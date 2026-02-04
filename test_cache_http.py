@@ -12,7 +12,7 @@ from pathlib import Path
 # CONFIGURACIÓN
 # ============================================
 
-BASE_URL = "http://localhost:8000"
+BASE_URL = "http://127.0.0.1:8000"
 API_KEY = "zxc12345"
 CACHE_DIR = Path("cache")
 HEADERS = {"X-API-Key": API_KEY}

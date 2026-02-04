@@ -4147,3 +4147,29 @@ TypeError: can't subtract offset-naive and offset-aware datetimes
 2026-02-04 11:13:54,870 - song_credits_background - INFO - Crédito 1 expirado para usuario 2
 2026-02-04 11:14:17,732 - song_credits_background - INFO - Credits background task started
 2026-02-04 11:18:28,279 - song_credits_background - INFO - Credits background task started
+2026-02-04 16:21:26,149 - song_credits_background - INFO - Credits background task started
+2026-02-04 16:29:27,607 - song_credits_background - INFO - Credits background task started
+2026-02-04 16:30:18,388 - song_credits_background - INFO - Credits background task started
+2026-02-04 16:30:53,245 - song_credits_background - INFO - Credits background task started
+2026-02-04 16:31:49,902 - song_credits_background - INFO - Credits background task started
+2026-02-04 16:32:10,868 - httpx - INFO - HTTP Request: POST http://testserver/api/v1/mesas/ "HTTP/1.1 201 Created"
+2026-02-04 16:32:10,918 - song_credits_background - INFO - Credits background task started
+2026-02-04 16:32:11,119 - httpx - INFO - HTTP Request: POST http://testserver/api/v1/mesas/karaoke-mesa-30-usuario1/conectar "HTTP/1.1 200 OK"
+2026-02-04 16:32:11,289 - httpx - INFO - HTTP Request: POST http://testserver/api/v1/mesas/karaoke-mesa-30-usuario2/conectar "HTTP/1.1 200 OK"
+2026-02-04 16:32:11,515 - httpx - INFO - HTTP Request: POST http://testserver/api/v1/canciones/3 "HTTP/1.1 402 Payment Required"
+2026-02-04 16:32:11,717 - httpx - INFO - HTTP Request: POST http://testserver/api/v1/canciones/3 "HTTP/1.1 402 Payment Required"
+2026-02-04 16:32:11,917 - httpx - INFO - HTTP Request: POST http://testserver/api/v1/canciones/4 "HTTP/1.1 402 Payment Required"
+2026-02-04 16:32:13,340 - httpx - INFO - HTTP Request: GET http://testserver/api/v1/canciones/3/lista "HTTP/1.1 200 OK"
+2026-02-04 16:32:13,587 - httpx - INFO - HTTP Request: POST http://testserver/api/v1/productos "HTTP/1.1 307 Temporary Redirect"
+2026-02-04 16:32:13,986 - httpx - INFO - HTTP Request: POST http://testserver/api/v1/productos/ "HTTP/1.1 200 OK"
+2026-02-04 16:32:43,890 - song_credits_background - INFO - Credits background task started
+2026-02-04 16:32:44,818 - httpx - INFO - HTTP Request: POST http://testserver/api/v1/mesas/ "HTTP/1.1 201 Created"
+2026-02-04 16:32:55,172 - httpx - INFO - HTTP Request: POST http://testserver/api/v1/mesas/ "HTTP/1.1 201 Created"
+2026-02-04 16:32:55,414 - httpx - INFO - HTTP Request: POST http://testserver/api/v1/mesas/karaoke-mesa-74-usuario1/conectar "HTTP/1.1 200 OK"
+2026-02-04 16:32:55,527 - httpx - INFO - HTTP Request: POST http://testserver/api/v1/mesas/karaoke-mesa-74-usuario2/conectar "HTTP/1.1 200 OK"
+2026-02-04 16:32:55,596 - httpx - INFO - HTTP Request: POST http://testserver/api/v1/canciones/5 "HTTP/1.1 402 Payment Required"
+2026-02-04 16:32:55,726 - httpx - INFO - HTTP Request: POST http://testserver/api/v1/canciones/5 "HTTP/1.1 402 Payment Required"
+2026-02-04 16:32:55,888 - httpx - INFO - HTTP Request: POST http://testserver/api/v1/canciones/6 "HTTP/1.1 402 Payment Required"
+2026-02-04 16:32:57,027 - httpx - INFO - HTTP Request: GET http://testserver/api/v1/canciones/5/lista "HTTP/1.1 200 OK"
+2026-02-04 16:32:57,158 - httpx - INFO - HTTP Request: POST http://testserver/api/v1/productos/ "HTTP/1.1 400 Bad Request"
+2026-02-04 16:32:57,265 - httpx - INFO - HTTP Request: POST http://testserver/api/v1/productos/ "HTTP/1.1 200 OK"
