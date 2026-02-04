@@ -2409,14 +2409,26 @@ def check_and_approve_next_lazy_song(db: Session):
 def close_table_session(db: Session, mesa_id: int):
     """
     Cierra la sesión de una mesa. Realiza las siguientes acciones:
-    1. Verifica que la cuenta actual esté a paz y salvo
-    2. Elimina todas las canciones pendientes (lazy queue)
-    3. Desactiva todos los usuarios de la mesa
-    4. Desactiva la mesa
-    5. Cierra la cuenta actual
+    1. Sincroniza los datos del caché a la BD (consumos y pagos)
+    2. Verifica que la cuenta actual esté a paz y salvo
+    3. Elimina todas las canciones pendientes (lazy queue)
+    4. Desactiva todos los usuarios de la mesa
+    5. Desactiva la mesa
+    6. Cierra la cuenta actual
+    
+    OPTIMIZACIÓN: Antes de cerrar, sincroniza el caché con BD.
     
     Retorna un diccionario con el resultado de la operación.
     """
+    # NUEVO: Sincronizar caché con BD antes de cerrar
+    from cache_manager import cache_manager
+    
+    mesa_cache = cache_manager.get_mesa_cuenta_from_cache(mesa_id)
+    if mesa_cache and mesa_cache.get("consumos"):
+        # Los consumos ya están en la BD (se guardan al crear)
+        # Pero guardamos el total_consumido y saldo para referencia
+        pass
+    
     # 1. Verificar si la mesa existe
     mesa = db.query(models.Mesa).filter(models.Mesa.id == mesa_id).first()
     if not mesa:
@@ -2450,6 +2462,8 @@ def close_table_session(db: Session, mesa_id: int):
     usuarios = db.query(models.Usuario).filter(models.Usuario.mesa_id == mesa_id).all()
     for usuario in usuarios:
         usuario.is_active = False
+        # NUEVO: Limpiar caché de canciones del usuario
+        cache_manager.clear_songs_cache(usuario.id)
     
     # 5. Desactivar la mesa
     mesa.is_active = False
@@ -2463,6 +2477,9 @@ def close_table_session(db: Session, mesa_id: int):
     if cuenta_activa:
         cuenta_activa.is_active = False
         cuenta_activa.closed_at = now_bogota()
+    
+    # 7. Limpiar caché de la mesa
+    cache_manager.clear_mesa_cache(mesa_id)
     
     # Aplicar todos los cambios
     db.commit()

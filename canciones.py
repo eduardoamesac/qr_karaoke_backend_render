@@ -11,6 +11,7 @@ import crud, schemas, models, config
 from database import SessionLocal # get_db se importará desde aquí
 import websocket_manager
 from security import api_key_auth
+from cache_manager import cache_manager
 
 router = APIRouter() # El prefijo y las etiquetas se pueden definir aquí o al incluir el router en main.py
 
@@ -116,10 +117,15 @@ async def anadir_cancion(
     # Crear canción
     db_cancion = crud.create_cancion_para_usuario(db=db, cancion=cancion, usuario_id=usuario_id)
     
+    # NUEVO: Agregar a caché
+    cancion_dict = jsonable_encoder(db_cancion)
+    cache_manager.add_song_to_cache(usuario_id, cancion_dict)
+    
     # NUEVO: Consumir un crédito para esta canción
     if not crud.consume_song_credit(db, usuario_id, db_cancion.id):
         # No debería pasar porque ya verificamos arriba, pero por seguridad
         crud.delete_cancion(db, db_cancion.id)
+        cache_manager.delete_song_from_cache(usuario_id, db_cancion.id)
         raise HTTPException(status_code=402, detail="Error al consumir crédito. Intenta nuevamente.")
     
     # LAZY APPROVAL: Solo aprobar si no hay más de 1 canción aprobada en espera
@@ -141,7 +147,22 @@ async def anadir_cancion(
 
 @router.get("/{usuario_id}/lista", response_model=List[schemas.Cancion], summary="Ver la lista de canciones de un usuario")
 def ver_lista_de_canciones(usuario_id: int, db: Session = Depends(get_db)):
-    return crud.get_canciones_por_usuario(db=db, usuario_id=usuario_id)
+    # OPTIMIZACIÓN: Intentar obtener del caché primero
+    cached_songs = cache_manager.get_songs_from_cache(usuario_id)
+    
+    # Si hay caché, retornarlo
+    if cached_songs:
+        return cached_songs
+    
+    # Si no hay caché, obtener de BD y guardar en caché
+    canciones = crud.get_canciones_por_usuario(db=db, usuario_id=usuario_id)
+    
+    # Guardar en caché para futuras consultas
+    for cancion in canciones:
+        cancion_dict = jsonable_encoder(cancion)
+        cache_manager.add_song_to_cache(usuario_id, cancion_dict)
+    
+    return canciones
 
 @router.get("/pendientes", response_model=List[schemas.CancionAdminView], summary="Ver todas las canciones pendientes")
 def ver_canciones_pendientes(db: Session = Depends(get_db), api_key: str = Depends(api_key_auth)):
@@ -283,6 +304,10 @@ async def eliminar_cancion(cancion_id: int, usuario_id: int, db: Session = Depen
         raise HTTPException(status_code=400, detail="No se puede eliminar una canción que ya está reproduciendo o ha sido cantada.")
 
     crud.delete_cancion(db, cancion_id=cancion_id)
+    
+    # OPTIMIZACIÓN: Eliminar del caché también
+    cache_manager.delete_song_from_cache(usuario_id, cancion_id)
+    
     await websocket_manager.manager.broadcast_queue_update() # Notificar actualización de la cola
     return Response(status_code=204)
 @router.post("/{cancion_id}/mover-arriba", response_model=schemas.Cancion, summary="Mover una canciÃ³n pendiente_lazy hacia arriba")

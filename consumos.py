@@ -8,6 +8,8 @@ import websocket_manager
 from security import api_key_auth
 import asyncio
 import datetime
+from cache_manager import cache_manager  # NUEVO: Importar cache manager
+from fastapi.encoders import jsonable_encoder  # Para serializar datos
 
 router = APIRouter()
 
@@ -26,10 +28,17 @@ async def registrar_consumo(
     """
     **[Admin/Staff]** Añade un producto al registro de consumo de un usuario.
     Esto afectará directamente la prioridad del usuario en la cola de canciones.
+    OPTIMIZACIÓN: Se agrega al caché de la mesa.
     """
     db_consumo, error_detail = crud.create_consumo_para_usuario(db=db, consumo=consumo, usuario_id=usuario_id)
     if error_detail:
         raise HTTPException(status_code=400, detail=error_detail)
+    
+    # NUEVO: Agregar al caché de la mesa
+    if db_consumo.usuario and db_consumo.usuario.mesa_id:
+        consumo_cache = jsonable_encoder(db_consumo)
+        cache_manager.add_consumo_to_mesa_cache(db_consumo.usuario.mesa_id, consumo_cache)
+    
     # Notificamos la actualización de la cola
     asyncio.create_task(websocket_manager.manager.broadcast_queue_update())
 
@@ -64,11 +73,18 @@ async def usuario_pide_producto(
     """
     **[Público]** Permite que un usuario registrado en una mesa pida un producto.
     No requiere clave de API de administrador.
+    OPTIMIZACIÓN: Se agrega al caché de la mesa.
     """
     # La lógica es la misma que para el admin, solo que sin la autenticación de admin
     db_consumo, error_detail = crud.create_consumo_para_usuario(db=db, consumo=consumo, usuario_id=usuario_id)
     if error_detail:
         raise HTTPException(status_code=400, detail=error_detail)
+    
+    # NUEVO: Agregar al caché de la mesa
+    if db_consumo.usuario and db_consumo.usuario.mesa_id:
+        consumo_cache = jsonable_encoder(db_consumo)
+        cache_manager.add_consumo_to_mesa_cache(db_consumo.usuario.mesa_id, consumo_cache)
+    
     # Notificamos a todos para que la cola se actualice (por si cambia la prioridad)
     asyncio.create_task(websocket_manager.manager.broadcast_queue_update())
 
@@ -101,6 +117,7 @@ async def usuario_pide_carrito(
     """
     **[Público]** Permite que un usuario envíe un pedido consolidado (carrito).
     Si algún producto falla (stock, etc.), todo el pedido es rechazado.
+    OPTIMIZACIÓN: Los consumos se agregan al caché de la mesa.
     """
     if not carrito.items:
         raise HTTPException(status_code=400, detail="El carrito no puede estar vacío.")
@@ -110,6 +127,14 @@ async def usuario_pide_carrito(
 
     if error_detail:
         raise HTTPException(status_code=400, detail=error_detail)
+
+    # NUEVO: Agregar todos los consumos al caché de la mesa
+    if consumos_creados:
+        primer_consumo = consumos_creados[0]
+        if primer_consumo.usuario and primer_consumo.usuario.mesa_id:
+            for consumo in consumos_creados:
+                consumo_cache = jsonable_encoder(consumo)
+                cache_manager.add_consumo_to_mesa_cache(primer_consumo.usuario.mesa_id, consumo_cache)
 
     # Notificamos a todos para que la cola se actualice (por si cambia la prioridad)
     asyncio.create_task(websocket_manager.manager.broadcast_queue_update())
