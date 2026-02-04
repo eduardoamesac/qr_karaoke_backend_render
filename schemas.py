@@ -35,6 +35,7 @@ class Usuario(UsuarioBase): # Schema completo de Usuario
     puntos: int
     nivel: str
     is_silenced: bool = False
+    song_credits: int = 1  # Créditos disponibles para agregar canciones
     canciones: List[Cancion] = []
 
     model_config = ConfigDict(from_attributes=True)
@@ -45,6 +46,7 @@ class UsuarioConectado(BaseModel):
     nick: str
     puntos: int
     nivel: str
+    song_credits: int = 1  # Créditos disponibles para agregar canciones
     is_active: bool
     last_active: datetime
 
@@ -196,6 +198,7 @@ class UsuarioPublico(UsuarioBase):
     id: int
     puntos: int
     nivel: str
+    song_credits: int = 1  # Créditos disponibles para agregar canciones
     mesa: Optional[MesaInfo] = None
     is_silenced: bool = False # Mantener este campo para consistencia, aunque Usuario ya lo tiene
     model_config = ConfigDict(from_attributes=True)

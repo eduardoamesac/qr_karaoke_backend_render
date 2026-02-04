@@ -40,6 +40,36 @@ def ver_perfil_usuario(usuario_id: int, db: Session = Depends(get_db)):
     
     return db_usuario
 
+@router.get("/{usuario_id}/song-credits", response_model=dict, summary="Ver créditos de canciones disponibles")
+def ver_creditos_cancion(usuario_id: int, db: Session = Depends(get_db)):
+    """
+    Devuelve los créditos de canciones disponibles para un usuario.
+    Muestra el valor actual de créditos y cuánto tiempo le queda antes de que decaigan a 0.
+    """
+    db_usuario = crud.get_usuario_by_id(db, usuario_id=usuario_id)
+    if not db_usuario:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+    
+    credits_detail = crud.get_user_credits_detail(db, usuario_id)
+    return credits_detail
+
+@router.get("/{usuario_id}/cuenta-regresiva", response_model=dict, summary="Ver cuenta regresiva de créditos")
+def ver_cuenta_regresiva(usuario_id: int, db: Session = Depends(get_db)):
+    """
+    Devuelve la información simplificada de los créditos para mostrar en la UI.
+    """
+    db_usuario = crud.get_usuario_by_id(db, usuario_id=usuario_id)
+    if not db_usuario:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+    
+    available_credits = crud.get_available_song_credits(db, usuario_id)
+    return {
+        "usuario_id": usuario_id,
+        "credits_available": available_credits,
+        "can_add_song": available_credits > 0,
+        "needs_purchase": available_credits == 0
+    }
+
 @router.get("/", response_model=List[schemas.UsuarioPerfil], summary="Ver el ranking de usuarios")
 def ver_ranking_usuarios(db: Session = Depends(get_db)):
     """

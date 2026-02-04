@@ -1382,3 +1382,42 @@ def close_table_session(mesa_id: int, db: Session = Depends(get_db)):
     crud.create_admin_log_entry(db, action="CLOSE_TABLE_SESSION", details=f"Sesión cerrada para mesa {mesa_id}. Canciones eliminadas: {result.get('canciones_eliminadas', 0)}")
     
     return result
+
+
+# ============================================================================
+# ENDPOINTS PARA SISTEMA DE CRÉDITOS DE CANCIONES
+# ============================================================================
+
+@router.get("/usuarios/{usuario_id}/song-credits", response_model=dict, summary="Ver créditos de canciones de un usuario")
+def admin_get_user_song_credits(usuario_id: int, db: Session = Depends(get_db)):
+    """
+    **[Admin]** Obtiene los créditos de canciones disponibles para un usuario.
+    Muestra el detalle de cada grupo de créditos y cuánto tiempo le queda antes de expirar.
+    """
+    db_usuario = crud.get_usuario_by_id(db, usuario_id=usuario_id)
+    if not db_usuario:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+    
+    credits_detail = crud.get_user_credits_detail(db, usuario_id)
+    return credits_detail
+
+@public_router.get("/usuarios/{usuario_id}/available-credits", response_model=dict, summary="Verificar créditos disponibles (endpoint público)", tags=["Usuarios"])
+def public_get_available_credits(usuario_id: int, db: Session = Depends(get_db)):
+    """
+    **[Público]** Devuelve información simple sobre los créditos disponibles para un usuario.
+    Útil para mostrar en la UI si puede agregar una canción o debe hacer un pedido.
+    """
+    db_usuario = crud.get_usuario_by_id(db, usuario_id=usuario_id)
+    if not db_usuario:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+    
+    available_credits = crud.get_available_song_credits(db, usuario_id)
+    
+    return {
+        "usuario_id": usuario_id,
+        "nick": db_usuario.nick,
+        "credits_available": available_credits,
+        "can_add_song": available_credits > 0,
+        "needs_purchase": available_credits == 0,
+        "message": "Puedes agregar una canción" if available_credits > 0 else "Debes hacer un pedido para agregar más canciones"
+    }

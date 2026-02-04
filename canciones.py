@@ -60,13 +60,24 @@ async def anadir_cancion(
     db: Session = Depends(get_db)
 ):
     """
-    Añade una nueva canción a la lista personal de un usuario, si hay tiempo disponible.
+    Añade una nueva canción a la lista personal de un usuario, si hay créditos disponibles.
+    NUEVO: El usuario obtiene 1 crédito al ingresar, y puede agregar más créditos comprando productos.
+    Los créditos decaen 100 puntos cada minuto hasta llegar a 0.
     """
     db_usuario = crud.get_usuario_by_id(db, usuario_id=usuario_id)
     if not db_usuario:
         raise HTTPException(status_code=404, detail="Usuario no encontrado.")
     if db_usuario.is_silenced:
         raise HTTPException(status_code=403, detail="No tienes permiso para añadir más canciones.")
+
+    # NUEVO: Verificar que el usuario tenga créditos disponibles
+    available_credits = crud.get_available_song_credits(db, usuario_id)
+    if available_credits <= 0:
+        credits_detail = crud.get_user_credits_detail(db, usuario_id)
+        raise HTTPException(
+            status_code=402,  # Payment Required
+            detail=f"No tienes créditos disponibles para agregar canciones. Debes hacer un pedido para restablecer tus derechos. Minutos hasta alcanzar 0: {credits_detail.get('minutes_to_zero', 0):.1f}"
+        )
 
     # Validar hora de cierre
     hora_cierre_str = config.settings.KARAOKE_CIERRE
@@ -104,6 +115,12 @@ async def anadir_cancion(
 
     # Crear canción
     db_cancion = crud.create_cancion_para_usuario(db=db, cancion=cancion, usuario_id=usuario_id)
+    
+    # NUEVO: Consumir un crédito para esta canción
+    if not crud.consume_song_credit(db, usuario_id, db_cancion.id):
+        # No debería pasar porque ya verificamos arriba, pero por seguridad
+        crud.delete_cancion(db, db_cancion.id)
+        raise HTTPException(status_code=402, detail="Error al consumir crédito. Intenta nuevamente.")
     
     # LAZY APPROVAL: Solo aprobar si no hay más de 1 canción aprobada en espera
     # Si ya hay 1 o más canciones aprobadas (más la que suena), la nueva va a pendiente_lazy

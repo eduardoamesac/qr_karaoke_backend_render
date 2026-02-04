@@ -24,6 +24,7 @@ import crud, schemas, broadcast, thumbnails
 import mesas, canciones, youtube, consumos, usuarios, admin, productos, websocket_manager
 from admin_settings_router import router as settings_router
 from admin_extra_router import router as admin_extra_router
+from song_credits_background import start_credits_background_task
 
 # ===============================
 # LOGGING
@@ -58,6 +59,8 @@ async def lifespan(app: FastAPI):
     db = SessionLocal()
     try:
         crud.get_or_create_dj_user(db)
+        # Iniciar tarea de background para decrementar créditos
+        start_credits_background_task()
         yield
     finally:
         db.close()

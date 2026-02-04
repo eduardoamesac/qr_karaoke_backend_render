@@ -327,6 +327,11 @@ def create_consumo_para_usuario(db: Session, consumo: schemas.ConsumoCreate, usu
 
     # 6. Otorgar puntos al usuario individual (ej: 1 punto por cada 10 de moneda gastados)
     db_usuario.puntos += int(valor_total_transaccion / 10)
+    
+    # NUEVO: Agregar créditos de canciones por el valor del producto en pesos
+    # 5000 pesos = 5000 créditos (100 créditos se pierden cada minuto)
+    credit_value = int(float(valor_total_transaccion))
+    add_song_credits(db, usuario_id, credit_value)
 
     db.add(db_consumo)
     db.commit()
@@ -408,6 +413,10 @@ def create_pedido_from_carrito(db: Session, carrito: schemas.CarritoCreate, usua
 
         # Si todo fue bien, actualizamos los puntos y el nivel del usuario INDIVIDUAL
         db_usuario.puntos += int(valor_total_pedido / 10)
+        
+        # NUEVO: Agregar créditos de canciones por el total del pedido
+        credit_value = int(float(valor_total_pedido))
+        add_song_credits(db, usuario_id, credit_value)
         total_consumido_historico = (db.query(func.sum(models.Consumo.valor_total)).filter(
             models.Consumo.usuario_id == usuario_id
         ).scalar() or 0) + valor_total_pedido
@@ -2803,3 +2812,139 @@ def move_lazy_song_down(db: Session, cancion_id: int, usuario_id: int):
     db.refresh(cancion)
     
     return cancion
+
+# ============================================================================
+# FUNCIONES PARA SISTEMA DE CRÉDITOS DE CANCIONES
+# ============================================================================
+
+def add_song_credits(db: Session, usuario_id: int, credit_value: int):
+    """
+    Agrega créditos de canción a un usuario.
+    Los créditos se asignan por el valor en pesos de los productos comprados.
+    Ejemplo: Cerveza 5000 pesos = 5000 créditos
+    """
+    db_usuario = db.query(models.Usuario).filter(models.Usuario.id == usuario_id).first()
+    if not db_usuario:
+        return None
+    
+    # Crear nuevo registro de créditos
+    new_credit = models.SongCredits(
+        usuario_id=usuario_id,
+        credits_value=credit_value,
+        created_at=now_bogota()
+    )
+    db.add(new_credit)
+    db.commit()
+    db.refresh(new_credit)
+    
+    return new_credit
+
+def get_available_song_credits(db: Session, usuario_id: int) -> int:
+    """
+    Obtiene los créditos disponibles para un usuario.
+    Los créditos decaen 100 por minuto desde su creación.
+    """
+    db_usuario = db.query(models.Usuario).filter(models.Usuario.id == usuario_id).first()
+    if not db_usuario:
+        return 0
+    
+    # Obtener todos los créditos no consumidos del usuario
+    credits = db.query(models.SongCredits).filter(
+        models.SongCredits.usuario_id == usuario_id,
+        models.SongCredits.consumed_at.is_(None),  # No ha sido consumido
+        models.SongCredits.consumed_by_song_id.is_(None)
+    ).all()
+    
+    total_credits = 0
+    current_time = now_bogota()
+    
+    for credit in credits:
+        # Calcular minutos transcurridos desde la creación
+        minutes_elapsed = (current_time - credit.created_at).total_seconds() / 60
+        
+        # Restar 100 puntos por minuto
+        remaining_credit = max(0, credit.credits_value - int(minutes_elapsed * 100))
+        
+        if remaining_credit > 0:
+            total_credits += remaining_credit
+        else:
+            # Marcar como expirado
+            if credit.expires_at is None:
+                credit.expires_at = current_time
+                db.commit()
+    
+    return total_credits
+
+def get_user_credits_detail(db: Session, usuario_id: int) -> dict:
+    """
+    Obtiene información detallada de los créditos de un usuario,
+    incluyendo el valor actual y cuánto tiempo le queda.
+    """
+    db_usuario = db.query(models.Usuario).filter(models.Usuario.id == usuario_id).first()
+    if not db_usuario:
+        return {"available_credits": 0, "credits_detail": [], "needs_purchase": False}
+    
+    credits = db.query(models.SongCredits).filter(
+        models.SongCredits.usuario_id == usuario_id,
+        models.SongCredits.consumed_at.is_(None),
+        models.SongCredits.consumed_by_song_id.is_(None)
+    ).all()
+    
+    total_credits = 0
+    current_time = now_bogota()
+    credits_detail = []
+    
+    for credit in credits:
+        minutes_elapsed = (current_time - credit.created_at).total_seconds() / 60
+        remaining_credit = max(0, credit.credits_value - int(minutes_elapsed * 100))
+        minutes_remaining = max(0, (remaining_credit / 100))
+        
+        if remaining_credit > 0:
+            total_credits += remaining_credit
+            credits_detail.append({
+                "credit_id": credit.id,
+                "original_value": credit.credits_value,
+                "current_value": remaining_credit,
+                "created_at": credit.created_at,
+                "minutes_remaining": minutes_remaining
+            })
+    
+    return {
+        "available_credits": total_credits,
+        "credits_detail": credits_detail,
+        "needs_purchase": total_credits == 0,
+        "minutes_to_zero": max(0, (total_credits / 100)) if total_credits > 0 else 0
+    }
+
+def consume_song_credit(db: Session, usuario_id: int, cancion_id: int) -> bool:
+    """
+    Consume un crédito de canción cuando el usuario agrega una canción.
+    Retorna True si hay crédito disponible, False si no.
+    """
+    available_credits = get_available_song_credits(db, usuario_id)
+    
+    if available_credits <= 0:
+        return False
+    
+    # Obtener el primer crédito que tenga valor disponible
+    credits = db.query(models.SongCredits).filter(
+        models.SongCredits.usuario_id == usuario_id,
+        models.SongCredits.consumed_at.is_(None),
+        models.SongCredits.consumed_by_song_id.is_(None)
+    ).order_by(models.SongCredits.created_at).all()
+    
+    current_time = now_bogota()
+    remaining_to_consume = 1  # Una canción consume 1 crédito lógico
+    
+    for credit in credits:
+        minutes_elapsed = (current_time - credit.created_at).total_seconds() / 60
+        remaining_credit = max(0, credit.credits_value - int(minutes_elapsed * 100))
+        
+        if remaining_credit > 0:
+            # Este crédito tiene valor, lo usamos para esta canción
+            credit.consumed_at = current_time
+            credit.consumed_by_song_id = cancion_id
+            db.commit()
+            return True
+    
+    return False

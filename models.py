@@ -43,6 +43,11 @@ class Usuario(Base):
     is_silenced = Column(Boolean, default=False) # Nuevo campo para silenciar
     is_active = Column(Boolean, default=True)  # Para desconectar usuarios sin eliminar
     
+    # Sistema de créditos para canciones: al ingresar se da 1, luego se compra con productos
+    song_credits = Column(Integer, default=1)  # Créditos disponibles para agregar canciones
+    credits_added_at = Column(DateTime, default=now_bogota)  # Última vez que se agregaron créditos
+    last_song_added_at = Column(DateTime, nullable=True)  # Última vez que agregó una canción
+    
     mesa_id = Column(Integer, ForeignKey("mesas.id"))
 
     # Relaciones: Un usuario pertenece a una mesa y puede tener muchas canciones
@@ -140,6 +145,24 @@ class Pago(Base):
     cuenta_id = Column(Integer, ForeignKey("cuentas.id"), nullable=True) # Nueva columna
     cuenta = relationship("Cuenta", back_populates="pagos")
 
+
+class SongCredits(Base):
+    """
+    Modelo para tracking de créditos de canciones por usuario.
+    Cada compra de producto asigna créditos que decaen 100 puntos cada minuto.
+    """
+    __tablename__ = "song_credits"
+
+    id = Column(Integer, primary_key=True, index=True)
+    usuario_id = Column(Integer, ForeignKey("usuarios.id"), nullable=False, index=True)
+    credits_value = Column(Integer, default=0)  # Valor de créditos (ej: 5000 pesos = 5000 puntos)
+    created_at = Column(DateTime, default=now_bogota)
+    expires_at = Column(DateTime, nullable=True)  # Fecha de expiración cuando llega a 0
+    consumed_at = Column(DateTime, nullable=True)  # Fecha cuando el usuario agregó una canción
+    consumed_by_song_id = Column(Integer, ForeignKey("canciones.id"), nullable=True)  # Canción que consumió estos créditos
+    
+    usuario = relationship("Usuario")
+    
 
 class ConfiguracionGlobal(Base):
     __tablename__ = "configuracion_global"
