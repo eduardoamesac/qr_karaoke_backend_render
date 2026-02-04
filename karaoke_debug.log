@@ -4146,3 +4146,4 @@ TypeError: can't subtract offset-naive and offset-aware datetimes
 2026-02-04 11:13:54,857 - song_credits_background - INFO - Credits background task started
 2026-02-04 11:13:54,870 - song_credits_background - INFO - Crédito 1 expirado para usuario 2
 2026-02-04 11:14:17,732 - song_credits_background - INFO - Credits background task started
+2026-02-04 11:18:28,279 - song_credits_background - INFO - Credits background task started
