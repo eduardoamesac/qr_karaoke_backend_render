@@ -3979,3 +3979,27 @@
 2026-02-03 15:14:38,122 - youtube - INFO - Procesamiento finalizado. Se encontraron 10 resultados formateados.
 2026-02-03 16:04:51,881 - random_scorer - INFO - Puntaje aleatorio calculado: 83
 2026-02-03 16:04:52,113 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=QFs3PIZb3js, duration_seconds=269
+2026-02-04 10:23:25,244 - song_credits_background - INFO - Credits background task started
+2026-02-04 10:27:04,654 - song_credits_background - INFO - Credits background task started
+2026-02-04 10:27:28,409 - song_credits_background - INFO - Credits background task started
+2026-02-04 10:27:39,334 - httpx - INFO - HTTP Request: POST http://testserver/api/v1/mesas "HTTP/1.1 307 Temporary Redirect"
+2026-02-04 10:27:39,374 - httpx - INFO - HTTP Request: POST http://testserver/api/v1/mesas/ "HTTP/1.1 401 Unauthorized"
+2026-02-04 10:28:06,629 - song_credits_background - INFO - Credits background task started
+2026-02-04 10:28:20,599 - song_credits_background - INFO - Credits background task started
+2026-02-04 10:28:31,118 - song_credits_background - INFO - Credits background task started
+2026-02-04 10:28:33,717 - httpx - INFO - HTTP Request: POST http://testserver/api/v1/mesas/ "HTTP/1.1 422 Unprocessable Entity"
+2026-02-04 10:29:05,566 - song_credits_background - INFO - Credits background task started
+2026-02-04 10:29:17,267 - song_credits_background - INFO - Credits background task started
+2026-02-04 10:29:18,009 - httpx - INFO - HTTP Request: POST http://testserver/api/v1/mesas/ "HTTP/1.1 201 Created"
+2026-02-04 10:29:42,821 - song_credits_background - INFO - Credits background task started
+2026-02-04 10:29:56,046 - song_credits_background - INFO - Credits background task started
+2026-02-04 10:30:25,877 - httpx - INFO - HTTP Request: POST http://testserver/api/v1/mesas/ "HTTP/1.1 201 Created"
+2026-02-04 10:30:25,912 - httpx - INFO - HTTP Request: POST http://testserver/api/v1/mesas/2/conectar "HTTP/1.1 400 Bad Request"
+2026-02-04 10:30:50,657 - song_credits_background - INFO - Credits background task started
+2026-02-04 10:31:06,993 - httpx - INFO - HTTP Request: POST http://testserver/api/v1/mesas/ "HTTP/1.1 201 Created"
+2026-02-04 10:31:07,137 - httpx - INFO - HTTP Request: POST http://testserver/api/v1/mesas/3/conectar "HTTP/1.1 400 Bad Request"
+2026-02-04 10:32:10,740 - song_credits_background - INFO - Credits background task started
+2026-02-04 10:33:04,204 - song_credits_background - INFO - Credits background task started
+2026-02-04 10:33:18,017 - song_credits_background - INFO - Credits background task started
+2026-02-04 10:33:18,602 - song_credits_background - INFO - Credits background task started
+2026-02-04 10:34:03,505 - song_credits_background - INFO - Credits background task started
