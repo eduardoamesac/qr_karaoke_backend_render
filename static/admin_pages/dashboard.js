@@ -328,7 +328,7 @@ function renderReactions(dashboardContainer) {
         { emoji: '👏', title: '¡Aplausos!' },
         { emoji: '❤️', title: '¡Me encanta!' },
         { emoji: '💔', title: '¡Corazón roto!' },
-        { emoji: <span style={{ color: '#5B2D8B' }}>😈</span>, title: '¡Diablillo!' },
+        { emoji: '😈', title: '¡Diablillo!' },
         { emoji: '😳', title: '¡Sonrojado!' },
         { emoji: '😢', title: '¡Triste!' },
         { emoji: '🙈', title: '¡No miro!' },

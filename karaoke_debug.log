@@ -4173,3 +4173,4 @@ TypeError: can't subtract offset-naive and offset-aware datetimes
 2026-02-04 16:32:57,027 - httpx - INFO - HTTP Request: GET http://testserver/api/v1/canciones/5/lista "HTTP/1.1 200 OK"
 2026-02-04 16:32:57,158 - httpx - INFO - HTTP Request: POST http://testserver/api/v1/productos/ "HTTP/1.1 400 Bad Request"
 2026-02-04 16:32:57,265 - httpx - INFO - HTTP Request: POST http://testserver/api/v1/productos/ "HTTP/1.1 200 OK"
+2026-02-04 16:36:48,105 - song_credits_background - INFO - Credits background task started
