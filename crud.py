@@ -5,7 +5,7 @@ import secrets
 from typing import List, Optional
 import datetime
 import models, schemas
-from timezone_utils import now_bogota
+from timezone_utils import now_bogota, safe_datetime_diff, ensure_aware
 from decimal import Decimal # Importar Decimal
 
 def get_mesa_by_qr(db: Session, qr_code: str):
@@ -2876,8 +2876,9 @@ def get_available_song_credits(db: Session, usuario_id: int) -> int:
     current_time = now_bogota()
     
     for credit in credits:
-        # Calcular minutos transcurridos desde la creación
-        minutes_elapsed = (current_time - credit.created_at).total_seconds() / 60
+        # Calcular minutos transcurridos desde la creación usando función segura
+        seconds_elapsed = safe_datetime_diff(current_time, credit.created_at)
+        minutes_elapsed = seconds_elapsed / 60
         
         # Restar 100 puntos por minuto
         remaining_credit = max(0, credit.credits_value - int(minutes_elapsed * 100))
@@ -2887,7 +2888,7 @@ def get_available_song_credits(db: Session, usuario_id: int) -> int:
         else:
             # Marcar como expirado
             if credit.expires_at is None:
-                credit.expires_at = current_time
+                credit.expires_at = ensure_aware(current_time)
                 db.commit()
     
     return total_credits
@@ -2912,7 +2913,8 @@ def get_user_credits_detail(db: Session, usuario_id: int) -> dict:
     credits_detail = []
     
     for credit in credits:
-        minutes_elapsed = (current_time - credit.created_at).total_seconds() / 60
+        seconds_elapsed = safe_datetime_diff(current_time, credit.created_at)
+        minutes_elapsed = seconds_elapsed / 60
         remaining_credit = max(0, credit.credits_value - int(minutes_elapsed * 100))
         minutes_remaining = max(0, (remaining_credit / 100))
         
@@ -2954,12 +2956,13 @@ def consume_song_credit(db: Session, usuario_id: int, cancion_id: int) -> bool:
     remaining_to_consume = 1  # Una canción consume 1 crédito lógico
     
     for credit in credits:
-        minutes_elapsed = (current_time - credit.created_at).total_seconds() / 60
+        seconds_elapsed = safe_datetime_diff(current_time, credit.created_at)
+        minutes_elapsed = seconds_elapsed / 60
         remaining_credit = max(0, credit.credits_value - int(minutes_elapsed * 100))
         
         if remaining_credit > 0:
             # Este crédito tiene valor, lo usamos para esta canción
-            credit.consumed_at = current_time
+            credit.consumed_at = ensure_aware(current_time)
             credit.consumed_by_song_id = cancion_id
             db.commit()
             return True

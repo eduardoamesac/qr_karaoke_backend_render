@@ -6,7 +6,7 @@ Los créditos decaen 100 puntos cada minuto hasta llegar a 0.
 import asyncio
 from database import SessionLocal
 import models
-from timezone_utils import now_bogota
+from timezone_utils import now_bogota, safe_datetime_diff, ensure_aware
 import logging
 
 logger = logging.getLogger(__name__)
@@ -31,15 +31,16 @@ async def credits_decay_worker():
                 current_time = now_bogota()
                 
                 for credit in credits:
-                    # Calcular minutos transcurridos
-                    minutes_elapsed = (current_time - credit.created_at).total_seconds() / 60
+                    # Calcular minutos transcurridos usando función segura
+                    seconds_elapsed = safe_datetime_diff(current_time, credit.created_at)
+                    minutes_elapsed = seconds_elapsed / 60
                     
                     # Calcular valor restante
                     remaining_value = max(0, credit.credits_value - int(minutes_elapsed * 100))
                     
                     # Si el crédito llegó a 0, marcar como expirado
                     if remaining_value == 0:
-                        credit.expires_at = current_time
+                        credit.expires_at = ensure_aware(current_time)
                         logger.info(f"Crédito {credit.id} expirado para usuario {credit.usuario_id}")
                 
                 db.commit()
