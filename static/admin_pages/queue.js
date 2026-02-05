@@ -176,6 +176,7 @@ async function loadQueuePage() {
             <div style="display: flex; gap: 8px;">
                 <button type="button" class="bees-btn bees-btn-primary bees-btn-small" id="admin-search-songs-btn" style="flex: 1; padding: 12px;">🎶 Canciones</button>
                 <button type="button" class="bees-btn bees-btn-success bees-btn-small" id="admin-search-karaoke-btn" style="flex: 1; padding: 12px;">🎤 Karaoke</button>
+                <button type="button" class="bees-btn bees-btn-warning bees-btn-small" id="admin-search-clear-btn" style="flex: 0.5; padding: 12px;">🗑️</button>
             </div>
         `;
         searchCard.appendChild(searchForm);
@@ -450,16 +451,14 @@ async function handleAdminSearch(event, karaokeMode = false) {
     songsButton.disabled = true;
     karaokeButton.disabled = true;
 
-    const clickedButton = karaokeMode ? karaokeButton : songsButton;
-    const originalText = clickedButton.textContent;
-    clickedButton.textContent = '⏳ Buscando...';
-
     const resultsContainer = document.getElementById('admin-search-results');
-    
-    // NO borrar los resultados anteriores - mantener la lista
-    // resultsContainer.innerHTML = '';
 
     try {
+        // Limpiar resultados anteriores al iniciar nueva búsqueda
+        if (resultsContainer) {
+            resultsContainer.innerHTML = '';
+        }
+
         const url = `/youtube/search?q=${encodeURIComponent(query)}${karaokeMode ? '&karaoke_mode=true' : ''}`;
         const results = await apiFetch(url);
 
@@ -487,11 +486,13 @@ async function handleAdminSearch(event, karaokeMode = false) {
     } catch (error) {
         const errorItem = document.createElement('li');
         errorItem.innerHTML = `<div class="bees-alert bees-alert-danger"><span class="bees-alert-icon">❌</span><div>Error: ${error.message}</div></div>`;
-        resultsContainer.appendChild(errorItem);
+        if (resultsContainer) {
+            resultsContainer.appendChild(errorItem);
+        }
+        console.error('Error en búsqueda:', error);
     } finally {
-        songsButton.disabled = false;
-        karaokeButton.disabled = false;
-        clickedButton.textContent = originalText;
+        if (songsButton) songsButton.disabled = false;
+        if (karaokeButton) karaokeButton.disabled = false;
     }
 }
 
@@ -527,11 +528,11 @@ async function handleAdminAddSong(event) {
         const targetName = targetTableId ? 'la mesa' : 'la cola general';
         showNotification(`✅ '${songData.titulo}' añadida a ${targetName}`, 'success');
 
-        // Limpiar
-        document.getElementById('admin-search-results').innerHTML = '';
-        document.getElementById('admin-search-input').value = '';
+        // NO limpiar la lista de búsqueda - mantenerla para agregar más canciones
+        // document.getElementById('admin-search-results').innerHTML = '';
+        // document.getElementById('admin-search-input').value = '';
 
-        // Recargar
+        // Recargar la cola
         await reloadApprovedQueue();
 
     } catch (error) {
@@ -731,7 +732,9 @@ async function handlePauseResume() {
 function setupQueueListeners() {
     const songsBtn = document.getElementById('admin-search-songs-btn');
     const karaokeBtn = document.getElementById('admin-search-karaoke-btn');
+    const clearBtn = document.getElementById('admin-search-clear-btn');
     const resultsContainer = document.getElementById('admin-search-results');
+    const searchInput = document.getElementById('admin-search-input');
     const songsList = document.getElementById('approved-songs-list');
     const lazySongsList = document.getElementById('lazy-songs-list');
 
@@ -740,6 +743,13 @@ function setupQueueListeners() {
     }
     if (karaokeBtn) {
         karaokeBtn.addEventListener('click', (e) => handleAdminSearch(e, true));
+    }
+    if (clearBtn) {
+        clearBtn.addEventListener('click', () => {
+            resultsContainer.innerHTML = '';
+            searchInput.value = '';
+            searchInput.focus();
+        });
     }
     if (resultsContainer) {
         resultsContainer.addEventListener('click', handleAdminAddSong);
