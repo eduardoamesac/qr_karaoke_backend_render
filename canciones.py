@@ -129,19 +129,19 @@ async def anadir_cancion(
         raise HTTPException(status_code=402, detail="Error al consumir crédito. Intenta nuevamente.")
     
     
-    # LAZY APPROVAL: Todas las nuevas canciones van a pendiente_lazy
+    # LAZY APPROVAL: Cambiar estado a pendiente_lazy por defecto
     # Esto permite que el usuario pueda reordenarlas con flechas
-    # La primera se aprobará automáticamente
+    # La primera se aprobará automáticamente si no hay nada en cola
     
-    # Primero, contar si hay algo más en la cola (reproduciendo o aprobado)
+    # Cambiar directamente a pendiente_lazy (creada en este estado)
+    cancion_final = crud.update_cancion_estado(db, cancion_id=db_cancion.id, nuevo_estado="pendiente_lazy")
+    
+    # Verificar si no hay nada en la cola (reproduciendo o aprobado)
     hay_cancion_activa = db.query(models.Cancion).filter(
         models.Cancion.estado.in_(["reproduciendo", "aprobado"])
     ).first()
     
-    if hay_cancion_activa:
-        # Ya hay algo en la cola, poner esta en pendiente_lazy
-        cancion_final = crud.update_cancion_estado(db, cancion_id=db_cancion.id, nuevo_estado="pendiente_lazy")
-    else:
+    if not hay_cancion_activa:
         # No hay nada en la cola, aprobar esta inmediatamente
         # para que comience a reproducirse (si autoplay está activo)
         cancion_final = crud.update_cancion_estado(db, cancion_id=db_cancion.id, nuevo_estado="aprobado")

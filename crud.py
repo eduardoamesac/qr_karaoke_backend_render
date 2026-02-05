@@ -2313,25 +2313,25 @@ def update_consumo_cantidad(db: Session, consumo_id: int, delta: int):
     return db_consumo, None
 def move_lazy_song_up(db: Session, cancion_id: int, usuario_id: int):
     """
-    Mueve una canción (pendiente_lazy o aprobado) hacia arriba en la cola del usuario.
+    Mueve una canción (pendiente, pendiente_lazy o aprobado) hacia arriba en la cola del usuario.
     Solo funciona para canciones del usuario actual.
     """
-    # 1. Validar que la canción existe, está en pendiente_lazy o aprobado, y pertenece al usuario
+    # 1. Validar que la canción existe, está en pendiente, pendiente_lazy o aprobado, y pertenece al usuario
     cancion = db.query(models.Cancion).filter(
         models.Cancion.id == cancion_id,
-        models.Cancion.estado.in_(['pendiente_lazy', 'aprobado']),
+        models.Cancion.estado.in_(['pendiente', 'pendiente_lazy', 'aprobado']),
         models.Cancion.usuario_id == usuario_id
     ).first()
     
     if not cancion:
         return None
     
-    # 2. Obtener todas las canciones del usuario en estados pendiente_lazy o aprobado, ordenadas
+    # 2. Obtener todas las canciones del usuario en estados pendiente, pendiente_lazy o aprobado, ordenadas
     canciones_usuario = (
         db.query(models.Cancion)
         .filter(
             models.Cancion.usuario_id == usuario_id,
-            models.Cancion.estado.in_(['pendiente_lazy', 'aprobado'])
+            models.Cancion.estado.in_(['pendiente', 'pendiente_lazy', 'aprobado'])
         )
         .order_by(models.Cancion.orden_manual.asc().nulls_last(), models.Cancion.id.asc())
         .all()
@@ -2372,25 +2372,25 @@ def move_lazy_song_up(db: Session, cancion_id: int, usuario_id: int):
 
 def move_lazy_song_down(db: Session, cancion_id: int, usuario_id: int):
     """
-    Mueve una canción (pendiente_lazy o aprobado) hacia abajo en la cola del usuario.
+    Mueve una canción (pendiente, pendiente_lazy o aprobado) hacia abajo en la cola del usuario.
     Solo funciona para canciones del usuario actual.
     """
-    # 1. Validar que la canción existe, está en pendiente_lazy o aprobado, y pertenece al usuario
+    # 1. Validar que la canción existe, está en pendiente, pendiente_lazy o aprobado, y pertenece al usuario
     cancion = db.query(models.Cancion).filter(
         models.Cancion.id == cancion_id,
-        models.Cancion.estado.in_(['pendiente_lazy', 'aprobado']),
+        models.Cancion.estado.in_(['pendiente', 'pendiente_lazy', 'aprobado']),
         models.Cancion.usuario_id == usuario_id
     ).first()
     
     if not cancion:
         return None
     
-    # 2. Obtener todas las canciones del usuario en estados pendiente_lazy o aprobado, ordenadas
+    # 2. Obtener todas las canciones del usuario en estados pendiente, pendiente_lazy o aprobado, ordenadas
     canciones_usuario = (
         db.query(models.Cancion)
         .filter(
             models.Cancion.usuario_id == usuario_id,
-            models.Cancion.estado.in_(['pendiente_lazy', 'aprobado'])
+            models.Cancion.estado.in_(['pendiente', 'pendiente_lazy', 'aprobado'])
         )
         .order_by(models.Cancion.orden_manual.asc().nulls_last(), models.Cancion.id.asc())
         .all()
