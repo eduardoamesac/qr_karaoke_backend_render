@@ -4179,3 +4179,66 @@ TypeError: can't subtract offset-naive and offset-aware datetimes
 2026-02-05 09:20:10,320 - song_credits_background - INFO - Credits background task started
 2026-02-05 09:53:33,110 - song_credits_background - INFO - Credits background task started
 2026-02-05 10:21:45,078 - song_credits_background - INFO - Credits background task started
+2026-02-05 10:29:08,580 - youtube - INFO - Búsqueda [Pública] en YouTube con el término: 'el heredero' (Karaoke Mode: True)
+2026-02-05 10:29:08,598 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'el heredero' (Karaoke Mode: True)
+2026-02-05 10:29:12,050 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-02-05 10:29:12,050 - youtube - INFO - Búsqueda por texto: 'el heredero karaoke'
+2026-02-05 10:29:12,051 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-02-05 10:29:12,982 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=el+heredero+karaoke&key=AIzaSyD5J79DvieL1TPjhk2ZOiwU-cHgd0QXn94&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-02-05 10:29:12,990 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-02-05 10:29:12,991 - youtube - INFO - IDs de video encontrados: ['4RU2bhSzTOA', 'H2noUnLd3Bs', 'JOqM_Jp2Peo', 'AfFD9ZVwjfI', 'bZLojmRvRd8', 'dChlni-iG6k', 'PwlHZJEEbDo', 'oTgnjYc6ngQ', 'ljssvJQDPKY', 'eziSvAH4xU0']
+2026-02-05 10:29:12,992 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-02-05 10:29:13,192 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=4RU2bhSzTOA%2CH2noUnLd3Bs%2CJOqM_Jp2Peo%2CAfFD9ZVwjfI%2CbZLojmRvRd8%2CdChlni-iG6k%2CPwlHZJEEbDo%2CoTgnjYc6ngQ%2CljssvJQDPKY%2CeziSvAH4xU0&key=AIzaSyD5J79DvieL1TPjhk2ZOiwU-cHgd0QXn94 "HTTP/1.1 200 OK"
+2026-02-05 10:29:13,645 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-02-05 10:29:13,652 - youtube - INFO - Procesamiento finalizado. Se encontraron 9 resultados formateados.
+2026-02-05 10:30:07,769 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'el mayor de los ranas'
+2026-02-05 10:30:07,771 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'el mayor de los ranas' (Karaoke Mode: False)
+2026-02-05 10:30:09,638 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-02-05 10:30:09,639 - youtube - INFO - Búsqueda por texto: 'el mayor de los ranas'
+2026-02-05 10:30:09,640 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-02-05 10:30:10,408 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=el+mayor+de+los+ranas&key=AIzaSyD5J79DvieL1TPjhk2ZOiwU-cHgd0QXn94&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-02-05 10:30:10,414 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-02-05 10:30:10,418 - youtube - INFO - IDs de video encontrados: ['1a3REFH83WA', '4Ez2wJnlwag', 'ftfeDRZA5iE', 'DjfaCC3ZKs8', 'IRSedFplzCc', 'onGJj-JIBZk', '2JbrCXDNGcA', 'rERCTLp4CK8', '6kYEW6oQfpw', 'UAAy5oTPUOE']
+2026-02-05 10:30:10,419 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-02-05 10:30:10,588 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=1a3REFH83WA%2C4Ez2wJnlwag%2CftfeDRZA5iE%2CDjfaCC3ZKs8%2CIRSedFplzCc%2ConGJj-JIBZk%2C2JbrCXDNGcA%2CrERCTLp4CK8%2C6kYEW6oQfpw%2CUAAy5oTPUOE&key=AIzaSyD5J79DvieL1TPjhk2ZOiwU-cHgd0QXn94 "HTTP/1.1 200 OK"
+2026-02-05 10:30:10,631 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-02-05 10:30:10,633 - youtube - INFO - Procesamiento finalizado. Se encontraron 10 resultados formateados.
+2026-02-05 10:30:10,650 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'el mayor de los ranas'
+2026-02-05 10:30:10,652 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'el mayor de los ranas' (Karaoke Mode: False)
+2026-02-05 10:30:12,644 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-02-05 10:30:12,645 - youtube - INFO - Búsqueda por texto: 'el mayor de los ranas'
+2026-02-05 10:30:12,646 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-02-05 10:30:13,271 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=el+mayor+de+los+ranas&key=AIzaSyD5J79DvieL1TPjhk2ZOiwU-cHgd0QXn94&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-02-05 10:30:13,440 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-02-05 10:30:13,458 - youtube - INFO - IDs de video encontrados: ['1a3REFH83WA', '4Ez2wJnlwag', 'ftfeDRZA5iE', 'DjfaCC3ZKs8', 'IRSedFplzCc', 'onGJj-JIBZk', '2JbrCXDNGcA', 'rERCTLp4CK8', '6kYEW6oQfpw', 'UAAy5oTPUOE']
+2026-02-05 10:30:13,471 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-02-05 10:30:13,655 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=1a3REFH83WA%2C4Ez2wJnlwag%2CftfeDRZA5iE%2CDjfaCC3ZKs8%2CIRSedFplzCc%2ConGJj-JIBZk%2C2JbrCXDNGcA%2CrERCTLp4CK8%2C6kYEW6oQfpw%2CUAAy5oTPUOE&key=AIzaSyD5J79DvieL1TPjhk2ZOiwU-cHgd0QXn94 "HTTP/1.1 200 OK"
+2026-02-05 10:30:13,712 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-02-05 10:30:13,820 - youtube - INFO - Procesamiento finalizado. Se encontraron 10 resultados formateados.
+2026-02-05 10:35:39,875 - youtube - INFO - Búsqueda [Pública] en YouTube con el término: 'bachata' (Karaoke Mode: True)
+2026-02-05 10:35:39,885 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'bachata' (Karaoke Mode: True)
+2026-02-05 10:35:41,971 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-02-05 10:35:41,971 - youtube - INFO - Búsqueda por texto: 'bachata karaoke'
+2026-02-05 10:35:41,974 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-02-05 10:35:42,872 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=bachata+karaoke&key=AIzaSyD5J79DvieL1TPjhk2ZOiwU-cHgd0QXn94&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-02-05 10:35:42,886 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-02-05 10:35:42,891 - youtube - INFO - IDs de video encontrados: ['fLDzTeRHl_s', 'RvYAN4b91CE', 'fnwUMw4vXv8', 'QNZkxrcwQAE', 's1G_7FCDtQQ', 'eupJ1SCfd30', 'A6Y3fX6bmrU', 'VTqxknZpJes', '_XJu5Os-9pw', 'JaibW4e9dXI']
+2026-02-05 10:35:42,896 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-02-05 10:35:43,082 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=fLDzTeRHl_s%2CRvYAN4b91CE%2CfnwUMw4vXv8%2CQNZkxrcwQAE%2Cs1G_7FCDtQQ%2CeupJ1SCfd30%2CA6Y3fX6bmrU%2CVTqxknZpJes%2C_XJu5Os-9pw%2CJaibW4e9dXI&key=AIzaSyD5J79DvieL1TPjhk2ZOiwU-cHgd0QXn94 "HTTP/1.1 200 OK"
+2026-02-05 10:35:43,101 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-02-05 10:35:43,106 - youtube - INFO - Procesamiento finalizado. Se encontraron 10 resultados formateados.
+2026-02-05 10:44:21,757 - song_credits_background - INFO - Credits background task started
+2026-02-05 10:47:06,039 - song_credits_background - INFO - Credits background task started
+2026-02-05 10:48:33,271 - song_credits_background - INFO - Credits background task started
+2026-02-05 10:48:51,472 - song_credits_background - INFO - Credits background task started
+2026-02-05 10:49:05,141 - song_credits_background - INFO - Credits background task started
+2026-02-05 10:49:32,422 - song_credits_background - INFO - Credits background task started
+2026-02-05 10:49:46,811 - song_credits_background - INFO - Credits background task started
+2026-02-05 10:50:01,599 - song_credits_background - INFO - Credits background task started
+2026-02-05 10:50:38,046 - song_credits_background - INFO - Credits background task started
+2026-02-05 10:51:13,238 - song_credits_background - INFO - Credits background task started
+2026-02-05 10:53:19,765 - song_credits_background - INFO - Credits background task started
+2026-02-05 10:53:53,167 - song_credits_background - INFO - Credits background task started
+2026-02-05 10:55:06,298 - song_credits_background - INFO - Credits background task started
+2026-02-05 10:55:27,861 - song_credits_background - INFO - Credits background task started
+2026-02-05 10:55:39,960 - song_credits_background - INFO - Credits background task started

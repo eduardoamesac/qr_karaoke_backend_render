@@ -47,10 +47,146 @@
       "valor_total": 7000.0,
       "mesa_id": 4,
       "cuenta_id": 1
+    },
+    {
+      "id": 4,
+      "created_at": "2026-02-05T10:28:52.618066",
+      "producto_id": 1,
+      "usuario_id": 2,
+      "is_dispatched": false,
+      "cantidad": 1,
+      "valor_total": 7000.0,
+      "mesa_id": 4,
+      "cuenta_id": 1,
+      "usuario": {
+        "id": 2,
+        "nivel": "oro",
+        "is_silenced": false,
+        "song_credits": 1,
+        "last_song_added_at": null,
+        "nick": "Toscana-Usuario1",
+        "puntos": 6700,
+        "last_active": "2026-02-04T11:06:40.506690",
+        "is_active": true,
+        "credits_added_at": "2026-02-04T11:06:40.506690",
+        "mesa_id": 4
+      }
+    },
+    {
+      "id": 5,
+      "created_at": "2026-02-05T10:28:52.618066",
+      "producto_id": 2,
+      "usuario_id": 2,
+      "is_dispatched": false,
+      "cantidad": 1,
+      "valor_total": 8000.0,
+      "mesa_id": 4,
+      "cuenta_id": 1
+    },
+    {
+      "id": 6,
+      "created_at": "2026-02-05T10:28:52.618066",
+      "producto_id": 3,
+      "usuario_id": 2,
+      "is_dispatched": false,
+      "cantidad": 1,
+      "valor_total": 7000.0,
+      "mesa_id": 4,
+      "cuenta_id": 1
+    },
+    {
+      "id": 7,
+      "created_at": "2026-02-05T10:28:52.618066",
+      "producto_id": 4,
+      "usuario_id": 2,
+      "is_dispatched": false,
+      "cantidad": 1,
+      "valor_total": 8000.0,
+      "mesa_id": 4,
+      "cuenta_id": 1
+    },
+    {
+      "id": 8,
+      "created_at": "2026-02-05T10:28:52.618066",
+      "producto_id": 5,
+      "usuario_id": 2,
+      "is_dispatched": false,
+      "cantidad": 1,
+      "valor_total": 15000.0,
+      "mesa_id": 4,
+      "cuenta_id": 1
+    },
+    {
+      "id": 9,
+      "created_at": "2026-02-05T10:35:32.966821",
+      "producto_id": 1,
+      "usuario_id": 2,
+      "is_dispatched": false,
+      "cantidad": 1,
+      "valor_total": 7000.0,
+      "mesa_id": 4,
+      "cuenta_id": 1,
+      "usuario": {
+        "id": 2,
+        "nivel": "oro",
+        "is_silenced": false,
+        "song_credits": 1,
+        "last_song_added_at": null,
+        "nick": "Toscana-Usuario1",
+        "puntos": 11200,
+        "last_active": "2026-02-04T11:06:40.506690",
+        "is_active": true,
+        "credits_added_at": "2026-02-04T11:06:40.506690",
+        "mesa_id": 4
+      }
+    },
+    {
+      "id": 10,
+      "created_at": "2026-02-05T10:35:32.966821",
+      "producto_id": 2,
+      "usuario_id": 2,
+      "is_dispatched": false,
+      "cantidad": 1,
+      "valor_total": 8000.0,
+      "mesa_id": 4,
+      "cuenta_id": 1
+    },
+    {
+      "id": 11,
+      "created_at": "2026-02-05T10:35:32.966821",
+      "producto_id": 3,
+      "usuario_id": 2,
+      "is_dispatched": false,
+      "cantidad": 1,
+      "valor_total": 7000.0,
+      "mesa_id": 4,
+      "cuenta_id": 1
+    },
+    {
+      "id": 12,
+      "created_at": "2026-02-05T10:35:32.966821",
+      "producto_id": 4,
+      "usuario_id": 2,
+      "is_dispatched": false,
+      "cantidad": 1,
+      "valor_total": 8000.0,
+      "mesa_id": 4,
+      "cuenta_id": 1
+    },
+    {
+      "id": 13,
+      "created_at": "2026-02-05T10:35:32.966821",
+      "producto_id": 5,
+      "usuario_id": 2,
+      "is_dispatched": false,
+      "cantidad": 1,
+      "valor_total": 15000.0,
+      "mesa_id": 4,
+      "cuenta_id": 1
     }
   ],
   "pagos": [],
-  "total_consumido": 22000.0,
+  "total_consumido": 112000.0,
   "total_pagado": 0.0,
-  "saldo": 22000.0
+  "saldo": 112000.0
 }
