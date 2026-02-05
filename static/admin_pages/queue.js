@@ -455,7 +455,9 @@ async function handleAdminSearch(event, karaokeMode = false) {
     clickedButton.textContent = '⏳ Buscando...';
 
     const resultsContainer = document.getElementById('admin-search-results');
-    resultsContainer.innerHTML = '';
+    
+    // NO borrar los resultados anteriores - mantener la lista
+    // resultsContainer.innerHTML = '';
 
     try {
         const url = `/youtube/search?q=${encodeURIComponent(query)}${karaokeMode ? '&karaoke_mode=true' : ''}`;
