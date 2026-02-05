@@ -57,7 +57,8 @@ function renderQueue(queueData) {
 function createSongItemHTML(song, isMyList) {
     const statusClass = `status-${song.estado}`;
     const canDelete = isMyList && (song.estado === 'pendiente' || song.estado === 'aprobado' || song.estado === 'pendiente_lazy');
-    const canMove = isMyList && song.estado === 'pendiente_lazy';
+    // Permitir mover canciones que están en pendiente_lazy O si es aprobado (primera en cola)
+    const canMove = isMyList && (song.estado === 'pendiente_lazy' || song.estado === 'aprobado');
     const scoreInfo = isMyList && song.estado === 'cantada' && song.puntuacion_ia ?
         `<div class="song-score">Puntaje: <strong>${song.puntuacion_ia}</strong></div>` : '';
     const deleteButton = `<button class="delete-song-btn" data-song-id="${song.id}">Eliminar</button>`;

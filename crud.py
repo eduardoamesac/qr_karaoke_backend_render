@@ -2094,408 +2094,6 @@ def get_cuenta_payment_status(db: Session, cuenta_id: int) -> Optional[dict]:
 
 
 def get_cola_lazy(db: Session):
-
-    """
-
-    Obtiene todas las canciones en estado pendiente_lazy, ordenadas por prioridad.
-
-    Usa el mismo algoritmo de cola justa que get_cola_priorizada.
-
-    """
-
-    from collections import deque
-
-    
-
-    # Obtener todas las canciones en estado pendiente_lazy
-
-    todas_canciones = (
-
-        db.query(models.Cancion)
-
-        .join(models.Usuario, models.Cancion.usuario_id == models.Usuario.id)
-
-        .filter(models.Cancion.estado == "pendiente_lazy")
-
-        .order_by(models.Cancion.orden_manual.asc().nulls_last(), models.Cancion.created_at.asc(), models.Cancion.id.asc())
-
-        .all()
-
-    )
-
-    
-
-    if not todas_canciones:
-
-        return []
-
-    
-
-    # Aplicar el mismo algoritmo de cola justa
-
-    cola_manual = []
-
-    cola_pool = []
-
-    
-
-    for cancion in todas_canciones:
-
-        if cancion.orden_manual is not None:
-
-            cola_manual.append(cancion)
-
-        else:
-
-            cola_pool.append(cancion)
-
-    
-
-    if not cola_pool:
-
-        return cola_manual
-
-    
-
-    # Agrupar por mesa
-
-    match_mesa_canciones = {}
-
-    mesa_arrival_time = {}
-
-    mesas_involucradas_ids = set()
-
-    
-
-    for cancion in cola_pool:
-
-        mesa_id = cancion.usuario.mesa_id or 0
-
-        if mesa_id not in match_mesa_canciones:
-
-            match_mesa_canciones[mesa_id] = deque()
-
-            mesa_arrival_time[mesa_id] = cancion.created_at
-
-            mesas_involucradas_ids.add(mesa_id)
-
-        match_mesa_canciones[mesa_id].append(cancion)
-
-    
-
-    # Calcular quotas
-
-    UMBRAL_ORO = 150000
-
-    UMBRAL_PLATA = 50000
-
-    mesa_quotas = {}
-
-    
-
-    if mesas_involucradas_ids:
-
-        ids_reales = [mid for mid in mesas_involucradas_ids if mid != 0]
-
-        consumos_mesas = {}
-
-        
-
-        if ids_reales:
-
-            rows = (
-
-                db.query(
-
-                    models.Usuario.mesa_id,
-
-                    func.sum(models.Consumo.valor_total)
-
-                )
-
-                .join(models.Consumo, models.Usuario.id == models.Consumo.usuario_id)
-
-                .filter(models.Usuario.mesa_id.in_(ids_reales))
-
-                .group_by(models.Usuario.mesa_id)
-
-                .all()
-
-            )
-
-            for mid, total in rows:
-
-                consumos_mesas[mid] = total or 0
-
-        
-
-        for mid in mesas_involucradas_ids:
-
-            total = consumos_mesas.get(mid, 0)
-
-            if mid == 0:
-
-                quota = 3
-
-            elif total >= UMBRAL_ORO:
-
-                quota = 3
-
-            elif total >= UMBRAL_PLATA:
-
-                quota = 2
-
-            else:
-
-                quota = 1
-
-            mesa_quotas[mid] = quota
-
-    
-
-    # Round Robin
-
-    cola_justa = []
-
-    orden_turnos_mesas = sorted(mesas_involucradas_ids, key=lambda mid: mesa_arrival_time[mid])
-
-    
-
-    while match_mesa_canciones:
-
-        for mesa_id in orden_turnos_mesas:
-
-            if mesa_id not in match_mesa_canciones:
-
-                continue
-
-            queue_de_mesa = match_mesa_canciones[mesa_id]
-
-            cupo = mesa_quotas.get(mesa_id, 1)
-
-            tomadas = 0
-
-            while tomadas < cupo and queue_de_mesa:
-
-                cancion = queue_de_mesa.popleft()
-
-                cola_justa.append(cancion)
-
-                tomadas += 1
-
-            if not queue_de_mesa:
-
-                del match_mesa_canciones[mesa_id]
-
-    
-
-    return cola_manual + cola_justa
-
-
-
-def aprobar_siguiente_cancion_lazy(db: Session):
-
-    """
-
-    Aprueba la siguiente canciÃÂ³n de la cola lazy.
-
-    Llamada automÃÂ¡ticamente cuando la canciÃÂ³n actual llega al 50%.
-
-    """
-
-    cola_lazy = get_cola_lazy(db)
-
-    if not cola_lazy:
-
-        return None
-
-    
-
-    siguiente = cola_lazy[0]
-
-    siguiente.estado = "aprobado"
-
-    siguiente.approved_at = now_bogota()
-
-    db.commit()
-
-    db.refresh(siguiente)
-
-    
-
-    create_admin_log_entry(db, action="LAZY_APPROVAL", details=f"CanciÃÂ³n '{siguiente.titulo}' aprobada automÃÂ¡ticamente (lazy).")
-
-    return siguiente
-
-
-
-def get_cola_completa_con_lazy(db: Session):
-
-    """
-
-    VersiÃÂ³n extendida de get_cola_completa que incluye la cola lazy.
-
-    Retorna:
-
-    - now_playing: CanciÃÂ³n actual
-
-    - upcoming: Solo la siguiente canciÃÂ³n aprobada (mÃÂ¡ximo 1)
-
-    - lazy_queue: Canciones en pendiente_lazy
-
-    - pending: Canciones pendientes de aprobaciÃÂ³n manual
-
-    """
-
-    # Aplicar aprobaciÃÂ³n automÃÂ¡tica despuÃÂ©s de 10 minutos
-
-    auto_approve_songs_after_10_minutes(db)
-
-    
-
-    now_playing = db.query(models.Cancion).filter(models.Cancion.estado == "reproduciendo").first()
-
-    approved_queue = get_cola_priorizada(db)
-
-    lazy_queue = get_cola_lazy(db)
-
-    pending_queue = get_canciones_pendientes_por_aprobar(db)
-
-    
-
-    # Si la canciÃÂ³n que se estÃÂ¡ reproduciendo sigue en la lista de upcoming, la quitamos
-
-    if now_playing:
-
-        approved_queue = [song for song in approved_queue if song.id != now_playing.id]
-
-    
-
-    # Limitar upcoming a mÃÂ¡ximo 1 canciÃÂ³n (la siguiente)
-
-    upcoming_limited = approved_queue[:1] if approved_queue else []
-
-    
-
-    return {
-
-        "now_playing": now_playing,
-
-        "upcoming": upcoming_limited,
-
-        "lazy_queue": lazy_queue,
-
-        "pending": pending_queue
-
-    }
-
-
-
-def check_and_approve_next_lazy_song(db: Session):
-    """
-    Verifica si hay espacio en la cola de aprobados y aprueba la siguiente lazy.
-    Regla: Mantener MÁXIMO 1 canción aprobada (upcoming) esperando, aparte de la que suena.
-    Esta función es llamada por un background task periódicamente o al avanzar canción.
-    """
-    # Contar cuántas canciones hay en estado 'aprobado'
-    approved_count = db.query(models.Cancion).filter(models.Cancion.estado == "aprobado").count()
-    
-    # Si hay menos de 1 canción aprobada (es decir, 0), aprobamos la siguiente de la lazy
-    if approved_count < 1:
-        return aprobar_siguiente_cancion_lazy(db)
-    
-    return None
-
-def close_table_session(db: Session, mesa_id: int):
-    """
-    Cierra la sesión de una mesa. Realiza las siguientes acciones:
-    1. Sincroniza los datos del caché a la BD (consumos y pagos)
-    2. Verifica que la cuenta actual esté a paz y salvo
-    3. Elimina todas las canciones pendientes (lazy queue)
-    4. Desactiva todos los usuarios de la mesa
-    5. Desactiva la mesa
-    6. Cierra la cuenta actual
-    
-    OPTIMIZACIÓN: Antes de cerrar, sincroniza el caché con BD.
-    
-    Retorna un diccionario con el resultado de la operación.
-    """
-    # NUEVO: Sincronizar caché con BD antes de cerrar
-    from cache_manager import cache_manager
-    
-    mesa_cache = cache_manager.get_mesa_cuenta_from_cache(mesa_id)
-    if mesa_cache and mesa_cache.get("consumos"):
-        # Los consumos ya están en la BD (se guardan al crear)
-        # Pero guardamos el total_consumido y saldo para referencia
-        pass
-    
-    # 1. Verificar si la mesa existe
-    mesa = db.query(models.Mesa).filter(models.Mesa.id == mesa_id).first()
-    if not mesa:
-        return {"success": False, "message": "Mesa no encontrada."}
-    
-    # 2. Verificar si la cuenta actual está a paz y salvo
-    status_dict = get_table_payment_status(db, mesa_id=mesa_id)
-    
-    if status_dict:
-        saldo_pendiente = status_dict.get("saldo_pendiente", 0)
-        try:
-            saldo_val = float(saldo_pendiente)
-        except:
-            saldo_val = 0.0
-        
-        if saldo_val > 0:
-            return {
-                "success": False,
-                "message": f"No se puede cerrar la sesión. La mesa tiene un saldo pendiente de ${saldo_val:,.0f}."
-            }
-    
-    # 3. Eliminar todas las canciones de la mesa (lazy queue y pendientes)
-    canciones_eliminadas = db.query(models.Cancion).filter(
-        models.Cancion.usuario_id.in_(
-            db.query(models.Usuario.id).filter(models.Usuario.mesa_id == mesa_id)
-        ),
-        models.Cancion.estado.in_(["pendiente", "pendiente_lazy", "aprobado"])
-    ).delete()
-    
-    # 4. Desactivar todos los usuarios de la mesa
-    usuarios = db.query(models.Usuario).filter(models.Usuario.mesa_id == mesa_id).all()
-    for usuario in usuarios:
-        usuario.is_active = False
-        # NUEVO: Limpiar caché de canciones del usuario
-        cache_manager.clear_songs_cache(usuario.id)
-    
-    # 5. Desactivar la mesa
-    mesa.is_active = False
-    
-    # 6. Cerrar la cuenta actual
-    cuenta_activa = db.query(models.Cuenta).filter(
-        models.Cuenta.mesa_id == mesa_id,
-        models.Cuenta.is_active == True
-    ).first()
-    
-    if cuenta_activa:
-        cuenta_activa.is_active = False
-        cuenta_activa.closed_at = now_bogota()
-    
-    # 7. Limpiar caché de la mesa
-    cache_manager.clear_mesa_cache(mesa_id)
-    
-    # Aplicar todos los cambios
-    db.commit()
-    
-    return {
-        "success": True,
-        "message": "Sesión cerrada exitosamente.",
-        "canciones_eliminadas": canciones_eliminadas,
-        "usuarios_desactivados": len(usuarios)
-    }
-
-
-
-# --- Lazy Approval Queue Functions ---
-
-def get_cola_lazy(db: Session):
     """
     Obtiene todas las canciones en estado pendiente_lazy, ordenadas por prioridad.
     Usa el mismo algoritmo de cola justa que get_cola_priorizada.
@@ -2715,25 +2313,25 @@ def update_consumo_cantidad(db: Session, consumo_id: int, delta: int):
     return db_consumo, None
 def move_lazy_song_up(db: Session, cancion_id: int, usuario_id: int):
     """
-    Mueve una canción pendiente_lazy hacia arriba en la cola del usuario.
+    Mueve una canción (pendiente_lazy o aprobado) hacia arriba en la cola del usuario.
     Solo funciona para canciones del usuario actual.
     """
-    # 1. Validar que la canción existe, está en pendiente_lazy y pertenece al usuario
+    # 1. Validar que la canción existe, está en pendiente_lazy o aprobado, y pertenece al usuario
     cancion = db.query(models.Cancion).filter(
         models.Cancion.id == cancion_id,
-        models.Cancion.estado == 'pendiente_lazy',
+        models.Cancion.estado.in_(['pendiente_lazy', 'aprobado']),
         models.Cancion.usuario_id == usuario_id
     ).first()
     
     if not cancion:
         return None
     
-    # 2. Obtener todas las canciones pendiente_lazy del usuario, ordenadas
+    # 2. Obtener todas las canciones del usuario en estados pendiente_lazy o aprobado, ordenadas
     canciones_usuario = (
         db.query(models.Cancion)
         .filter(
             models.Cancion.usuario_id == usuario_id,
-            models.Cancion.estado == 'pendiente_lazy'
+            models.Cancion.estado.in_(['pendiente_lazy', 'aprobado'])
         )
         .order_by(models.Cancion.orden_manual.asc().nulls_last(), models.Cancion.id.asc())
         .all()
@@ -2774,25 +2372,25 @@ def move_lazy_song_up(db: Session, cancion_id: int, usuario_id: int):
 
 def move_lazy_song_down(db: Session, cancion_id: int, usuario_id: int):
     """
-    Mueve una canción pendiente_lazy hacia abajo en la cola del usuario.
+    Mueve una canción (pendiente_lazy o aprobado) hacia abajo en la cola del usuario.
     Solo funciona para canciones del usuario actual.
     """
-    # 1. Validar que la canción existe, está en pendiente_lazy y pertenece al usuario
+    # 1. Validar que la canción existe, está en pendiente_lazy o aprobado, y pertenece al usuario
     cancion = db.query(models.Cancion).filter(
         models.Cancion.id == cancion_id,
-        models.Cancion.estado == 'pendiente_lazy',
+        models.Cancion.estado.in_(['pendiente_lazy', 'aprobado']),
         models.Cancion.usuario_id == usuario_id
     ).first()
     
     if not cancion:
         return None
     
-    # 2. Obtener todas las canciones pendiente_lazy del usuario, ordenadas
+    # 2. Obtener todas las canciones del usuario en estados pendiente_lazy o aprobado, ordenadas
     canciones_usuario = (
         db.query(models.Cancion)
         .filter(
             models.Cancion.usuario_id == usuario_id,
-            models.Cancion.estado == 'pendiente_lazy'
+            models.Cancion.estado.in_(['pendiente_lazy', 'aprobado'])
         )
         .order_by(models.Cancion.orden_manual.asc().nulls_last(), models.Cancion.id.asc())
         .all()

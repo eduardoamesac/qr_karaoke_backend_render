@@ -128,17 +128,23 @@ async def anadir_cancion(
         cache_manager.delete_song_from_cache(usuario_id, db_cancion.id)
         raise HTTPException(status_code=402, detail="Error al consumir crédito. Intenta nuevamente.")
     
-    # LAZY APPROVAL: Solo aprobar si no hay más de 1 canción aprobada en espera
-    # Si ya hay 1 o más canciones aprobadas (más la que suena), la nueva va a pendiente_lazy
-    approved_count = db.query(models.Cancion).filter(models.Cancion.estado == "aprobado").count()
     
-    if approved_count >= 1:
-        # Ya hay una canción aprobada esperando, poner en cola lazy
+    # LAZY APPROVAL: Todas las nuevas canciones van a pendiente_lazy
+    # Esto permite que el usuario pueda reordenarlas con flechas
+    # La primera se aprobará automáticamente
+    
+    # Primero, contar si hay algo más en la cola (reproduciendo o aprobado)
+    hay_cancion_activa = db.query(models.Cancion).filter(
+        models.Cancion.estado.in_(["reproduciendo", "aprobado"])
+    ).first()
+    
+    if hay_cancion_activa:
+        # Ya hay algo en la cola, poner esta en pendiente_lazy
         cancion_final = crud.update_cancion_estado(db, cancion_id=db_cancion.id, nuevo_estado="pendiente_lazy")
     else:
-        # Primera canción, aprobar inmediatamente
+        # No hay nada en la cola, aprobar esta inmediatamente
+        # para que comience a reproducirse (si autoplay está activo)
         cancion_final = crud.update_cancion_estado(db, cancion_id=db_cancion.id, nuevo_estado="aprobado")
-        # Si autoplay está activo, iniciar reproducción si la cola estaba vacía
         await crud.start_next_song_if_autoplay_and_idle(db)
     
     await websocket_manager.manager.broadcast_queue_update()
