@@ -111,12 +111,6 @@
     <div id="notification"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script>
-    <script src="/static/admin_pages/dashboard.js"></script>
-    <script src="/static/admin_pages/queue.js"></script>
-    <script src="/static/admin_pages/inventory.js"></script>
-    <script src="/static/admin_pages/accounts.js"></script>
-    <script src="/static/admin_pages/reports.js"></script>
-    <script src="/static/admin_pages/settings.js"></script>
     <script>
         const API_BASE_URL = '/api/v1';
         const notification = document.getElementById('notification');
@@ -652,6 +646,12 @@
             }).catch(err => { console.warn('Error loading fragments', err); apiKey = sessionStorage.getItem('adminApiKey'); if (!apiKey) { window.location.href = '/admin'; return; } loadDashboardPage(); setupAdminWebSocket(); startCarousel(); });
         });
     </script>
+    <script src="/static/admin_pages/dashboard.js"></script>
+    <script src="/static/admin_pages/queue.js"></script>
+    <script src="/static/admin_pages/inventory.js"></script>
+    <script src="/static/admin_pages/accounts.js"></script>
+    <script src="/static/admin_pages/reports.js"></script>
+    <script src="/static/admin_pages/settings.js"></script>
 </body>
 
 </html>
