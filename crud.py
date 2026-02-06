@@ -273,8 +273,9 @@ def update_producto_imagen(db: Session, producto_id: int, imagen_url: str):
     db_producto = get_producto_by_id(db, producto_id)
     if db_producto:
         db_producto.imagen_url = imagen_url
-        db.commit()
-        db.refresh(db_producto)
+        db.flush()  # Sincronizar cambios sin hacer commit
+        db.refresh(db_producto)  # Obtener datos actualizados
+        db.commit()  # Hacer commit de la transacción
     return db_producto
 
 def create_consumo_para_usuario(db: Session, consumo: schemas.ConsumoCreate, usuario_id: int):
@@ -1034,8 +1035,9 @@ def update_producto(db: Session, producto_id: int, producto_update: schemas.Prod
     if db_producto:
         for key, value in producto_update.model_dump(exclude_unset=True).items():
             setattr(db_producto, key, value)
-        db.commit()
-        db.refresh(db_producto)
+        db.flush()  # Sincronizar cambios sin hacer commit
+        db.refresh(db_producto)  # Obtener datos actualizados
+        db.commit()  # Hacer commit de la transacción
     return db_producto
 
 def update_producto_valor(db: Session, producto_id: int, nuevo_valor: Decimal):
@@ -1045,8 +1047,9 @@ def update_producto_valor(db: Session, producto_id: int, nuevo_valor: Decimal):
     db_producto = db.query(models.Producto).filter(models.Producto.id == producto_id).first()
     if db_producto:
         db_producto.valor = nuevo_valor
-        db.commit()
-        db.refresh(db_producto)
+        db.flush()  # Sincronizar cambios sin hacer commit
+        db.refresh(db_producto)  # Obtener datos actualizados
+        db.commit()  # Hacer commit de la transacción
     return db_producto
 
 def update_producto_active_status(db: Session, producto_id: int, is_active: bool):
@@ -1056,8 +1059,9 @@ def update_producto_active_status(db: Session, producto_id: int, is_active: bool
     db_producto = db.query(models.Producto).filter(models.Producto.id == producto_id).first()
     if db_producto:
         db_producto.is_active = is_active
-        db.commit()
-        db.refresh(db_producto)
+        db.flush()  # Sincronizar cambios sin hacer commit
+        db.refresh(db_producto)  # Obtener datos actualizados
+        db.commit()  # Hacer commit de la transacción
     return db_producto
 
 def get_usuarios_por_nivel(db: Session, nivel: str):

@@ -174,10 +174,17 @@ async def upload_product_image(
     # Actualizar el producto con la URL de la imagen
     image_url = f"/static/images/productos/{filename}"
     db_producto.imagen_url = image_url
-    db.commit()
-    db.refresh(db_producto)
-
-    crud.create_admin_log_entry(db, action="UPLOAD_PRODUCT_IMAGE", details=f"Imagen subida para producto ID {producto_id}")
+    db.flush()  # Sincronizar cambios en la misma transacción sin hacer commit
+    db.refresh(db_producto)  # Obtener datos actualizados de la BD
+    db.commit()  # Hacer commit de toda la transacción
+    
+    # Log después del commit exitoso
+    try:
+        crud.create_admin_log_entry(db, action="UPLOAD_PRODUCT_IMAGE", details=f"Imagen subida para producto ID {producto_id}")
+    except Exception as e:
+        import logging
+        logging.getLogger(__name__).exception(f"Error creando log de imagen: {e}")
+        # No lanzamos excepción porque la imagen ya fue guardada exitosamente
 
     # Notificar a los clientes conectados (si usas WebSocket)
     try:
