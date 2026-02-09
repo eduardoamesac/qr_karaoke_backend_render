@@ -93,10 +93,19 @@ async def delete_product(producto_id: int, db: Session = Depends(get_db), api_ke
     """
     **[Admin]** Elimina un producto del catálogo permanentemente.
     """
-    deleted_product = crud.delete_producto(db, producto_id=producto_id)
-    if not deleted_product:
-        raise HTTPException(status_code=404, detail="Producto no encontrado.")
-    crud.create_admin_log_entry(db, action="DELETE_PRODUCT", details=f"Producto '{deleted_product.nombre}' (ID: {producto_id}) eliminado.")
+    deleted_product, message = crud.delete_producto(db, producto_id=producto_id)
+    
+    # Si deleted_product es None y el mensaje indica que no se encontró
+    if deleted_product is None and "no encontrado" in message.lower():
+        raise HTTPException(status_code=404, detail=message)
+    
+    # Si deleted_product existe, fue desactivado (tiene consumos asociados)
+    if deleted_product:
+        crud.create_admin_log_entry(db, action="DEACTIVATE_PRODUCT", details=f"Producto '{deleted_product.nombre}' (ID: {producto_id}) desactivado (tiene consumos asociados).")
+    else:
+        # Si deleted_product es None pero no hubo error, fue eliminado permanentemente
+        crud.create_admin_log_entry(db, action="DELETE_PRODUCT", details=f"Producto (ID: {producto_id}) eliminado permanentemente.")
+    
     await websocket_manager.manager.broadcast_product_update() # Notificamos
     return Response(status_code=204)
 
