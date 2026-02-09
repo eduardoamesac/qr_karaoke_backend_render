@@ -16,9 +16,9 @@ print("YOUTUBE_API_KEY cargada:", os.getenv("YOUTUBE_API_KEY"))
 # BASE DE DATOS
 # ===============================
 from database import engine, SessionLocal
-import models
+from models import Base  # importa TODOS los modelos
 
-models.Base.metadata.create_all(bind=engine)
+Base.metadata.create_all(bind=engine)
 
 import crud, schemas, broadcast, thumbnails
 import mesas, canciones, youtube, consumos, usuarios, admin, productos, websocket_manager

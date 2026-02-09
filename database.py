@@ -4,14 +4,16 @@ from sqlalchemy.orm import sessionmaker
 import os
 from dotenv import load_dotenv
 
-load_dotenv()
+SQLALCHEMY_DATABASE_URL = (
+    "mysql+mysqlconnector://root@127.0.0.1:3306/mi_base_datos"
+)
 
-# Conexión a MySQL
-# Usuario: root, Contraseña: 1234, Puerto: 3307, Base de datos: mi_base_datos
-SQLALCHEMY_DATABASE_URL = "mysql+pymysql://root:1234@localhost:3307/mi_base_datos"
-
-# MySQL no necesita connect_args especiales como SQLite
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+SessionLocal = sessionmaker(
+    autocommit=False,
+    autoflush=False,
+    bind=engine
+)
 
 Base = declarative_base()
