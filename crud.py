@@ -46,7 +46,11 @@ def get_total_consumido_por_usuario(db: Session, usuario_id: int):
 
 def get_canciones_por_usuario(db: Session, usuario_id: int):
     """Busca todas las canciones de un usuario especÃÂ­fico."""
-    return db.query(models.Cancion).filter(models.Cancion.usuario_id == usuario_id).order_by(models.Cancion.orden_manual.asc().nulls_last(), models.Cancion.created_at.asc()).all()
+    return db.query(models.Cancion).filter(models.Cancion.usuario_id == usuario_id).order_by(
+        case((models.Cancion.orden_manual.is_(None), 1), else_=0),
+        models.Cancion.orden_manual.asc(),
+        models.Cancion.created_at.asc()
+    ).all()
 
 def create_cancion_para_usuario(db: Session, cancion: schemas.CancionCreate, usuario_id: int):
     """Crea una nueva canciÃÂ³n y la asocia a un usuario."""
@@ -127,7 +131,11 @@ def get_cola_priorizada(db: Session):
         db.query(models.Cancion)
         .join(models.Usuario, models.Cancion.usuario_id == models.Usuario.id)
         .filter(models.Cancion.estado == "aprobado")
-        .order_by(models.Cancion.orden_manual.asc().nulls_last(), models.Cancion.id.asc())
+        .order_by(
+            case((models.Cancion.orden_manual.is_(None), 1), else_=0),
+            models.Cancion.orden_manual.asc(),
+            models.Cancion.id.asc()
+        )
         .all()
     )
 
@@ -2109,7 +2117,11 @@ def get_cola_lazy(db: Session):
         db.query(models.Cancion)
         .join(models.Usuario, models.Cancion.usuario_id == models.Usuario.id)
         .filter(models.Cancion.estado == "pendiente_lazy")
-        .order_by(models.Cancion.orden_manual.asc().nulls_last(), models.Cancion.id.asc())
+        .order_by(
+            case((models.Cancion.orden_manual.is_(None), 1), else_=0),
+            models.Cancion.orden_manual.asc(),
+            models.Cancion.id.asc()
+        )
         .all()
     )
     
@@ -2337,7 +2349,11 @@ def move_lazy_song_up(db: Session, cancion_id: int, usuario_id: int):
             models.Cancion.usuario_id == usuario_id,
             models.Cancion.estado.in_(['pendiente', 'pendiente_lazy', 'aprobado'])
         )
-        .order_by(models.Cancion.orden_manual.asc().nulls_last(), models.Cancion.id.asc())
+        .order_by(
+            case((models.Cancion.orden_manual.is_(None), 1), else_=0),
+            models.Cancion.orden_manual.asc(),
+            models.Cancion.id.asc()
+        )
         .all()
     )
     
@@ -2396,7 +2412,11 @@ def move_lazy_song_down(db: Session, cancion_id: int, usuario_id: int):
             models.Cancion.usuario_id == usuario_id,
             models.Cancion.estado.in_(['pendiente', 'pendiente_lazy', 'aprobado'])
         )
-        .order_by(models.Cancion.orden_manual.asc().nulls_last(), models.Cancion.id.asc())
+        .order_by(
+            case((models.Cancion.orden_manual.is_(None), 1), else_=0),
+            models.Cancion.orden_manual.asc(),
+            models.Cancion.id.asc()
+        )
         .all()
     )
     
