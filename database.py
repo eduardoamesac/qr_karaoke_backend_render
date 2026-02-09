@@ -6,13 +6,12 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# Cambiamos a una URL de SQLite. Esto creará un archivo llamado `karaoke.db` en la raíz del proyecto.
-SQLALCHEMY_DATABASE_URL = "sqlite:///./karaoke.db"
+# Conexión a MySQL
+# Usuario: root, Contraseña: 1234, Puerto: 3307, Base de datos: mi_base_datos
+SQLALCHEMY_DATABASE_URL = "mysql+pymysql://root:1234@localhost:3307/mi_base_datos"
 
-# Para SQLite, es necesario añadir connect_args={"check_same_thread": False} para que funcione con FastAPI
-engine = create_engine(
-    SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
-)
+# MySQL no necesita connect_args especiales como SQLite
+engine = create_engine(SQLALCHEMY_DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()

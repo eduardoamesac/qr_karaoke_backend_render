@@ -9,8 +9,8 @@ class Mesa(Base):
     __tablename__ = "mesas"
 
     id = Column(Integer, primary_key=True, index=True)
-    nombre = Column(String, index=True)
-    qr_code = Column(String, unique=True, index=True)
+    nombre = Column(String(200), index=True)
+    qr_code = Column(String(100), unique=True, index=True)
     is_active = Column(Boolean, default=True) # Nuevo campo para activar/desactivar
 
     # Relaciones: Una mesa puede tener muchos usuarios y consumos
@@ -36,9 +36,9 @@ class Usuario(Base):
     __tablename__ = "usuarios"
 
     id = Column(Integer, primary_key=True, index=True)
-    nick = Column(String, index=True)
+    nick = Column(String(100), index=True)
     puntos = Column(Integer, default=0)
-    nivel = Column(String, default="bronce")  # bronce, plata, oro
+    nivel = Column(String(50), default="bronce")  # bronce, plata, oro
     last_active = Column(DateTime, default=now_bogota)
     is_silenced = Column(Boolean, default=False) # Nuevo campo para silenciar
     is_active = Column(Boolean, default=True)  # Para desconectar usuarios sin eliminar
@@ -59,10 +59,10 @@ class Cancion(Base):
     __tablename__ = "canciones"
 
     id = Column(Integer, primary_key=True, index=True)
-    youtube_id = Column(String, index=True)
-    titulo = Column(String)
+    youtube_id = Column(String(50), index=True)
+    titulo = Column(String(200))
     duracion_seconds = Column(Integer, default=0)
-    estado = Column(String, default="pendiente")  # pendiente, pendiente_lazy, aprobado, reproduciendo, cantada, rechazada
+    estado = Column(String(50), default="pendiente")  # pendiente, pendiente_lazy, aprobado, reproduciendo, cantada, rechazada
     started_at = Column(DateTime, nullable=True)  # Hora en que empieza a sonar
     orden_manual = Column(Integer, nullable=True)  # Posición manual establecida por el admin
     puntuacion_ia = Column(Integer, nullable=True) # Nuevo campo para el puntaje de la IA
@@ -77,12 +77,12 @@ class Cancion(Base):
 class Producto(Base):
     __tablename__ = "productos"
     id = Column(Integer, primary_key=True, index=True)
-    nombre = Column(String, unique=True, index=True)
-    categoria = Column(String, index=True, default="General")
+    nombre = Column(String(200), unique=True, index=True)
+    categoria = Column(String(100), index=True, default="General")
     valor = Column(Numeric(10, 2))  # Precio de venta
     costo = Column(Numeric(10, 2), default=0)  # Precio de compra
     stock = Column(Integer, default=0)
-    imagen_url = Column(String, nullable=True) # Columna para la URL de la imagen
+    imagen_url = Column(String(500), nullable=True) # Columna para la URL de la imagen
     is_active = Column(Boolean, default=True)
 
     consumos = relationship("Consumo", back_populates="producto")
@@ -110,21 +110,21 @@ class Consumo(Base):
 class BannedNick(Base):
     __tablename__ = "banned_nicks"
     id = Column(Integer, primary_key=True, index=True)
-    nick = Column(String, unique=True, index=True)
+    nick = Column(String(100), unique=True, index=True)
     banned_at = Column(DateTime, default=now_bogota)
 
 class AdminLog(Base):
     __tablename__ = "admin_logs"
     id = Column(Integer, primary_key=True, index=True)
     timestamp = Column(DateTime, default=now_bogota)
-    action = Column(String, index=True)
-    details = Column(String, nullable=True)
+    action = Column(String(100), index=True)
+    details = Column(String(500), nullable=True)
 
 class AdminApiKey(Base):
     __tablename__ = "admin_api_keys"
     id = Column(Integer, primary_key=True, index=True)
-    key = Column(String, unique=True, index=True, nullable=False)
-    description = Column(String, nullable=True)
+    key = Column(String(100), unique=True, index=True, nullable=False)
+    description = Column(String(200), nullable=True)
     is_active = Column(Boolean, default=True)
     created_at = Column(DateTime, default=now_bogota)
     last_used = Column(DateTime, nullable=True)
@@ -134,7 +134,7 @@ class Pago(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     monto = Column(Numeric(10, 2), nullable=False)
-    metodo_pago = Column(String, default="Efectivo")
+    metodo_pago = Column(String(50), default="Efectivo")
     created_at = Column(DateTime, default=now_bogota)
 
     mesa_id = Column(Integer, ForeignKey("mesas.id"))
