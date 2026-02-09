@@ -250,6 +250,8 @@ async function handleProductImageUpload(event) {
     const fileInput = event.target;
     const productId = fileInput.dataset.productId;
     if (!fileInput.files || fileInput.files.length === 0 || !productId) {
+        // Limpiar el productId si no hay archivo seleccionado
+        delete fileInput.dataset.productId;
         return;
     }
 
@@ -277,7 +279,9 @@ async function handleProductImageUpload(event) {
     } catch (error) {
         showNotification(error.message, 'error');
     } finally {
+        // Limpiar el input y el productId
         fileInput.value = '';
+        delete fileInput.dataset.productId;
     }
 }
 
@@ -305,7 +309,10 @@ function setupInventoryListeners() {
     }
 
     if (fileInput) {
-        fileInput.removeEventListener('change', handleProductImageUpload); // Evitar duplicados
-        fileInput.addEventListener('change', handleProductImageUpload);
+        // Clonar y reemplazar el elemento para eliminar todos los listeners anteriores
+        const newFileInput = fileInput.cloneNode(true);
+        fileInput.parentNode.replaceChild(newFileInput, fileInput);
+        // Agregar el listener al nuevo elemento
+        newFileInput.addEventListener('change', handleProductImageUpload);
     }
 }
