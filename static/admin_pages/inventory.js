@@ -1,6 +1,8 @@
 // Inventory Page Module - BEES Style
 // Manejo: lista de productos, creación, activación/desactivación, eliminación
 
+// Flag para prevenir que el diálogo de archivos se abra múltiples veces
+let isUploadingImage = false;
 async function loadInventoryPage() {
     const inventoryContainer = document.getElementById('inventory');
     if (!inventoryContainer) return;
@@ -262,6 +264,8 @@ async function handleProductImageUpload(event) {
     showNotification('⬆️ Subiendo imagen...', 'info', 10000);
 
     try {
+        isUploadingImage = true;
+
         const response = await fetch(`${API_BASE_URL}/productos/${productId}/upload-image`, {
             method: 'POST',
             headers: { 'X-API-Key': apiKey },
@@ -274,12 +278,21 @@ async function handleProductImageUpload(event) {
         }
 
         showNotification('🖼️ Imagen actualizada.', 'success');
-        loadInventoryPage();
+
+        // Limpiar el input ANTES de recargar para evitar eventos residuales
+        fileInput.value = '';
+        delete fileInput.dataset.productId;
+
+        // Pequeño retardo para asegurar que el DOM esté estable
+        setTimeout(() => {
+            isUploadingImage = false;
+            loadInventoryPage();
+        }, 100);
 
     } catch (error) {
         showNotification(error.message, 'error');
-    } finally {
-        // Limpiar el input y el productId
+        isUploadingImage = false;
+        // Limpiar en caso de error también
         fileInput.value = '';
         delete fileInput.dataset.productId;
     }
@@ -299,6 +312,9 @@ function setupInventoryListeners() {
         productList.addEventListener('click', handleDeleteProduct);
         productList.addEventListener('click', (e) => {
             if (e.target.classList.contains('upload-img-btn')) {
+                // Prevenir múltiples clics si ya se está subiendo
+                if (isUploadingImage) return;
+
                 const productId = e.target.dataset.id;
                 if (fileInput) {
                     fileInput.dataset.productId = productId;

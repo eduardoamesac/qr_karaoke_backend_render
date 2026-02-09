@@ -4702,3 +4702,4 @@ TypeError: can't subtract offset-naive and offset-aware datetimes
 2026-02-09 16:33:01,912 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=1a3REFH83WA%2C4Ez2wJnlwag%2CftfeDRZA5iE%2CDjfaCC3ZKs8%2ConGJj-JIBZk%2CIRSedFplzCc%2C2JbrCXDNGcA%2CrERCTLp4CK8%2CUAAy5oTPUOE%2CUjYXahcriA0&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
 2026-02-09 16:33:02,013 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
 2026-02-09 16:33:02,053 - youtube - INFO - Procesamiento finalizado. Se encontraron 10 resultados formateados.
+2026-02-09 16:39:29,627 - song_credits_background - INFO - Credits background task started
