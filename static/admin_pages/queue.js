@@ -321,41 +321,26 @@ function renderApprovedSongs(songs, listElement) {
         ? '<span class="bees-badge bees-badge-success">▶️ Reproduciendo</span>'
         : '<span class="bees-badge bees-badge-info">#1</span>';
 
-    let buttonsHtml = '';
-    if (isPlaying) {
-        const isPaused = !playerState.isPlaying;
-        // SVG Icons
-        const playIcon = `<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>`;
-        const pauseIcon = `<svg viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`;
-        const restartIcon = `<svg viewBox="0 0 24 24"><path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/></svg>`;
-        const nextIcon = `<svg viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>`;
+    const isPaused = !playerState.isPlaying;
+    // SVG Icons
+    const playIcon = `<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>`;
+    const pauseIcon = `<svg viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`;
+    const restartIcon = `<svg viewBox="0 0 24 24"><path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/></svg>`;
+    const nextIcon = `<svg viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>`;
 
-        buttonsHtml = `
-            <div class="admin-player-controls">
-                <button class="player-btn" data-action="restart" title="Reiniciar">${restartIcon}</button>
-                <button class="player-btn player-btn-large" data-action="pause-resume-toggle" title="${isPaused ? 'Reanudar' : 'Pausar'}">${isPaused ? playIcon : pauseIcon}</button>
-                <button class="player-btn" data-action="play-next" title="Siguiente">${nextIcon}</button>
-            </div>
-        `;
-    } else {
-        // Mostrar controles para gestión previa a la reproducción
-        // Si estamos mostrando la primera canción aprobada (upcoming[0]), no permitir 'subir'.
-        const upcomingCount = (typeof currentQueueData !== 'undefined' && currentQueueData.upcoming && Array.isArray(currentQueueData.upcoming)) ? currentQueueData.upcoming.length : 0;
-        const showMoveDown = upcomingCount > 1; // Solo si hay más canciones abajo puede bajarse
-        const approvedButtons = [];
+    // Determinamos la acción del botón central: 
+    // Si ya está reproduciendo, toggle pausa. Si no, iniciar reproducción.
+    const middleAction = isPlaying ? 'pause-resume-toggle' : 'play-song';
+    const middleTitle = isPlaying ? (isPaused ? 'Reanudar' : 'Pausar') : 'Reproducir Ahora';
+    const middleIcon = isPlaying ? (isPaused ? playIcon : pauseIcon) : playIcon;
 
-        // No mostramos 'Subir' porque esta vista muestra la primera en upcoming (index 0)
-        if (showMoveDown) approvedButtons.push(`<button class="bees-btn bees-btn-warning bees-btn-small" data-id="${song.id}" data-action="move-down" title="Bajar">⬇️ Bajar</button>`);
-
-        // Siempre permitir eliminar
-        approvedButtons.push(`<button class="bees-btn bees-btn-danger bees-btn-small" data-id="${song.id}" data-action="remove" title="Eliminar">❌ Eliminar</button>`);
-
-        buttonsHtml = `
-            <div style="display: grid; grid-template-columns: repeat(${approvedButtons.length}, 1fr); gap: 8px; margin-top: 12px;">
-                ${approvedButtons.join('')}
-            </div>
-        `;
-    }
+    buttonsHtml = `
+        <div class="admin-player-controls">
+            <button class="player-btn" data-id="${song.id}" data-action="restart" title="Reiniciar">${restartIcon}</button>
+            <button class="player-btn player-btn-large" data-id="${song.id}" data-action="${middleAction}" title="${middleTitle}">${middleIcon}</button>
+            <button class="player-btn" data-id="${song.id}" data-action="play-next" title="Siguiente">${nextIcon}</button>
+        </div>
+    `;
 
     li.innerHTML = `
         <div style="background: var(--page-input-bg); border-radius: 12px; padding: 16px; border-left: 4px solid ${isPlaying ? 'var(--bees-green)' : 'var(--bees-yellow)'};">
