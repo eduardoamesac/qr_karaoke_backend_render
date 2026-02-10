@@ -12,6 +12,7 @@ from database import SessionLocal # get_db se importará desde aquí
 import websocket_manager
 from security import api_key_auth
 from cache_manager import cache_manager
+from queue_manager import queue_manager
 
 router = APIRouter() # El prefijo y las etiquetas se pueden definir aquí o al incluir el router en main.py
 
@@ -147,6 +148,7 @@ async def anadir_cancion(
         cancion_final = crud.update_cancion_estado(db, cancion_id=db_cancion.id, nuevo_estado="aprobado")
         await crud.start_next_song_if_autoplay_and_idle(db)
     
+    queue_manager.refresh_queue(db)
     await websocket_manager.manager.broadcast_queue_update()
 
     return cancion_final
@@ -181,6 +183,7 @@ async def aprobar_cancion(cancion_id: int, db: Session = Depends(get_db), api_ke
         raise HTTPException(status_code=404, detail="Canción no encontrada")
     crud.create_admin_log_entry(db, action="APPROVE_SONG", details=f"Canción '{db_cancion.titulo}' aprobada.")
     await crud.start_next_song_if_autoplay_and_idle(db)
+    queue_manager.refresh_queue(db)
     await websocket_manager.manager.broadcast_queue_update()
     return db_cancion
 
@@ -201,6 +204,7 @@ async def rechazar_cancion(cancion_id: int, db: Session = Depends(get_db), api_k
     
     db_cancion = crud.update_cancion_estado(db, cancion_id=cancion_id, nuevo_estado="rechazada")
     crud.create_admin_log_entry(db, action="REJECT_SONG", details=f"Canción '{db_cancion.titulo}' rechazada.")
+    queue_manager.refresh_queue(db)
     await websocket_manager.manager.broadcast_queue_update()
     return db_cancion
 
@@ -220,6 +224,7 @@ async def admin_anadir_cancion(cancion: schemas.CancionCreate, db: Session = Dep
         cancion_final = crud.update_cancion_estado(db, cancion_id=db_cancion.id, nuevo_estado="aprobado")
         await crud.start_next_song_if_autoplay_and_idle(db)
     
+    queue_manager.refresh_queue(db)
     await websocket_manager.manager.broadcast_queue_update()
     return cancion_final
 
@@ -280,6 +285,7 @@ async def play_song_now(cancion_id: int, db: Session = Depends(get_db), api_key:
     db.refresh(db_cancion)
 
     # Notificar a los clientes que la cola cambió y pedir al player que reproduzca
+    queue_manager.refresh_queue(db)
     await websocket_manager.manager.broadcast_queue_update()
     await websocket_manager.manager.broadcast_play_song(
         youtube_id=db_cancion.youtube_id,
@@ -311,9 +317,9 @@ async def eliminar_cancion(cancion_id: int, usuario_id: int, db: Session = Depen
 
     crud.delete_cancion(db, cancion_id=cancion_id)
     
-    # OPTIMIZACIÓN: Eliminar del caché también
     cache_manager.delete_song_from_cache(usuario_id, cancion_id)
     
+    queue_manager.refresh_queue(db)
     await websocket_manager.manager.broadcast_queue_update() # Notificar actualización de la cola
     return Response(status_code=204)
 @router.post("/{cancion_id}/mover-arriba", response_model=schemas.Cancion, summary="Mover una canciÃ³n pendiente_lazy hacia arriba")

@@ -8,6 +8,7 @@ import config
 from database import SessionLocal
 import websocket_manager
 from security import api_key_auth, MASTER_API_KEY
+from queue_manager import queue_manager
 
 router = APIRouter(dependencies=[Depends(api_key_auth)])
 
@@ -105,6 +106,7 @@ async def reset_night(background_tasks: BackgroundTasks, db: Session = Depends(g
     crud.create_admin_log_entry(db, action="RESET_NIGHT", details="El sistema ha sido reiniciado para una nueva noche.")
     
     # Después de borrar todo, notificamos a los clientes para que la cola se vacíe
+    queue_manager.refresh_queue(db)
     await websocket_manager.manager.broadcast_queue_update()
     
     # Programar reinicio del servidor
@@ -525,6 +527,7 @@ async def reorder_queue(orden: schemas.ReordenarCola, db: Session = Depends(get_
     crud.reordenar_cola_manual(db, canciones_ids=orden.canciones_ids)
     # Notificamos a todos los clientes de la nueva cola
     crud.create_admin_log_entry(db, action="REORDER_QUEUE", details=f"Cola reordenada manualmente. Nuevo orden: {orden.canciones_ids}")
+    queue_manager.refresh_queue(db)
     await websocket_manager.manager.broadcast_queue_update()
     return {"mensaje": "La cola ha sido reordenada manualmente."}
 
@@ -551,6 +554,7 @@ async def move_song_to_top_endpoint(cancion_id: int, db: Session = Depends(get_d
         )
     
     crud.create_admin_log_entry(db, action="MOVE_SONG_TOP", details=f"Canción '{cancion_movida.titulo}' (ID: {cancion_id}) movida al principio.")
+    queue_manager.refresh_queue(db)
     await websocket_manager.manager.broadcast_queue_update()
     return {"mensaje": f"La canción '{cancion_movida.titulo}' ha sido movida al principio de la cola."}
 
@@ -598,6 +602,7 @@ async def approve_pending_song(cancion_id: int, db: Session = Depends(get_db), a
         raise HTTPException(status_code=404, detail="Canción no encontrada o no está pendiente.")
     
     crud.create_admin_log_entry(db, action="APPROVE_SONG", details=f"Canción '{db_cancion.titulo}' aprobada manualmente.")
+    queue_manager.refresh_queue(db)
     await websocket_manager.manager.broadcast_queue_update()
     return db_cancion
 
@@ -755,6 +760,7 @@ async def approve_next_lazy_song(db: Session = Depends(get_db), api_key: str = D
         # Registrar error no crítico y continuar con la actualización de cola
         print(f"Error al intentar iniciar la siguiente canción tras aprobar lazy: {e}")
 
+    queue_manager.refresh_queue(db)
     await websocket_manager.manager.broadcast_queue_update()
     return siguiente
 
@@ -785,6 +791,7 @@ async def revert_approved_song(cancion_id: int, db: Session = Depends(get_db), a
     db.refresh(db_cancion)
 
     crud.create_admin_log_entry(db, action="REVERT_APPROVAL", details=f"Aprobación revertida para '{db_cancion.titulo}' (ID: {cancion_id}).")
+    queue_manager.refresh_queue(db)
     await websocket_manager.manager.broadcast_queue_update()
     return db_cancion
 

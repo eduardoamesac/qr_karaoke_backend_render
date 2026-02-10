@@ -1,4 +1,4 @@
-
+﻿
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import func, case, or_, and_, desc
 import secrets
@@ -9,7 +9,7 @@ from timezone_utils import now_bogota, safe_datetime_diff, ensure_aware
 from decimal import Decimal # Importar Decimal
 
 def get_mesa_by_qr(db: Session, qr_code: str):
-    """Busca una mesa por su cÃÂ³digo QR."""
+    """Busca una mesa por su cÃƒÂƒÃ‚Â³digo QR."""
     return db.query(models.Mesa).filter(models.Mesa.qr_code == qr_code).first()
 
 def get_mesas(db: Session):
@@ -45,7 +45,7 @@ def get_total_consumido_por_usuario(db: Session, usuario_id: int):
     return db.query(func.sum(models.Consumo.valor_total)).filter(models.Consumo.usuario_id == usuario_id).scalar() or 0
 
 def get_canciones_por_usuario(db: Session, usuario_id: int):
-    """Busca todas las canciones de un usuario especÃÂ­fico."""
+    """Busca todas las canciones de un usuario especÃƒÂƒÃ‚Â­fico."""
     return db.query(models.Cancion).filter(models.Cancion.usuario_id == usuario_id).order_by(
         case((models.Cancion.orden_manual.is_(None), 1), else_=0),
         models.Cancion.orden_manual.asc(),
@@ -53,7 +53,7 @@ def get_canciones_por_usuario(db: Session, usuario_id: int):
     ).all()
 
 def create_cancion_para_usuario(db: Session, cancion: schemas.CancionCreate, usuario_id: int):
-    """Crea una nueva canciÃÂ³n y la asocia a un usuario."""
+    """Crea una nueva canciÃƒÂƒÃ‚Â³n y la asocia a un usuario."""
     # Usar model_dump() (Pydantic v2) en vez de dict()
     db_cancion = models.Cancion(**cancion.model_dump(), usuario_id=usuario_id)
     db.add(db_cancion)
@@ -63,7 +63,7 @@ def create_cancion_para_usuario(db: Session, cancion: schemas.CancionCreate, usu
 
 def check_if_song_in_user_list(db: Session, usuario_id: int, youtube_id: str):
     """
-    Verifica si ALGÃÂN USUARIO DE LA MISMA MESA ya tiene esta canciÃÂ³n en la cola.
+    Verifica si ALGÃƒÂƒÃ‚ÂšN USUARIO DE LA MISMA MESA ya tiene esta canciÃƒÂƒÃ‚Â³n en la cola.
     CAMBIO: Ahora verifica a nivel de mesa para evitar duplicados entre usuarios de la misma mesa.
     """
     # Obtener el usuario y su mesa
@@ -71,7 +71,7 @@ def check_if_song_in_user_list(db: Session, usuario_id: int, youtube_id: str):
     if not usuario or not usuario.mesa_id:
         return None
     
-    # Buscar si algÃÂºn usuario de la misma mesa ya tiene esta canciÃÂ³n en cola
+    # Buscar si algÃƒÂƒÃ‚Âºn usuario de la misma mesa ya tiene esta canciÃƒÂƒÃ‚Â³n en cola
     return db.query(models.Cancion).join(
         models.Usuario, models.Cancion.usuario_id == models.Usuario.id
     ).filter(
@@ -80,12 +80,12 @@ def check_if_song_in_user_list(db: Session, usuario_id: int, youtube_id: str):
         models.Cancion.estado.in_(['pendiente', 'aprobado', 'reproduciendo'])
     ).first()
 def get_cancion_by_id(db: Session, cancion_id: int):
-    """Busca una canciÃÂ³n por su ID."""
+    """Busca una canciÃƒÂƒÃ‚Â³n por su ID."""
     return db.query(models.Cancion).filter(models.Cancion.id == cancion_id).first()
 
 def get_cancion_actual(db: Session):
     """
-    Retorna la canciÃÂ³n que estÃÂ¡ actualmente en reproducciÃÂ³n,
+    Retorna la canciÃƒÂƒÃ‚Â³n que estÃƒÂƒÃ‚Â¡ actualmente en reproducciÃƒÂƒÃ‚Â³n,
     o None si no hay ninguna activa.
     """
     return db.query(models.Cancion).filter(models.Cancion.estado == "reproduciendo").first()
@@ -96,12 +96,12 @@ def get_canciones_pendientes(db: Session):
     return db.query(models.Cancion).filter(models.Cancion.estado == 'pendiente').order_by(models.Cancion.id).all()
 
 def get_duracion_total_cola_aprobada(db: Session) -> int:
-    """Calcula la suma de la duraciÃÂ³n de todas las canciones aprobadas."""
+    """Calcula la suma de la duraciÃƒÂƒÃ‚Â³n de todas las canciones aprobadas."""
     total_seconds = db.query(func.sum(models.Cancion.duracion_seconds)).filter(models.Cancion.estado == 'aprobado').scalar()
     return total_seconds or 0
 
 def update_cancion_estado(db: Session, cancion_id: int, nuevo_estado: str):
-    """Actualiza el estado de una canciÃÂ³n especÃÂ­fica."""
+    """Actualiza el estado de una canciÃƒÂƒÃ‚Â³n especÃƒÂƒÃ‚Â­fica."""
     db_cancion = db.query(models.Cancion).filter(models.Cancion.id == cancion_id).first()
     if db_cancion:
         db_cancion.estado = nuevo_estado
@@ -115,156 +115,32 @@ def get_cola_priorizada(db: Session):
     
     Reglas:
     1. Orden Manual: Las canciones con `orden_manual` tienen prioridad absoluta y mantienen su orden relativo.
-    2. AgrupaciÃÂ³n por Mesa: El resto de canciones se agrupan por su mesa de origen.
-    3. CategorÃÂ­as de Mesa (basado en consumo total de la mesa):
+    2. AgrupaciÃƒÂƒÃ‚Â³n por Mesa: El resto de canciones se agrupan por su mesa de origen.
+    3. CategorÃƒÂƒÃ‚Â­as de Mesa (basado en consumo total de la mesa):
         - ORO (> $150.000): Cupo de 3 canciones por turno.
         - PLATA (> $50.000): Cupo de 2 canciones por turno.
-        - BRONCE (<= $50.000): Cupo de 1 canciÃÂ³n por turno.
-    4. Round Robin: Se iteran las mesas (ordenadas por la hora de llegada de su primera canciÃÂ³n pendiente)
-       y se toman N canciones (segÃÂºn su cupo) en cada turno.
+        - BRONCE (<= $50.000): Cupo de 1 canciÃƒÂƒÃ‚Â³n por turno.
+    4. Round Robin: Se iteran las mesas (ordenadas por la hora de llegada de su primera canciÃƒÂƒÃ‚Â³n pendiente)
+       y se toman N canciones (segÃƒÂƒÃ‚Âºn su cupo) en cada turno.
     """
-    from collections import deque
-    
-    # 1. Obtener todas las canciones aprobadas
-    # Ordenamos por ID ascendente para respetar el orden de llegada "natural" dentro de cada mesa
-    todas_canciones = (
-        db.query(models.Cancion)
-        .join(models.Usuario, models.Cancion.usuario_id == models.Usuario.id)
-        .filter(models.Cancion.estado == "aprobado")
-        .order_by(
-            case((models.Cancion.orden_manual.is_(None), 1), else_=0),
-            models.Cancion.orden_manual.asc(),
-            models.Cancion.id.asc()
-        )
-        .all()
-    )
-
-    # 2. Separar canciones con orden manual (Prioridad Absoluta)
-    cola_manual = []
-    cola_pool = []
-    
-    for cancion in todas_canciones:
-        if cancion.orden_manual is not None:
-            # Insertar respetando el valor de orden_manual si es posible, o simplemente al principio
-            cola_manual.append(cancion)
-        else:
-            cola_pool.append(cancion)
-            
-    # Si solo hay canciones manuales, retornamos
-    if not cola_pool:
-        return cola_manual
-
-    # 3. Agrupar canciones por Mesa
-    match_mesa_canciones = {} # {mesa_id: deque([canciones])}
-    mesa_arrival_time = {} # {mesa_id: primer_id_cancion} para ordenar turnos
-    
-    mesas_involucradas_ids = set()
-
-    for cancion in cola_pool:
-        mesa_id = cancion.usuario.mesa_id
-        if not mesa_id:
-            # Si un usuario no tiene mesa (ej. DJ), lo tratamos como una mesa "ficticia" con ID negativo
-            # o lo agrupamos en un grupo especial. Asumamos ID 0 para "Sin Mesa"
-            mesa_id = 0
-            
-        if mesa_id not in match_mesa_canciones:
-            match_mesa_canciones[mesa_id] = deque()
-            mesa_arrival_time[mesa_id] = cancion.id # El ID mÃÂ¡s bajo es el primero que llegÃÂ³
-            mesas_involucradas_ids.add(mesa_id)
-            
-        match_mesa_canciones[mesa_id].append(cancion)
-
-    # 4. Calcular CategorÃÂ­a (Tier) de cada Mesa
-    # Necesitamos el consumo total de cada mesa involucrada
-    # Definimos umbrales
-    UMBRAL_ORO = 150000
-    UMBRAL_PLATA = 50000
-    
-    mesa_tiers = {} # {mesa_id: 'oro'|'plata'|'bronce'}
-    mesa_quotas = {} # {mesa_id: int}
-    
-    if mesas_involucradas_ids:
-        # Consulta eficiente para obtener consumos de las mesas relevantes
-        # Excluimos la mesa 0 (sin mesa/DJ) de la consulta de base de datos
-        ids_reales = [mid for mid in mesas_involucradas_ids if mid != 0]
-        
-        consumos_mesas = {}
-        if ids_reales:
-            rows = (
-                db.query(
-                    models.Usuario.mesa_id,
-                    func.sum(models.Consumo.valor_total)
-                )
-                .join(models.Consumo, models.Usuario.id == models.Consumo.usuario_id)
-                .filter(models.Usuario.mesa_id.in_(ids_reales))
-                .group_by(models.Usuario.mesa_id)
-                .all()
-            )
-            for mid, total in rows:
-                consumos_mesas[mid] = total or 0
-        
-        # Asignar quotas
-        for mid in mesas_involucradas_ids:
-            total = consumos_mesas.get(mid, 0)
-            
-            # DJ / Sin Mesa (ID 0) recibe trato Preferencial o EstÃÂ¡ndar?
-            # Vamos a darle trato de ORO al DJ si se usa para poner mÃÂºsica activamente.
-            if mid == 0: 
-                quota = 3 
-            elif total >= UMBRAL_ORO:
-                quota = 3
-            elif total >= UMBRAL_PLATA:
-                quota = 2
-            else:
-                quota = 1
-                
-            mesa_quotas[mid] = quota
-
-    # 5. Construir la Cola Round-Robin
-    cola_justa = []
-    
-    # Ordenamos las mesas por orden de llegada (quiÃÂ©n puso canciÃÂ³n primero)
-    orden_turnos_mesas = sorted(mesas_involucradas_ids, key=lambda mid: mesa_arrival_time[mid])
-    
-    # Bucle Round Robin
-    while match_mesa_canciones:
-        # Iterar sobre una copia de la lista de mesas para poder borrar claves del diccionario principal
-        for mesa_id in orden_turnos_mesas:
-            if mesa_id not in match_mesa_canciones:
-                continue
-                
-            queue_de_mesa = match_mesa_canciones[mesa_id]
-            cupo = mesa_quotas.get(mesa_id, 1)
-            
-            # Tomar hasta 'cupo' canciones
-            tomadas = 0
-            while tomadas < cupo and queue_de_mesa:
-                cancion = queue_de_mesa.popleft()
-                cola_justa.append(cancion)
-                tomadas += 1
-            
-            # Si la mesa se queda sin canciones, la eliminamos del diccionario
-            if not queue_de_mesa:
-                del match_mesa_canciones[mesa_id]
-    
-    # 6. Fusionar: Manual + Justa
-    return cola_manual + cola_justa
+    from queue_manager import queue_manager
+    return queue_manager.get_queue(db)
 
 def get_producto_by_nombre(db: Session, nombre: str):
     """Busca un producto por su nombre."""
     return db.query(models.Producto).filter(models.Producto.nombre == nombre).first()
 
 def get_productos(db: Session, skip: int = 0, limit: int = 100):
-    """Obtiene una lista de todos los productos del catÃÂ¡logo."""
+    """Obtiene una lista de todos los productos del catÃƒÂƒÃ‚Â¡logo."""
     return db.query(models.Producto).offset(skip).limit(limit).all()
 
 def create_producto(db: Session, producto: schemas.ProductoCreate):
-    """Crea un nuevo producto en el catÃÂ¡logo."""
+    """Crea un nuevo producto en el catÃƒÂƒÃ‚Â¡logo."""
     # Aseguramos que el producto se cree como activo por defecto.
     producto_data = producto.model_dump()
     # El schema ProductoCreate ya tiene `is_active` con un valor por defecto.
     # Al pasarlo directamente, evitamos el error de "multiple values for keyword argument".
-    # Si el schema no lo tuviera, podrÃÂ­amos hacer `producto_data.pop('is_active', None)`
+    # Si el schema no lo tuviera, podrÃƒÂƒÃ‚Â­amos hacer `producto_data.pop('is_active', None)`
     # antes de pasarlo como argumento extra.
     db_producto = models.Producto(**producto_data)
     db.add(db_producto)
@@ -283,7 +159,7 @@ def update_producto_imagen(db: Session, producto_id: int, imagen_url: str):
         db_producto.imagen_url = imagen_url
         db.flush()  # Sincronizar cambios sin hacer commit
         db.refresh(db_producto)  # Obtener datos actualizados
-        db.commit()  # Hacer commit de la transacción
+        db.commit()  # Hacer commit de la transacciÃ³n
     return db_producto
 
 def create_consumo_para_usuario(db: Session, consumo: schemas.ConsumoCreate, usuario_id: int):
@@ -297,12 +173,12 @@ def create_consumo_para_usuario(db: Session, consumo: schemas.ConsumoCreate, usu
         return None, "Usuario no encontrado."
     
     if not db_usuario.mesa_id:
-        return None, "El usuario no estÃÂ¡ asociado a ninguna mesa."
+        return None, "El usuario no estÃƒÂƒÃ‚Â¡ asociado a ninguna mesa."
 
-    # 2. Obtener el producto del catÃÂ¡logo para saber su precio
+    # 2. Obtener el producto del catÃƒÂƒÃ‚Â¡logo para saber su precio
     db_producto = db.query(models.Producto).filter(models.Producto.id == consumo.producto_id).first()
     if not db_producto:
-        return None, "Producto no encontrado en el catÃÂ¡logo."
+        return None, "Producto no encontrado en el catÃƒÂƒÃ‚Â¡logo."
 
     if db_producto.stock < consumo.cantidad:
         return None, f"No hay suficiente stock para '{db_producto.nombre}'. Disponible: {db_producto.stock}"
@@ -311,9 +187,9 @@ def create_consumo_para_usuario(db: Session, consumo: schemas.ConsumoCreate, usu
         return None, "La cantidad debe ser mayor que cero."
 
     if not db_producto.is_active:
-        return None, "El producto no estÃÂ¡ disponible actualmente."
+        return None, "El producto no estÃƒÂƒÃ‚Â¡ disponible actualmente."
 
-    # 3. Calcular el valor total de la transacciÃÂ³n
+    # 3. Calcular el valor total de la transacciÃƒÂƒÃ‚Â³n
     valor_total_transaccion = db_producto.valor * consumo.cantidad
 
     # 4. Crear el registro de consumo ASIGNADO A LA MESA (no al usuario)
@@ -327,7 +203,7 @@ def create_consumo_para_usuario(db: Session, consumo: schemas.ConsumoCreate, usu
         cantidad=consumo.cantidad,
         valor_total=valor_total_transaccion,
         mesa_id=db_usuario.mesa_id,  # CAMBIO: Asignar a mesa
-        usuario_id=usuario_id,  # Mantener referencia al usuario que pidiÃÂ³ (tracking)
+        usuario_id=usuario_id,  # Mantener referencia al usuario que pidiÃƒÂƒÃ‚Â³ (tracking)
         cuenta_id=active_cuenta.id
     )
 
@@ -337,8 +213,8 @@ def create_consumo_para_usuario(db: Session, consumo: schemas.ConsumoCreate, usu
     # 6. Otorgar puntos al usuario individual (ej: 1 punto por cada 10 de moneda gastados)
     db_usuario.puntos += int(valor_total_transaccion / 10)
     
-    # NUEVO: Agregar créditos de canciones por el valor del producto en pesos
-    # 5000 pesos = 5000 créditos (100 créditos se pierden cada minuto)
+    # NUEVO: Agregar crÃ©ditos de canciones por el valor del producto en pesos
+    # 5000 pesos = 5000 crÃ©ditos (100 crÃ©ditos se pierden cada minuto)
     credit_value = int(float(valor_total_transaccion))
     add_song_credits(db, usuario_id, credit_value)
 
@@ -365,9 +241,9 @@ def create_consumo_para_usuario(db: Session, consumo: schemas.ConsumoCreate, usu
 
 def create_pedido_from_carrito(db: Session, carrito: schemas.CarritoCreate, usuario_id: int):
     """
-    Crea mÃÂºltiples registros de consumo a partir de un carrito de compras.
+    Crea mÃƒÂƒÃ‚Âºltiples registros de consumo a partir de un carrito de compras.
     CAMBIO: Los consumos se asignan a la MESA, no al usuario individual.
-    Toda la operaciÃÂ³n se maneja como una ÃÂºnica transacciÃÂ³n.
+    Toda la operaciÃƒÂƒÃ‚Â³n se maneja como una ÃƒÂƒÃ‚Âºnica transacciÃƒÂƒÃ‚Â³n.
     """
     SILVER_THRESHOLD = 50.0
     GOLD_THRESHOLD = 150.0
@@ -377,7 +253,7 @@ def create_pedido_from_carrito(db: Session, carrito: schemas.CarritoCreate, usua
         return None, "Usuario no encontrado."
     
     if not db_usuario.mesa_id:
-        return None, "El usuario no estÃÂ¡ asociado a ninguna mesa."
+        return None, "El usuario no estÃƒÂƒÃ‚Â¡ asociado a ninguna mesa."
 
     consumos_creados = []
     valor_total_pedido = Decimal(0)
@@ -392,11 +268,11 @@ def create_pedido_from_carrito(db: Session, carrito: schemas.CarritoCreate, usua
             if not db_producto:
                 raise ValueError(f"Producto con ID {item.producto_id} no encontrado.")
             if not db_producto.is_active:
-                raise ValueError(f"El producto '{db_producto.nombre}' no estÃÂ¡ disponible.")
+                raise ValueError(f"El producto '{db_producto.nombre}' no estÃƒÂƒÃ‚Â¡ disponible.")
             if db_producto.stock < item.cantidad:
                 raise ValueError(f"No hay stock suficiente para '{db_producto.nombre}'. Disponible: {db_producto.stock}.")
 
-            # Calculamos el valor de esta lÃÂ­nea del pedido
+            # Calculamos el valor de esta lÃƒÂƒÃ‚Â­nea del pedido
             valor_linea = db_producto.valor * item.cantidad
             valor_total_pedido += valor_linea
 
@@ -411,7 +287,7 @@ def create_pedido_from_carrito(db: Session, carrito: schemas.CarritoCreate, usua
                 cantidad=item.cantidad,
                 valor_total=valor_linea,
                 mesa_id=db_usuario.mesa_id,  # CAMBIO: Asignar a mesa
-                usuario_id=usuario_id,  # Mantener referencia al usuario que pidiÃÂ³
+                usuario_id=usuario_id,  # Mantener referencia al usuario que pidiÃƒÂƒÃ‚Â³
                 cuenta_id=active_cuenta.id
             )
             db.add(db_consumo)
@@ -423,7 +299,7 @@ def create_pedido_from_carrito(db: Session, carrito: schemas.CarritoCreate, usua
         # Si todo fue bien, actualizamos los puntos y el nivel del usuario INDIVIDUAL
         db_usuario.puntos += int(valor_total_pedido / 10)
         
-        # NUEVO: Agregar créditos de canciones por el total del pedido
+        # NUEVO: Agregar crÃ©ditos de canciones por el total del pedido
         credit_value = int(float(valor_total_pedido))
         add_song_credits(db, usuario_id, credit_value)
         total_consumido_historico = (db.query(func.sum(models.Consumo.valor_total)).filter(
@@ -440,22 +316,22 @@ def create_pedido_from_carrito(db: Session, carrito: schemas.CarritoCreate, usua
             db.refresh(consumo)
         return consumos_creados, None
     except ValueError as e:
-        db.rollback() # Si algo falla, revertimos TODOS los cambios de esta transacciÃÂ³n
+        db.rollback() # Si algo falla, revertimos TODOS los cambios de esta transacciÃƒÂƒÃ‚Â³n
         return None, str(e)
 
 def marcar_cancion_actual_como_cantada(db: Session):
     """
-    Busca la canciÃÂ³n que se estÃÂ¡ reproduciendo, la marca como 'cantada' y le da puntos al usuario.
-    Simula una puntuaciÃÂ³n de IA.
+    Busca la canciÃƒÂƒÃ‚Â³n que se estÃƒÂƒÃ‚Â¡ reproduciendo, la marca como 'cantada' y le da puntos al usuario.
+    Simula una puntuaciÃƒÂƒÃ‚Â³n de IA.
     """
     import os
-    import random_scorer # Importamos nuestro nuevo mÃÂ³dulo de IA
+    import random_scorer # Importamos nuestro nuevo mÃƒÂƒÃ‚Â³dulo de IA
 
-    # 1. Buscar la canciÃÂ³n que estÃÂ¡ actualmente en estado 'reproduciendo'
+    # 1. Buscar la canciÃƒÂƒÃ‚Â³n que estÃƒÂƒÃ‚Â¡ actualmente en estado 'reproduciendo'
     cancion_actual = db.query(models.Cancion).filter(models.Cancion.estado == "reproduciendo").first()
     
     if not cancion_actual:
-        return None  # No hay ninguna canciÃÂ³n reproduciÃÂ©ndose
+        return None  # No hay ninguna canciÃƒÂƒÃ‚Â³n reproduciÃƒÂƒÃ‚Â©ndose
     
     # 2. Calcular puntaje solo si es modo karaoke
     if cancion_actual.is_karaoke:
@@ -465,7 +341,7 @@ def marcar_cancion_actual_como_cantada(db: Session):
         cancion_actual.puntuacion_ia = 0
         puntuacion = 0
 
-    # 3. Actualizar el estado de la canciÃÂ³n a 'cantada'
+    # 3. Actualizar el estado de la canciÃƒÂƒÃ‚Â³n a 'cantada'
     cancion_actual.estado = "cantada"
     cancion_actual.finished_at = now_bogota()
 
@@ -478,22 +354,15 @@ def marcar_cancion_actual_como_cantada(db: Session):
     return cancion_actual
 
 def marcar_siguiente_como_reproduciendo(db: Session):
-    """Busca la siguiente canciÃÂ³n en la cola y la marca como 'reproduciendo'."""
-    siguiente_cancion = get_cola_priorizada(db)
-    if not siguiente_cancion:
-        return None
-    
-    siguiente_cancion[0].estado = "reproduciendo"
-    siguiente_cancion[0].started_at = now_bogota()
-    db.commit()
-    db.refresh(siguiente_cancion[0])
-    return siguiente_cancion[0]
+    """Busca la siguiente canciÃƒÂƒÃ‚Â³n en la cola y la marca como 'reproduciendo'."""
+    from queue_manager import queue_manager
+    return queue_manager.pop_next_song(db)
 
 def get_tiempo_espera_para_cancion(db: Session, cancion_id: int) -> int:
     """
-    Calcula el tiempo de espera estimado en segundos para una canciÃÂ³n especÃÂ­fica.
+    Calcula el tiempo de espera estimado en segundos para una canciÃƒÂƒÃ‚Â³n especÃƒÂƒÃ‚Â­fica.
     """
-    # 1. Obtener la canciÃÂ³n que se estÃÂ¡ reproduciendo
+    # 1. Obtener la canciÃƒÂƒÃ‚Â³n que se estÃƒÂƒÃ‚Â¡ reproduciendo
     cancion_actual = db.query(models.Cancion).filter(models.Cancion.estado == "reproduciendo").first()
     
     tiempo_espera_total = 0
@@ -505,14 +374,14 @@ def get_tiempo_espera_para_cancion(db: Session, cancion_id: int) -> int:
     # 2. Obtener la cola de canciones aprobadas
     cola_aprobada = get_cola_priorizada(db)
 
-    # 3. Sumar la duraciÃÂ³n de las canciones que estÃÂ¡n antes de la nuestra
+    # 3. Sumar la duraciÃƒÂƒÃ‚Â³n de las canciones que estÃƒÂƒÃ‚Â¡n antes de la nuestra
     for cancion_en_cola in cola_aprobada:
         if cancion_en_cola.id == cancion_id:
-            # Llegamos a nuestra canciÃÂ³n, dejamos de sumar
+            # Llegamos a nuestra canciÃƒÂƒÃ‚Â³n, dejamos de sumar
             break
         tiempo_espera_total += cancion_en_cola.duracion_seconds
     else:
-        # Si la canciÃÂ³n no se encuentra en la cola (ya se cantÃÂ³, fue rechazada, etc.)
+        # Si la canciÃƒÂƒÃ‚Â³n no se encuentra en la cola (ya se cantÃƒÂƒÃ‚Â³, fue rechazada, etc.)
         # devolvemos -1 para indicar que no hay tiempo de espera.
         return -1
 
@@ -539,9 +408,9 @@ def get_ranking_usuarios(db: Session):
 def reset_database_for_new_night(db: Session):
     """
     Borra todos los datos de las tablas transaccionales para empezar una nueva noche.
-    El orden es importante para respetar las restricciones de clave forÃÂ¡nea.
+    El orden es importante para respetar las restricciones de clave forÃƒÂƒÃ‚Â¡nea.
     """
-    # El orden de borrado es inverso al de creaciÃÂ³n de dependencias
+    # El orden de borrado es inverso al de creaciÃƒÂƒÃ‚Â³n de dependencias
     db.query(models.Consumo).delete()
     db.query(models.Cancion).delete()
     db.query(models.Usuario).delete()
@@ -551,7 +420,7 @@ def reset_database_for_new_night(db: Session):
 
 def get_canciones_mas_cantadas(db: Session, limit: int = 10):
     """
-    Obtiene un reporte de las canciones mÃÂ¡s cantadas, agrupadas y contadas.
+    Obtiene un reporte de las canciones mÃƒÂƒÃ‚Â¡s cantadas, agrupadas y contadas.
     """
     return (
         db.query(
@@ -567,7 +436,7 @@ def get_canciones_mas_cantadas(db: Session, limit: int = 10):
     )
 
 def delete_cancion(db: Session, cancion_id: int):
-    """Elimina una canciÃÂ³n de la base de datos por su ID."""
+    """Elimina una canciÃƒÂƒÃ‚Â³n de la base de datos por su ID."""
     db_cancion = db.query(models.Cancion).filter(models.Cancion.id == cancion_id).first()
     if db_cancion:
         db.delete(db_cancion)
@@ -575,7 +444,7 @@ def delete_cancion(db: Session, cancion_id: int):
 
 def get_productos_mas_consumidos(db: Session, limit: int = 10):
     """
-    Obtiene un reporte de los productos mÃÂ¡s consumidos, agrupados y sumada su cantidad.
+    Obtiene un reporte de los productos mÃƒÂƒÃ‚Â¡s consumidos, agrupados y sumada su cantidad.
     """
     return (
         db.query(
@@ -674,7 +543,7 @@ def reordenar_cola_manual(db: Session, canciones_ids: List[int]):
 
 def get_usuarios_sin_consumo(db: Session):
     """
-    Obtiene una lista de todos los usuarios que no han realizado ningÃÂºn consumo.
+    Obtiene una lista de todos los usuarios que no han realizado ningÃƒÂƒÃ‚Âºn consumo.
     """
     return (
         db.query(models.Usuario)
@@ -697,9 +566,9 @@ def delete_mesa(db: Session, mesa_id: int):
 
 def move_song_to_top(db: Session, cancion_id: int):
     """
-    Mueve una canciÃÂ³n especÃÂ­fica al principio de la cola manual.
+    Mueve una canciÃƒÂƒÃ‚Â³n especÃƒÂƒÃ‚Â­fica al principio de la cola manual.
     """
-    # 1. Validar que la canciÃÂ³n existe y estÃÂ¡ aprobada
+    # 1. Validar que la canciÃƒÂƒÃ‚Â³n existe y estÃƒÂƒÃ‚Â¡ aprobada
     cancion_a_mover = db.query(models.Cancion).filter(
         models.Cancion.id == cancion_id,
         models.Cancion.estado == 'aprobado'
@@ -708,14 +577,14 @@ def move_song_to_top(db: Session, cancion_id: int):
     if not cancion_a_mover:
         return None
 
-    # 2. Encontrar el valor de orden manual mÃÂ¡s bajo actual
+    # 2. Encontrar el valor de orden manual mÃƒÂƒÃ‚Â¡s bajo actual
     min_orden = db.query(func.min(models.Cancion.orden_manual)).scalar()
 
     nuevo_orden = 1
     if min_orden is not None:
         nuevo_orden = min_orden - 1
     
-    # 3. Asignar el nuevo orden a la canciÃÂ³n
+    # 3. Asignar el nuevo orden a la canciÃƒÂƒÃ‚Â³n
     cancion_a_mover.orden_manual = nuevo_orden
     db.commit()
     db.refresh(cancion_a_mover)
@@ -739,7 +608,7 @@ def get_canciones_cantadas_por_usuario(db: Session):
 
 def update_usuario_nick(db: Session, usuario_id: int, nuevo_nick: str):
     """
-    Actualiza el nick de un usuario especÃÂ­fico.
+    Actualiza el nick de un usuario especÃƒÂƒÃ‚Â­fico.
     """
     db_usuario = db.query(models.Usuario).filter(models.Usuario.id == usuario_id).first()
     if db_usuario:
@@ -755,7 +624,7 @@ def get_ingresos_promedio_por_usuario(db: Session):
     # Calcular ingresos totales
     total_ingresos = db.query(func.sum(models.Consumo.valor_total)).scalar() or 0
 
-    # Contar el nÃÂºmero de usuarios ÃÂºnicos con consumo
+    # Contar el nÃƒÂƒÃ‚Âºmero de usuarios ÃƒÂƒÃ‚Âºnicos con consumo
     usuarios_con_consumo = db.query(models.Consumo.usuario_id).distinct().count()
 
     if usuarios_con_consumo == 0:
@@ -765,7 +634,7 @@ def get_ingresos_promedio_por_usuario(db: Session):
 
 def update_usuario_mesa(db: Session, usuario_id: int, nueva_mesa_id: int):
     """
-    Actualiza la mesa de un usuario especÃÂ­fico.
+    Actualiza la mesa de un usuario especÃƒÂƒÃ‚Â­fico.
     """
     db_usuario = db.query(models.Usuario).filter(models.Usuario.id == usuario_id).first()
     if db_usuario:
@@ -776,7 +645,7 @@ def update_usuario_mesa(db: Session, usuario_id: int, nueva_mesa_id: int):
 
 def get_usuarios_una_cancion(db: Session):
     """
-    Obtiene una lista de usuarios que han cantado exactamente una canciÃÂ³n.
+    Obtiene una lista de usuarios que han cantado exactamente una canciÃƒÂƒÃ‚Â³n.
     """
     return (
         db.query(models.Usuario)
@@ -789,7 +658,7 @@ def get_usuarios_una_cancion(db: Session):
 
 def add_puntos_a_usuario(db: Session, usuario_id: int, puntos_a_anadir: int):
     """
-    AÃÂ±ade una cantidad de puntos a un usuario especÃÂ­fico.
+    AÃƒÂƒÃ‚Â±ade una cantidad de puntos a un usuario especÃƒÂƒÃ‚Â­fico.
     """
     db_usuario = db.query(models.Usuario).filter(models.Usuario.id == usuario_id).first()
     if db_usuario:
@@ -818,7 +687,7 @@ def delete_usuario(db: Session, usuario_id: int):
     if not db_usuario:
         return None
 
-    # Borrar datos dependientes primero para evitar errores de clave forÃÂ¡nea
+    # Borrar datos dependientes primero para evitar errores de clave forÃƒÂƒÃ‚Â¡nea
     db.query(models.Consumo).filter(models.Consumo.usuario_id == usuario_id).delete(synchronize_session=False)
     db.query(models.Cancion).filter(models.Cancion.usuario_id == usuario_id).delete(synchronize_session=False)
 
@@ -831,7 +700,7 @@ def get_ingresos_promedio_por_usuario_por_mesa(db: Session):
     """
     Calcula los ingresos promedio por usuario para cada mesa.
     """
-    # Consulta que calcula el total consumido y el nÃÂºmero de usuarios ÃÂºnicos por mesa
+    # Consulta que calcula el total consumido y el nÃƒÂƒÃ‚Âºmero de usuarios ÃƒÂƒÃ‚Âºnicos por mesa
     return (
         db.query(
             models.Mesa.nombre,
@@ -849,18 +718,18 @@ def get_ingresos_promedio_por_usuario_por_mesa(db: Session):
     )
 
 def is_nick_banned(db: Session, nick: str):
-    """Verifica si un nick estÃÂ¡ en la lista de baneados (case-insensitive)."""
+    """Verifica si un nick estÃƒÂƒÃ‚Â¡ en la lista de baneados (case-insensitive)."""
     return db.query(models.BannedNick).filter(models.BannedNick.nick.ilike(nick)).first() is not None
 
 def ban_usuario(db: Session, usuario_id: int):
     """
-    Banea a un usuario: aÃÂ±ade su nick a la lista de baneados y luego lo elimina.
+    Banea a un usuario: aÃƒÂƒÃ‚Â±ade su nick a la lista de baneados y luego lo elimina.
     """
     db_usuario = db.query(models.Usuario).filter(models.Usuario.id == usuario_id).first()
     if not db_usuario:
         return None
 
-    # 1. AÃÂ±adir el nick a la lista de baneados si no existe
+    # 1. AÃƒÂƒÃ‚Â±adir el nick a la lista de baneados si no existe
     nick_baneado_existente = db.query(models.BannedNick).filter(models.BannedNick.nick.ilike(db_usuario.nick)).first()
     if not nick_baneado_existente:
         banned_nick_entry = models.BannedNick(nick=db_usuario.nick)
@@ -869,17 +738,17 @@ def ban_usuario(db: Session, usuario_id: int):
         # antes de proceder con el borrado del usuario.
         db.commit()
 
-    # 2. Eliminar al usuario y sus datos asociados (reutilizamos la funciÃÂ³n existente)
+    # 2. Eliminar al usuario y sus datos asociados (reutilizamos la funciÃƒÂƒÃ‚Â³n existente)
     delete_usuario(db, usuario_id=usuario_id)
 
     return db_usuario
 
 def get_tiempo_promedio_espera(db: Session):
     """
-    Calcula el tiempo promedio en segundos desde que una canciÃÂ³n se aÃÂ±ade hasta que se canta.
+    Calcula el tiempo promedio en segundos desde que una canciÃƒÂƒÃ‚Â³n se aÃƒÂƒÃ‚Â±ade hasta que se canta.
     """
-    # Para SQLite, usamos julianday para calcular la diferencia en dÃÂ­as y luego convertimos a segundos.
-    # Para PostgreSQL, serÃÂ­a: func.avg(func.extract('epoch', models.Cancion.finished_at - models.Cancion.created_at))
+    # Para SQLite, usamos julianday para calcular la diferencia en dÃƒÂƒÃ‚Â­as y luego convertimos a segundos.
+    # Para PostgreSQL, serÃƒÂƒÃ‚Â­a: func.avg(func.extract('epoch', models.Cancion.finished_at - models.Cancion.created_at))
     avg_seconds = db.query(func.avg((func.julianday(models.Cancion.finished_at) - func.julianday(models.Cancion.created_at)) * 86400)).filter(
         models.Cancion.estado == "cantada",
         models.Cancion.finished_at.isnot(None)
@@ -888,12 +757,12 @@ def get_tiempo_promedio_espera(db: Session):
 
 def get_actividad_por_hora(db: Session):
     """
-    Obtiene un reporte de la cantidad de canciones cantadas por cada hora del dÃÂ­a.
+    Obtiene un reporte de la cantidad de canciones cantadas por cada hora del dÃƒÂƒÃ‚Â­a.
     """
     return (
         db.query(
             # Usamos strftime para SQLite para extraer la hora.
-            # Para PostgreSQL serÃÂ­a: extract('hour', models.Cancion.started_at)
+            # Para PostgreSQL serÃƒÂƒÃ‚Â­a: extract('hour', models.Cancion.started_at)
             func.strftime('%H', models.Cancion.started_at).label("hora"),
             func.count(models.Cancion.id).label("canciones_cantadas"),
         )
@@ -949,7 +818,7 @@ def get_banned_nicks(db: Session):
 
 def get_canciones_mas_rechazadas(db: Session, limit: int = 10):
     """
-    Obtiene un reporte de las canciones mÃÂ¡s rechazadas, agrupadas y contadas.
+    Obtiene un reporte de las canciones mÃƒÂƒÃ‚Â¡s rechazadas, agrupadas y contadas.
     """
     return (
         db.query(
@@ -966,7 +835,7 @@ def get_canciones_mas_rechazadas(db: Session, limit: int = 10):
 
 def get_usuarios_mas_rechazados(db: Session, limit: int = 10):
     """
-    Obtiene un reporte de los usuarios a los que mÃÂ¡s se les han rechazado canciones.
+    Obtiene un reporte de los usuarios a los que mÃƒÂƒÃ‚Â¡s se les han rechazado canciones.
     """
     return (
         db.query(
@@ -983,7 +852,7 @@ def get_usuarios_mas_rechazados(db: Session, limit: int = 10):
 
 def get_ingresos_por_categoria(db: Session):
     """
-    Calcula los ingresos totales agrupados por cada categorÃÂ­a de producto.
+    Calcula los ingresos totales agrupados por cada categorÃƒÂƒÃ‚Â­a de producto.
     """
     return (
         db.query(
@@ -997,14 +866,14 @@ def get_ingresos_por_categoria(db: Session):
     )
 
 def create_admin_log_entry(db: Session, action: str, details: Optional[str] = None):
-    """Crea una nueva entrada en el log de administraciÃÂ³n."""
+    """Crea una nueva entrada en el log de administraciÃƒÂƒÃ‚Â³n."""
     log_entry = models.AdminLog(action=action, details=details)
     db.add(log_entry)
     db.commit()
     return log_entry
 
 def get_admin_logs(db: Session, limit: int = 100):
-    """Obtiene las ÃÂºltimas entradas del log de administraciÃÂ³n."""
+    """Obtiene las ÃƒÂƒÃ‚Âºltimas entradas del log de administraciÃƒÂƒÃ‚Â³n."""
     return db.query(models.AdminLog).order_by(models.AdminLog.timestamp.desc()).limit(limit).all()
 
 def get_productos_menos_consumidos(db: Session, limit: int = 5):
@@ -1025,7 +894,7 @@ def get_productos_menos_consumidos(db: Session, limit: int = 5):
 
 def get_productos_no_consumidos(db: Session):
     """
-    Obtiene una lista de productos del catÃÂ¡logo que nunca han sido consumidos.
+    Obtiene una lista de productos del catÃƒÂƒÃ‚Â¡logo que nunca han sido consumidos.
     """
     return (
         db.query(models.Producto)
@@ -1037,7 +906,7 @@ def get_productos_no_consumidos(db: Session):
 
 def update_producto(db: Session, producto_id: int, producto_update: schemas.ProductoCreate):
     """
-    Actualiza los datos de un producto especÃÂ­fico.
+    Actualiza los datos de un producto especÃƒÂƒÃ‚Â­fico.
     """
     db_producto = db.query(models.Producto).filter(models.Producto.id == producto_id).first()
     if db_producto:
@@ -1045,42 +914,42 @@ def update_producto(db: Session, producto_id: int, producto_update: schemas.Prod
             setattr(db_producto, key, value)
         db.flush()  # Sincronizar cambios sin hacer commit
         db.refresh(db_producto)  # Obtener datos actualizados
-        db.commit()  # Hacer commit de la transacción
+        db.commit()  # Hacer commit de la transacciÃ³n
     return db_producto
 
 def update_producto_valor(db: Session, producto_id: int, nuevo_valor: Decimal):
     """
-    Actualiza el valor de un producto especÃÂ­fico en el catÃÂ¡logo.
+    Actualiza el valor de un producto especÃƒÂƒÃ‚Â­fico en el catÃƒÂƒÃ‚Â¡logo.
     """
     db_producto = db.query(models.Producto).filter(models.Producto.id == producto_id).first()
     if db_producto:
         db_producto.valor = nuevo_valor
         db.flush()  # Sincronizar cambios sin hacer commit
         db.refresh(db_producto)  # Obtener datos actualizados
-        db.commit()  # Hacer commit de la transacción
+        db.commit()  # Hacer commit de la transacciÃ³n
     return db_producto
 
 def update_producto_active_status(db: Session, producto_id: int, is_active: bool):
     """
-    Actualiza el estado de activaciÃÂ³n de un producto.
+    Actualiza el estado de activaciÃƒÂƒÃ‚Â³n de un producto.
     """
     db_producto = db.query(models.Producto).filter(models.Producto.id == producto_id).first()
     if db_producto:
         db_producto.is_active = is_active
         db.flush()  # Sincronizar cambios sin hacer commit
         db.refresh(db_producto)  # Obtener datos actualizados
-        db.commit()  # Hacer commit de la transacción
+        db.commit()  # Hacer commit de la transacciÃ³n
     return db_producto
 
 def get_usuarios_por_nivel(db: Session, nivel: str):
     """
-    Obtiene una lista de todos los usuarios que tienen un nivel especÃÂ­fico.
+    Obtiene una lista de todos los usuarios que tienen un nivel especÃƒÂƒÃ‚Â­fico.
     """
     return db.query(models.Usuario).filter(models.Usuario.nivel == nivel).all()
 
 def get_resumen_noche(db: Session):
     """
-    Obtiene un resumen de las mÃÂ©tricas clave de la noche.
+    Obtiene un resumen de las mÃƒÂƒÃ‚Â©tricas clave de la noche.
     """
     ingresos_totales = db.query(func.sum(models.Consumo.valor_total)).scalar() or 0
     canciones_cantadas = db.query(func.count(models.Cancion.id)).filter(models.Cancion.estado == "cantada").scalar() or 0
@@ -1093,8 +962,8 @@ def get_resumen_noche(db: Session):
 
 def get_resumen_mesa(db: Session, mesa_id: int):
     """
-    Obtiene un resumen detallado de una mesa especÃÂ­fica, incluyendo usuarios,
-    consumo total y canciones pendientes/reproduciÃÂ©ndose.
+    Obtiene un resumen detallado de una mesa especÃƒÂƒÃ‚Â­fica, incluyendo usuarios,
+    consumo total y canciones pendientes/reproduciÃƒÂƒÃ‚Â©ndose.
     """
     db_mesa = db.query(models.Mesa).filter(models.Mesa.id == mesa_id).first()
     if not db_mesa:
@@ -1131,18 +1000,18 @@ def get_resumen_mesa(db: Session, mesa_id: int):
 
 def get_usuarios_sin_canciones_cantadas(db: Session):
     """
-    Obtiene una lista de usuarios que no han cantado ninguna canciÃÂ³n.
+    Obtiene una lista de usuarios que no han cantado ninguna canciÃƒÂƒÃ‚Â³n.
     """
-    # Subconsulta para obtener los IDs de los usuarios que SÃÂ han cantado.
+    # Subconsulta para obtener los IDs de los usuarios que SÃƒÂƒÃ‚Â han cantado.
     subquery = db.query(models.Usuario.id).join(models.Cancion).filter(models.Cancion.estado == 'cantada').distinct()
 
-    # Consulta principal para obtener los usuarios cuyo ID NO ESTÃÂ en la subconsulta.
+    # Consulta principal para obtener los usuarios cuyo ID NO ESTÃƒÂƒÃ‚Â en la subconsulta.
     return db.query(models.Usuario).filter(models.Usuario.id.notin_(subquery)).all()
 
 def get_estado_mesas(db: Session):
     """
-    Obtiene un listado de todas las mesas con su estado (ocupada/vacÃÂ­a),
-    nÃÂºmero de usuarios y consumo total.
+    Obtiene un listado de todas las mesas con su estado (ocupada/vacÃƒÂƒÃ‚Â­a),
+    nÃƒÂƒÃ‚Âºmero de usuarios y consumo total.
     """
     # Subconsulta para el conteo de usuarios por mesa
     user_count_subq = (
@@ -1186,16 +1055,16 @@ def get_ranking_puntos_usuarios(db: Session, limit: int = 10):
 
 def get_usuarios_cantan_pero_no_consumen(db: Session):
     """
-    Obtiene una lista de usuarios que han cantado al menos una canciÃÂ³n
-    pero no han realizado ningÃÂºn consumo.
+    Obtiene una lista de usuarios que han cantado al menos una canciÃƒÂƒÃ‚Â³n
+    pero no han realizado ningÃƒÂƒÃ‚Âºn consumo.
     """
-    # Subconsulta para obtener los IDs de los usuarios que SÃÂ han cantado.
+    # Subconsulta para obtener los IDs de los usuarios que SÃƒÂƒÃ‚Â han cantado.
     subquery_cantan = db.query(models.Cancion.usuario_id).filter(models.Cancion.estado == 'cantada').distinct()
 
-    # Subconsulta para obtener los IDs de los usuarios que SÃÂ han consumido.
+    # Subconsulta para obtener los IDs de los usuarios que SÃƒÂƒÃ‚Â han consumido.
     subquery_consumen = db.query(models.Consumo.usuario_id).distinct()
 
-    # Consulta principal para obtener los usuarios que estÃÂ¡n en la primera subconsulta pero NO en la segunda.
+    # Consulta principal para obtener los usuarios que estÃƒÂƒÃ‚Â¡n en la primera subconsulta pero NO en la segunda.
     return db.query(models.Usuario).filter(
         models.Usuario.id.in_(subquery_cantan),
         models.Usuario.id.notin_(subquery_consumen)
@@ -1203,14 +1072,14 @@ def get_usuarios_cantan_pero_no_consumen(db: Session):
 
 def get_consumos_por_usuario(db: Session, usuario_id: int):
     """
-    Obtiene el historial de consumo de un usuario especÃÂ­fico.
+    Obtiene el historial de consumo de un usuario especÃƒÂƒÃ‚Â­fico.
     """
     return db.query(models.Consumo).filter(models.Consumo.usuario_id == usuario_id).order_by(models.Consumo.created_at.desc()).all()
 
 
 def get_recent_consumos(db: Session, limit: int = 10):
     """
-    Devuelve los consumos mÃÂ¡s recientes junto con el nombre del producto,
+    Devuelve los consumos mÃƒÂƒÃ‚Â¡s recientes junto con el nombre del producto,
     nick del usuario y nombre de la mesa (si existe).
     """
     # Hacemos las uniones necesarias para obtener la info deseada
@@ -1232,7 +1101,7 @@ def get_recent_consumos(db: Session, limit: int = 10):
         .all()
     )
 
-    # Mapear a diccionarios/objetos que Pydantic pueda serializar fÃÂ¡cilmente
+    # Mapear a diccionarios/objetos que Pydantic pueda serializar fÃƒÂƒÃ‚Â¡cilmente
     result = []
     for r in rows:
         result.append({
@@ -1248,7 +1117,7 @@ def get_recent_consumos(db: Session, limit: int = 10):
 
 def get_usuarios_mayor_gasto_por_categoria(db: Session, categoria: str, limit: int = 10):
     """
-    Obtiene un reporte de los usuarios que mÃÂ¡s han gastado en una categorÃÂ­a de producto especÃÂ­fica.
+    Obtiene un reporte de los usuarios que mÃƒÂƒÃ‚Â¡s han gastado en una categorÃƒÂƒÃ‚Â­a de producto especÃƒÂƒÃ‚Â­fica.
     """
     return (
         db.query(
@@ -1286,7 +1155,7 @@ def registrar_compra_producto(db: Session, compra: schemas.CompraProducto):
 
 def get_productos_mas_consumidos_por_mesa(db: Session, mesa_id: int, limit: int = 5):
     """
-    Obtiene un reporte de los productos mÃÂ¡s consumidos en una mesa especÃÂ­fica.
+    Obtiene un reporte de los productos mÃƒÂƒÃ‚Â¡s consumidos en una mesa especÃƒÂƒÃ‚Â­fica.
     """
     return (
         db.query(
@@ -1304,7 +1173,7 @@ def get_productos_mas_consumidos_por_mesa(db: Session, mesa_id: int, limit: int 
 
 def get_usuarios_oro_activos(db: Session):
     """
-    Obtiene una lista de usuarios de nivel "Oro" que han cantado mÃÂ¡s de 5 canciones.
+    Obtiene una lista de usuarios de nivel "Oro" que han cantado mÃƒÂƒÃ‚Â¡s de 5 canciones.
     """
     return (
         db.query(models.Usuario)
@@ -1320,7 +1189,7 @@ def get_usuarios_oro_activos(db: Session):
 
 def get_canciones_mas_pedidas_por_mesa(db: Session, mesa_id: int, limit: int = 5):
     """
-    Obtiene un reporte de las canciones mÃÂ¡s pedidas en una mesa especÃÂ­fica.
+    Obtiene un reporte de las canciones mÃƒÂƒÃ‚Â¡s pedidas en una mesa especÃƒÂƒÃ‚Â­fica.
     """
     return (
         db.query(
@@ -1338,16 +1207,16 @@ def get_canciones_mas_pedidas_por_mesa(db: Session, mesa_id: int, limit: int = 5
 
 def get_usuarios_consumen_pero_no_cantan(db: Session, umbral_consumo: float = 100.0):
     """
-    Obtiene una lista de usuarios que han consumido mÃÂ¡s de un umbral
-    pero no han cantado ninguna canciÃÂ³n.
+    Obtiene una lista de usuarios que han consumido mÃƒÂƒÃ‚Â¡s de un umbral
+    pero no han cantado ninguna canciÃƒÂƒÃ‚Â³n.
     """
-    # Subconsulta para obtener los IDs de los usuarios que SÃÂ han cantado.
+    # Subconsulta para obtener los IDs de los usuarios que SÃƒÂƒÃ‚Â han cantado.
     subquery_cantan = db.query(models.Cancion.usuario_id).filter(models.Cancion.estado == 'cantada').distinct()
 
-    # Subconsulta para obtener los IDs de los usuarios que han consumido mÃÂ¡s del umbral.
+    # Subconsulta para obtener los IDs de los usuarios que han consumido mÃƒÂƒÃ‚Â¡s del umbral.
     subquery_consumen_mas_de = db.query(models.Usuario.id).join(models.Consumo).group_by(models.Usuario.id).having(func.sum(models.Consumo.valor_total) > umbral_consumo).subquery()
 
-    # Consulta principal para obtener los usuarios que estÃÂ¡n en la segunda subconsulta pero NO en la primera.
+    # Consulta principal para obtener los usuarios que estÃƒÂƒÃ‚Â¡n en la segunda subconsulta pero NO en la primera.
     return db.query(models.Usuario).filter(
         models.Usuario.id.in_(subquery_consumen_mas_de),
         models.Usuario.id.notin_(subquery_cantan)
@@ -1355,7 +1224,7 @@ def get_usuarios_consumen_pero_no_cantan(db: Session, umbral_consumo: float = 10
 
 def get_categorias_mas_consumidas_por_mesa(db: Session, mesa_id: int, limit: int = 5):
     """
-    Obtiene un reporte de las categorÃÂ­as de productos mÃÂ¡s consumidas en una mesa especÃÂ­fica.
+    Obtiene un reporte de las categorÃƒÂƒÃ‚Â­as de productos mÃƒÂƒÃ‚Â¡s consumidas en una mesa especÃƒÂƒÃ‚Â­fica.
     """
     return (
         db.query(
@@ -1373,9 +1242,9 @@ def get_categorias_mas_consumidas_por_mesa(db: Session, mesa_id: int, limit: int
 
 def get_top_consumers_one_song(db: Session, limit: int = 10):
     """
-    Obtiene un reporte de los usuarios que mÃÂ¡s han consumido pero que solo han cantado una canciÃÂ³n.
+    Obtiene un reporte de los usuarios que mÃƒÂƒÃ‚Â¡s han consumido pero que solo han cantado una canciÃƒÂƒÃ‚Â³n.
     """
-    # Subconsulta para obtener los IDs de los usuarios que han cantado exactamente una canciÃÂ³n.
+    # Subconsulta para obtener los IDs de los usuarios que han cantado exactamente una canciÃƒÂƒÃ‚Â³n.
     subquery_una_cancion = (
         db.query(models.Cancion.usuario_id)
         .filter(models.Cancion.estado == 'cantada')
@@ -1397,12 +1266,12 @@ def get_top_consumers_one_song(db: Session, limit: int = 10):
 
 def get_usuarios_inactivos_consumo(db: Session, horas: int = 2):
     """
-    Obtiene una lista de usuarios cuyo ÃÂºltimo consumo fue hace mÃÂ¡s de X horas,
+    Obtiene una lista de usuarios cuyo ÃƒÂƒÃ‚Âºltimo consumo fue hace mÃƒÂƒÃ‚Â¡s de X horas,
     o que no han consumido nada.
     """
     hora_limite = datetime.datetime.utcnow() - datetime.timedelta(hours=horas)
 
-    # Subconsulta para obtener el ÃÂºltimo consumo de cada usuario
+    # Subconsulta para obtener el ÃƒÂƒÃ‚Âºltimo consumo de cada usuario
     ultimo_consumo_subq = (
         db.query(
             models.Consumo.usuario_id.label("usuario_id"),
@@ -1412,7 +1281,7 @@ def get_usuarios_inactivos_consumo(db: Session, horas: int = 2):
         .subquery()
     )
 
-    # Consulta principal que une usuarios con su ÃÂºltimo consumo
+    # Consulta principal que une usuarios con su ÃƒÂƒÃ‚Âºltimo consumo
     return db.query(models.Usuario).outerjoin(ultimo_consumo_subq, models.Usuario.id == ultimo_consumo_subq.c.usuario_id).filter(
         (ultimo_consumo_subq.c.ultimo_consumo_ts < hora_limite) |
         (ultimo_consumo_subq.c.ultimo_consumo_ts == None)
@@ -1422,7 +1291,7 @@ def get_usuarios_inactivos_consumo(db: Session, horas: int = 2):
 def get_admin_api_key(db: Session, key: str) -> Optional[models.AdminApiKey]:
     """
     Busca una clave de API de administrador en la base de datos,
-    verifica que estÃÂ© activa y actualiza su ÃÂºltimo uso.
+    verifica que estÃƒÂƒÃ‚Â© activa y actualiza su ÃƒÂƒÃ‚Âºltimo uso.
     """
     db_key = db.query(models.AdminApiKey).filter(
         models.AdminApiKey.key == key,
@@ -1459,7 +1328,7 @@ def delete_admin_api_key(db: Session, key_id: int) -> Optional[models.AdminApiKe
 
 def get_consumo_por_mesa(db: Session, mesa_id: int):
     """
-    Obtiene el historial de consumo de una mesa especÃÂ­fica.
+    Obtiene el historial de consumo de una mesa especÃƒÂƒÃ‚Â­fica.
     """
     return (
         db.query(models.Consumo)
@@ -1474,7 +1343,7 @@ def delete_consumo(db: Session, consumo_id: int):
     """
     Elimina un consumo, restaura el stock del producto asociado y recalcula
     los puntos y nivel del usuario correspondiente.
-    Devuelve True si se eliminÃÂ³, o None si no se encontrÃÂ³.
+    Devuelve True si se eliminÃƒÂƒÃ‚Â³, o None si no se encontrÃƒÂƒÃ‚Â³.
     """
     SILVER_THRESHOLD = 50.0
     GOLD_THRESHOLD = 150.0
@@ -1512,11 +1381,11 @@ def delete_consumo(db: Session, consumo_id: int):
     return True
 
 def get_config(db: Session, key: str):
-    """Obtiene un valor de configuraciÃÂ³n por su clave (clave)."""
+    """Obtiene un valor de configuraciÃƒÂƒÃ‚Â³n por su clave (clave)."""
     return db.query(models.ConfiguracionGlobal).filter(models.ConfiguracionGlobal.clave == key).first()
 
 def update_config(db: Session, key: str, value: str):
-    """Establece o actualiza un valor de configuraciÃÂ³n (clave)."""
+    """Establece o actualiza un valor de configuraciÃƒÂƒÃ‚Â³n (clave)."""
     db_config = db.query(models.ConfiguracionGlobal).filter(models.ConfiguracionGlobal.clave == key).first()
     if db_config:
         db_config.value = value
@@ -1530,7 +1399,7 @@ def update_config(db: Session, key: str, value: str):
 def get_or_create_dj_user(db: Session) -> models.Usuario:
     """
     Busca al usuario 'DJ'. Si no existe, lo crea sin asociarlo a una mesa.
-    Este usuario se usa para las canciones aÃÂ±adidas por el administrador.
+    Este usuario se usa para las canciones aÃƒÂƒÃ‚Â±adidas por el administrador.
     """
     dj_user = db.query(models.Usuario).filter(models.Usuario.nick == "DJ").first()
     if not dj_user:
@@ -1542,9 +1411,9 @@ def get_or_create_dj_user(db: Session) -> models.Usuario:
 
 def get_o_crear_usuario_admin_para_mesa(db: Session, mesa_id: int) -> models.Usuario:
     """
-    Busca o crea un usuario administrador para una mesa especÃÂ­fica.
-    Este usuario se utiliza para las canciones aÃÂ±adidas por el admin a travÃÂ©s del dashboard.
-    El nick serÃÂ¡ "ADMIN_Mesa_{mesa_id}".
+    Busca o crea un usuario administrador para una mesa especÃƒÂƒÃ‚Â­fica.
+    Este usuario se utiliza para las canciones aÃƒÂƒÃ‚Â±adidas por el admin a travÃƒÂƒÃ‚Â©s del dashboard.
+    El nick serÃƒÂƒÃ‚Â¡ "ADMIN_Mesa_{mesa_id}".
     """
     admin_nick = f"ADMIN_Mesa_{mesa_id}"
     admin_user = db.query(models.Usuario).filter(models.Usuario.nick == admin_nick).first()
@@ -1559,8 +1428,8 @@ def get_o_crear_usuario_admin_para_mesa(db: Session, mesa_id: int) -> models.Usu
 
 def get_canciones_pendientes_por_aprobar(db: Session):
     """
-    Obtiene las canciones que estÃÂ¡n en estado 'pendiente' (no aprobadas aÃÂºn).
-    Ordenadas por fecha de creaciÃÂ³n.
+    Obtiene las canciones que estÃƒÂƒÃ‚Â¡n en estado 'pendiente' (no aprobadas aÃƒÂƒÃ‚Âºn).
+    Ordenadas por fecha de creaciÃƒÂƒÃ‚Â³n.
     """
     return db.query(models.Cancion).filter(
         models.Cancion.estado == 'pendiente'
@@ -1568,20 +1437,20 @@ def get_canciones_pendientes_por_aprobar(db: Session):
 
 def auto_approve_songs_after_10_minutes(db: Session):
     """
-    Aprueba automáticamente canciones pendientes que ya han pasado 10 minutos desde su creación.
-    RESPETA EL LÍMITE DE COLA: Solo aprueba si hay espacio en la cola de aprobados (max 1).
+    Aprueba automÃ¡ticamente canciones pendientes que ya han pasado 10 minutos desde su creaciÃ³n.
+    RESPETA EL LÃMITE DE COLA: Solo aprueba si hay espacio en la cola de aprobados (max 1).
     """
     from datetime import timedelta
     
     # Verificar cupo en cola aprobada
     approved_count = db.query(models.Cancion).filter(models.Cancion.estado == 'aprobado').count()
     if approved_count >= 1:
-        return [] # No hay cupo, no aprobamos nada automáticamente por tiempo
+        return [] # No hay cupo, no aprobamos nada automÃ¡ticamente por tiempo
         
-    # Calcular cuántas podemos aprobar (solo 1 para llenar el cupo)
-    cupo_disponible = 1 - approved_count # Debería ser 1
+    # Calcular cuÃ¡ntas podemos aprobar (solo 1 para llenar el cupo)
+    cupo_disponible = 1 - approved_count # DeberÃ­a ser 1
     
-    # Obtener canciones pendientes que tienen más de 10 minutos
+    # Obtener canciones pendientes que tienen mÃ¡s de 10 minutos
     time_threshold = now_bogota() - timedelta(minutes=10)
     
     songs_to_auto_approve = db.query(models.Cancion).filter(
@@ -1597,12 +1466,15 @@ def auto_approve_songs_after_10_minutes(db: Session):
     
     if songs_to_auto_approve:
         db.commit()
+        # Notificar al gestor de cola para refrescar
+        from queue_manager import queue_manager
+        queue_manager.refresh_queue(db)
     
     return songs_to_auto_approve
 
 def approve_song_by_admin(db: Session, cancion_id: int):
     """
-    Aprueba una canciÃÂ³n manualmente desde el admin.
+    Aprueba una canciÃƒÂƒÃ‚Â³n manualmente desde el admin.
     Cambia el estado de 'pendiente' a 'aprobado'.
     """
     db_cancion = db.query(models.Cancion).filter(
@@ -1615,24 +1487,27 @@ def approve_song_by_admin(db: Session, cancion_id: int):
         db_cancion.approved_at = now_bogota()
         db.commit()
         db.refresh(db_cancion)
+        # Notificar al gestor de cola para refrescar
+        from queue_manager import queue_manager
+        queue_manager.refresh_queue(db)
     
     return db_cancion
 
 def get_cola_completa(db: Session):
     """
     Obtiene la cola completa, incluyendo:
-    - CanciÃÂ³n actualmente reproduciendo
+    - CanciÃƒÂƒÃ‚Â³n actualmente reproduciendo
     - Cola aprobada (upcoming)
     - Cola pendiente por aprobar
     """
-    # Aplicar aprobaciÃÂ³n automÃÂ¡tica despuÃÂ©s de 10 minutos
+    # Aplicar aprobaciÃƒÂƒÃ‚Â³n automÃƒÂƒÃ‚Â¡tica despuÃƒÂƒÃ‚Â©s de 10 minutos
     auto_approve_songs_after_10_minutes(db)
     
     now_playing = db.query(models.Cancion).filter(models.Cancion.estado == "reproduciendo").first()
     approved_queue = get_cola_priorizada(db)
     pending_queue = get_canciones_pendientes_por_aprobar(db)
 
-    # Si la canciÃÂ³n que se estÃÂ¡ reproduciendo sigue en la lista de 'upcoming', la quitamos.
+    # Si la canciÃƒÂƒÃ‚Â³n que se estÃƒÂƒÃ‚Â¡ reproduciendo sigue en la lista de 'upcoming', la quitamos.
     if now_playing:
         approved_queue = [song for song in approved_queue if song.id != now_playing.id]
 
@@ -1644,7 +1519,7 @@ def get_cola_completa(db: Session):
 
 def set_mesa_active_status(db: Session, mesa_id: int, is_active: bool) -> Optional[models.Mesa]:
     """
-    Actualiza el estado de activaciÃÂ³n de una mesa.
+    Actualiza el estado de activaciÃƒÂƒÃ‚Â³n de una mesa.
     """
     db_mesa = db.query(models.Mesa).filter(models.Mesa.id == mesa_id).first()
     if db_mesa:
@@ -1700,7 +1575,7 @@ def get_all_tables_consumption_summaries(db: Session) -> List[dict]:
 
 def create_pago_for_mesa(db: Session, pago: schemas.PagoCreate) -> models.Pago:
     """
-    Registra un nuevo pago para una mesa especÃÂ­fica.
+    Registra un nuevo pago para una mesa especÃƒÂƒÃ‚Â­fica.
     """
     db_mesa = get_mesa_by_id(db, mesa_id=pago.mesa_id)
     if not db_mesa:
@@ -1725,7 +1600,7 @@ def create_pago_for_mesa(db: Session, pago: schemas.PagoCreate) -> models.Pago:
 def get_all_tables_payment_status(db: Session) -> List[dict]:
     """
     Obtiene un estado de cuenta detallado para todas las mesas ACTIVAS, incluyendo
-    consumos, pagos y saldo pendiente. Solo devuelve mesas que están activas (is_active=True).
+    consumos, pagos y saldo pendiente. Solo devuelve mesas que estÃ¡n activas (is_active=True).
     """
     mesas = db.query(models.Mesa).filter(models.Mesa.is_active == True).order_by(models.Mesa.nombre).all()
     
@@ -1795,19 +1670,19 @@ def get_all_tables_payment_status(db: Session) -> List[dict]:
 
 def get_table_payment_status(db: Session, mesa_id: int) -> Optional[dict]:
     """
-    Obtiene un estado de cuenta detallado para una mesa especÃÂ­fica.
+    Obtiene un estado de cuenta detallado para una mesa especÃƒÂƒÃ‚Â­fica.
     CAMBIO: Se obtiene el estado de la CUENTA ACTIVA de la mesa.
     """
     # 1. Obtener la cuenta activa
-    # Nota: Usamos la funciÃÂ³n helper definida abajo. Como Python permite referencias forward en runtime,
-    # esto funcionarÃÂ¡ siempre que se llame despuÃÂ©s de definir get_active_cuenta.
-    # Pero para estar seguros, la importaremos o asumiremos que estÃÂ¡ en el scope global del mÃÂ³dulo.
-    # Dado que get_active_cuenta estÃÂ¡ en este mismo archivo, estÃÂ¡ bien.
+    # Nota: Usamos la funciÃƒÂƒÃ‚Â³n helper definida abajo. Como Python permite referencias forward en runtime,
+    # esto funcionarÃƒÂƒÃ‚Â¡ siempre que se llame despuÃƒÂƒÃ‚Â©s de definir get_active_cuenta.
+    # Pero para estar seguros, la importaremos o asumiremos que estÃƒÂƒÃ‚Â¡ en el scope global del mÃƒÂƒÃ‚Â³dulo.
+    # Dado que get_active_cuenta estÃƒÂƒÃ‚Â¡ en este mismo archivo, estÃƒÂƒÃ‚Â¡ bien.
     
     active_cuenta = get_active_cuenta(db, mesa_id)
     
     if not active_cuenta:
-         # Si no hay cuenta activa, devolvemos un estado vacÃÂ­o pero vÃÂ¡lido
+         # Si no hay cuenta activa, devolvemos un estado vacÃƒÂƒÃ‚Â­o pero vÃƒÂƒÃ‚Â¡lido
          mesa = get_mesa_by_id(db, mesa_id)
          if not mesa: return None
          return schemas.MesaEstadoPago(
@@ -1820,11 +1695,11 @@ def get_table_payment_status(db: Session, mesa_id: int) -> Optional[dict]:
 async def start_next_song_if_autoplay_and_idle(db: Session):
     """
     Verifica si no hay nada sonando y si hay canciones en la cola.
-    Si se cumplen las condiciones, inicia la siguiente canciÃÂ³n automÃÂ¡ticamente.
+    Si se cumplen las condiciones, inicia la siguiente canciÃƒÂƒÃ‚Â³n automÃƒÂƒÃ‚Â¡ticamente.
     """
     import websocket_manager
 
-    # Verificamos si ya hay una canciÃÂ³n en estado 'reproduciendo'
+    # Verificamos si ya hay una canciÃƒÂƒÃ‚Â³n en estado 'reproduciendo'
     is_playing = db.query(models.Cancion).filter(models.Cancion.estado == "reproduciendo").first()
     if is_playing:
         return
@@ -1833,42 +1708,42 @@ async def start_next_song_if_autoplay_and_idle(db: Session):
     next_song = marcar_siguiente_como_reproduciendo(db)
 
     if next_song:
-        # Si se encontrÃÂ³ una siguiente canciÃÂ³n, notificamos a todos los clientes
+        # Si se encontrÃƒÂƒÃ‚Â³ una siguiente canciÃƒÂƒÃ‚Â³n, notificamos a todos los clientes
         # para que la cola se actualice y el reproductor comience a reproducir.
         await websocket_manager.manager.broadcast_queue_update()
         await websocket_manager.manager.broadcast_play_song(next_song.youtube_id, next_song.duracion_seconds or 0)
-        create_admin_log_entry(db, action="AUTO_START", details=f"Iniciada automÃÂ¡ticamente la canciÃÂ³n '{next_song.titulo}'.")
+        create_admin_log_entry(db, action="AUTO_START", details=f"Iniciada automÃƒÂƒÃ‚Â¡ticamente la canciÃƒÂƒÃ‚Â³n '{next_song.titulo}'.")
 
 async def avanzar_cola_automaticamente(db: Session):
     """
-    FunciÃÂ³n central para avanzar la cola: marca la canciÃÂ³n actual como cantada,
+    FunciÃƒÂƒÃ‚Â³n central para avanzar la cola: marca la canciÃƒÂƒÃ‚Â³n actual como cantada,
     inicia la siguiente y notifica a todos los clientes.
-    Esta funciÃÂ³n es llamada tanto por el autoplay como por el botÃÂ³n manual.
+    Esta funciÃƒÂƒÃ‚Â³n es llamada tanto por el autoplay como por el botÃƒÂƒÃ‚Â³n manual.
     """
     import websocket_manager
 
-    # 1. Marcar la canciÃÂ³n actual como 'cantada' y obtener sus datos
+    # 1. Marcar la canciÃƒÂƒÃ‚Â³n actual como 'cantada' y obtener sus datos
     cancion_cantada = marcar_cancion_actual_como_cantada(db)
     if cancion_cantada:
-        # Notificar a todos que la canciÃÂ³n terminÃÂ³ (para mostrar puntajes, etc.)
+        # Notificar a todos que la canciÃƒÂƒÃ‚Â³n terminÃƒÂƒÃ‚Â³ (para mostrar puntajes, etc.)
         await websocket_manager.manager.broadcast_song_finished(cancion_cantada)
 
-    # 2. Marcar la siguiente canciÃÂ³n como 'reproduciendo'
+    # 2. Marcar la siguiente canciÃƒÂƒÃ‚Â³n como 'reproduciendo'
     siguiente_cancion = marcar_siguiente_como_reproduciendo(db)
 
-    # 3. Notificar a todos los clientes sobre la actualizaciÃÂ³n de la cola
+    # 3. Notificar a todos los clientes sobre la actualizaciÃƒÂƒÃ‚Â³n de la cola
     await websocket_manager.manager.broadcast_queue_update()
 
-    # 4. Si hay una nueva canciÃÂ³n, enviar la orden de reproducciÃÂ³n al player
+    # 4. Si hay una nueva canciÃƒÂƒÃ‚Â³n, enviar la orden de reproducciÃƒÂƒÃ‚Â³n al player
     if siguiente_cancion:
         await websocket_manager.manager.broadcast_play_song(siguiente_cancion.youtube_id, siguiente_cancion.duracion_seconds or 0)
 
 
-    # 5. Aprobar la siguiente canciÃ³n lazy si es necesario
+    # 5. Aprobar la siguiente canciÃƒÂ³n lazy si es necesario
     check_and_approve_next_lazy_song(db)
 
 
-    # 5. Aprobar la siguiente canciÃ³n lazy si es necesario
+    # 5. Aprobar la siguiente canciÃƒÂ³n lazy si es necesario
     check_and_approve_next_lazy_song(db)
 
     return siguiente_cancion
@@ -1895,14 +1770,14 @@ def registrar_compra_producto(db: Session, compra: schemas.CompraProducto):
 
 def get_consumos_por_usuario(db: Session, usuario_id: int):
     """
-    Obtiene el historial de consumo de un usuario especÃÂ­fico.
+    Obtiene el historial de consumo de un usuario especÃƒÂƒÃ‚Â­fico.
     """
     return db.query(models.Consumo).filter(models.Consumo.usuario_id == usuario_id).order_by(models.Consumo.created_at.desc()).all()
 
 
 def get_recent_consumos(db: Session, limit: int = 10):
     """
-    Devuelve los consumos mÃÂ¡s recientes junto con el nombre del producto,
+    Devuelve los consumos mÃƒÂƒÃ‚Â¡s recientes junto con el nombre del producto,
     nick del usuario y nombre de la mesa (si existe).
     Filtra los consumos que ya han sido despachados.
     """
@@ -1926,7 +1801,7 @@ def get_recent_consumos(db: Session, limit: int = 10):
         .all()
     )
 
-    # Mapear a diccionarios/objetos que Pydantic pueda serializar fÃÂ¡cilmente
+    # Mapear a diccionarios/objetos que Pydantic pueda serializar fÃƒÂƒÃ‚Â¡cilmente
     result = []
     for r in rows:
         result.append({
@@ -1942,7 +1817,7 @@ def get_recent_consumos(db: Session, limit: int = 10):
 
 def get_usuarios_mayor_gasto_por_categoria(db: Session, categoria: str, limit: int = 10):
     """
-    Obtiene un reporte de los usuarios que mÃÂ¡s han gastado en una categorÃÂ­a de producto especÃÂ­fica.
+    Obtiene un reporte de los usuarios que mÃƒÂƒÃ‚Â¡s han gastado en una categorÃƒÂƒÃ‚Â­a de producto especÃƒÂƒÃ‚Â­fica.
     """
     return (
         db.query(
@@ -2045,7 +1920,7 @@ def get_cuenta_by_id(db: Session, cuenta_id: int):
 
 def get_cuenta_payment_status(db: Session, cuenta_id: int) -> Optional[dict]:
     """
-    Obtiene el estado de pago de una CUENTA especÃÂ­fica (activa o cerrada).
+    Obtiene el estado de pago de una CUENTA especÃƒÂƒÃ‚Â­fica (activa o cerrada).
     """
     cuenta = get_cuenta_by_id(db, cuenta_id)
     if not cuenta:
@@ -2097,7 +1972,7 @@ def get_cuenta_payment_status(db: Session, cuenta_id: int) -> Optional[dict]:
         consumos=consumos_items, 
         pagos=pagos_detalle,
         nivel=("oro" if total_consumido >= 150000 else "plata" if total_consumido >= 50000 else "bronce")
-    ).model_dump()# CÃÂ³digo para agregar al final de crud.py
+    ).model_dump()# CÃƒÂƒÃ‚Â³digo para agregar al final de crud.py
 
 
 
@@ -2211,8 +2086,8 @@ def get_cola_lazy(db: Session):
 
 def aprobar_siguiente_cancion_lazy(db: Session):
     """
-    Aprueba la siguiente canciÃ³n de la cola lazy.
-    Llamada automÃ¡ticamente cuando la canciÃ³n actual llega al 50%.
+    Aprueba la siguiente canciÃƒÂ³n de la cola lazy.
+    Llamada automÃƒÂ¡ticamente cuando la canciÃƒÂ³n actual llega al 50%.
     """
     cola_lazy = get_cola_lazy(db)
     if not cola_lazy:
@@ -2229,14 +2104,14 @@ def aprobar_siguiente_cancion_lazy(db: Session):
 
 def get_cola_completa_con_lazy(db: Session):
     """
-    VersiÃ³n extendida de get_cola_completa que incluye la cola lazy.
+    VersiÃƒÂ³n extendida de get_cola_completa que incluye la cola lazy.
     Retorna:
-    - now_playing: CanciÃ³n actual
-    - upcoming: Solo la siguiente canciÃ³n aprobada (mÃ¡ximo 1)
+    - now_playing: CanciÃƒÂ³n actual
+    - upcoming: Solo la siguiente canciÃƒÂ³n aprobada (mÃƒÂ¡ximo 1)
     - lazy_queue: Canciones en pendiente_lazy
-    - pending: Canciones pendientes de aprobaciÃ³n manual
+    - pending: Canciones pendientes de aprobaciÃƒÂ³n manual
     """
-    # Aplicar aprobaciÃ³n automÃ¡tica despuÃ©s de 10 minutos
+    # Aplicar aprobaciÃƒÂ³n automÃƒÂ¡tica despuÃƒÂ©s de 10 minutos
     auto_approve_songs_after_10_minutes(db)
     
     now_playing = db.query(models.Cancion).filter(models.Cancion.estado == "reproduciendo").first()
@@ -2244,11 +2119,11 @@ def get_cola_completa_con_lazy(db: Session):
     lazy_queue = get_cola_lazy(db)
     pending_queue = get_canciones_pendientes_por_aprobar(db)
     
-    # Si la canciÃ³n que se estÃ¡ reproduciendo sigue en la lista de upcoming, la quitamos
+    # Si la canciÃƒÂ³n que se estÃƒÂ¡ reproduciendo sigue en la lista de upcoming, la quitamos
     if now_playing:
         approved_queue = [song for song in approved_queue if song.id != now_playing.id]
     
-    # Limitar upcoming a mÃ¡ximo 1 canciÃ³n (la siguiente)
+    # Limitar upcoming a mÃƒÂ¡ximo 1 canciÃƒÂ³n (la siguiente)
     upcoming_limited = approved_queue[:1] if approved_queue else []
     
     return {
@@ -2261,13 +2136,13 @@ def get_cola_completa_con_lazy(db: Session):
 def check_and_approve_next_lazy_song(db: Session):
     """
     Verifica si hay espacio en la cola de aprobados y aprueba la siguiente lazy.
-    Regla: Mantener MÁXIMO 1 canción aprobada (upcoming) esperando, aparte de la que suena.
-    Esta función es llamada por un background task periódicamente o al avanzar canción.
+    Regla: Mantener MÃXIMO 1 canciÃ³n aprobada (upcoming) esperando, aparte de la que suena.
+    Esta funciÃ³n es llamada por un background task periÃ³dicamente o al avanzar canciÃ³n.
     """
-    # Contar cuántas canciones hay en estado 'aprobado'
+    # Contar cuÃ¡ntas canciones hay en estado 'aprobado'
     approved_count = db.query(models.Cancion).filter(models.Cancion.estado == "aprobado").count()
     
-    # Si hay menos de 1 canción aprobada (es decir, 0), aprobamos la siguiente de la lazy
+    # Si hay menos de 1 canciÃ³n aprobada (es decir, 0), aprobamos la siguiente de la lazy
     if approved_count < 1:
         return aprobar_siguiente_cancion_lazy(db)
     
@@ -2292,9 +2167,9 @@ def update_consumo_cantidad(db: Session, consumo_id: int, delta: int):
     # 3. Validar nueva cantidad
     nueva_cantidad = db_consumo.cantidad + delta
     
-    # Si la nueva cantidad es menor que 1, no permitimos la operación (para eliminar, usar delete explícito)
+    # Si la nueva cantidad es menor que 1, no permitimos la operaciÃ³n (para eliminar, usar delete explÃ­cito)
     if nueva_cantidad < 1:
-        return None, "La cantidad mínima es 1. Elimine el producto si desea removerlo."
+        return None, "La cantidad mÃ­nima es 1. Elimine el producto si desea removerlo."
     
     # 4. Validar stock si estamos aumentando
     if delta > 0:
@@ -2303,7 +2178,7 @@ def update_consumo_cantidad(db: Session, consumo_id: int, delta: int):
     
     # 5. Actualizar stock
     # Si delta es positivo (aumento), restamos del stock.
-    # Si delta es negativo (disminución), sumamos al stock (delta es negativo, así que -= delta es restar un negativo -> sumar).
+    # Si delta es negativo (disminuciÃ³n), sumamos al stock (delta es negativo, asÃ­ que -= delta es restar un negativo -> sumar).
     db_producto.stock -= delta
     
     # 6. Actualizar consumo
@@ -2315,7 +2190,7 @@ def update_consumo_cantidad(db: Session, consumo_id: int, delta: int):
     
     # 7. Actualizar puntos del usuario si corresponde (opcional, pero consistente)
     # Revertimos puntos anteriores y sumamos nuevos, o ajustamos por la diferencia.
-    # Lógica de puntos: 1 punto por cada 10 de valor.
+    # LÃ³gica de puntos: 1 punto por cada 10 de valor.
     # Diferencia de valor:
     diferencia_valor = valor_unitario * delta
     puntos_delta = int(diferencia_valor / 10)
@@ -2329,10 +2204,10 @@ def update_consumo_cantidad(db: Session, consumo_id: int, delta: int):
     return db_consumo, None
 def move_lazy_song_up(db: Session, cancion_id: int, usuario_id: int):
     """
-    Mueve una canción (pendiente, pendiente_lazy o aprobado) hacia arriba en la cola del usuario.
+    Mueve una canciÃ³n (pendiente, pendiente_lazy o aprobado) hacia arriba en la cola del usuario.
     Solo funciona para canciones del usuario actual.
     """
-    # 1. Validar que la canción existe, está en pendiente, pendiente_lazy o aprobado, y pertenece al usuario
+    # 1. Validar que la canciÃ³n existe, estÃ¡ en pendiente, pendiente_lazy o aprobado, y pertenece al usuario
     cancion = db.query(models.Cancion).filter(
         models.Cancion.id == cancion_id,
         models.Cancion.estado.in_(['pendiente', 'pendiente_lazy', 'aprobado']),
@@ -2358,10 +2233,10 @@ def move_lazy_song_up(db: Session, cancion_id: int, usuario_id: int):
     )
     
     if len(canciones_usuario) <= 1:
-        # Si hay solo una canción, no se puede mover
+        # Si hay solo una canciÃ³n, no se puede mover
         return cancion
     
-    # 3. Encontrar el índice de la canción actual
+    # 3. Encontrar el Ã­ndice de la canciÃ³n actual
     indice_actual = None
     for i, c in enumerate(canciones_usuario):
         if c.id == cancion_id:
@@ -2369,13 +2244,13 @@ def move_lazy_song_up(db: Session, cancion_id: int, usuario_id: int):
             break
     
     if indice_actual is None or indice_actual == 0:
-        # No encontrado o ya está al principio
+        # No encontrado o ya estÃ¡ al principio
         return cancion
     
-    # 4. Intercambiar orden con la canción anterior
+    # 4. Intercambiar orden con la canciÃ³n anterior
     cancion_anterior = canciones_usuario[indice_actual - 1]
     
-    # Si la canción anterior tiene orden_manual, incrementamos el orden de la actual
+    # Si la canciÃ³n anterior tiene orden_manual, incrementamos el orden de la actual
     if cancion_anterior.orden_manual is not None:
         # Asignar un orden entre la anterior y la siguiente (si existe)
         nuevo_orden = cancion_anterior.orden_manual - 0.5
@@ -2392,10 +2267,10 @@ def move_lazy_song_up(db: Session, cancion_id: int, usuario_id: int):
 
 def move_lazy_song_down(db: Session, cancion_id: int, usuario_id: int):
     """
-    Mueve una canción (pendiente, pendiente_lazy o aprobado) hacia abajo en la cola del usuario.
+    Mueve una canciÃ³n (pendiente, pendiente_lazy o aprobado) hacia abajo en la cola del usuario.
     Solo funciona para canciones del usuario actual.
     """
-    # 1. Validar que la canción existe, está en pendiente, pendiente_lazy o aprobado, y pertenece al usuario
+    # 1. Validar que la canciÃ³n existe, estÃ¡ en pendiente, pendiente_lazy o aprobado, y pertenece al usuario
     cancion = db.query(models.Cancion).filter(
         models.Cancion.id == cancion_id,
         models.Cancion.estado.in_(['pendiente', 'pendiente_lazy', 'aprobado']),
@@ -2421,10 +2296,10 @@ def move_lazy_song_down(db: Session, cancion_id: int, usuario_id: int):
     )
     
     if len(canciones_usuario) <= 1:
-        # Si hay solo una canción, no se puede mover
+        # Si hay solo una canciÃ³n, no se puede mover
         return cancion
     
-    # 3. Encontrar el índice de la canción actual
+    # 3. Encontrar el Ã­ndice de la canciÃ³n actual
     indice_actual = None
     for i, c in enumerate(canciones_usuario):
         if c.id == cancion_id:
@@ -2432,13 +2307,13 @@ def move_lazy_song_down(db: Session, cancion_id: int, usuario_id: int):
             break
     
     if indice_actual is None or indice_actual == len(canciones_usuario) - 1:
-        # No encontrado o ya está al final
+        # No encontrado o ya estÃ¡ al final
         return cancion
     
-    # 4. Intercambiar orden con la canción siguiente
+    # 4. Intercambiar orden con la canciÃ³n siguiente
     cancion_siguiente = canciones_usuario[indice_actual + 1]
     
-    # Asignar orden entre la canción siguiente y la anterior (si existe)
+    # Asignar orden entre la canciÃ³n siguiente y la anterior (si existe)
     if cancion_siguiente.orden_manual is not None:
         nuevo_orden = cancion_siguiente.orden_manual + 0.5
     else:
@@ -2453,20 +2328,20 @@ def move_lazy_song_down(db: Session, cancion_id: int, usuario_id: int):
     return cancion
 
 # ============================================================================
-# FUNCIONES PARA SISTEMA DE CRÉDITOS DE CANCIONES
+# FUNCIONES PARA SISTEMA DE CRÃ‰DITOS DE CANCIONES
 # ============================================================================
 
 def add_song_credits(db: Session, usuario_id: int, credit_value: int):
     """
-    Agrega créditos de canción a un usuario.
-    Los créditos se asignan por el valor en pesos de los productos comprados.
-    Ejemplo: Cerveza 5000 pesos = 5000 créditos
+    Agrega crÃ©ditos de canciÃ³n a un usuario.
+    Los crÃ©ditos se asignan por el valor en pesos de los productos comprados.
+    Ejemplo: Cerveza 5000 pesos = 5000 crÃ©ditos
     """
     db_usuario = db.query(models.Usuario).filter(models.Usuario.id == usuario_id).first()
     if not db_usuario:
         return None
     
-    # Crear nuevo registro de créditos
+    # Crear nuevo registro de crÃ©ditos
     new_credit = models.SongCredits(
         usuario_id=usuario_id,
         credits_value=credit_value,
@@ -2480,14 +2355,14 @@ def add_song_credits(db: Session, usuario_id: int, credit_value: int):
 
 def get_available_song_credits(db: Session, usuario_id: int) -> int:
     """
-    Obtiene los créditos disponibles para un usuario.
-    Los créditos decaen 100 por minuto desde su creación.
+    Obtiene los crÃ©ditos disponibles para un usuario.
+    Los crÃ©ditos decaen 100 por minuto desde su creaciÃ³n.
     """
     db_usuario = db.query(models.Usuario).filter(models.Usuario.id == usuario_id).first()
     if not db_usuario:
         return 0
     
-    # Obtener todos los créditos no consumidos del usuario
+    # Obtener todos los crÃ©ditos no consumidos del usuario
     credits = db.query(models.SongCredits).filter(
         models.SongCredits.usuario_id == usuario_id,
         models.SongCredits.consumed_at.is_(None),  # No ha sido consumido
@@ -2498,7 +2373,7 @@ def get_available_song_credits(db: Session, usuario_id: int) -> int:
     current_time = now_bogota()
     
     for credit in credits:
-        # Calcular minutos transcurridos desde la creación usando función segura
+        # Calcular minutos transcurridos desde la creaciÃ³n usando funciÃ³n segura
         seconds_elapsed = safe_datetime_diff(current_time, credit.created_at)
         minutes_elapsed = seconds_elapsed / 60
         
@@ -2517,8 +2392,8 @@ def get_available_song_credits(db: Session, usuario_id: int) -> int:
 
 def get_user_credits_detail(db: Session, usuario_id: int) -> dict:
     """
-    Obtiene información detallada de los créditos de un usuario,
-    incluyendo el valor actual y cuánto tiempo le queda.
+    Obtiene informaciÃ³n detallada de los crÃ©ditos de un usuario,
+    incluyendo el valor actual y cuÃ¡nto tiempo le queda.
     """
     db_usuario = db.query(models.Usuario).filter(models.Usuario.id == usuario_id).first()
     if not db_usuario:
@@ -2559,15 +2434,15 @@ def get_user_credits_detail(db: Session, usuario_id: int) -> dict:
 
 def consume_song_credit(db: Session, usuario_id: int, cancion_id: int) -> bool:
     """
-    Consume un crédito de canción cuando el usuario agrega una canción.
-    Retorna True si hay crédito disponible, False si no.
+    Consume un crÃ©dito de canciÃ³n cuando el usuario agrega una canciÃ³n.
+    Retorna True si hay crÃ©dito disponible, False si no.
     """
     available_credits = get_available_song_credits(db, usuario_id)
     
     if available_credits <= 0:
         return False
     
-    # Obtener el primer crédito que tenga valor disponible
+    # Obtener el primer crÃ©dito que tenga valor disponible
     credits = db.query(models.SongCredits).filter(
         models.SongCredits.usuario_id == usuario_id,
         models.SongCredits.consumed_at.is_(None),
@@ -2575,7 +2450,7 @@ def consume_song_credit(db: Session, usuario_id: int, cancion_id: int) -> bool:
     ).order_by(models.SongCredits.created_at).all()
     
     current_time = now_bogota()
-    remaining_to_consume = 1  # Una canción consume 1 crédito lógico
+    remaining_to_consume = 1  # Una canciÃ³n consume 1 crÃ©dito lÃ³gico
     
     for credit in credits:
         seconds_elapsed = safe_datetime_diff(current_time, credit.created_at)
@@ -2583,7 +2458,7 @@ def consume_song_credit(db: Session, usuario_id: int, cancion_id: int) -> bool:
         remaining_credit = max(0, credit.credits_value - int(minutes_elapsed * 100))
         
         if remaining_credit > 0:
-            # Este crédito tiene valor, lo usamos para esta canción
+            # Este crÃ©dito tiene valor, lo usamos para esta canciÃ³n
             credit.consumed_at = ensure_aware(current_time)
             credit.consumed_by_song_id = cancion_id
             db.commit()

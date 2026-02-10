@@ -4747,3 +4747,100 @@ TypeError: can't subtract offset-naive and offset-aware datetimes
 2026-02-10 09:37:48,506 - random_scorer - INFO - Puntaje aleatorio calculado: 95
 2026-02-10 09:37:48,736 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=8veX6aXeaBU, duration_seconds=266
 2026-02-10 09:42:24,605 - random_scorer - INFO - Puntaje aleatorio calculado: 97
+2026-02-10 09:52:56,285 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'el mayor de los ranas'
+2026-02-10 09:52:56,296 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'el mayor de los ranas' (Karaoke Mode: False)
+2026-02-10 09:52:58,398 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-02-10 09:52:58,399 - youtube - INFO - Búsqueda por texto: 'el mayor de los ranas'
+2026-02-10 09:52:58,401 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-02-10 09:52:59,337 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=el+mayor+de+los+ranas&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-02-10 09:52:59,353 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-02-10 09:52:59,353 - youtube - INFO - IDs de video encontrados: ['1a3REFH83WA', '4Ez2wJnlwag', 'ftfeDRZA5iE', 'DjfaCC3ZKs8', 'onGJj-JIBZk', 'IRSedFplzCc', '2JbrCXDNGcA', 'rERCTLp4CK8', 'UAAy5oTPUOE', 'UjYXahcriA0', 'eHflKESzSEY', '6kYEW6oQfpw', 'k1jzUtKrFk0', 'CfGKChXwc4s', '8fq90aeRBx4', 'nBhUJ9Rf8s0', '1wC6r7L1RvA', 'gEejTe7PHxs', 'DWUpLPxb-lA', 'BUUvW6XJIik', 'Dbfydpz2Vec', 'dg-Xh5NNMIk', 'Fzf8tGmrND8', '4oBqfKh3Clg', 'jnMe0PuOQW8']
+2026-02-10 09:52:59,361 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-02-10 09:52:59,578 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=1a3REFH83WA%2C4Ez2wJnlwag%2CftfeDRZA5iE%2CDjfaCC3ZKs8%2ConGJj-JIBZk%2CIRSedFplzCc%2C2JbrCXDNGcA%2CrERCTLp4CK8%2CUAAy5oTPUOE%2CUjYXahcriA0%2CeHflKESzSEY%2C6kYEW6oQfpw%2Ck1jzUtKrFk0%2CCfGKChXwc4s%2C8fq90aeRBx4%2CnBhUJ9Rf8s0%2C1wC6r7L1RvA%2CgEejTe7PHxs%2CDWUpLPxb-lA%2CBUUvW6XJIik%2CDbfydpz2Vec%2Cdg-Xh5NNMIk%2CFzf8tGmrND8%2C4oBqfKh3Clg%2CjnMe0PuOQW8&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-02-10 09:52:59,604 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-02-10 09:52:59,616 - youtube - INFO - Procesamiento finalizado. Se encontraron 23 resultados formateados.
+2026-02-10 09:52:59,677 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'el mayor de los ranas'
+2026-02-10 09:52:59,681 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'el mayor de los ranas' (Karaoke Mode: False)
+2026-02-10 09:53:02,034 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-02-10 09:53:02,036 - youtube - INFO - Búsqueda por texto: 'el mayor de los ranas'
+2026-02-10 09:53:02,044 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-02-10 09:53:02,425 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=1a3REFH83WA, duration_seconds=175
+2026-02-10 09:53:03,157 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=el+mayor+de+los+ranas&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-02-10 09:53:03,172 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-02-10 09:53:03,172 - youtube - INFO - IDs de video encontrados: ['1a3REFH83WA', '4Ez2wJnlwag', 'ftfeDRZA5iE', 'DjfaCC3ZKs8', 'onGJj-JIBZk', 'IRSedFplzCc', '2JbrCXDNGcA', 'rERCTLp4CK8', 'UjYXahcriA0', 'UAAy5oTPUOE']
+2026-02-10 09:53:03,188 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-02-10 09:53:03,565 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=1a3REFH83WA%2C4Ez2wJnlwag%2CftfeDRZA5iE%2CDjfaCC3ZKs8%2ConGJj-JIBZk%2CIRSedFplzCc%2C2JbrCXDNGcA%2CrERCTLp4CK8%2CUjYXahcriA0%2CUAAy5oTPUOE&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-02-10 09:53:03,583 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-02-10 09:53:03,585 - youtube - INFO - Procesamiento finalizado. Se encontraron 10 resultados formateados.
+2026-02-10 09:53:32,879 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'vallenatos'
+2026-02-10 09:53:32,881 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'vallenatos' (Karaoke Mode: False)
+2026-02-10 09:53:34,754 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-02-10 09:53:34,755 - youtube - INFO - Búsqueda por texto: 'vallenatos'
+2026-02-10 09:53:34,755 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-02-10 09:53:35,426 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=vallenatos&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-02-10 09:53:35,436 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-02-10 09:53:35,439 - youtube - INFO - IDs de video encontrados: ['oYobLFYuTXs', 'bKSMX4K_ceM', '8veX6aXeaBU', 'khId1CnKIv4', '1UeVZr7Nmc4', '-HFP9HnLFpA', 'Povw_G4L9r0', 'KvjV6RMjfBo', 'JoFk4xc8fQ8', 'qVr_3bE1JwQ']
+2026-02-10 09:53:35,449 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-02-10 09:53:35,686 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=oYobLFYuTXs%2CbKSMX4K_ceM%2C8veX6aXeaBU%2CkhId1CnKIv4%2C1UeVZr7Nmc4%2C-HFP9HnLFpA%2CPovw_G4L9r0%2CKvjV6RMjfBo%2CJoFk4xc8fQ8%2CqVr_3bE1JwQ&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-02-10 09:53:35,703 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-02-10 09:53:35,705 - youtube - INFO - Procesamiento finalizado. Se encontraron 9 resultados formateados.
+2026-02-10 09:53:35,721 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'vallenatos'
+2026-02-10 09:53:35,745 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'vallenatos' (Karaoke Mode: False)
+2026-02-10 09:53:37,484 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-02-10 09:53:37,484 - youtube - INFO - Búsqueda por texto: 'vallenatos'
+2026-02-10 09:53:37,502 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-02-10 09:53:38,105 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=vallenatos&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-02-10 09:53:38,109 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-02-10 09:53:38,110 - youtube - INFO - IDs de video encontrados: ['oYobLFYuTXs', 'bKSMX4K_ceM', '8veX6aXeaBU', 'khId1CnKIv4', '1UeVZr7Nmc4', '-HFP9HnLFpA', 'Povw_G4L9r0', 'KvjV6RMjfBo', 'JoFk4xc8fQ8', 'Cy6NeCNS8Qc']
+2026-02-10 09:53:38,112 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-02-10 09:53:38,307 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=oYobLFYuTXs%2CbKSMX4K_ceM%2C8veX6aXeaBU%2CkhId1CnKIv4%2C1UeVZr7Nmc4%2C-HFP9HnLFpA%2CPovw_G4L9r0%2CKvjV6RMjfBo%2CJoFk4xc8fQ8%2CCy6NeCNS8Qc&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-02-10 09:53:38,317 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-02-10 09:53:38,317 - youtube - INFO - Procesamiento finalizado. Se encontraron 9 resultados formateados.
+2026-02-10 09:54:00,599 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'vallenatos yan carlos centeno'
+2026-02-10 09:54:00,602 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'vallenatos yan carlos centeno' (Karaoke Mode: False)
+2026-02-10 09:54:02,255 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-02-10 09:54:02,255 - youtube - INFO - Búsqueda por texto: 'vallenatos yan carlos centeno'
+2026-02-10 09:54:02,255 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-02-10 09:54:02,952 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=vallenatos+yan+carlos+centeno&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-02-10 09:54:02,970 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-02-10 09:54:02,975 - youtube - INFO - IDs de video encontrados: ['V7F1nKWZWig', 'm3OExF24Ma8', 'Mvypo7rT378', '_s3hqxDkFlU', 'wDeZiEZGS3Q', 't1qZIGxcSfM', 'oYobLFYuTXs', 'KDUb2seKR0c', 'DlkS22tpvi4', 'rBYTilqGJZA']
+2026-02-10 09:54:02,977 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-02-10 09:54:03,151 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=V7F1nKWZWig%2Cm3OExF24Ma8%2CMvypo7rT378%2C_s3hqxDkFlU%2CwDeZiEZGS3Q%2Ct1qZIGxcSfM%2CoYobLFYuTXs%2CKDUb2seKR0c%2CDlkS22tpvi4%2CrBYTilqGJZA&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-02-10 09:54:03,156 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-02-10 09:54:03,165 - youtube - INFO - Procesamiento finalizado. Se encontraron 8 resultados formateados.
+2026-02-10 09:54:03,186 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'vallenatos yan carlos centeno'
+2026-02-10 09:54:03,210 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'vallenatos yan carlos centeno' (Karaoke Mode: False)
+2026-02-10 09:54:04,897 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-02-10 09:54:04,898 - youtube - INFO - Búsqueda por texto: 'vallenatos yan carlos centeno'
+2026-02-10 09:54:04,900 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-02-10 09:54:05,536 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=vallenatos+yan+carlos+centeno&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-02-10 09:54:05,542 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-02-10 09:54:05,542 - youtube - INFO - IDs de video encontrados: ['V7F1nKWZWig', 'm3OExF24Ma8', 'Mvypo7rT378', '_s3hqxDkFlU', 'wDeZiEZGS3Q', 't1qZIGxcSfM', 'oYobLFYuTXs', 'KDUb2seKR0c', 'DlkS22tpvi4', 'rBYTilqGJZA']
+2026-02-10 09:54:05,543 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-02-10 09:54:05,913 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=V7F1nKWZWig%2Cm3OExF24Ma8%2CMvypo7rT378%2C_s3hqxDkFlU%2CwDeZiEZGS3Q%2Ct1qZIGxcSfM%2CoYobLFYuTXs%2CKDUb2seKR0c%2CDlkS22tpvi4%2CrBYTilqGJZA&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-02-10 09:54:05,992 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-02-10 09:54:05,994 - youtube - INFO - Procesamiento finalizado. Se encontraron 8 resultados formateados.
+2026-02-10 09:54:45,729 - random_scorer - INFO - Puntaje aleatorio calculado: 83
+2026-02-10 09:55:14,711 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=DjfaCC3ZKs8, duration_seconds=173
+2026-02-10 09:56:54,619 - song_credits_background - INFO - Crédito 2 expirado para usuario 2
+2026-02-10 09:58:24,180 - random_scorer - INFO - Puntaje aleatorio calculado: 85
+2026-02-10 09:58:24,264 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=rERCTLp4CK8, duration_seconds=173
+2026-02-10 10:02:11,514 - random_scorer - INFO - Puntaje aleatorio calculado: 83
+2026-02-10 10:02:11,688 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=oYobLFYuTXs, duration_seconds=303
+2026-02-10 10:07:24,102 - random_scorer - INFO - Puntaje aleatorio calculado: 85
+2026-02-10 10:07:24,279 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=Mvypo7rT378, duration_seconds=334
+2026-02-10 10:08:19,438 - random_scorer - INFO - Puntaje aleatorio calculado: 86
+2026-02-10 10:08:19,614 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=t1qZIGxcSfM, duration_seconds=318
+2026-02-10 10:18:47,760 - song_credits_background - INFO - Credits background task started
+2026-02-10 10:19:03,856 - song_credits_background - INFO - Credits background task started
+2026-02-10 10:19:58,945 - song_credits_background - INFO - Credits background task started
+2026-02-10 10:21:02,364 - song_credits_background - INFO - Credits background task started
+2026-02-10 10:23:23,530 - song_credits_background - INFO - Credits background task started
+2026-02-10 10:23:23,732 - queue_manager - INFO - iniciando QueueManager singleton
+2026-02-10 10:23:23,734 - queue_manager - INFO - Refrescando cola de canciones en QueueManager...
+2026-02-10 10:24:36,187 - song_credits_background - INFO - Credits background task started
+2026-02-10 10:24:36,305 - queue_manager - INFO - Refrescando cola de canciones en QueueManager...
+2026-02-10 10:26:31,373 - song_credits_background - INFO - Credits background task started
+2026-02-10 10:26:31,550 - queue_manager - INFO - Refrescando cola de canciones en QueueManager...
+2026-02-10 10:26:41,595 - song_credits_background - INFO - Credits background task started
+2026-02-10 10:26:41,704 - queue_manager - INFO - Refrescando cola de canciones en QueueManager...
