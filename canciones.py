@@ -182,17 +182,21 @@ async def rechazar_cancion(cancion_id: int, db: Session = Depends(get_db), api_k
     if not db_cancion:
         raise HTTPException(status_code=404, detail="Canción no encontrada")
     
-    # Validar que la canción no haya sido aprobada
-    if db_cancion.estado == 'aprobado' or db_cancion.approved_at is not None:
-        raise HTTPException(status_code=403, detail="No se puede eliminar: la canción ya fue aprobada por el sistema")
+    # Validar que la canción no esté ya reproduciéndose o cantada
+    if db_cancion.estado in ['reproduciendo', 'cantada']:
+        raise HTTPException(status_code=403, detail="No se puede eliminar: la canción ya está en reproducción o fue cantada")
     
-    # Solo se pueden rechazar canciones en estado 'pendiente' o 'pendiente_lazy'
-    if db_cancion.estado not in ['pendiente', 'pendiente_lazy']:
-        raise HTTPException(status_code=403, detail="Solo se pueden eliminar canciones pendientes o en cola lazy")
+    # Solo se pueden rechazar canciones en estado 'pendiente', 'pendiente_lazy' o 'aprobado' (si no está sonando)
+    if db_cancion.estado not in ['pendiente', 'pendiente_lazy', 'aprobado']:
+        raise HTTPException(status_code=403, detail="Solo se pueden eliminar canciones pendientes, en cola lazy o aprobadas")
     
     db_cancion = crud.update_cancion_estado(db, cancion_id=cancion_id, nuevo_estado="rechazada")
     crud.create_admin_log_entry(db, action="REJECT_SONG", details=f"Canción '{db_cancion.titulo}' rechazada.")
+    
+    # NUEVO: Refrescar la cola ANTES de chequear la siguiente lazy para que el cache esté al día
     queue_manager.refresh_queue(db)
+    crud.check_and_approve_next_lazy_song(db)
+    
     await websocket_manager.manager.broadcast_queue_update()
     return db_cancion
 
@@ -303,11 +307,19 @@ async def eliminar_cancion(cancion_id: int, usuario_id: int, db: Session = Depen
     if db_cancion.estado not in ['pendiente', 'aprobado', 'pendiente_lazy']:
         raise HTTPException(status_code=400, detail="No se puede eliminar una canción que ya está reproduciendo o ha sido cantada.")
 
+    # Si la canción estaba aprobada, intentamos aprobar la siguiente lazy
+    fue_aprobada = db_cancion.estado == 'aprobado'
+    
     crud.delete_cancion(db, cancion_id=cancion_id)
+    
+    # NUEVO: Refrescar cache antes de chequear lazy
+    queue_manager.refresh_queue(db)
+    
+    if fue_aprobada:
+        crud.check_and_approve_next_lazy_song(db)
     
     cache_manager.delete_song_from_cache(usuario_id, cancion_id)
     
-    queue_manager.refresh_queue(db)
     await websocket_manager.manager.broadcast_queue_update() # Notificar actualización de la cola
     return Response(status_code=204)
 @router.post("/{cancion_id}/mover-arriba", response_model=schemas.Cancion, summary="Mover una canciÃ³n pendiente_lazy hacia arriba")
