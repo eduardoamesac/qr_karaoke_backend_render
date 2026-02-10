@@ -155,23 +155,10 @@ async def anadir_cancion(
 
 @router.get("/{usuario_id}/lista", response_model=List[schemas.Cancion], summary="Ver la lista de canciones de un usuario")
 def ver_lista_de_canciones(usuario_id: int, db: Session = Depends(get_db)):
-    # OPTIMIZACIÓN: Se desactiva temporalmente el caché porque no se invalida correctamente
-    # cuando cambia el estado de la canción (ej. de aprobado a reproduciendo).
-    # cached_songs = cache_manager.get_songs_from_cache(usuario_id)
-    
-    # Si hay caché, retornarlo
-    # if cached_songs:
-    #     return cached_songs
-    
-    # Si no hay caché, obtener de BD y guardar en caché
-    canciones = crud.get_canciones_por_usuario(db=db, usuario_id=usuario_id)
-    
-    # Guardar en caché para futuras consultas
-    for cancion in canciones:
-        cancion_dict = jsonable_encoder(cancion)
-        cache_manager.add_song_to_cache(usuario_id, cancion_dict)
-    
-    return canciones
+    """
+    Obtiene la lista de canciones del usuario desde el cache sincronizado.
+    """
+    return queue_manager.get_user_songs(db, usuario_id)
 
 @router.get("/pendientes", response_model=List[schemas.CancionAdminView], summary="Ver todas las canciones pendientes")
 def ver_canciones_pendientes(db: Session = Depends(get_db), api_key: str = Depends(api_key_auth)):

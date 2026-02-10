@@ -1,16 +1,21 @@
 import logging
-from typing import List, Optional, Dict
-from sqlalchemy.orm import Session
+from typing import List, Optional, Dict, Any
+from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import func, case
-from collections import deque
 import models
 import schemas
 from database import SessionLocal
 from timezone_utils import now_bogota
+import json
+from fastapi.encoders import jsonable_encoder
 
 logger = logging.getLogger(__name__)
 
 class QueueManager:
+    """
+    Singleton que gestiona el estado global de todas las colas de canciones.
+    Actúa como una base de datos en memoria sincronizada con la DB real.
+    """
     _instance = None
 
     def __new__(cls):
@@ -22,214 +27,116 @@ class QueueManager:
     def __init__(self):
         if self._initialized:
             return
-        self._queue: List[models.Cancion] = []
-        self._current_song: Optional[models.Cancion] = None
+            
+        # Almacenamos los objetos detached
+        self._now_playing: Optional[models.Cancion] = None
+        self._approved_queue: List[models.Cancion] = []
+        self._lazy_queue: List[models.Cancion] = []
+        self._pending_queue: List[models.Cancion] = []
+        
+        # Cache de canciones por usuario (para "Mis canciones")
+        self._user_songs: Dict[int, List[models.Cancion]] = {}
+        
         self._initialized = True
-        logger.info("iniciando QueueManager singleton")
+        logger.info("QueueManager Unified Cache (Full) inicializado.")
 
-    def get_queue(self, db: Session) -> List[models.Cancion]:
-        """
-        Devuelve la cola actual. Si está vacía, intenta refrescarla desde la DB.
-        Nota: Esto devuelve la lista en memoria, pero RE-ADJUNTA los objetos a la sesión actual
-        para evitar DetachedInstanceError.
-        """
-        # Si la cola está vacía, forzamos un refresh por si acaso el servidor se reinició
-        if not self._queue:
-            self.refresh_queue(db)
+    def _reattach(self, db: Session, song: Optional[models.Cancion]) -> Optional[models.Cancion]:
+        if not song: return None
+        return db.merge(song, load=False)
+
+    def refresh_all(self, db: Session):
+        """Sincroniza todas las estructuras desde la base de datos."""
+        # 1. Now Playing
+        self._now_playing = db.query(models.Cancion)\
+            .options(joinedload(models.Cancion.usuario).joinedload(models.Usuario.mesa))\
+            .filter(models.Cancion.estado == "reproduciendo")\
+            .first()
+        if self._now_playing: db.expunge(self._now_playing)
+
+        # 2. Approved Queue
+        from crud import get_cola_priorizada
+        self._approved_queue = get_cola_priorizada(db)
+        for s in self._approved_queue: db.expunge(s)
+
+        # 3. Lazy Queue
+        from crud import get_cola_lazy
+        self._lazy_queue = get_cola_lazy(db)
+        for s in self._lazy_queue: db.expunge(s)
+
+        # 4. Pending Queue
+        from crud import get_canciones_pendientes_por_aprobar
+        self._pending_queue = get_canciones_pendientes_por_aprobar(db)
+        for s in self._pending_queue: db.expunge(s)
+
+        # Reset user songs cache (se recargará bajo demanda)
+        self._user_songs = {}
+        
+        logger.info("Cache unificado refrescado exitosamente.")
+
+    def get_full_state(self, db: Session) -> Dict[str, Any]:
+        """Estado para el Dashboard de Admin."""
+        # Siempre refrescamos para asegurar que el admin vea la realidad
+        self.refresh_all(db)
+        return {
+            "now_playing": self._reattach(db, self._now_playing),
+            "upcoming": [self._reattach(db, s) for s in self._approved_queue[:1]],
+            "lazy_queue": [self._reattach(db, s) for s in self._lazy_queue],
+            "pending": [self._reattach(db, s) for s in self._pending_queue]
+        }
+
+    def get_user_songs(self, db: Session, usuario_id: int) -> List[models.Cancion]:
+        """Estado para 'Mis canciones' del usuario."""
+        # Si no está en cache, cargar de DB
+        if usuario_id not in self._user_songs:
+            from crud import get_canciones_por_usuario
+            songs = get_canciones_por_usuario(db, usuario_id)
+            for s in songs: db.expunge(s)
+            self._user_songs[usuario_id] = songs
             
-        if not self._queue:
-            return []
-
-        # Re-attach objects to the current session
-        # Strategy: Fetch by IDs to ensure freshness and attachment
-        ids = [s.id for s in self._queue]
-        
-        # Fetch objects preserving order is tricky in SQL, so we fetch all and map
-        # Optimization: Use joinedload if needed, but for now standard lazy load is safer than detached
-        current_objects = db.query(models.Cancion).filter(models.Cancion.id.in_(ids)).all()
-        object_map = {obj.id: obj for obj in current_objects}
-        
-        # Reconstruct list in original order
-        attached_queue = []
-        dirty = False
-        for song_id in ids:
-            if song_id in object_map:
-                attached_queue.append(object_map[song_id])
-            else:
-                # Song was deleted from DB but is in cache?
-                dirty = True
-        
-        if dirty:
-            # If we found discrepancies, maybe we should refresh?
-            # For now, let's just return what we found to avoid recursion or blocking
-            pass
-            
-        return attached_queue
-
-    def refresh_queue(self, db: Session) -> List[models.Cancion]:
-        """
-        Recalcula la cola completa basada en la lógica de 'Cola Justa' y actualiza el estado en memoria.
-        """
-        logger.info("Refrescando cola de canciones en QueueManager...")
-        
-        # 1. Obtener todas las canciones aprobadas
-        # Ordenamos por ID ascendente para respetar el orden de llegada "natural" dentro de cada mesa
-        todas_canciones = (
-            db.query(models.Cancion)
-            .join(models.Usuario, models.Cancion.usuario_id == models.Usuario.id)
-            .filter(models.Cancion.estado == "aprobado")
-            .order_by(
-                case((models.Cancion.orden_manual.is_(None), 1), else_=0),
-                models.Cancion.orden_manual.asc(),
-                models.Cancion.id.asc()
-            )
-            .all()
-        )
-
-        # 2. Separar canciones con orden manual (Prioridad Absoluta)
-        cola_manual = []
-        cola_pool = []
-        
-        for cancion in todas_canciones:
-            if cancion.orden_manual is not None:
-                cola_manual.append(cancion)
-            else:
-                cola_pool.append(cancion)
-                
-        # Si solo hay canciones manuales, esa es nuestra cola
-        if not cola_pool:
-            self._queue = cola_manual
-            return self.get_queue(db) # Return attached via get_queue logic
-
-        # 3. Agrupar canciones por Mesa
-        match_mesa_canciones = {} # {mesa_id: deque([canciones])}
-        mesa_arrival_time = {} # {mesa_id: primer_id_cancion} para ordenar turnos
-        
-        mesas_involucradas_ids = set()
-
-        for cancion in cola_pool:
-            mesa_id = cancion.usuario.mesa_id
-            if not mesa_id:
-                # Si no tiene mesa (ej. DJ), ID 0
-                mesa_id = 0
-                
-            if mesa_id not in match_mesa_canciones:
-                match_mesa_canciones[mesa_id] = deque()
-                mesa_arrival_time[mesa_id] = cancion.id # El ID más bajo es el primero que llegó
-                mesas_involucradas_ids.add(mesa_id)
-                
-            match_mesa_canciones[mesa_id].append(cancion)
-
-        # 4. Calcular Categoría (Tier) de cada Mesa y sus Cuotas
-        UMBRAL_ORO = 150000
-        UMBRAL_PLATA = 50000
-        
-        mesa_quotas = {} # {mesa_id: int}
-        
-        if mesas_involucradas_ids:
-            ids_reales = [mid for mid in mesas_involucradas_ids if mid != 0]
-            
-            consumos_mesas = {}
-            if ids_reales:
-                rows = (
-                    db.query(
-                        models.Usuario.mesa_id,
-                        func.sum(models.Consumo.valor_total)
-                    )
-                    .join(models.Consumo, models.Usuario.id == models.Consumo.usuario_id)
-                    .filter(models.Usuario.mesa_id.in_(ids_reales))
-                    .group_by(models.Usuario.mesa_id)
-                    .all()
-                )
-                for mid, total in rows:
-                    consumos_mesas[mid] = total or 0
-            
-            for mid in mesas_involucradas_ids:
-                total = consumos_mesas.get(mid, 0)
-                
-                # DJ / Sin Mesa (ID 0) recibe trato Preferencial (Oro)
-                if mid == 0: 
-                    quota = 3 
-                elif total >= UMBRAL_ORO:
-                    quota = 3
-                elif total >= UMBRAL_PLATA:
-                    quota = 2
-                else:
-                    quota = 1
-                    
-                mesa_quotas[mid] = quota
-
-        # 5. Construir la Cola Round-Robin
-        cola_fair = []
-        
-        # Ordenamos las mesas por orden de llegada (quién puso canción primero)
-        orden_turnos_mesas = sorted(mesas_involucradas_ids, key=lambda mid: mesa_arrival_time[mid])
-        
-        # Bucle Round Robin
-        while match_mesa_canciones:
-            # Iterar sobre una copia de la lista de mesas para mantener el orden de turnos
-            # Si una mesa se queda sin canciones, la sacamos del diccionario match_mesa_canciones
-            
-            for mesa_id in orden_turnos_mesas:
-                if mesa_id not in match_mesa_canciones:
-                    continue
-                    
-                quota = mesa_quotas.get(mesa_id, 1)
-                canciones_mesa = match_mesa_canciones[mesa_id]
-                
-                # Tomar hasta 'quota' canciones de esta mesa
-                tomadas = 0
-                while tomadas < quota and canciones_mesa:
-                    cola_fair.append(canciones_mesa.popleft())
-                    tomadas += 1
-                
-                # Si se acabaron las canciones de esta mesa, borrarla del diccionario
-                if not canciones_mesa:
-                    del match_mesa_canciones[mesa_id]
-
-        # Combinar: Manual (prioridad) + Fair
-        self._queue = cola_manual + cola_fair
-        
-        logger.info(f"Cola refrescada. Total: {len(self._queue)} canciones.")
-        
-        # Instead of returning self._queue (detached), use get_queue to return attached
-        return self.get_queue(db)
-
-    def get_next_song(self, db: Session) -> Optional[models.Cancion]:
-        """Retorna la siguiente canción sin sacarla de la cola."""
-        if not self._queue:
-            self.refresh_queue(db)
-        
-        if self._queue:
-            first_id = self._queue[0].id
-            return db.query(models.Cancion).filter(models.Cancion.id == first_id).first()
-        return None
+        return [self._reattach(db, s) for s in self._user_songs[usuario_id]]
 
     def pop_next_song(self, db: Session) -> Optional[models.Cancion]:
         """
-        Saca la siguiente canción de la cola y actualiza el estado en DB y memoria.
+        Transición de estado: Siguiente en Approved -> Reproduciendo.
+        Marca la anterior como 'cantada'.
         """
-        # Asegurarnos de tener la cola actualizada
-        if not self._queue:
-            self.refresh_queue(db)
-            
-        if not self._queue:
+        # Asegurar que tenemos la cola fresca
+        self.refresh_all(db)
+        
+        if not self._approved_queue:
             return None
             
-        next_song_detached = self._queue.pop(0) # Sacar de la memoria
-        
-        # Actualizar estado en DB para que sea la canción actual
+        next_song_detached = self._approved_queue[0]
         next_song = db.query(models.Cancion).filter(models.Cancion.id == next_song_detached.id).first()
+        
         if next_song:
+            # 1. Finalizar actual
+            actual = db.query(models.Cancion).filter(models.Cancion.estado == "reproduciendo").first()
+            if actual:
+                actual.estado = "cantada"
+                actual.finished_at = now_bogota()
+            
+            # 2. Iniciar nueva
             next_song.estado = "reproduciendo"
             next_song.started_at = now_bogota()
-            next_song.orden_manual = None # Limpiar orden manual al reproducir
+            next_song.orden_manual = None
             
             db.commit()
             db.refresh(next_song)
+            
+            # 3. Invalidar caches
+            self.refresh_all(db)
             return next_song
             
         return None
+
+    def invalidate_user_cache(self, usuario_id: Optional[int] = None):
+        """Limpia el cache de usuarios. Si no se pasa id, limpia todos."""
+        if usuario_id:
+            if usuario_id in self._user_songs:
+                del self._user_songs[usuario_id]
+        else:
+            self._user_songs = {}
 
 # Instancia global
 queue_manager = QueueManager()

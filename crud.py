@@ -53,12 +53,16 @@ def get_canciones_por_usuario(db: Session, usuario_id: int):
     ).all()
 
 def create_cancion_para_usuario(db: Session, cancion: schemas.CancionCreate, usuario_id: int):
-    """Crea una nueva canciÃƒÂƒÃ‚Â³n y la asocia a un usuario."""
+    """Crea una nueva canción y la asocia a un usuario."""
+    from queue_manager import queue_manager
     # Usar model_dump() (Pydantic v2) en vez de dict()
     db_cancion = models.Cancion(**cancion.model_dump(), usuario_id=usuario_id)
     db.add(db_cancion)
     db.commit()
     db.refresh(db_cancion)
+    
+    # Sincronizar cache
+    queue_manager.refresh_all(db)
     return db_cancion
 
 def check_if_song_in_user_list(db: Session, usuario_id: int, youtube_id: str):
@@ -101,12 +105,16 @@ def get_duracion_total_cola_aprobada(db: Session) -> int:
     return total_seconds or 0
 
 def update_cancion_estado(db: Session, cancion_id: int, nuevo_estado: str):
-    """Actualiza el estado de una canciÃƒÂƒÃ‚Â³n especÃƒÂƒÃ‚Â­fica."""
+    """Actualiza el estado de una canción específica."""
+    from queue_manager import queue_manager
     db_cancion = db.query(models.Cancion).filter(models.Cancion.id == cancion_id).first()
     if db_cancion:
         db_cancion.estado = nuevo_estado
         db.commit()
         db.refresh(db_cancion)
+        
+        # Sincronizar cache
+        queue_manager.refresh_all(db)
     return db_cancion
 
 def get_cola_priorizada(db: Session):
@@ -351,6 +359,10 @@ def marcar_cancion_actual_como_cantada(db: Session):
 
     db.commit()
     db.refresh(cancion_actual)
+    
+    # Sincronizar cache
+    from queue_manager import queue_manager
+    queue_manager.refresh_all(db)
     return cancion_actual
 
 def marcar_siguiente_como_reproduciendo(db: Session):
@@ -436,11 +448,16 @@ def get_canciones_mas_cantadas(db: Session, limit: int = 10):
     )
 
 def delete_cancion(db: Session, cancion_id: int):
-    """Elimina una canciÃƒÂƒÃ‚Â³n de la base de datos por su ID."""
+    """Elimina una canción de la base de datos por su ID."""
+    from queue_manager import queue_manager
     db_cancion = db.query(models.Cancion).filter(models.Cancion.id == cancion_id).first()
     if db_cancion:
         db.delete(db_cancion)
         db.commit()
+        # Sincronizar cache
+        queue_manager.refresh_all(db)
+        return True
+    return False
 
 def get_productos_mas_consumidos(db: Session, limit: int = 10):
     """
@@ -540,6 +557,10 @@ def reordenar_cola_manual(db: Session, canciones_ids: List[int]):
         db.query(models.Cancion).filter(models.Cancion.id == cancion_id).update({"orden_manual": i + 1})
     
     db.commit()
+    # Sincronizar cache unificado
+    from queue_manager import queue_manager
+    queue_manager.refresh_all(db)
+    return True
 
 def get_usuarios_sin_consumo(db: Session):
     """
@@ -588,6 +609,10 @@ def move_song_to_top(db: Session, cancion_id: int):
     cancion_a_mover.orden_manual = nuevo_orden
     db.commit()
     db.refresh(cancion_a_mover)
+    
+    # Sincronizar cache unificado
+    from queue_manager import queue_manager
+    queue_manager.refresh_all(db)
     return cancion_a_mover
 
 def get_canciones_cantadas_por_usuario(db: Session):
@@ -1466,17 +1491,18 @@ def auto_approve_songs_after_10_minutes(db: Session):
     
     if songs_to_auto_approve:
         db.commit()
-        # Notificar al gestor de cola para refrescar
+        # Notificar al gestor de cola para refrescar cache unificado
         from queue_manager import queue_manager
-        queue_manager.refresh_queue(db)
+        queue_manager.refresh_all(db)
     
     return songs_to_auto_approve
 
 def approve_song_by_admin(db: Session, cancion_id: int):
     """
-    Aprueba una canciÃƒÂƒÃ‚Â³n manualmente desde el admin.
+    Aprueba una canción manualmente desde el admin.
     Cambia el estado de 'pendiente' a 'aprobado'.
     """
+    from queue_manager import queue_manager
     db_cancion = db.query(models.Cancion).filter(
         models.Cancion.id == cancion_id,
         models.Cancion.estado == 'pendiente'
@@ -1487,11 +1513,10 @@ def approve_song_by_admin(db: Session, cancion_id: int):
         db_cancion.approved_at = now_bogota()
         db.commit()
         db.refresh(db_cancion)
-        # Notificar al gestor de cola para refrescar
-        from queue_manager import queue_manager
-        queue_manager.refresh_queue(db)
-    
-    return db_cancion
+        # Sincronizar cache unificado
+        queue_manager.refresh_all(db)
+        return db_cancion
+    return None
 
 def get_cola_completa(db: Session):
     """
@@ -2104,34 +2129,16 @@ def aprobar_siguiente_cancion_lazy(db: Session):
 
 def get_cola_completa_con_lazy(db: Session):
     """
-    VersiÃƒÂ³n extendida de get_cola_completa que incluye la cola lazy.
-    Retorna:
-    - now_playing: CanciÃƒÂ³n actual
-    - upcoming: Solo la siguiente canciÃƒÂ³n aprobada (mÃƒÂ¡ximo 1)
-    - lazy_queue: Canciones en pendiente_lazy
-    - pending: Canciones pendientes de aprobaciÃƒÂ³n manual
+    Versión extendida de get_cola_completa que incluye la cola lazy.
+    Retorna todo sincronizado desde el cache unificado.
     """
-    # Aplicar aprobaciÃƒÂ³n automÃƒÂ¡tica despuÃƒÂ©s de 10 minutos
+    # Aplicar aprobación automática después de 10 minutos (opcional aquí, puede ser background)
     auto_approve_songs_after_10_minutes(db)
     
-    now_playing = db.query(models.Cancion).filter(models.Cancion.estado == "reproduciendo").first()
-    approved_queue = get_cola_priorizada(db)
-    lazy_queue = get_cola_lazy(db)
-    pending_queue = get_canciones_pendientes_por_aprobar(db)
+    from queue_manager import queue_manager
+    state = queue_manager.get_full_state(db)
     
-    # Si la canciÃƒÂ³n que se estÃƒÂ¡ reproduciendo sigue en la lista de upcoming, la quitamos
-    if now_playing:
-        approved_queue = [song for song in approved_queue if song.id != now_playing.id]
-    
-    # Limitar upcoming a mÃƒÂ¡ximo 1 canciÃƒÂ³n (la siguiente)
-    upcoming_limited = approved_queue[:1] if approved_queue else []
-    
-    return {
-        "now_playing": now_playing,
-        "upcoming": upcoming_limited,
-        "lazy_queue": lazy_queue,
-        "pending": pending_queue
-    }
+    return state
 
 def check_and_approve_next_lazy_song(db: Session):
     """
