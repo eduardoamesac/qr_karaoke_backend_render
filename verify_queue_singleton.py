@@ -41,6 +41,23 @@ def verify_queue():
             print("Singleton check: PASS")
         else:
             print("Singleton check: FAIL")
+            
+        # 4. Test pop_next_song state change
+        print("\nTesting pop_next_song state change...")
+        popped_song = queue_manager.pop_next_song(db)
+        if popped_song:
+            print(f"Popped song: {popped_song.titulo} (ID: {popped_song.id})")
+            # Clear session to force re-fetch from DB
+            db.expire_all()
+            db_song = db.query(Cancion).filter(Cancion.id == popped_song.id).first()
+            print(f"DB Status: {db_song.estado}")
+            print(f"DB Started At: {db_song.started_at}")
+            if db_song.estado == "reproduciendo" and db_song.started_at is not None:
+                print("State Sync Test: PASS")
+            else:
+                print("State Sync Test: FAIL")
+        else:
+            print("No song to pop.")
 
     except Exception as e:
         print(f"Error during verification: {e}")

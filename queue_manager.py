@@ -6,6 +6,7 @@ from collections import deque
 import models
 import schemas
 from database import SessionLocal
+from timezone_utils import now_bogota
 
 logger = logging.getLogger(__name__)
 
@@ -217,14 +218,15 @@ class QueueManager:
             
         next_song_detached = self._queue.pop(0) # Sacar de la memoria
         
-        # Si tenía orden manual, limpiarlo al reproducir
-        # Need to fetch attached object to modify it
+        # Actualizar estado en DB para que sea la canción actual
         next_song = db.query(models.Cancion).filter(models.Cancion.id == next_song_detached.id).first()
         if next_song:
-            if next_song.orden_manual is not None:
-                next_song.orden_manual = None
-                db.commit()
-                db.refresh(next_song)
+            next_song.estado = "reproduciendo"
+            next_song.started_at = now_bogota()
+            next_song.orden_manual = None # Limpiar orden manual al reproducir
+            
+            db.commit()
+            db.refresh(next_song)
             return next_song
             
         return None
