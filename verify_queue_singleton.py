@@ -27,6 +27,9 @@ def verify_queue():
         if q:
             print(f"First song: {q[0].titulo} (ID: {q[0].id})")
             print(f"Order Manual: {q[0].orden_manual}")
+            # Verify attachment by accessing relationship
+            if q[0].usuario:
+                print(f"User Nick: {q[0].usuario.nick}")
             print(f"Mesa ID: {q[0].usuario.mesa_id if q[0].usuario else 'None'}")
         else:
             print("Queue is empty.")

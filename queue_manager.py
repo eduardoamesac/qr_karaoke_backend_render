@@ -29,12 +29,41 @@ class QueueManager:
     def get_queue(self, db: Session) -> List[models.Cancion]:
         """
         Devuelve la cola actual. Si está vacía, intenta refrescarla desde la DB.
-        Nota: Esto devuelve la lista en memoria.
+        Nota: Esto devuelve la lista en memoria, pero RE-ADJUNTA los objetos a la sesión actual
+        para evitar DetachedInstanceError.
         """
         # Si la cola está vacía, forzamos un refresh por si acaso el servidor se reinició
         if not self._queue:
             self.refresh_queue(db)
-        return self._queue
+            
+        if not self._queue:
+            return []
+
+        # Re-attach objects to the current session
+        # Strategy: Fetch by IDs to ensure freshness and attachment
+        ids = [s.id for s in self._queue]
+        
+        # Fetch objects preserving order is tricky in SQL, so we fetch all and map
+        # Optimization: Use joinedload if needed, but for now standard lazy load is safer than detached
+        current_objects = db.query(models.Cancion).filter(models.Cancion.id.in_(ids)).all()
+        object_map = {obj.id: obj for obj in current_objects}
+        
+        # Reconstruct list in original order
+        attached_queue = []
+        dirty = False
+        for song_id in ids:
+            if song_id in object_map:
+                attached_queue.append(object_map[song_id])
+            else:
+                # Song was deleted from DB but is in cache?
+                dirty = True
+        
+        if dirty:
+            # If we found discrepancies, maybe we should refresh?
+            # For now, let's just return what we found to avoid recursion or blocking
+            pass
+            
+        return attached_queue
 
     def refresh_queue(self, db: Session) -> List[models.Cancion]:
         """
@@ -69,7 +98,7 @@ class QueueManager:
         # Si solo hay canciones manuales, esa es nuestra cola
         if not cola_pool:
             self._queue = cola_manual
-            return self._queue
+            return self.get_queue(db) # Return attached via get_queue logic
 
         # 3. Agrupar canciones por Mesa
         match_mesa_canciones = {} # {mesa_id: deque([canciones])}
@@ -161,7 +190,9 @@ class QueueManager:
         self._queue = cola_manual + cola_fair
         
         logger.info(f"Cola refrescada. Total: {len(self._queue)} canciones.")
-        return self._queue
+        
+        # Instead of returning self._queue (detached), use get_queue to return attached
+        return self.get_queue(db)
 
     def get_next_song(self, db: Session) -> Optional[models.Cancion]:
         """Retorna la siguiente canción sin sacarla de la cola."""
@@ -169,7 +200,8 @@ class QueueManager:
             self.refresh_queue(db)
         
         if self._queue:
-            return self._queue[0]
+            first_id = self._queue[0].id
+            return db.query(models.Cancion).filter(models.Cancion.id == first_id).first()
         return None
 
     def pop_next_song(self, db: Session) -> Optional[models.Cancion]:
@@ -183,16 +215,19 @@ class QueueManager:
         if not self._queue:
             return None
             
-        next_song = self._queue.pop(0) # Sacar de la memoria
+        next_song_detached = self._queue.pop(0) # Sacar de la memoria
         
         # Si tenía orden manual, limpiarlo al reproducir
-        if next_song.orden_manual is not None:
-            next_song.orden_manual = None
+        # Need to fetch attached object to modify it
+        next_song = db.query(models.Cancion).filter(models.Cancion.id == next_song_detached.id).first()
+        if next_song:
+            if next_song.orden_manual is not None:
+                next_song.orden_manual = None
+                db.commit()
+                db.refresh(next_song)
+            return next_song
             
-        # Actualizar resto de la cola en memoria si es necesario?
-        # Por ahora confiamos en que al sacar el primero, el resto sube.
-        
-        return next_song
+        return None
 
 # Instancia global
 queue_manager = QueueManager()
