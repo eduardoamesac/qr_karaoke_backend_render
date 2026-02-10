@@ -124,6 +124,7 @@ async function handleReportGeneration() {
 
     try {
         const data = await apiFetch(`/admin/reports/${reportType}`);
+        console.log('Report data received:', reportType, data); // DEBUG
         renderReport(reportType, data, outputDiv);
     } catch (error) {
         outputDiv.innerHTML = `
@@ -203,12 +204,17 @@ function renderReportTable(data, type, container) {
 
     const tbody = document.createElement('tbody');
     data.slice(0, 20).forEach((row, index) => {
+        // DEBUG: Inspect row data
+        if (index === 0) console.log('First row data for type', type, ':', row);
+
         const tr = document.createElement('tr');
         if (type.includes('songs') || type.includes('products')) {
+            // FIX: Added row.cantidad_total to support product reports
+            const cantidad = row.cantidad || row.cantidad_total || row.veces_cantada || row.count;
             tr.innerHTML = `
                 <td>#${index + 1}</td>
                 <td>${row.nombre || row.titulo}</td>
-                <td><strong>${row.cantidad || row.cantidad_total || row.veces_cantada || row.count}</strong></td>
+                <td><strong>${cantidad}</strong></td>
             `;
         } else if (type.includes('income') && type.includes('table')) {
             tr.innerHTML = `
