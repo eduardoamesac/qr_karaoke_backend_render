@@ -208,7 +208,7 @@ function renderReportTable(data, type, container) {
             tr.innerHTML = `
                 <td>#${index + 1}</td>
                 <td>${row.nombre || row.titulo}</td>
-                <td><strong>${row.cantidad || row.veces_cantada || row.count}</strong></td>
+                <td><strong>${row.cantidad || row.cantidad_total || row.veces_cantada || row.count}</strong></td>
             `;
         } else if (type.includes('income') && type.includes('table')) {
             tr.innerHTML = `

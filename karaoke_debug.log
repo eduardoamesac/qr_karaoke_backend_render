@@ -4703,3 +4703,47 @@ TypeError: can't subtract offset-naive and offset-aware datetimes
 2026-02-09 16:33:02,013 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
 2026-02-09 16:33:02,053 - youtube - INFO - Procesamiento finalizado. Se encontraron 10 resultados formateados.
 2026-02-09 16:39:29,627 - song_credits_background - INFO - Credits background task started
+2026-02-09 16:42:44,488 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=KI3pWvM19Pc, duration_seconds=198
+2026-02-09 16:46:35,453 - random_scorer - INFO - Puntaje aleatorio calculado: 96
+2026-02-09 16:46:35,549 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=KI3pWvM19Pc, duration_seconds=198
+2026-02-09 16:58:07,836 - random_scorer - INFO - Puntaje aleatorio calculado: 87
+2026-02-09 16:58:07,958 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=76aba24n66U, duration_seconds=156
+2026-02-09 17:00:22,862 - song_credits_background - INFO - Credits background task started
+2026-02-10 09:22:54,314 - song_credits_background - INFO - Credits background task started
+2026-02-10 09:27:58,111 - random_scorer - INFO - Puntaje aleatorio calculado: 82
+2026-02-10 09:27:58,252 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=DjfaCC3ZKs8, duration_seconds=173
+2026-02-10 09:29:02,360 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'los gigantes del vallenato'
+2026-02-10 09:29:02,362 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'los gigantes del vallenato' (Karaoke Mode: False)
+2026-02-10 09:29:05,557 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-02-10 09:29:05,558 - youtube - INFO - Búsqueda por texto: 'los gigantes del vallenato'
+2026-02-10 09:29:05,561 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-02-10 09:29:06,427 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=los+gigantes+del+vallenato&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-02-10 09:29:06,436 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-02-10 09:29:06,437 - youtube - INFO - IDs de video encontrados: ['LA4X4fyJOcg', 'C4cGljNvCig', '8veX6aXeaBU', 'WyueNqPNUrQ', 'Jg3fsmqXoIo', '3kWwGa4W8Ak', 'L5nz4iOqY08', 'XEHRhQgn7Do', 'jsD3QWHtvGI', 'FmWDmFFDOi0']
+2026-02-10 09:29:06,440 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-02-10 09:29:06,632 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=LA4X4fyJOcg%2CC4cGljNvCig%2C8veX6aXeaBU%2CWyueNqPNUrQ%2CJg3fsmqXoIo%2C3kWwGa4W8Ak%2CL5nz4iOqY08%2CXEHRhQgn7Do%2CjsD3QWHtvGI%2CFmWDmFFDOi0&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-02-10 09:29:06,852 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-02-10 09:29:06,856 - youtube - INFO - Procesamiento finalizado. Se encontraron 10 resultados formateados.
+2026-02-10 09:29:06,930 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'los gigantes del vallenato'
+2026-02-10 09:29:06,937 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'los gigantes del vallenato' (Karaoke Mode: False)
+2026-02-10 09:29:08,589 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-02-10 09:29:08,590 - youtube - INFO - Búsqueda por texto: 'los gigantes del vallenato'
+2026-02-10 09:29:08,591 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-02-10 09:29:09,262 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=los+gigantes+del+vallenato&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-02-10 09:29:09,265 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-02-10 09:29:09,266 - youtube - INFO - IDs de video encontrados: ['LA4X4fyJOcg', 'C4cGljNvCig', 'Jg3fsmqXoIo', 'WyueNqPNUrQ', '8veX6aXeaBU', 'L5nz4iOqY08', '3kWwGa4W8Ak', 'rsNmB0fZbQ4', 'jsD3QWHtvGI', 'HjkvThEUiD0']
+2026-02-10 09:29:09,267 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-02-10 09:29:09,471 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=LA4X4fyJOcg%2CC4cGljNvCig%2CJg3fsmqXoIo%2CWyueNqPNUrQ%2C8veX6aXeaBU%2CL5nz4iOqY08%2C3kWwGa4W8Ak%2CrsNmB0fZbQ4%2CjsD3QWHtvGI%2CHjkvThEUiD0&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-02-10 09:29:09,485 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-02-10 09:29:09,488 - youtube - INFO - Procesamiento finalizado. Se encontraron 10 resultados formateados.
+2026-02-10 09:31:28,485 - random_scorer - INFO - Puntaje aleatorio calculado: 86
+2026-02-10 09:31:28,577 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=1a3REFH83WA, duration_seconds=175
+2026-02-10 09:32:32,481 - random_scorer - INFO - Puntaje aleatorio calculado: 88
+2026-02-10 09:32:32,879 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=RvYAN4b91CE, duration_seconds=303
+2026-02-10 09:32:46,266 - random_scorer - INFO - Puntaje aleatorio calculado: 97
+2026-02-10 09:32:46,558 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=C4cGljNvCig, duration_seconds=284
+2026-02-10 09:37:38,015 - random_scorer - INFO - Puntaje aleatorio calculado: 100
+2026-02-10 09:37:38,112 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=1a3REFH83WA, duration_seconds=175
+2026-02-10 09:37:48,506 - random_scorer - INFO - Puntaje aleatorio calculado: 95
+2026-02-10 09:37:48,736 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=8veX6aXeaBU, duration_seconds=266
+2026-02-10 09:42:24,605 - random_scorer - INFO - Puntaje aleatorio calculado: 97
