@@ -44,6 +44,14 @@ class QueueManager:
         if not song: return None
         return db.merge(song, load=False)
 
+    def refresh_queue(self, db: Session):
+        """
+        Alias de refresh_all para compatibilidad con código existente.
+        Sincroniza todas las estructuras desde la base de datos.
+        """
+        self.refresh_all(db)
+        return self._approved_queue
+
     def refresh_all(self, db: Session):
         """Sincroniza todas las estructuras desde la base de datos."""
         # 1. Now Playing
@@ -53,25 +61,132 @@ class QueueManager:
             .first()
         if self._now_playing: db.expunge(self._now_playing)
 
-        # 2. Approved Queue
-        from crud import get_cola_priorizada
-        self._approved_queue = get_cola_priorizada(db)
+        # 2. Approved Queue (Fair Queue Logic)
+        self._approved_queue = self._get_cola_justa_db(db, "aprobado")
         for s in self._approved_queue: db.expunge(s)
 
         # 3. Lazy Queue
-        from crud import get_cola_lazy
-        self._lazy_queue = get_cola_lazy(db)
+        self._lazy_queue = self._get_cola_justa_db(db, "pendiente_lazy")
         for s in self._lazy_queue: db.expunge(s)
 
         # 4. Pending Queue
-        from crud import get_canciones_pendientes_por_aprobar
-        self._pending_queue = get_canciones_pendientes_por_aprobar(db)
+        self._pending_queue = db.query(models.Cancion)\
+            .options(joinedload(models.Cancion.usuario).joinedload(models.Usuario.mesa))\
+            .filter(models.Cancion.estado == 'pendiente')\
+            .order_by(models.Cancion.created_at.asc())\
+            .all()
         for s in self._pending_queue: db.expunge(s)
 
         # Reset user songs cache (se recargará bajo demanda)
         self._user_songs = {}
         
         logger.info("Cache unificado refrescado exitosamente.")
+
+    def _get_cola_justa_db(self, db: Session, estado: str) -> List[models.Cancion]:
+        """
+        Calcula la cola justa directamente desde la DB.
+        Cargamos con joinedload para evitar DetachedInstanceError.
+        """
+        from collections import deque
+        
+        # Obtener todas las canciones en el estado solicitado
+        todas_canciones = (
+            db.query(models.Cancion)
+            .options(joinedload(models.Cancion.usuario).joinedload(models.Usuario.mesa))
+            .filter(models.Cancion.estado == estado)
+            .order_by(
+                case((models.Cancion.orden_manual.is_(None), 1), else_=0),
+                models.Cancion.orden_manual.asc(),
+                models.Cancion.id.asc()
+            )
+            .all()
+        )
+        
+        if not todas_canciones:
+            return []
+            
+        cola_manual = []
+        cola_pool = []
+        
+        for cancion in todas_canciones:
+            if cancion.orden_manual is not None:
+                cola_manual.append(cancion)
+            else:
+                cola_pool.append(cancion)
+        
+        if not cola_pool:
+            return cola_manual
+            
+        # Agrupar por mesa
+        match_mesa_canciones = {}
+        mesa_arrival_time = {}
+        mesas_involucradas_ids = set()
+        
+        for cancion in cola_pool:
+            mesa_id = cancion.usuario.mesa_id or 0
+            if mesa_id not in match_mesa_canciones:
+                match_mesa_canciones[mesa_id] = deque()
+                mesa_arrival_time[mesa_id] = cancion.id
+                mesas_involucradas_ids.add(mesa_id)
+            match_mesa_canciones[mesa_id].append(cancion)
+            
+        # Calcular quotas
+        UMBRAL_ORO = 150000
+        UMBRAL_PLATA = 50000
+        mesa_quotas = {}
+        
+        if mesas_involucradas_ids:
+            ids_reales = [mid for mid in mesas_involucradas_ids if mid != 0]
+            consumos_mesas = {}
+            
+            if ids_reales:
+                rows = (
+                    db.query(
+                        models.Usuario.mesa_id,
+                        func.sum(models.Consumo.valor_total)
+                    )
+                    .join(models.Consumo, models.Usuario.id == models.Consumo.usuario_id)
+                    .filter(models.Usuario.mesa_id.in_(ids_reales))
+                    .group_by(models.Usuario.mesa_id)
+                    .all()
+                )
+                for mid, total in rows:
+                    consumos_mesas[mid] = total or 0
+            
+            for mid in mesas_involucradas_ids:
+                total = consumos_mesas.get(mid, 0)
+                if mid == 0: quota = 3
+                elif total >= UMBRAL_ORO: quota = 3
+                elif total >= UMBRAL_PLATA: quota = 2
+                else: quota = 1
+                mesa_quotas[mid] = quota
+                
+        cola_justa = []
+        orden_turnos_mesas = sorted(mesas_involucradas_ids, key=lambda mid: mesa_arrival_time[mid])
+        
+        while match_mesa_canciones:
+            for mesa_id in orden_turnos_mesas:
+                if mesa_id not in match_mesa_canciones:
+                    continue
+                queue_de_mesa = match_mesa_canciones[mesa_id]
+                cupo = mesa_quotas.get(mesa_id, 1)
+                tomadas = 0
+                while tomadas < cupo and queue_de_mesa:
+                    cancion = queue_de_mesa.popleft()
+                    cola_justa.append(cancion)
+                    tomadas += 1
+                if not queue_de_mesa:
+                    del match_mesa_canciones[mesa_id]
+                    
+        return cola_manual + cola_justa
+
+    def get_queue(self, db: Session) -> List[models.Cancion]:
+        """Retorna la cola de aprobadas (para crud.get_cola_priorizada)."""
+        # Si la cola está vacía, refrescar. 
+        # En producción podrías cachear por N segundos, pero aquí priorizamos precisión.
+        if not self._approved_queue:
+            self.refresh_queue(db)
+        return [self._reattach(db, s) for s in self._approved_queue]
 
     def get_full_state(self, db: Session) -> Dict[str, Any]:
         """Estado para el Dashboard de Admin."""

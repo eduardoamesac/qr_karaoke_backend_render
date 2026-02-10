@@ -6896,3 +6896,38 @@ TypeError: can't subtract offset-naive and offset-aware datetimes
 2026-02-10 11:58:22,825 - song_credits_background - INFO - Credits background task started
 2026-02-10 11:59:18,236 - song_credits_background - INFO - Credits background task started
 2026-02-10 11:59:48,634 - song_credits_background - INFO - Credits background task started
+2026-02-10 12:00:15,642 - song_credits_background - INFO - Credits background task started
+2026-02-10 15:14:06,431 - song_credits_background - INFO - Credits background task started
+2026-02-10 15:16:33,150 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'amistades peligrosas'
+2026-02-10 15:16:33,154 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'amistades peligrosas' (Karaoke Mode: False)
+2026-02-10 15:16:35,943 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-02-10 15:16:35,943 - youtube - INFO - Búsqueda por texto: 'amistades peligrosas'
+2026-02-10 15:16:35,943 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-02-10 15:16:36,614 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=amistades+peligrosas&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-02-10 15:16:36,997 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-02-10 15:16:36,997 - youtube - INFO - IDs de video encontrados: ['95JHOXoXR6M', 'bWQul83KtqI', 'u6c45acypTQ', 'e48oXY7QMm8', '2OFTs7ix9w0', 'GBH9Nll5nFA', 'k6c7UUhScPw', 'UsrIyimnViM', 'DAYG6nlF-to', '2wUsAA7J3ko']
+2026-02-10 15:16:37,005 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-02-10 15:16:37,209 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=95JHOXoXR6M%2CbWQul83KtqI%2Cu6c45acypTQ%2Ce48oXY7QMm8%2C2OFTs7ix9w0%2CGBH9Nll5nFA%2Ck6c7UUhScPw%2CUsrIyimnViM%2CDAYG6nlF-to%2C2wUsAA7J3ko&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-02-10 15:16:37,218 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-02-10 15:16:37,218 - youtube - INFO - Procesamiento finalizado. Se encontraron 10 resultados formateados.
+2026-02-10 15:16:37,305 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'amistades peligrosas'
+2026-02-10 15:16:37,326 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'amistades peligrosas' (Karaoke Mode: False)
+2026-02-10 15:16:38,956 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-02-10 15:16:38,956 - youtube - INFO - Búsqueda por texto: 'amistades peligrosas'
+2026-02-10 15:16:38,959 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-02-10 15:16:39,614 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=amistades+peligrosas&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-02-10 15:16:39,631 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-02-10 15:16:39,632 - youtube - INFO - IDs de video encontrados: ['95JHOXoXR6M', 'bWQul83KtqI', 'u6c45acypTQ', 'e48oXY7QMm8', '2OFTs7ix9w0', 'GBH9Nll5nFA', 'k6c7UUhScPw', 'UsrIyimnViM', 'DAYG6nlF-to', '2wUsAA7J3ko']
+2026-02-10 15:16:39,635 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-02-10 15:16:39,868 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=95JHOXoXR6M%2CbWQul83KtqI%2Cu6c45acypTQ%2Ce48oXY7QMm8%2C2OFTs7ix9w0%2CGBH9Nll5nFA%2Ck6c7UUhScPw%2CUsrIyimnViM%2CDAYG6nlF-to%2C2wUsAA7J3ko&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-02-10 15:16:39,876 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-02-10 15:16:39,878 - youtube - INFO - Procesamiento finalizado. Se encontraron 10 resultados formateados.
+2026-02-10 15:23:52,563 - song_credits_background - INFO - Credits background task started
+2026-02-10 15:23:52,805 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-10 15:23:52,836 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-10 15:24:23,505 - song_credits_background - INFO - Credits background task started
+2026-02-10 15:24:23,697 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-10 15:24:23,725 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-10 15:24:44,166 - song_credits_background - INFO - Credits background task started
+2026-02-10 15:24:44,351 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-10 15:24:44,381 - queue_manager - INFO - Cache unificado refrescado exitosamente.

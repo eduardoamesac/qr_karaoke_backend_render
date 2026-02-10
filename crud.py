@@ -1453,12 +1453,12 @@ def get_o_crear_usuario_admin_para_mesa(db: Session, mesa_id: int) -> models.Usu
 
 def get_canciones_pendientes_por_aprobar(db: Session):
     """
-    Obtiene las canciones que estÃƒÂƒÃ‚Â¡n en estado 'pendiente' (no aprobadas aÃƒÂƒÃ‚Âºn).
-    Ordenadas por fecha de creaciÃƒÂƒÃ‚Â³n.
+    Obtiene las canciones que están en estado 'pendiente' (no aprobadas aún).
+    Retorna desde el cache unificado.
     """
-    return db.query(models.Cancion).filter(
-        models.Cancion.estado == 'pendiente'
-    ).order_by(models.Cancion.created_at.asc()).all()
+    from queue_manager import queue_manager
+    state = queue_manager.get_full_state(db)
+    return state["pending"]
 
 def auto_approve_songs_after_10_minutes(db: Session):
     """
@@ -2008,106 +2008,11 @@ def get_cuenta_payment_status(db: Session, cuenta_id: int) -> Optional[dict]:
 def get_cola_lazy(db: Session):
     """
     Obtiene todas las canciones en estado pendiente_lazy, ordenadas por prioridad.
-    Usa el mismo algoritmo de cola justa que get_cola_priorizada.
+    Retorna desde el cache unificado.
     """
-    from collections import deque
-    
-    # Obtener todas las canciones en estado pendiente_lazy
-    todas_canciones = (
-        db.query(models.Cancion)
-        .join(models.Usuario, models.Cancion.usuario_id == models.Usuario.id)
-        .filter(models.Cancion.estado == "pendiente_lazy")
-        .order_by(
-            case((models.Cancion.orden_manual.is_(None), 1), else_=0),
-            models.Cancion.orden_manual.asc(),
-            models.Cancion.id.asc()
-        )
-        .all()
-    )
-    
-    if not todas_canciones:
-        return []
-    
-    # Aplicar el mismo algoritmo de cola justa
-    cola_manual = []
-    cola_pool = []
-    
-    for cancion in todas_canciones:
-        if cancion.orden_manual is not None:
-            cola_manual.append(cancion)
-        else:
-            cola_pool.append(cancion)
-    
-    if not cola_pool:
-        return cola_manual
-    
-    # Agrupar por mesa
-    match_mesa_canciones = {}
-    mesa_arrival_time = {}
-    mesas_involucradas_ids = set()
-    
-    for cancion in cola_pool:
-        mesa_id = cancion.usuario.mesa_id or 0
-        if mesa_id not in match_mesa_canciones:
-            match_mesa_canciones[mesa_id] = deque()
-            mesa_arrival_time[mesa_id] = cancion.id
-            mesas_involucradas_ids.add(mesa_id)
-        match_mesa_canciones[mesa_id].append(cancion)
-    
-    # Calcular quotas
-    UMBRAL_ORO = 150000
-    UMBRAL_PLATA = 50000
-    mesa_quotas = {}
-    
-    if mesas_involucradas_ids:
-        ids_reales = [mid for mid in mesas_involucradas_ids if mid != 0]
-        consumos_mesas = {}
-        
-        if ids_reales:
-            rows = (
-                db.query(
-                    models.Usuario.mesa_id,
-                    func.sum(models.Consumo.valor_total)
-                )
-                .join(models.Consumo, models.Usuario.id == models.Consumo.usuario_id)
-                .filter(models.Usuario.mesa_id.in_(ids_reales))
-                .group_by(models.Usuario.mesa_id)
-                .all()
-            )
-            for mid, total in rows:
-                consumos_mesas[mid] = total or 0
-        
-        for mid in mesas_involucradas_ids:
-            total = consumos_mesas.get(mid, 0)
-            if mid == 0:
-                quota = 3
-            elif total >= UMBRAL_ORO:
-                quota = 3
-            elif total >= UMBRAL_PLATA:
-                quota = 2
-            else:
-                quota = 1
-            mesa_quotas[mid] = quota
-    
-    # Round Robin
-    cola_justa = []
-    orden_turnos_mesas = sorted(mesas_involucradas_ids, key=lambda mid: mesa_arrival_time[mid])
-    
-    while match_mesa_canciones:
-        for mesa_id in orden_turnos_mesas:
-            if mesa_id not in match_mesa_canciones:
-                continue
-            queue_de_mesa = match_mesa_canciones[mesa_id]
-            cupo = mesa_quotas.get(mesa_id, 1)
-            tomadas = 0
-            while tomadas < cupo and queue_de_mesa:
-                cancion = queue_de_mesa.popleft()
-                cola_justa.append(cancion)
-                tomadas += 1
-            if not queue_de_mesa:
-                del match_mesa_canciones[mesa_id]
-    
-    return cola_manual + cola_justa
+    from queue_manager import queue_manager
+    state = queue_manager.get_full_state(db)
+    return state["lazy_queue"]
 
 def aprobar_siguiente_cancion_lazy(db: Session):
     """

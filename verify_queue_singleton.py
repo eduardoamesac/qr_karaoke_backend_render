@@ -17,7 +17,7 @@ def verify_queue():
     db = SessionLocal()
     try:
         # 1. Check initial state (might be empty if not refreshed)
-        print("Initial queue state:", len(queue_manager._queue))
+        print("Initial queue state:", len(queue_manager._approved_queue))
         
         # 2. Refresh
         print("Refreshing queue from DB...")
