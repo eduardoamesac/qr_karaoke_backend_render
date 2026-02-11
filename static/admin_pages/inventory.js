@@ -279,22 +279,28 @@ async function handleProductImageUpload(event) {
 
         showNotification('🖼️ Imagen actualizada.', 'success');
 
-        // Limpiar el input ANTES de recargar para evitar eventos residuales
+        // Limpiar el input y el estado ANTES de recargar
         fileInput.value = '';
         delete fileInput.dataset.productId;
 
-        // Pequeño retardo para asegurar que el DOM esté estable
+        // Pequeño retardo controlado antes de permitir otra acción y recargar
         setTimeout(() => {
             isUploadingImage = false;
-            loadInventoryPage();
-        }, 100);
+            // Solo recargar si la página de inventario sigue activa
+            const inventoryPage = document.getElementById('inventory');
+            if (inventoryPage && inventoryPage.classList.contains('active')) {
+                loadInventoryPage();
+            }
+        }, 300);
 
     } catch (error) {
         showNotification(error.message, 'error');
-        isUploadingImage = false;
         // Limpiar en caso de error también
         fileInput.value = '';
         delete fileInput.dataset.productId;
+        setTimeout(() => {
+            isUploadingImage = false;
+        }, 300);
     }
 }
 
@@ -325,10 +331,13 @@ function setupInventoryListeners() {
     }
 
     if (fileInput) {
-        // Clonar y reemplazar el elemento para eliminar todos los listeners anteriores
-        const newFileInput = fileInput.cloneNode(true);
-        fileInput.parentNode.replaceChild(newFileInput, fileInput);
-        // Agregar el listener al nuevo elemento
-        newFileInput.addEventListener('change', handleProductImageUpload);
+        // Eliminar listeners previos para evitar acumulación
+        // Importante: No clonamos aquí si queremos mantener la referencia global del elemento en admin_dashboard.html
+        // Pero como estamos dentro de un switch de navegación que llama a esto, es mejor una limpieza limpia.
+        fileInput.removeEventListener('change', handleProductImageUpload);
+        fileInput.addEventListener('change', handleProductImageUpload);
+
+        // Asegurar que el valor esté limpio
+        fileInput.value = '';
     }
 }
