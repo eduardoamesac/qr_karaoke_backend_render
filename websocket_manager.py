@@ -48,9 +48,9 @@ class ConnectionManager:
         """Obtiene la cola actualizada y la envía a todos los clientes."""
         db = SessionLocal()
         try:
-            # Usamos crud.get_cola_completa para obtener la cola real (aprobada y priorizada)
-            # Esto corrige el error donde se mostraban solo canciones pendientes o se borraba la cola
-            cola_data = crud.get_cola_completa(db)
+            # Usamos crud.get_cola_completa_con_lazy para obtener la cola extendida (incluyendo lazy)
+            # Esto asegura que el admin reciba toda la información necesaria para actualizar ambas listas.
+            cola_data = crud.get_cola_completa_con_lazy(db)
             
             queue_data = jsonable_encoder(cola_data)
             

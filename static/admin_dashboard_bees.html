@@ -717,8 +717,13 @@
                                     // Actualizar la lista si la pestaña de cola está visible
                                     if (document.getElementById('queue').classList.contains('active')) {
                                         const approvedListEl = document.getElementById('approved-songs-list');
+                                        const lazySongsListEl = document.getElementById('lazy-songs-list');
+
                                         if (approvedListEl && typeof renderApprovedSongs === 'function') {
                                             renderApprovedSongs(currentQueueData, approvedListEl);
+                                        }
+                                        if (lazySongsListEl && typeof renderLazySongs === 'function' && currentQueueData.lazy_queue) {
+                                            renderLazySongs(currentQueueData.lazy_queue, lazySongsListEl);
                                         }
                                     }
                                     break;
