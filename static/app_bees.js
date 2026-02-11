@@ -518,6 +518,13 @@ async function handlePlaceOrder() {
         showNotification('¡Pedido realizado con éxito!', 'success');
         state.cart = [];
         renderCart();
+
+        // Reset all product buttons in the catalog
+        const addBtnContainers = document.querySelectorAll('.add-btn-container');
+        addBtnContainers.forEach(container => {
+            updateQuantityDisplay(container, 0);
+        });
+
         cartModal.style.display = 'none';
         fetchUserProfile();
         fetchTableAccountStatus();
