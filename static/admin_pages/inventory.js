@@ -284,13 +284,20 @@ async function handleProductImageUpload(event) {
         delete fileInput.dataset.productId;
 
         // Pequeño retardo controlado antes de permitir otra acción y recargar
-        setTimeout(() => {
+        setTimeout(async () => {
             isUploadingImage = false;
-            // Solo recargar si la página de inventario sigue activa
+
             const inventoryPage = document.getElementById('inventory');
             if (inventoryPage && inventoryPage.classList.contains('active')) {
-                loadInventoryPage();
+
+                // SOLO re-renderizar productos
+                const products = await apiFetch('/productos/');
+                const productList = document.getElementById('product-list');
+                if (productList) {
+                    renderProducts(products, productList);
+                }
             }
+
         }, 300);
 
     } catch (error) {
