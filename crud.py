@@ -1741,38 +1741,33 @@ async def start_next_song_if_autoplay_and_idle(db: Session):
 
 async def avanzar_cola_automaticamente(db: Session):
     """
-    FunciÃƒÂƒÃ‚Â³n central para avanzar la cola: marca la canciÃƒÂƒÃ‚Â³n actual como cantada,
+    Función central para avanzar la cola: marca la canción actual como cantada,
     inicia la siguiente y notifica a todos los clientes.
-    Esta funciÃƒÂƒÃ‚Â³n es llamada tanto por el autoplay como por el botÃƒÂƒÃ‚Â³n manual.
+    Esta función es llamada tanto por el autoplay como por el botón manual.
     """
     import websocket_manager
 
-    # 1. Marcar la canciÃƒÂƒÃ‚Â³n actual como 'cantada' y obtener sus datos
+    # 1. Marcar la canción actual como 'cantada' y obtener sus datos
     cancion_cantada = marcar_cancion_actual_como_cantada(db)
     if cancion_cantada:
-        # Notificar a todos que la canciÃƒÂƒÃ‚Â³n terminÃƒÂƒÃ‚Â³ (para mostrar puntajes, etc.)
+        # Notificar a todos que la canción terminó (para mostrar puntajes, etc.)
         await websocket_manager.manager.broadcast_song_finished(cancion_cantada)
 
-    # 2. Marcar la siguiente canciÃƒÂƒÃ‚Â³n como 'reproduciendo'
+    # 2. Marcar la siguiente canción como 'reproduciendo'
     siguiente_cancion = marcar_siguiente_como_reproduciendo(db)
 
-    # 3. Notificar a todos los clientes sobre la actualizaciÃƒÂƒÃ‚Â³n de la cola
+    # 3. Aprobar la siguiente canción lazy si es necesario
+    # IMPORTANTE: Esto debe suceder ANTES del broadcast_queue_update
+    check_and_approve_next_lazy_song(db)
+
+    # 4. Notificar a todos los clientes sobre la actualización de la cola
     await websocket_manager.manager.broadcast_queue_update()
 
-    # 4. Si hay una nueva canciÃƒÂƒÃ‚Â³n, enviar la orden de reproducciÃƒÂƒÃ‚Â³n al player
+    # 5. Si hay una nueva canción, enviar la orden de reproducción al player
     if siguiente_cancion:
         await websocket_manager.manager.broadcast_play_song(siguiente_cancion.youtube_id, siguiente_cancion.duracion_seconds or 0)
 
-
-    # 5. Aprobar la siguiente canciÃƒÂ³n lazy si es necesario
-    check_and_approve_next_lazy_song(db)
-
-
-    # 5. Aprobar la siguiente canciÃƒÂ³n lazy si es necesario
-    check_and_approve_next_lazy_song(db)
-
     return siguiente_cancion
-
 def registrar_compra_producto(db: Session, compra: schemas.CompraProducto):
     """
     Registra una compra para un producto existente, aumentando su stock.
@@ -2016,8 +2011,8 @@ def get_cola_lazy(db: Session):
 
 def aprobar_siguiente_cancion_lazy(db: Session):
     """
-    Aprueba la siguiente canciÃƒÂ³n de la cola lazy.
-    Llamada automÃƒÂ¡ticamente cuando la canciÃƒÂ³n actual llega al 50%.
+    Aprueba la siguiente canción de la cola lazy.
+    Llamada automáticamente cuando la canción actual llega al 50%.
     """
     cola_lazy = get_cola_lazy(db)
     if not cola_lazy:
@@ -2029,6 +2024,9 @@ def aprobar_siguiente_cancion_lazy(db: Session):
     db.commit()
     db.refresh(siguiente)
     
+    from queue_manager import queue_manager
+    queue_manager.refresh_queue(db)
+
     create_admin_log_entry(db, action="LAZY_APPROVAL", details=f"Cancion '{siguiente.titulo}' aprobada automaticamente (lazy).")
     return siguiente
 
