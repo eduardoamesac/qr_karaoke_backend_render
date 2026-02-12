@@ -3,12 +3,16 @@
 
 // Flag para prevenir que el diálogo de archivos se abra múltiples veces
 let isUploadingImage = false;
+let inventoryListenersAttached = false;
 async function loadInventoryPage() {
     const inventoryContainer = document.getElementById('inventory');
     if (!inventoryContainer) return;
 
     try {
         inventoryContainer.innerHTML = '';
+
+        // 🔥 RESET OBLIGATORIO DE LISTENERS
+        inventoryListenersAttached = false;
 
         // Encabezado
         const header = document.createElement('div');
@@ -312,39 +316,52 @@ async function handleProductImageUpload(event) {
 }
 
 function setupInventoryListeners() {
+    if (inventoryListenersAttached) return;
+
     const createForm = document.getElementById('create-product-form');
     const productList = document.getElementById('product-list');
     const fileInput = document.getElementById('product-image-upload');
 
     if (createForm) {
-        createForm.addEventListener('submit', (e) => handleCreateProduct(e, e.target));
+        createForm.addEventListener('submit', (e) =>
+            handleCreateProduct(e, e.target)
+        );
     }
 
     if (productList) {
-        productList.addEventListener('click', handleToggleProductActive);
-        productList.addEventListener('click', handleDeleteProduct);
         productList.addEventListener('click', (e) => {
+
+            if (
+                e.target.classList.contains('btn-activate') ||
+                e.target.classList.contains('btn-deactivate')
+            ) {
+                handleToggleProductActive(e);
+                return;
+            }
+
+            if (e.target.classList.contains('btn-delete')) {
+                handleDeleteProduct(e);
+                return;
+            }
+
             if (e.target.classList.contains('upload-img-btn')) {
-                // Prevenir múltiples clics si ya se está subiendo
                 if (isUploadingImage) return;
 
                 const productId = e.target.dataset.id;
                 if (fileInput) {
                     fileInput.dataset.productId = productId;
-                    fileInput.click();
+                    fileInput.click(); // 👈 AQUÍ estaba el doble disparo
                 }
             }
         });
     }
 
     if (fileInput) {
-        // Eliminar listeners previos para evitar acumulación
-        // Importante: No clonamos aquí si queremos mantener la referencia global del elemento en admin_dashboard.html
-        // Pero como estamos dentro de un switch de navegación que llama a esto, es mejor una limpieza limpia.
         fileInput.removeEventListener('change', handleProductImageUpload);
         fileInput.addEventListener('change', handleProductImageUpload);
-
-        // Asegurar que el valor esté limpio
         fileInput.value = '';
     }
+
+    inventoryListenersAttached = true;
 }
+
