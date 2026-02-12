@@ -8118,3 +8118,7 @@ TypeError: can't subtract offset-naive and offset-aware datetimes
 2026-02-12 11:02:10,781 - queue_manager - INFO - Cache unificado refrescado exitosamente.
 2026-02-12 11:02:10,871 - queue_manager - INFO - Cache unificado refrescado exitosamente.
 2026-02-12 11:02:16,442 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-12 11:31:02,412 - song_credits_background - INFO - Credits background task started
+2026-02-12 11:31:04,995 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-12 11:31:47,686 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-12 11:32:29,120 - queue_manager - INFO - Cache unificado refrescado exitosamente.
