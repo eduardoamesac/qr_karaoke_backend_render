@@ -186,7 +186,81 @@ function renderSettings(settings, container) {
     `;
     cardsContainer.appendChild(closingTimeCard);
 
-    // ============= TARJETA 5: CLAVES API =============
+    // ============= TARJETA 5: CONFIGURACIÓN COLA LAZY =============
+    const lazyQueueCard = document.createElement('div');
+    lazyQueueCard.className = 'settings-card';
+    lazyQueueCard.innerHTML = `
+        <div class="settings-card-header">
+            <div class="settings-card-icon">🎵</div>
+            <div class="settings-card-header-content">
+                <h3>Fórmula de Entrada a Cola Lazy</h3>
+                <p>Gestiona cómo los usuarios agregan canciones</p>
+            </div>
+        </div>
+        <div style="padding: 16px; background: rgba(76, 175, 80, 0.1); border-radius: 8px; border-left: 4px solid var(--bees-green); margin-bottom: 16px;">
+            <p style="margin: 0; font-size: 12px; color: #2e7d32;">
+                <strong>ℹ️ Información:</strong> Estos parámetros controlan cómo los usuarios pueden agregar canciones después de hacer una compra.
+            </p>
+        </div>
+        <form id="lazy-queue-form">
+            <div class="bees-form-group">
+                <label for="credit-multiplier">
+                    Multiplicador de Créditos
+                    <span style="font-size: 11px; color: var(--settings-text-secondary);">x Monto Gastado</span>
+                </label>
+                <div style="display: flex; gap: 12px; align-items: center;">
+                    <input type="number" id="credit-multiplier" name="credit_multiplier" min="0.1" max="10" step="0.1" value="1.0" style="flex: 1;">
+                    <span style="font-size: 14px; font-weight: bold; min-width: 60px;" id="credit-multiplier-display">1.0x</span>
+                </div>
+                <p style="margin: 8px 0 0 0; font-size: 12px; color: var(--settings-text-secondary);">
+                    Ej: 1.0 = $100 → 100 créditos | 1.5 = $100 → 150 créditos
+                </p>
+            </div>
+
+            <div class="bees-form-group">
+                <label for="decay-rate">
+                    Tasa de Decaimiento
+                    <span style="font-size: 11px; color: var(--settings-text-secondary);">Créditos/Minuto</span>
+                </label>
+                <div style="display: flex; gap: 12px; align-items: center;">
+                    <input type="number" id="decay-rate" name="decay_rate" min="0" step="10" value="100" style="flex: 1;">
+                    <span style="font-size: 14px; font-weight: bold; min-width: 100px;" id="decay-rate-display">100/min</span>
+                </div>
+                <p style="margin: 8px 0 0 0; font-size: 12px; color: var(--settings-text-secondary);">
+                    Créditos que se pierden cada minuto (0 = sin decaimiento)
+                </p>
+            </div>
+
+            <div style="margin-top: 16px; padding-top: 16px; border-top: 2px solid var(--settings-border);">
+                <h4 style="margin: 0 0 12px 0; color: var(--settings-text);">Modos Especiales</h4>
+                
+                <label style="display: flex; align-items: center; gap: 12px; padding: 12px; background: rgba(255, 193, 7, 0.1); border-radius: 8px; border-left: 4px solid #FFC107; cursor: pointer; margin-bottom: 12px;">
+                    <input type="checkbox" id="allow-unrestricted" name="allow_unrestricted" class="bees-checkbox" style="margin: 0;">
+                    <div>
+                        <strong>🔓 Modo Sin Restricciones</strong>
+                        <p style="margin: 4px 0 0 0; font-size: 12px; color: var(--settings-text-secondary);">
+                            Permite que los usuarios agreguen canciones sin límite de créditos
+                        </p>
+                    </div>
+                </label>
+            </div>
+
+            <div class="bees-form-group">
+                <label for="max-concurrent">Máximo de Canciones Concurrentes por Usuario</label>
+                <input type="number" id="max-concurrent" name="max_concurrent_songs" min="1" max="50" value="10">
+                <p style="margin: 8px 0 0 0; font-size: 12px; color: var(--settings-text-secondary);">
+                    Límite de canciones que puede tener un usuario en la cola simultáneamente
+                </p>
+            </div>
+
+            <button type="submit" class="bees-btn bees-btn-primary" style="width: 100%; margin-top: 16px; padding: 12px;">
+                💾 Guardar Configuración
+            </button>
+        </form>
+    `;
+    cardsContainer.appendChild(lazyQueueCard);
+
+    // ============= TARJETA 6: CLAVES API =============
     const apiKeysCard = document.createElement('div');
     apiKeysCard.className = 'settings-card';
     apiKeysCard.innerHTML = `
@@ -227,7 +301,7 @@ function renderSettings(settings, container) {
     `;
     cardsContainer.appendChild(apiKeysCard);
 
-    // ============= TARJETA 6: ZONA PELIGROSA =============
+    // ============= TARJETA 7: ZONA PELIGROSA =============
     const dangerCard = document.createElement('div');
     dangerCard.className = 'settings-card';
     dangerCard.style.borderLeft = '4px solid var(--bees-red)';
@@ -483,6 +557,62 @@ async function handleGeneralSettingsUpdate(event, form) {
 
 
 
+async function loadLazyQueueConfig() {
+    try {
+        const config = await apiFetch('/admin/settings/lazy-queue');
+        
+        // Cargar valores en el formulario
+        const creditMultiplierInput = document.getElementById('credit-multiplier');
+        const decayRateInput = document.getElementById('decay-rate');
+        const unrestricted = document.getElementById('allow-unrestricted');
+        const maxConcurrentInput = document.getElementById('max-concurrent');
+        
+        if (creditMultiplierInput) {
+            creditMultiplierInput.value = (config.credit_multiplier || 1.0).toFixed(1);
+            const display = document.getElementById('credit-multiplier-display');
+            if (display) display.textContent = (config.credit_multiplier || 1.0).toFixed(1) + 'x';
+        }
+        
+        if (decayRateInput) {
+            decayRateInput.value = config.decay_rate || 100;
+            const display = document.getElementById('decay-rate-display');
+            if (display) display.textContent = (config.decay_rate || 100) + '/min';
+        }
+        
+        if (unrestricted) {
+            unrestricted.checked = config.allow_unrestricted || false;
+        }
+        
+        if (maxConcurrentInput) {
+            maxConcurrentInput.value = config.max_concurrent_songs || 10;
+        }
+    } catch (error) {
+        console.log('No se pudo cargar configuración de cola lazy:', error.message);
+    }
+}
+
+async function handleLazyQueueUpdate(event, form) {
+    event.preventDefault();
+    const formData = new FormData(form);
+    const data = {
+        credit_multiplier: parseFloat(formData.get('credit_multiplier')) || 1.0,
+        decay_rate: parseInt(formData.get('decay_rate')) || 100,
+        allow_unrestricted: formData.get('allow_unrestricted') === 'on',
+        max_concurrent_songs: parseInt(formData.get('max_concurrent_songs')) || 10
+    };
+
+    try {
+        const result = await apiFetch('/admin/settings/lazy-queue', {
+            method: 'POST',
+            body: JSON.stringify(data)
+        });
+
+        showNotification('✅ Configuración de cola lazy actualizada correctamente.', 'success');
+    } catch (error) {
+        showNotification(`❌ Error: ${error.message}`, 'error');
+    }
+}
+
 function setupSettingsListeners() {
     const closingTimeForm = document.getElementById('closing-time-form');
     const createApiKeyForm = document.getElementById('create-api-key-form');
@@ -545,6 +675,40 @@ function setupSettingsListeners() {
     if (resetNightBtn) {
         resetNightBtn.addEventListener('click', handleResetNight);
     }
+
+    // Lazy Queue form
+    const lazyQueueForm = document.getElementById('lazy-queue-form');
+    if (lazyQueueForm && !lazyQueueForm.dataset.listenerAttached) {
+        lazyQueueForm.addEventListener('submit', (e) => handleLazyQueueUpdate(e, e.target));
+        
+        // Listeners para actualización en tiempo real de los displays
+        const creditMultiplierInput = document.getElementById('credit-multiplier');
+        const decayRateInput = document.getElementById('decay-rate');
+        const unrestricted = document.getElementById('allow-unrestricted');
+        
+        if (creditMultiplierInput) {
+            creditMultiplierInput.addEventListener('input', (e) => {
+                const display = document.getElementById('credit-multiplier-display');
+                if (display) {
+                    display.textContent = parseFloat(e.target.value).toFixed(1) + 'x';
+                }
+            });
+        }
+        
+        if (decayRateInput) {
+            decayRateInput.addEventListener('input', (e) => {
+                const display = document.getElementById('decay-rate-display');
+                if (display) {
+                    display.textContent = e.target.value + '/min';
+                }
+            });
+        }
+        
+        lazyQueueForm.dataset.listenerAttached = '1';
+    }
+
+    // Load current lazy queue configuration
+    loadLazyQueueConfig();
 
     // Load API keys
     loadApiKeys();

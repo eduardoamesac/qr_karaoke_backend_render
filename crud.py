@@ -7,6 +7,7 @@ import datetime
 import models, schemas
 from timezone_utils import now_bogota, safe_datetime_diff, ensure_aware
 from decimal import Decimal # Importar Decimal
+from settings_storage import load_settings
 
 def get_mesa_by_qr(db: Session, qr_code: str):
     """Busca una mesa por su cÃƒÂƒÃ‚Â³digo QR."""
@@ -2235,26 +2236,43 @@ def move_lazy_song_down(db: Session, cancion_id: int, usuario_id: int):
     db.commit()
     db.refresh(cancion)
     
-    return cancion
+    return cancion# ============================================================================
+# FUNCIONES PARA SISTEMA DE CRÉDITOS DE CANCIONES
+# ============================================================================
 
-# ============================================================================
-# FUNCIONES PARA SISTEMA DE CRÃ‰DITOS DE CANCIONES
-# ============================================================================
+def get_lazy_queue_config() -> dict:
+    """
+    Obtiene la configuración actual de la cola lazy desde settings.
+    Retorna un diccionario con los parámetros de control de entrada a la cola lazy.
+    """
+    settings = load_settings()
+    return {
+        "credit_multiplier": settings.get("lazy_queue_credit_multiplier", 1.0),
+        "decay_rate": settings.get("lazy_queue_decay_rate", 100),
+        "allow_unrestricted": settings.get("lazy_queue_allow_unrestricted", False),
+        "max_concurrent_songs": settings.get("lazy_queue_max_concurrent_songs", 10)
+    }
+
 
 def add_song_credits(db: Session, usuario_id: int, credit_value: int):
     """
-    Agrega crÃ©ditos de canciÃ³n a un usuario.
-    Los crÃ©ditos se asignan por el valor en pesos de los productos comprados.
-    Ejemplo: Cerveza 5000 pesos = 5000 crÃ©ditos
+    Agrega créditos de canción a un usuario aplicando el multiplicador configurado.
     """
     db_usuario = db.query(models.Usuario).filter(models.Usuario.id == usuario_id).first()
     if not db_usuario:
         return None
     
-    # Crear nuevo registro de crÃ©ditos
+    # Obtener configuración de la cola lazy
+    lazy_config = get_lazy_queue_config()
+    credit_multiplier = lazy_config.get("credit_multiplier", 1.0)
+    
+    # Aplicar multiplicador al valor de créditos
+    final_credit_value = int(float(credit_value) * credit_multiplier)
+    
+    # Crear nuevo registro de créditos
     new_credit = models.SongCredits(
         usuario_id=usuario_id,
-        credits_value=credit_value,
+        credits_value=final_credit_value,
         created_at=now_bogota()
     )
     db.add(new_credit)
@@ -2265,30 +2283,37 @@ def add_song_credits(db: Session, usuario_id: int, credit_value: int):
 
 def get_available_song_credits(db: Session, usuario_id: int) -> int:
     """
-    Obtiene los crÃ©ditos disponibles para un usuario.
-    Los crÃ©ditos decaen 100 por minuto desde su creaciÃ³n.
+    Obtiene los créditos disponibles para un usuario usando la tasa de decaimiento configurada.
     """
     db_usuario = db.query(models.Usuario).filter(models.Usuario.id == usuario_id).first()
     if not db_usuario:
         return 0
     
-    # Obtener todos los crÃ©ditos no consumidos del usuario
+    # Obtener configuración (incluyendo si está en modo sin restricciones)
+    lazy_config = get_lazy_queue_config()
+    allow_unrestricted = lazy_config.get("allow_unrestricted", False)
+    
+    # Si está en modo sin restricciones, retornar siempre un valor positivo
+    if allow_unrestricted:
+        return 1  # Retornar 1 para indicar que hay créditos disponibles
+    
+    # Obtener todos los créditos no consumidos del usuario
     credits = db.query(models.SongCredits).filter(
         models.SongCredits.usuario_id == usuario_id,
-        models.SongCredits.consumed_at.is_(None),  # No ha sido consumido
+        models.SongCredits.consumed_at.is_(None),
         models.SongCredits.consumed_by_song_id.is_(None)
     ).all()
     
     total_credits = 0
     current_time = now_bogota()
+    decay_rate = lazy_config.get("decay_rate", 100)  # Tasa de decaimiento por minuto
     
     for credit in credits:
-        # Calcular minutos transcurridos desde la creaciÃ³n usando funciÃ³n segura
         seconds_elapsed = safe_datetime_diff(current_time, credit.created_at)
         minutes_elapsed = seconds_elapsed / 60
         
-        # Restar 100 puntos por minuto
-        remaining_credit = max(0, credit.credits_value - int(minutes_elapsed * 100))
+        # Restar decay_rate puntos por minuto (configurable)
+        remaining_credit = max(0, credit.credits_value - int(minutes_elapsed * decay_rate))
         
         if remaining_credit > 0:
             total_credits += remaining_credit
@@ -2302,12 +2327,23 @@ def get_available_song_credits(db: Session, usuario_id: int) -> int:
 
 def get_user_credits_detail(db: Session, usuario_id: int) -> dict:
     """
-    Obtiene informaciÃ³n detallada de los crÃ©ditos de un usuario,
-    incluyendo el valor actual y cuÃ¡nto tiempo le queda.
+    Obtiene información detallada de los créditos de un usuario con la tasa configurada.
     """
     db_usuario = db.query(models.Usuario).filter(models.Usuario.id == usuario_id).first()
     if not db_usuario:
         return {"available_credits": 0, "credits_detail": [], "needs_purchase": False}
+    
+    lazy_config = get_lazy_queue_config()
+    allow_unrestricted = lazy_config.get("allow_unrestricted", False)
+    decay_rate = lazy_config.get("decay_rate", 100)
+    
+    if allow_unrestricted:
+        return {
+            "available_credits": 999999,
+            "credits_detail": [{"status": "unrestricted"}],
+            "needs_purchase": False,
+            "minutes_to_zero": -1  # -1 indica modo sin restricciones
+        }
     
     credits = db.query(models.SongCredits).filter(
         models.SongCredits.usuario_id == usuario_id,
@@ -2322,8 +2358,8 @@ def get_user_credits_detail(db: Session, usuario_id: int) -> dict:
     for credit in credits:
         seconds_elapsed = safe_datetime_diff(current_time, credit.created_at)
         minutes_elapsed = seconds_elapsed / 60
-        remaining_credit = max(0, credit.credits_value - int(minutes_elapsed * 100))
-        minutes_remaining = max(0, (remaining_credit / 100))
+        remaining_credit = max(0, credit.credits_value - int(minutes_elapsed * decay_rate))
+        minutes_remaining = max(0, (remaining_credit / decay_rate)) if decay_rate > 0 else 0
         
         if remaining_credit > 0:
             total_credits += remaining_credit
@@ -2339,20 +2375,23 @@ def get_user_credits_detail(db: Session, usuario_id: int) -> dict:
         "available_credits": total_credits,
         "credits_detail": credits_detail,
         "needs_purchase": total_credits == 0,
-        "minutes_to_zero": max(0, (total_credits / 100)) if total_credits > 0 else 0
+        "minutes_to_zero": max(0, (total_credits / decay_rate)) if total_credits > 0 and decay_rate > 0 else 0
     }
 
 def consume_song_credit(db: Session, usuario_id: int, cancion_id: int) -> bool:
     """
-    Consume un crÃ©dito de canciÃ³n cuando el usuario agrega una canciÃ³n.
-    Retorna True si hay crÃ©dito disponible, False si no.
+    Consume un crédito de canción cuando el usuario agrega una canción.
+    Retorna True si hay crédito disponible, False si no.
     """
     available_credits = get_available_song_credits(db, usuario_id)
     
     if available_credits <= 0:
         return False
     
-    # Obtener el primer crÃ©dito que tenga valor disponible
+    lazy_config = get_lazy_queue_config()
+    decay_rate = lazy_config.get("decay_rate", 100)
+    
+    # Obtener el primer crédito que tenga valor disponible
     credits = db.query(models.SongCredits).filter(
         models.SongCredits.usuario_id == usuario_id,
         models.SongCredits.consumed_at.is_(None),
@@ -2360,15 +2399,14 @@ def consume_song_credit(db: Session, usuario_id: int, cancion_id: int) -> bool:
     ).order_by(models.SongCredits.created_at).all()
     
     current_time = now_bogota()
-    remaining_to_consume = 1  # Una canciÃ³n consume 1 crÃ©dito lÃ³gico
     
     for credit in credits:
         seconds_elapsed = safe_datetime_diff(current_time, credit.created_at)
         minutes_elapsed = seconds_elapsed / 60
-        remaining_credit = max(0, credit.credits_value - int(minutes_elapsed * 100))
+        remaining_credit = max(0, credit.credits_value - int(minutes_elapsed * decay_rate))
         
         if remaining_credit > 0:
-            # Este crÃ©dito tiene valor, lo usamos para esta canciÃ³n
+            # Este crédito tiene valor, lo usamos para esta canción
             credit.consumed_at = ensure_aware(current_time)
             credit.consumed_by_song_id = cancion_id
             db.commit()
