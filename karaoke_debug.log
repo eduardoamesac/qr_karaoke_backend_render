@@ -8572,3 +8572,63 @@ TypeError: can't subtract offset-naive and offset-aware datetimes
 2026-02-13 10:27:28,436 - queue_manager - INFO - Cache unificado refrescado exitosamente.
 2026-02-13 10:27:29,316 - queue_manager - INFO - Cache unificado refrescado exitosamente.
 2026-02-13 10:28:25,165 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 11:49:55,522 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 11:50:13,487 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 11:50:29,367 - youtube - INFO - Búsqueda [Pública] en YouTube con el término: 'bachata' (Karaoke Mode: True)
+2026-02-13 11:50:29,368 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'bachata' (Karaoke Mode: True)
+2026-02-13 11:50:32,366 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-02-13 11:50:32,366 - youtube - INFO - Búsqueda por texto: 'bachata karaoke'
+2026-02-13 11:50:32,366 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-02-13 11:50:33,177 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=bachata+karaoke&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-02-13 11:50:33,193 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-02-13 11:50:33,193 - youtube - INFO - IDs de video encontrados: ['RvYAN4b91CE', 'o8RsE__qIMI', 'fLDzTeRHl_s', 'cSjmOuUpeEE', 'QNZkxrcwQAE', 'ZnzJBQuoJ1c', 'VTqxknZpJes', 'A6Y3fX6bmrU', 'V91ayAM9res', 'vbbAcEhSrxE']
+2026-02-13 11:50:33,193 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-02-13 11:50:33,380 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=RvYAN4b91CE%2Co8RsE__qIMI%2CfLDzTeRHl_s%2CcSjmOuUpeEE%2CQNZkxrcwQAE%2CZnzJBQuoJ1c%2CVTqxknZpJes%2CA6Y3fX6bmrU%2CV91ayAM9res%2CvbbAcEhSrxE&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-02-13 11:50:33,482 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-02-13 11:50:33,482 - youtube - INFO - Procesamiento finalizado. Se encontraron 10 resultados formateados.
+2026-02-13 11:50:36,843 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 11:50:36,943 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 11:50:52,188 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 11:51:20,535 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 11:51:37,909 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 11:51:39,073 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 11:51:39,834 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 11:51:40,744 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 11:51:40,951 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 11:52:11,178 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 11:52:18,357 - youtube - INFO - Búsqueda [Pública] en YouTube con el término: 'bachata' (Karaoke Mode: False)
+2026-02-13 11:52:18,365 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'bachata' (Karaoke Mode: False)
+2026-02-13 11:52:19,912 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-02-13 11:52:19,912 - youtube - INFO - Búsqueda por texto: 'bachata'
+2026-02-13 11:52:19,912 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-02-13 11:52:20,754 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=bachata&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-02-13 11:52:20,773 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-02-13 11:52:20,773 - youtube - INFO - IDs de video encontrados: ['QFs3PIZb3js', 'dsLjyLn859g', 'TiM_TFpT_DE', '5ku6b33rHAA', 'kADoBrj4934', 'TOYA3PJtVUQ', 'fY36BMNDqbg', '8zcZC4HVr68', 'sojQgH3DT08', 'b3ZFwi6vRNk']
+2026-02-13 11:52:20,773 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-02-13 11:52:20,992 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=QFs3PIZb3js%2CdsLjyLn859g%2CTiM_TFpT_DE%2C5ku6b33rHAA%2CkADoBrj4934%2CTOYA3PJtVUQ%2CfY36BMNDqbg%2C8zcZC4HVr68%2CsojQgH3DT08%2Cb3ZFwi6vRNk&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-02-13 11:52:21,007 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-02-13 11:52:21,007 - youtube - INFO - Procesamiento finalizado. Se encontraron 10 resultados formateados.
+2026-02-13 11:52:28,534 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 11:52:28,600 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 11:55:13,413 - youtube - INFO - Búsqueda [Pública] en YouTube con el término: 'bachata' (Karaoke Mode: True)
+2026-02-13 11:55:13,413 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'bachata' (Karaoke Mode: True)
+2026-02-13 11:55:15,051 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-02-13 11:55:15,051 - youtube - INFO - Búsqueda por texto: 'bachata karaoke'
+2026-02-13 11:55:15,052 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-02-13 11:55:15,727 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=bachata+karaoke&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-02-13 11:55:15,727 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-02-13 11:55:15,727 - youtube - INFO - IDs de video encontrados: ['RvYAN4b91CE', 'o8RsE__qIMI', 'fLDzTeRHl_s', 'cSjmOuUpeEE', 'QNZkxrcwQAE', 'ZnzJBQuoJ1c', 'VTqxknZpJes', 'A6Y3fX6bmrU', 'V91ayAM9res', 'vbbAcEhSrxE']
+2026-02-13 11:55:15,727 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-02-13 11:55:15,908 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=RvYAN4b91CE%2Co8RsE__qIMI%2CfLDzTeRHl_s%2CcSjmOuUpeEE%2CQNZkxrcwQAE%2CZnzJBQuoJ1c%2CVTqxknZpJes%2CA6Y3fX6bmrU%2CV91ayAM9res%2CvbbAcEhSrxE&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-02-13 11:55:15,923 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-02-13 11:55:15,939 - youtube - INFO - Procesamiento finalizado. Se encontraron 10 resultados formateados.
+2026-02-13 11:55:18,497 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 11:55:18,568 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 11:57:10,848 - song_credits_background - INFO - Credits background task started
+2026-02-13 11:57:11,165 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 11:57:11,266 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 11:57:11,402 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 11:57:42,367 - song_credits_background - INFO - Credits background task started
+2026-02-13 11:57:42,622 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 11:57:42,708 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 11:57:42,799 - queue_manager - INFO - Cache unificado refrescado exitosamente.

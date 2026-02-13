@@ -2382,13 +2382,20 @@ def consume_song_credit(db: Session, usuario_id: int, cancion_id: int) -> bool:
     """
     Consume un crédito de canción cuando el usuario agrega una canción.
     Retorna True si hay crédito disponible, False si no.
+    En modo sin restricciones, retorna True sin consumir crédito real.
     """
+    lazy_config = get_lazy_queue_config()
+    allow_unrestricted = lazy_config.get("allow_unrestricted", False)
+    
+    # En modo sin restricciones, permitir agregar sin consumir crédito
+    if allow_unrestricted:
+        return True
+    
     available_credits = get_available_song_credits(db, usuario_id)
     
     if available_credits <= 0:
         return False
     
-    lazy_config = get_lazy_queue_config()
     decay_rate = lazy_config.get("decay_rate", 100)
     
     # Obtener el primer crédito que tenga valor disponible

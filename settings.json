@@ -6,6 +6,6 @@
     "enable_notifications": true,
     "lazy_queue_credit_multiplier": 1.0,
     "lazy_queue_decay_rate": 100,
-    "lazy_queue_allow_unrestricted": false,
+    "lazy_queue_allow_unrestricted": true,
     "lazy_queue_max_concurrent_songs": 10
 }
