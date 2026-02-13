@@ -178,6 +178,121 @@ def get_queue_state(db: Session = Depends(get_db)):
     return state
 
 
+@router.get("/queue/debug", summary="DIAGNÓSTICO: Ver exactamente qué va a reproducir")
+def queue_debug(db: Session = Depends(get_db)):
+    """
+    🔍 **[Admin - DEBUG]** HERRAMIENTA DE DIAGNÓSTICO
+    
+    Muestra EXACTAMENTE:
+    1. Qué está reproduciendo AHORA
+    2. Qué va a reproducir DESPUÉS
+    3. Estado completo de la BD
+    4. Discrepancias detectadas
+    
+    **PARA ENCONTRAR CANCIONES ESCONDIDAS**
+    
+    Si subes una canción y no aparece en la cola pero debería reproducir:
+    1. Llama a este endpoint
+    2. Ve la sección "next_20_in_queue"
+    3. Verás si la canción está REALMENTE en BD o fue eliminada
+    
+    SECCIONES:
+    - `what_will_play`: Próxima canción REAL que sonará
+    - `database_state`: Todo lo que hay en BD
+    - `integrity_checks`: Validaciones
+    - `issues`: Problemas detectados
+    """
+    from queue_debugger import QueueDebugger
+    
+    report = QueueDebugger.get_full_debug_report(db)
+    
+    crud.create_admin_log_entry(
+        db,
+        action="DEBUG_QUEUE",
+        details=f"Reporte de debug solicitado. Issues: {report['integrity_checks']['issues_detected']}"
+    )
+    
+    return report
+
+
+@router.get("/queue/next-to-play", summary="¿Cuál es la PRÓXIMA canción que va a reproducir?")
+def next_song_to_play(db: Session = Depends(get_db)):
+    """
+    🎵 **[Admin]** LA PRÓXIMA CANCIÓN QUE EL PLAYER VA A TOCAR
+    
+    Respuesta clara y directa:
+    - Si está reproduciendo algo: qué está sonando + qué sigue
+    - Si NO está reproduciendo: qué va a sonar
+    - Si no hay cola: mensaje explicativo
+    
+    USAR CUANDO:
+    - "¿Por qué no suena mi canción?"
+    - "¿Qué va a sonar después de esta?"
+    - Verificar que la cola sea la correcta
+    """
+    from queue_debugger import QueueDebugger
+    
+    result = QueueDebugger.get_next_song_to_play(db)
+    
+    return result
+
+
+@router.post("/queue/compare-ui-vs-reality", summary="Comparar UI vs realidad (para encontrar canciones escondidas)")
+def compare_ui_vs_reality(ui_state: dict, db: Session = Depends(get_db)):
+    """
+    🔎 **[Admin - DEBUG]** COMPARA LO QUE LA UI MUESTRA VS LA REALIDAD
+    
+    USO:
+    1. Desde el frontend, captura el estado de la cola que muestra
+    2. Envía el state aquí
+    3. Este endpoint compara con la BD
+    4. Te dice si hay:
+       - Canciones ESCONDIDAS (en BD pero no en UI)
+       - Canciones FANTASMA (en UI pero no en BD)
+       - Orden DIFERENTE
+       - now_playing INCORRECTO
+    
+    EJEMPLO REQUEST BODY:
+    {
+      "now_playing": { "id": 105 },
+      "upcoming": [
+        { "id": 106, "titulo": "Canción 2" },
+        { "id": 107, "titulo": "Canción 3" }
+      ]
+    }
+    
+    EJEMPLO RESPUESTA:
+    {
+      "discrepancies": [
+        {
+          "type": "hidden_songs",
+          "severity": "CRITICAL",
+          "hidden_song_ids": [108, 109],
+          "hidden_songs_details": [...]
+        }
+      ],
+      "summary": {
+        "issues_found": 1,
+        "critical_issues": 1
+      }
+    }
+    """
+    from queue_debugger import QueueDebugger
+    
+    comparison = QueueDebugger.get_ui_vs_reality_comparison(db, ui_state)
+    
+    # Log si hay problemas
+    if comparison["summary"]["critical_issues"] > 0:
+        crud.create_admin_log_entry(
+            db,
+            action="DEBUG_UI_REALITY_MISMATCH",
+            details=f"Desincronización detectada: {comparison['summary']['critical_issues']} problemas críticos"
+        )
+    
+    return comparison
+
+
+
 @router.post("/broadcast-message", status_code=202, summary="Enviar mensaje global a todos los usuarios")
 async def broadcast_message(notificacion: schemas.Notificacion, db: Session = Depends(get_db)):
     """
