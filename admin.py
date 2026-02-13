@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, Response, HTTPException, Body, BackgroundTasks
-import os, time
+import os, time, logging
 from sqlalchemy.orm import Session
 from typing import List, Dict, Any
 import models 
@@ -9,11 +9,15 @@ from database import SessionLocal
 import websocket_manager
 from security import api_key_auth, MASTER_API_KEY
 from queue_manager import queue_manager
+from fastapi.encoders import jsonable_encoder
 
 router = APIRouter(dependencies=[Depends(api_key_auth)])
 
 # Creamos un nuevo router para las rutas públicas que no necesitan clave de API
 public_router = APIRouter()
+
+# Logger
+logger = logging.getLogger(__name__)
 
 
 def trigger_server_restart():
@@ -132,6 +136,46 @@ def get_closing_time(db: Session = Depends(get_db)):
     """
     return schemas.ClosingTimeUpdate(hora_cierre=config.settings.KARAOKE_CIERRE)
 
+
+@router.get("/queue/state", summary="Obtener estado DEFINITIVO de la cola")
+def get_queue_state(db: Session = Depends(get_db)):
+    """
+    🎯 **[Admin]** ENDPOINT DETERMINÍSTICO - Fuente de verdad única.
+    
+    Retorna el estado ACTUAL y COMPLETO de la cola con:
+    ✅ Sincronización forzada desde BD
+    ✅ Validación de integridad
+    ✅ Número de revisión (para detectar cambios)
+    ✅ Timestamps para auditoría
+    
+    EL FRONTEND DEBE:
+    1. Guardar el 'revision' recibido
+    2. Si pide de nuevo y revision es IGUAL → puede usar cache LOCAL
+    3. Si revision cambió → RENDERIZAR NUEVA cola
+    4. Confiar 100% en los datos recibidos aquí (nunca asumir orden)
+    
+    IMPORTANTE para sincronización:
+    - now_playing: canción actualmente reproduciendo (o null)
+    - upcoming: SOLO canciones aprobadas que siguen (sin now_playing)
+    - lazy_queue: canciones pendientes_lazy en espera
+    - pending: canciones pendientes por aprobar
+    
+    Las validaciones de integridad están en '_integrity_checks'
+    """
+    from queue_synchronizer import QueueSynchronizer
+    
+    state = QueueSynchronizer.get_definitive_state(db)
+    
+    # Log para auditoría
+    crud.create_admin_log_entry(
+        db,
+        action="GET_QUEUE_STATE",
+        details=f"Estado solicitado. Revisión: {state['revision']}, "
+                f"now_playing: {state['now_playing']['id'] if state['now_playing'] else 'None'}, "
+                f"upcoming: {len(state['upcoming'])}, lazy: {len(state['lazy_queue'])}"
+    )
+    
+    return state
 
 
 @router.post("/broadcast-message", status_code=202, summary="Enviar mensaje global a todos los usuarios")
@@ -672,104 +716,134 @@ async def move_pending_song_down(cancion_id: int, db: Session = Depends(get_db),
 async def move_lazy_song_up(cancion_id: int, db: Session = Depends(get_db), api_key: str = Depends(api_key_auth)):
     """
     **[Admin]** Mueve una canción en la cola lazy una posición hacia arriba.
-    CONVIERTE la cola dinámica en una cola manual estática para garantizar el orden.
+    
+    CAMBIO: Ahora usa QueueSynchronizer para GARANTIZAR que:
+    1. La canción no está siendo reproducida
+    2. El reorden es ATÓMICO
+    3. El estado retornado es DEFINITIVO
+    4. Se incrementa la revisión para invalidar cache frontend
     """
-    # 1. Obtener la lista visual completa actual
-    cola_lazy = crud.get_cola_lazy(db)
+    from queue_synchronizer import QueueSynchronizer
     
-    # 2. Encontrar índices
-    current_index = -1
-    for i, song in enumerate(cola_lazy):
-        if song.id == cancion_id:
-            current_index = i
-            break
-            
-    if current_index == -1:
-        raise HTTPException(status_code=404, detail="Canción lazy no encontrada en la cola.")
+    # Usar mecanismo determinístico y seguro
+    result = QueueSynchronizer.reorder_lazy_queue_safely(
+        db,
+        cancion_id=cancion_id,
+        direction="up",
+        audit_user=f"api_key_{api_key[:8]}..."
+    )
     
-    if current_index == 0:
-        return {"mensaje": "La canción ya está en el principio."}
-        
-    # 3. Intercambiar en la lista EN MEMORIA
-    cola_lazy[current_index], cola_lazy[current_index - 1] = cola_lazy[current_index - 1], cola_lazy[current_index]
+    if not result["success"]:
+        raise HTTPException(status_code=400, detail=result["error"])
     
-    # 4. "Congelar" el orden: Asignar orden_manual secuencial a TODA la lista
-    # Esto sobreescribe la lógica dinámica de Round Robin para las canciones actuales,
-    # garantizando que el orden visual se respete.
-    for index, song in enumerate(cola_lazy):
-        song.orden_manual = index + 1
-        
-    db.commit()
+    # Log de auditoría
+    crud.create_admin_log_entry(
+        db,
+        action="MOVE_LAZY_UP",
+        details=f"Canción ID {cancion_id} movida hacia arriba (Revisión {result['queue_state']['revision']})"
+    )
     
-    crud.create_admin_log_entry(db, action="MOVE_LAZY_UP", details=f"Canción ID {cancion_id} movida hacia arriba (Cola convertida a manual).")
+    # Broadcast DEFINITIVO
     await websocket_manager.manager.broadcast_queue_update()
-    return {"mensaje": "Canción movida hacia arriba."}
+    
+    return {
+        "mensaje": "Canción movida hacia arriba.",
+        "queue_state": result["queue_state"]
+    }
 
 @router.post("/canciones/lazy/{cancion_id}/move-down", status_code=200, summary="Mover canción lazy hacia abajo")
 async def move_lazy_song_down(cancion_id: int, db: Session = Depends(get_db), api_key: str = Depends(api_key_auth)):
     """
     **[Admin]** Mueve una canción en la cola lazy una posición hacia abajo.
-    CONVIERTE la cola dinámica en una cola manual estática para garantizar el orden.
+    
+    CAMBIO: Ahora usa QueueSynchronizer para GARANTIZAR que:
+    1. La canción no está siendo reproducida
+    2. El reorden es ATÓMICO
+    3. El estado retornado es DEFINITIVO
+    4. Se incrementa la revisión para invalidar cache frontend
     """
-    # 1. Obtener la lista visual completa
-    cola_lazy = crud.get_cola_lazy(db)
+    from queue_synchronizer import QueueSynchronizer
     
-    # 2. Encontrar índice
-    current_index = -1
-    for i, song in enumerate(cola_lazy):
-        if song.id == cancion_id:
-            current_index = i
-            break
-            
-    if current_index == -1:
-        raise HTTPException(status_code=404, detail="Canción lazy no encontrada en la cola.")
+    # Usar mecanismo determinístico y seguro
+    result = QueueSynchronizer.reorder_lazy_queue_safely(
+        db,
+        cancion_id=cancion_id,
+        direction="down",
+        audit_user=f"api_key_{api_key[:8]}..."
+    )
     
-    if current_index >= len(cola_lazy) - 1:
-        return {"mensaje": "La canción ya está en el final."}
-        
-    # 3. Intercambiar en la lista EN MEMORIA
-    cola_lazy[current_index], cola_lazy[current_index + 1] = cola_lazy[current_index + 1], cola_lazy[current_index]
+    if not result["success"]:
+        raise HTTPException(status_code=400, detail=result["error"])
     
-    # 4. "Congelar" el orden secuencial
-    for index, song in enumerate(cola_lazy):
-        song.orden_manual = index + 1
-        
-    db.commit()
+    # Log de auditoría
+    crud.create_admin_log_entry(
+        db,
+        action="MOVE_LAZY_DOWN",
+        details=f"Canción ID {cancion_id} movida hacia abajo (Revisión {result['queue_state']['revision']})"
+    )
     
-    crud.create_admin_log_entry(db, action="MOVE_LAZY_DOWN", details=f"Canción ID {cancion_id} movida hacia abajo (Cola convertida a manual).")
+    # Broadcast DEFINITIVO
     await websocket_manager.manager.broadcast_queue_update()
-    return {"mensaje": "Canción movida hacia abajo."}
+    
+    return {
+        "mensaje": "Canción movida hacia abajo.",
+        "queue_state": result["queue_state"]
+    }
 
 
 @router.post("/canciones/lazy/approve-next", status_code=200, summary="Aprobar siguiente canción lazy")
 async def approve_next_lazy_song(db: Session = Depends(get_db), api_key: str = Depends(api_key_auth)):
     """
     **[Admin]** Aprueba la siguiente canción en la cola lazy (pendiente_lazy).
-    Útil para forzar que siempre haya una canción disponible en la cola aprobada.
+    
+    MEJORA: Ahora retorna el estado DEFINITIVO con número de revisión,
+    permitiendo que el frontend sincronice correctamente.
     """
+    from queue_synchronizer import QueueSynchronizer
+    
     siguiente = crud.aprobar_siguiente_cancion_lazy(db)
     if not siguiente:
         raise HTTPException(status_code=404, detail="No hay canciones en cola lazy para aprobar.")
 
-    crud.create_admin_log_entry(db, action="APPROVE_LAZY_NEXT", details=f"Canción '{siguiente.titulo}' aprobada manualmente desde admin.")
+    # Incrementar versión para invalidar cache frontend
+    new_revision = QueueSynchronizer.increment_revision(db)
+
+    crud.create_admin_log_entry(
+        db,
+        action="APPROVE_LAZY_NEXT",
+        details=f"Canción ID {siguiente.id} '{siguiente.titulo}' aprobada. Revisión: {new_revision}"
+    )
 
     # Si no hay canción en reproducción, intentar iniciar la siguiente automáticamente
     try:
         await crud.start_next_song_if_autoplay_and_idle(db)
     except Exception as e:
-        # Registrar error no crítico y continuar con la actualización de cola
-        print(f"Error al intentar iniciar la siguiente canción tras aprobar lazy: {e}")
+        logger.error(f"Error al intentar iniciar siguiente canción: {e}")
 
+    # Refresh completo
     queue_manager.refresh_queue(db)
+    
+    # Broadcast con estado DEFINITIVO
     await websocket_manager.manager.broadcast_queue_update()
-    return siguiente
+    
+    # Retornar estado definitivo también en respuesta
+    state = QueueSynchronizer.get_definitive_state(db)
+    return {
+        "mensaje": f"Canción '{siguiente.titulo}' aprobada.",
+        "cancion_aprobada": jsonable_encoder(siguiente),
+        "queue_state": state
+    }
 
 
 @router.post("/canciones/{cancion_id}/revert-approve", status_code=200, summary="Revertir aprobación de canción")
 async def revert_approved_song(cancion_id: int, db: Session = Depends(get_db), api_key: str = Depends(api_key_auth)):
     """
-    Revertir una aprobación previa: devuelve la canción al estado `pendiente_lazy`.
+    **[Admin]** Revertir una aprobación previa: devuelve la canción al estado `pendiente_lazy`.
+    
+    MEJORA: Ahora retorna el estado DEFINITIVO con número de revisión.
     """
+    from queue_synchronizer import QueueSynchronizer
+    
     db_cancion = crud.get_cancion_by_id(db, cancion_id)
     if not db_cancion:
         raise HTTPException(status_code=404, detail="Canción no encontrada.")
@@ -784,16 +858,29 @@ async def revert_approved_song(cancion_id: int, db: Session = Depends(get_db), a
     # Revertir
     db_cancion.estado = 'pendiente_lazy'
     db_cancion.approved_at = None
-    # Ajuste opcional: actualizar created_at para que vuelva al final de la cola lazy
-    # db_cancion.created_at = now_bogota()
 
     db.commit()
     db.refresh(db_cancion)
 
-    crud.create_admin_log_entry(db, action="REVERT_APPROVAL", details=f"Aprobación revertida para '{db_cancion.titulo}' (ID: {cancion_id}).")
+    # Incrementar versión
+    new_revision = QueueSynchronizer.increment_revision(db)
+
+    crud.create_admin_log_entry(
+        db,
+        action="REVERT_APPROVAL",
+        details=f"Aprobación revertida para ID {cancion_id}. Revisión: {new_revision}"
+    )
+    
     queue_manager.refresh_queue(db)
     await websocket_manager.manager.broadcast_queue_update()
-    return db_cancion
+    
+    # Retornar estado definitivo
+    state = QueueSynchronizer.get_definitive_state(db)
+    return {
+        "mensaje": "Aprobación revertida. Canción regresó a lazy.",
+        "cancion": jsonable_encoder(db_cancion),
+        "queue_state": state
+    }
 
 @router.get("/reports/total-income", response_model=schemas.ReporteIngresos, summary="Obtener los ingresos totales de la noche")
 def get_total_income_report(db: Session = Depends(get_db)):

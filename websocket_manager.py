@@ -45,18 +45,29 @@ class ConnectionManager:
                 pass
 
     async def broadcast_queue_update(self):
-        """Obtiene la cola actualizada y la envía a todos los clientes."""
+        """
+        Obtiene el ESTADO DEFINITIVO de la cola (con integridad validada)
+        y lo envía a todos los clientes.
+        
+        IMPORTANTE:
+        - Usa QueueSynchronizer para garantizar estado consistente
+        - Incluye revisión (revision number) para invalidar cache frontend
+        - Valida que now_playing no esté duplicado en upcoming
+        """
         db = SessionLocal()
         try:
-            # Usamos crud.get_cola_completa_con_lazy para obtener la cola extendida (incluyendo lazy)
-            # Esto asegura que el admin reciba toda la información necesaria para actualizar ambas listas.
-            cola_data = crud.get_cola_completa_con_lazy(db)
+            from queue_synchronizer import QueueSynchronizer
             
-            queue_data = jsonable_encoder(cola_data)
+            # Obtener estado DEFINITIVO (con validaciones)
+            queue_state = QueueSynchronizer.get_definitive_state(db)
             
-            payload = {"type": "queue_update", "payload": queue_data}
+            payload = {
+                "type": "queue_update",
+                "payload": queue_state
+            }
             await self._broadcast(json.dumps(payload, default=str))
         except Exception as e:
+            logger.error(f"Error broadcasting queue update: {e}", exc_info=True)
             print(f"Error broadcasting queue update: {e}")
         finally:
             db.close()
