@@ -8707,3 +8707,222 @@ TypeError: can't subtract offset-naive and offset-aware datetimes
 2026-02-13 15:42:49,833 - queue_manager - INFO - Cache unificado refrescado exitosamente.
 2026-02-13 15:42:49,855 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=Tsj8e9x9S_s, duration_seconds=262
 2026-02-13 15:42:50,104 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 15:47:21,286 - random_scorer - INFO - Puntaje aleatorio calculado: 92
+2026-02-13 15:47:21,339 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 15:47:21,379 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 15:47:21,433 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 15:47:21,469 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 15:47:21,518 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 15:47:21,567 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 15:47:21,572 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=fLDzTeRHl_s, duration_seconds=177
+2026-02-13 15:47:21,713 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 15:52:12,038 - random_scorer - INFO - Puntaje aleatorio calculado: 100
+2026-02-13 15:52:12,116 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 15:52:12,150 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 15:52:12,208 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 15:52:12,232 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 15:52:12,324 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 15:52:12,329 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=A6Y3fX6bmrU, duration_seconds=317
+2026-02-13 15:52:12,445 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 15:55:32,649 - song_credits_background - INFO - Credits background task started
+2026-02-13 15:55:32,831 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 15:55:32,904 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 15:55:32,995 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 15:55:34,308 - random_scorer - INFO - Puntaje aleatorio calculado: 96
+2026-02-13 15:55:34,515 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 15:55:34,600 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 15:55:34,655 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 15:55:34,724 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 15:55:34,839 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 15:55:48,127 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'amistades peligrosas'
+2026-02-13 15:55:48,136 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'amistades peligrosas' (Karaoke Mode: False)
+2026-02-13 15:55:50,734 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-02-13 15:55:50,734 - youtube - INFO - Búsqueda por texto: 'amistades peligrosas'
+2026-02-13 15:55:50,750 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-02-13 15:55:51,470 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=amistades+peligrosas&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-02-13 15:55:51,475 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-02-13 15:55:51,476 - youtube - INFO - IDs de video encontrados: ['95JHOXoXR6M', 'bWQul83KtqI', 'u6c45acypTQ', '2OFTs7ix9w0', 'e48oXY7QMm8', 'GBH9Nll5nFA', 'k6c7UUhScPw', 'UsrIyimnViM', 'vQ1grGlbj2A', '2wUsAA7J3ko']
+2026-02-13 15:55:51,477 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-02-13 15:55:51,649 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=95JHOXoXR6M%2CbWQul83KtqI%2Cu6c45acypTQ%2C2OFTs7ix9w0%2Ce48oXY7QMm8%2CGBH9Nll5nFA%2Ck6c7UUhScPw%2CUsrIyimnViM%2CvQ1grGlbj2A%2C2wUsAA7J3ko&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-02-13 15:55:51,650 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-02-13 15:55:51,650 - youtube - INFO - Procesamiento finalizado. Se encontraron 10 resultados formateados.
+2026-02-13 15:55:51,683 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'amistades peligrosas'
+2026-02-13 15:55:51,684 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'amistades peligrosas' (Karaoke Mode: False)
+2026-02-13 15:55:53,305 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-02-13 15:55:53,306 - youtube - INFO - Búsqueda por texto: 'amistades peligrosas'
+2026-02-13 15:55:53,306 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-02-13 15:55:53,852 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=amistades+peligrosas&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-02-13 15:55:53,864 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-02-13 15:55:53,868 - youtube - INFO - IDs de video encontrados: ['95JHOXoXR6M', 'bWQul83KtqI', 'u6c45acypTQ', '2OFTs7ix9w0', 'e48oXY7QMm8', 'GBH9Nll5nFA', 'k6c7UUhScPw', '2wUsAA7J3ko', 'vQ1grGlbj2A', 'UsrIyimnViM']
+2026-02-13 15:55:53,872 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-02-13 15:55:54,037 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=95JHOXoXR6M%2CbWQul83KtqI%2Cu6c45acypTQ%2C2OFTs7ix9w0%2Ce48oXY7QMm8%2CGBH9Nll5nFA%2Ck6c7UUhScPw%2C2wUsAA7J3ko%2CvQ1grGlbj2A%2CUsrIyimnViM&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-02-13 15:55:54,056 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-02-13 15:55:54,056 - youtube - INFO - Procesamiento finalizado. Se encontraron 10 resultados formateados.
+2026-02-13 15:56:25,783 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 15:56:25,852 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 15:56:25,922 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 15:56:26,002 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 15:56:26,100 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 15:56:26,139 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=UsrIyimnViM, duration_seconds=247
+2026-02-13 15:56:26,440 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 15:56:26,481 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 15:56:26,587 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 15:56:26,587 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 15:56:45,488 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'bachata'
+2026-02-13 15:56:45,488 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'bachata' (Karaoke Mode: False)
+2026-02-13 15:56:47,071 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-02-13 15:56:47,072 - youtube - INFO - Búsqueda por texto: 'bachata'
+2026-02-13 15:56:47,073 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-02-13 15:56:47,744 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=bachata&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-02-13 15:56:47,754 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-02-13 15:56:47,756 - youtube - INFO - IDs de video encontrados: ['QFs3PIZb3js', 'dsLjyLn859g', '5ku6b33rHAA', 'TiM_TFpT_DE', 'v6aicYYG59I', 'TOYA3PJtVUQ', 'fY36BMNDqbg', '8zcZC4HVr68', 'b3ZFwi6vRNk', 'uPCZm2Tvjpo']
+2026-02-13 15:56:47,759 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-02-13 15:56:48,037 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=QFs3PIZb3js%2CdsLjyLn859g%2C5ku6b33rHAA%2CTiM_TFpT_DE%2Cv6aicYYG59I%2CTOYA3PJtVUQ%2CfY36BMNDqbg%2C8zcZC4HVr68%2Cb3ZFwi6vRNk%2CuPCZm2Tvjpo&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-02-13 15:56:48,067 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-02-13 15:56:48,069 - youtube - INFO - Procesamiento finalizado. Se encontraron 10 resultados formateados.
+2026-02-13 15:56:48,092 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'bachata'
+2026-02-13 15:56:48,094 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'bachata' (Karaoke Mode: False)
+2026-02-13 15:56:49,662 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-02-13 15:56:49,663 - youtube - INFO - Búsqueda por texto: 'bachata'
+2026-02-13 15:56:49,664 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-02-13 15:56:50,411 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=bachata&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-02-13 15:56:50,430 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-02-13 15:56:50,430 - youtube - INFO - IDs de video encontrados: ['QFs3PIZb3js', 'dsLjyLn859g', 'TiM_TFpT_DE', '5ku6b33rHAA', 'v6aicYYG59I', 'TOYA3PJtVUQ', 'fY36BMNDqbg', '8zcZC4HVr68', 'uPCZm2Tvjpo', 'sojQgH3DT08']
+2026-02-13 15:56:50,430 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-02-13 15:56:50,617 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=QFs3PIZb3js%2CdsLjyLn859g%2CTiM_TFpT_DE%2C5ku6b33rHAA%2Cv6aicYYG59I%2CTOYA3PJtVUQ%2CfY36BMNDqbg%2C8zcZC4HVr68%2CuPCZm2Tvjpo%2CsojQgH3DT08&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-02-13 15:56:50,636 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-02-13 15:56:50,636 - youtube - INFO - Procesamiento finalizado. Se encontraron 10 resultados formateados.
+2026-02-13 15:56:57,785 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 15:56:57,837 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 15:56:57,871 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 15:56:57,908 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 15:56:57,989 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 15:57:04,430 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 15:57:04,491 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 15:57:04,515 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 15:57:04,557 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 15:57:04,669 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 15:57:21,529 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 15:57:21,588 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 15:57:21,618 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 15:57:21,651 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 15:57:21,773 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 15:57:27,784 - random_scorer - INFO - Puntaje aleatorio calculado: 97
+2026-02-13 15:57:27,870 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 15:57:27,960 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 15:57:28,047 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 15:57:28,116 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 15:57:28,162 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 15:57:38,540 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 15:57:38,651 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 15:57:38,723 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 15:57:38,795 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 15:57:38,857 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 15:57:38,899 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=TOYA3PJtVUQ, duration_seconds=196
+2026-02-13 15:57:39,060 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 15:58:36,034 - song_credits_background - INFO - Credits background task started
+2026-02-13 15:58:36,286 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 15:58:36,350 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 15:58:36,434 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 15:58:36,482 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 15:58:57,394 - song_credits_background - INFO - Credits background task started
+2026-02-13 15:58:57,552 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 15:58:57,611 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 15:58:57,672 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 15:58:57,761 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 15:59:29,351 - song_credits_background - INFO - Credits background task started
+2026-02-13 15:59:29,524 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 15:59:29,582 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 15:59:29,645 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 15:59:29,722 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 15:59:55,008 - song_credits_background - INFO - Credits background task started
+2026-02-13 15:59:55,170 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 15:59:55,229 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 15:59:55,293 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 15:59:55,543 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 16:00:20,048 - song_credits_background - INFO - Credits background task started
+2026-02-13 16:00:20,244 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 16:00:20,315 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 16:00:20,390 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 16:00:20,473 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 16:00:40,094 - song_credits_background - INFO - Credits background task started
+2026-02-13 16:00:40,292 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 16:00:40,352 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 16:00:40,433 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 16:00:40,510 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 16:01:04,680 - song_credits_background - INFO - Credits background task started
+2026-02-13 16:01:04,842 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 16:01:04,893 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 16:01:04,952 - random_scorer - INFO - Puntaje aleatorio calculado: 97
+2026-02-13 16:01:05,020 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 16:01:05,054 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 16:01:05,103 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 16:01:05,129 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 16:01:05,179 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 16:01:05,227 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 16:01:05,233 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=uPCZm2Tvjpo, duration_seconds=350
+2026-02-13 16:01:05,432 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 16:01:05,544 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 16:01:05,688 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 16:01:16,754 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 16:01:16,824 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 16:01:16,862 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 16:01:16,896 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 16:01:16,961 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 16:01:20,545 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 16:01:20,612 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 16:01:20,650 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 16:01:20,687 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 16:01:20,772 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 16:01:24,226 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 16:01:24,278 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 16:01:24,314 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 16:01:24,348 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 16:01:24,440 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 16:01:32,437 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 16:01:32,498 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 16:01:32,537 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 16:01:32,572 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 16:01:32,661 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 16:01:38,396 - random_scorer - INFO - Puntaje aleatorio calculado: 94
+2026-02-13 16:01:38,546 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 16:01:38,685 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 16:01:38,949 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 16:01:39,037 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 16:01:39,093 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 16:01:39,165 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 16:01:39,184 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=b3ZFwi6vRNk, duration_seconds=267
+2026-02-13 16:01:39,293 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 16:01:45,784 - random_scorer - INFO - Puntaje aleatorio calculado: 96
+2026-02-13 16:01:45,900 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 16:01:45,982 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 16:01:46,095 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 16:01:46,167 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 16:01:46,253 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 16:01:46,333 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 16:01:46,346 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=TOYA3PJtVUQ, duration_seconds=196
+2026-02-13 16:01:46,476 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 16:02:51,583 - song_credits_background - INFO - Credits background task started
+2026-02-13 16:02:51,777 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 16:02:51,868 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 16:02:52,002 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 16:02:52,211 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 16:03:27,836 - song_credits_background - INFO - Credits background task started
+2026-02-13 16:03:28,028 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 16:03:28,084 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 16:03:28,148 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 16:03:28,226 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 16:03:54,625 - song_credits_background - INFO - Credits background task started
+2026-02-13 16:03:54,776 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 16:03:54,846 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 16:03:54,926 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 16:03:54,971 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 16:05:09,464 - random_scorer - INFO - Puntaje aleatorio calculado: 80
+2026-02-13 16:05:09,556 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 16:05:09,593 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 16:05:09,647 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 16:05:09,675 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 16:05:09,730 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 16:05:09,771 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-13 16:05:09,777 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=b3ZFwi6vRNk, duration_seconds=267
+2026-02-13 16:05:09,915 - queue_manager - INFO - Cache unificado refrescado exitosamente.
