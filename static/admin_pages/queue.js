@@ -283,17 +283,24 @@ function renderApprovedSongs(songs, listElement) {
     // si existe, o en su defecto la primera canción aprobada (siguiente en sonar).
     let item = null;
     let isPlaying = false;
-
+    console.log("upcoming logic", songs);
     if (Array.isArray(songs)) {
         if (songs.length > 0) {
             item = songs[0];
+            songs.now_playing = item;
             isPlaying = !!(item.estado && item.estado === 'reproduciendo');
         }
     } else if (songs && typeof songs === 'object') {
         if (songs.now_playing) {
+            console.log("now playing", songs);
             item = songs.now_playing;
             isPlaying = true;
+            if (songs.upcoming && Array.isArray(songs.upcoming) && songs.upcoming.length > 0) {  
+            songs.lazy_queue.unshift(songs.upcoming[0]);
+            console.log("songs object ", songs);
+         } 
         } else if (songs.upcoming && Array.isArray(songs.upcoming) && songs.upcoming.length > 0) {
+            console.log("else if upcoming", songs);
             item = songs.upcoming[0];
             isPlaying = false;
         }
@@ -362,6 +369,7 @@ function renderApprovedSongs(songs, listElement) {
 }
 
 function renderLazySongs(songs, listElement) {
+    console.log("songs ", songs , "listElement ", listElement)
     listElement.innerHTML = '';
 
     if (!songs || songs.length === 0) {
