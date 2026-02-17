@@ -283,6 +283,7 @@ function renderApprovedSongs(songs, listElement) {
     // si existe, o en su defecto la primera canción aprobada (siguiente en sonar).
     let item = null;
     let isPlaying = false;
+    let isFirstQueueRender = true;
     console.log("upcoming logic", songs);
     if (Array.isArray(songs)) {
         if (songs.length > 0) {
@@ -303,6 +304,12 @@ function renderApprovedSongs(songs, listElement) {
             console.log("else if upcoming", songs);
             item = songs.upcoming[0];
             isPlaying = false;
+
+            // 🚨 Solo en el primer render evitamos que aparezca en lazy
+            if (isFirstQueueRender) {
+                songs.upcoming = songs.upcoming.slice(1);
+                isFirstQueueRender = false;
+            }
         }
     }
 
