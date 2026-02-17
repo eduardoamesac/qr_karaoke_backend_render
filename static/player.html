@@ -178,9 +178,12 @@
         }
 
         @keyframes pulse {
-            0%, 100% {
+
+            0%,
+            100% {
                 opacity: 1;
             }
+
             50% {
                 opacity: 0.6;
             }
@@ -287,9 +290,14 @@
         let currentVideoDuration = 0;
         let nextSongInfo = null; // Información de la siguiente canción para mostrar en transición
         let lastSongScore = null; // Información del puntaje de la última canción
-        
-        // Variable para rastrear si el reproductor está reproduciendo
+
+        // Variables para rastrear si el reproductor está reproduciendo
         let isPlayerPlaying = false;
+
+        // Variables para sincronizar la transición con el puntaje
+        let scoreReadyForTransition = false;
+        let pendingTransition = false;
+        let transitionTimeout = null;
 
         // (Pre-carga deshabilitada) -- anteriormente había lógica para pre-cargar
 
@@ -389,12 +397,12 @@
             // YT.PlayerState.BUFFERING = 3
             // YT.PlayerState.CUED = 5
             // YT.PlayerState.ENDED = 0
-            
+
             if (event.data === YT.PlayerState.PLAYING) {
                 console.log('▶️ Video reproduciéndose');
                 isPlayerPlaying = true;
                 currentSongEnded = false;
-                
+
                 // Cancelar cualquier timer de transición si estaba corriendo
                 if (autoplayTimer) {
                     clearTimeout(autoplayTimer);
@@ -405,19 +413,20 @@
                 console.log('⏸️ Video pausado');
                 isPlayerPlaying = false;
             } else if (event.data === YT.PlayerState.ENDED) {
-                console.log('🎬 Video terminado, iniciando transición de 5 segundos...');
+                console.log('🎬 Video terminado, solicitando avance de cola...');
                 isPlayerPlaying = false;
                 currentSongEnded = true;
-                
+
                 // Cancelar timer de fallback si estaba corriendo
                 if (autoplayTimer) {
                     clearTimeout(autoplayTimer);
                     autoplayTimer = null;
                 }
-                
-                // Iniciar la transición a la siguiente canción
+
+                // Llamar a advanceToNextSong inmediatamente
+                // Esto hará que el backend envíe song_finished con el puntaje
                 if (!transitionInProgress) {
-                    showTransitionScreen();
+                    advanceToNextSong();
                 }
             }
         }
@@ -428,10 +437,12 @@
                 console.log('⚠️ Transición ya en progreso, ignorando nueva solicitud');
                 return;
             }
-            
+
             transitionInProgress = true;
+            pendingTransition = false; // Ya no está pendiente
             console.log('🔄 Iniciando transición a siguiente canción');
-            
+            console.log('📊 Datos de puntaje disponibles:', lastSongScore);
+
             // Limpiar el reproductor
             const container = document.getElementById('player-container');
             if (container) {
@@ -443,9 +454,9 @@
 
             // Construir el HTML de la pantalla de transición
             const standbyParagraph = standbyScreen.querySelector('p');
-            
+
             let transitionHTML = '';
-            
+
             // 1. Mostrar puntaje si fue una canción karaoke
             if (lastSongScore) {
                 transitionHTML += `
@@ -453,7 +464,7 @@
                         <div style="font-size: 5rem; margin-bottom: 15px;">🐸 LA CANTA QUE RANA 🐸</div>
                         <div style="font-size: 4.5rem; margin-bottom: 10px; animation: pulse 1s infinite;">🎤</div>
                 `;
-                
+
                 if (lastSongScore.is_karaoke) {
                     // Mostrar puntaje para karaoke
                     if (lastSongScore.puntuacion_ia > 0) {
@@ -489,10 +500,10 @@
                         </p>
                     `;
                 }
-                
+
                 transitionHTML += `</div>`;
             }
-            
+
             // 2. Mostrar información de la siguiente canción
             if (nextSongInfo) {
                 transitionHTML += `
@@ -515,18 +526,17 @@
 
             standbyParagraph.innerHTML = transitionHTML;
 
-            // Esperar 5 segundos antes de avanzar a la siguiente canción
-            setTimeout(() => {
-                console.log('⏭️ Transición completada (5 segundos), avanzando a la siguiente canción');
-                transitionInProgress = false;
-                advanceToNextSong();
-            }, 5000);
+            // NO llamamos a advanceToNextSong aquí porque ya fue llamado antes
+            // La siguiente canción comenzará automáticamente cuando llegue el evento play_song
         }
 
         // Función para avanzar automáticamente a la siguiente canción
         async function advanceToNextSong() {
             console.log('⏭️ Avanzando automáticamente a la siguiente canción...');
-            
+
+            // Marcar que estamos esperando la transición
+            pendingTransition = true;
+
             try {
                 const response = await fetch(`${API_BASE_URL}/canciones/siguiente`, {
                     method: 'POST',
@@ -539,7 +549,8 @@
                     if (container) container.innerHTML = '';
                     startCarousel();
                     transitionInProgress = false;
-                    
+                    pendingTransition = false;
+
                     // Limpiar cualquier timer restante
                     if (autoplayTimer) {
                         clearTimeout(autoplayTimer);
@@ -547,47 +558,32 @@
                     }
                     return;
                 }
-                
-                if (response.ok) {
-                    // Intentar usar la respuesta JSON como fallback en caso de que
-                    // el evento WebSocket `play_song` no llegue al cliente.
-                    try {
-                        const data = await response.json();
-                        console.log('📥 Respuesta de siguiente recibida:', data);
-                        
-                        // El endpoint retorna PlayNextResponse con `play_url` y `cancion`.
-                        let videoId = null;
-                        let duration = 0;
-                        if (data.cancion && data.cancion.youtube_id) {
-                            videoId = data.cancion.youtube_id;
-                            duration = data.cancion.duracion_seconds || 0;
-                        } else if (data.play_url) {
-                            try {
-                                const u = new URL(data.play_url);
-                                const parts = u.pathname.split('/');
-                                videoId = parts.pop() || parts.pop();
-                            } catch (e) {
-                                console.warn('⚠️ No se pudo parsear play_url:', e);
-                            }
-                        }
 
-                        if (videoId) {
-                            console.log('✅ Iniciando reproducción (fallback HTTP) de:', videoId, 'duración:', duration);
-                            transitionInProgress = false;
-                            playVideo(videoId, duration);
-                        } else {
-                            console.log('⚠️ Siguiente canción iniciada automáticamente (sin videoId en respuesta)');
-                            transitionInProgress = false;
-                        }
-                    } catch (err) {
-                        console.warn('⚠️ No se pudo leer la respuesta JSON de /siguiente:', err);
-                        console.log('✅ Siguiente canción iniciada automáticamente (confiando en WebSocket)');
-                        transitionInProgress = false;
+                if (response.ok) {
+                    console.log('✅ Solicitud de avance exitosa, esperando eventos WebSocket...');
+
+                    // Esperar a que llegue el evento song_finished con el puntaje
+                    // Si no llega en 2 segundos, mostrar transición de todas formas
+                    if (!scoreReadyForTransition) {
+                        console.log('⏳ Esperando evento song_finished con puntaje...');
+                        transitionTimeout = setTimeout(() => {
+                            console.log('⚠️ Timeout: Mostrando transición sin puntaje');
+                            if (pendingTransition && !transitionInProgress) {
+                                showTransitionScreen();
+                            }
+                        }, 2000);
+                    } else {
+                        // El puntaje ya está listo, mostrar transición
+                        console.log('✅ Puntaje ya disponible, mostrando transición');
+                        showTransitionScreen();
                     }
+
+                    // La siguiente canción comenzará automáticamente cuando llegue play_song
                 } else {
                     console.error('❌ Error al avanzar:', response.status, response.statusText);
                     transitionInProgress = false;
-                    
+                    pendingTransition = false;
+
                     // Intentar recuperarse mostrando la cola nuevamente
                     setTimeout(() => {
                         fetchAndUpdateQueue();
@@ -596,7 +592,8 @@
             } catch (error) {
                 console.error('❌ Error en advanceToNextSong:', error);
                 transitionInProgress = false;
-                
+                pendingTransition = false;
+
                 // Intenta recuperarse
                 setTimeout(() => {
                     try {
@@ -616,9 +613,17 @@
             currentVideoDuration = duration;
             currentSongEnded = false;
             isPlayerPlaying = false;
-            
+
             // Resetear el puntaje anterior cuando comienza una nueva canción
             lastSongScore = null;
+            scoreReadyForTransition = false;
+            pendingTransition = false;
+
+            // Limpiar timeout de transición si existe
+            if (transitionTimeout) {
+                clearTimeout(transitionTimeout);
+                transitionTimeout = null;
+            }
 
             // Limpiar temporizador anterior si existe
             if (autoplayTimer) {
@@ -649,11 +654,11 @@
                     // Añadir 2 segundos de buffer para seguridad
                     const fallbackTimeMs = (duration + 2) * 1000;
                     console.log(`⏱️ Temporizador de fallback establecido para ${duration + 2} segundos (${fallbackTimeMs}ms)`);
-                    
+
                     autoplayTimer = setTimeout(() => {
                         console.log('⚠️ FALLBACK TIMER ACTIVADO: El evento ENDED no se disparó, forzando transición');
                         autoplayTimer = null;
-                        
+
                         // Evitar múltiples transiciones simultáneas
                         if (!transitionInProgress) {
                             showTransitionScreen();
@@ -763,7 +768,7 @@
                 // 3. Canción finalizada
                 if (data.type === 'song_finished' && data.payload) {
                     const scoreInfo = data.payload;
-                    
+
                     // Guardar información del puntaje para mostrar en transición
                     lastSongScore = {
                         usuario_nick: scoreInfo.usuario_nick,
@@ -771,8 +776,21 @@
                         titulo: scoreInfo.titulo,
                         is_karaoke: scoreInfo.is_karaoke
                     };
-                    
+
                     console.log('🏆 Puntaje guardado para mostrar en transición:', lastSongScore);
+
+                    // Marcar que el puntaje está listo
+                    scoreReadyForTransition = true;
+
+                    // Si hay una transición pendiente, mostrarla ahora
+                    if (pendingTransition && !transitionInProgress) {
+                        console.log('✅ Puntaje recibido, mostrando transición pendiente');
+                        if (transitionTimeout) {
+                            clearTimeout(transitionTimeout);
+                            transitionTimeout = null;
+                        }
+                        showTransitionScreen();
+                    }
                 }
 
                 // 4. Notificaciones globales

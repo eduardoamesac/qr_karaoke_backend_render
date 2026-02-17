@@ -182,12 +182,12 @@ def create_consumo_para_usuario(db: Session, consumo: schemas.ConsumoCreate, usu
         return None, "Usuario no encontrado."
     
     if not db_usuario.mesa_id:
-        return None, "El usuario no estÃƒÂƒÃ‚Â¡ asociado a ninguna mesa."
+        return None, "El usuario no esta activado¡ asociado a ninguna mesa."
 
     # 2. Obtener el producto del catÃƒÂƒÃ‚Â¡logo para saber su precio
     db_producto = db.query(models.Producto).filter(models.Producto.id == consumo.producto_id).first()
     if not db_producto:
-        return None, "Producto no encontrado en el catÃƒÂƒÃ‚Â¡logo."
+        return None, "Producto no encontrado en el catalogo¡logo."
 
     if db_producto.stock < consumo.cantidad:
         return None, f"No hay suficiente stock para '{db_producto.nombre}'. Disponible: {db_producto.stock}"
@@ -196,9 +196,9 @@ def create_consumo_para_usuario(db: Session, consumo: schemas.ConsumoCreate, usu
         return None, "La cantidad debe ser mayor que cero."
 
     if not db_producto.is_active:
-        return None, "El producto no estÃƒÂƒÃ‚Â¡ disponible actualmente."
+        return None, "El producto no esta disponible¡ disponible actualmente."
 
-    # 3. Calcular el valor total de la transacciÃƒÂƒÃ‚Â³n
+    # 3. Calcular el valor total de la transaccion
     valor_total_transaccion = db_producto.valor * consumo.cantidad
 
     # 4. Crear el registro de consumo ASIGNADO A LA MESA (no al usuario)
