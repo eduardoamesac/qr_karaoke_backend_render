@@ -171,6 +171,97 @@
                 opacity: 0;
             }
         }
+
+        #score-display {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        #score-display.show {
+            animation: scoreShow 0.8s ease-in-out forwards;
+        }
+
+        #score-display.hide {
+            animation: scoreHide 0.5s ease-in-out forwards;
+        }
+
+        @keyframes scoreShow {
+            0% {
+                transform: translate(-50%, -50%) scale(0.5);
+                opacity: 0;
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.1);
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes scoreHide {
+            0% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(0.8);
+                opacity: 0;
+            }
+        }
+
+        .score-container {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            border-radius: 20px;
+            padding: 60px 80px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            animation: scorePulse 3s ease-in-out;
+        }
+
+        @keyframes scorePulse {
+            0%, 100% {
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            }
+            50% {
+                box-shadow: 0 20px 60px rgba(76, 175, 80, 0.6);
+            }
+        }
+
+        .score-label {
+            font-size: 1.5rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin: 0;
+            font-weight: 300;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+
+        .score-value {
+            font-size: 5rem;
+            font-weight: bold;
+            color: #ffffff;
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .score-stars {
+            font-size: 2rem;
+            margin-top: 20px;
+            margin-bottom: 0;
+            letter-spacing: 5px;
+        }
     </style>
 </head>
 
@@ -196,6 +287,14 @@
     </div>
 
     <div id="reaction-container" class="reaction-container"></div>
+
+    <div id="score-display">
+        <div class="score-container">
+            <p class="score-label">Tu Puntaje</p>
+            <p class="score-value"><span id="score-number">0</span></p>
+            <p class="score-stars" id="score-stars">⭐⭐⭐⭐⭐</p>
+        </div>
+    </div>
 
     <script src="https://www.youtube.com/iframe_api"></script>
     <script>
@@ -282,6 +381,9 @@
         function onPlayerStateChange(event) {
             // Cuando el video termina (estado 0), enviamos una notificación al backend.
             if (event.data == YT.PlayerState.ENDED) {
+                // Mostrar puntaje aleatorio
+                showRandomScore();
+                
                 fetch('/api/v1/canciones/siguiente', {
                     method: 'POST',
                     // No se necesita API Key para este endpoint público
@@ -303,6 +405,60 @@
             }
             // Manejo de visualización del overlay en los últimos segundos
             handleOverlayTiming(event);
+        }
+
+        function showRandomScore() {
+            try {
+                // Generar puntaje aleatorio entre 80 y 100
+                const score = Math.floor(Math.random() * (100 - 80 + 1)) + 80;
+                console.log('Mostrando puntaje:', score);
+                
+                // Actualizar el valor del puntaje
+                document.getElementById('score-number').textContent = score;
+                
+                // Determinar cantidad de estrellas basado en el puntaje
+                let stars = '';
+                if (score >= 95) {
+                    stars = '⭐⭐⭐⭐⭐';
+                } else if (score >= 90) {
+                    stars = '⭐⭐⭐⭐⭐';
+                } else if (score >= 85) {
+                    stars = '⭐⭐⭐⭐';
+                } else {
+                    stars = '⭐⭐⭐';
+                }
+                
+                document.getElementById('score-stars').textContent = stars;
+                
+                // Mostrar el display de puntaje
+                const scoreDisplay = document.getElementById('score-display');
+                scoreDisplay.classList.remove('hide');
+                scoreDisplay.classList.add('show');
+                
+                // Mostrar el overlay después del puntaje (2 segundos para el puntaje)
+                setTimeout(() => {
+                    const overlay = document.querySelector('.overlay');
+                    if (overlay) {
+                        overlay.classList.add('visible');
+                    }
+                }, 2000);
+                
+                // Ocultar el puntaje después de 2 segundos y mostrar overlay por 5 segundos más
+                setTimeout(() => {
+                    scoreDisplay.classList.remove('show');
+                    scoreDisplay.classList.add('hide');
+                }, 2000);
+                
+                // Ocultar overlay después de 7 segundos totales (2 del puntaje + 5 del overlay)
+                setTimeout(() => {
+                    const overlay = document.querySelector('.overlay');
+                    if (overlay) {
+                        overlay.classList.remove('visible');
+                    }
+                }, 7000);
+            } catch (err) {
+                console.error('Error en showRandomScore:', err);
+            }
         }
 
         let overlayWatcher = null;
