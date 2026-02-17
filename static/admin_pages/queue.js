@@ -96,8 +96,8 @@ async function loadQueuePage() {
         queueHeader.innerHTML = `
             <div class="bees-card-icon">▶️</div>
             <div class="bees-card-header-content">
-                <h3>Cola Aprobada</h3>
-                <p>Canciones en reproducción</p>
+                <h3>Canción en reproducción</h3>
+                <p>Reproductor</p>
             </div>
         `;
         queueCard.appendChild(queueHeader);
@@ -124,8 +124,8 @@ async function loadQueuePage() {
         lazyQueueHeader.innerHTML = `
             <div class="bees-card-icon">🎯</div>
             <div class="bees-card-header-content">
-                <h3>Cola Lazy (Esperando Turno)</h3>
-                <p>Se aprobarán automáticamente al 50% de la canción actual</p>
+                <h3>Cola de Canciones(Esperando Turno)</h3> 
+                <p>Canciones Cargadas en la Cola</p>
             </div>
         `;
         lazyQueueCard.appendChild(lazyQueueHeader);
@@ -296,10 +296,10 @@ function renderApprovedSongs(songs, listElement) {
             console.log("now playing", songs);
             item = songs.now_playing;
             isPlaying = true;
-            if (songs.upcoming && Array.isArray(songs.upcoming) && songs.upcoming.length > 0) {  
-            songs.lazy_queue.unshift(songs.upcoming[0]);
-            console.log("songs object ", songs);
-         } 
+            if (songs.upcoming && Array.isArray(songs.upcoming) && songs.upcoming.length > 0) {
+                songs.lazy_queue.unshift(songs.upcoming[0]);
+                console.log("songs object ", songs);
+            }
         } else if (songs.upcoming && Array.isArray(songs.upcoming) && songs.upcoming.length > 0) {
             console.log("else if upcoming", songs);
             item = songs.upcoming[0];
@@ -376,7 +376,7 @@ function renderApprovedSongs(songs, listElement) {
 }
 
 function renderLazySongs(songs, listElement) {
-    console.log("songs ", songs , "listElement ", listElement)
+    console.log("songs ", songs, "listElement ", listElement)
     listElement.innerHTML = '';
 
     if (!songs || songs.length === 0) {
