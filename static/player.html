@@ -266,6 +266,8 @@
 
         // Variables para el autoplay automático
         let autoplayTimer = null;
+        let transitionInProgress = false;
+        let currentSongEnded = false;
 
         // Flags para acciones enviadas por admin antes de que el reproductor exista
         let pendingPause = false;
@@ -275,6 +277,9 @@
         let currentVideoId = null;
         let currentVideoDuration = 0;
         let nextSongInfo = null; // Información de la siguiente canción para mostrar en transición
+        
+        // Variable para rastrear si el reproductor está reproduciendo
+        let isPlayerPlaying = false;
 
         // (Pre-carga deshabilitada) -- anteriormente había lógica para pre-cargar
 
@@ -369,24 +374,59 @@
 
         // Evento cuando cambia el estado del reproductor
         function onPlayerStateChange(event) {
+            // YT.PlayerState.PLAYING = 1
+            // YT.PlayerState.PAUSED = 2
+            // YT.PlayerState.BUFFERING = 3
+            // YT.PlayerState.CUED = 5
             // YT.PlayerState.ENDED = 0
-            if (event.data === YT.PlayerState.ENDED) {
-                console.log('🎬 Video terminado, iniciando transición de 5 segundos...');
-                // Sin pre-carga: no hay watcher que limpiar
-                showTransitionScreen();
-            } else if (event.data === YT.PlayerState.PLAYING) {
+            
+            if (event.data === YT.PlayerState.PLAYING) {
                 console.log('▶️ Video reproduciéndose');
+                isPlayerPlaying = true;
+                currentSongEnded = false;
+                
+                // Cancelar cualquier timer de transición si estaba corriendo
+                if (autoplayTimer) {
+                    clearTimeout(autoplayTimer);
+                    autoplayTimer = null;
+                    console.log('🔄 Timer de transición cancelado (video comenzó a reproducirse)');
+                }
             } else if (event.data === YT.PlayerState.PAUSED) {
                 console.log('⏸️ Video pausado');
-                // Sin pre-carga: no watcher que limpiar
+                isPlayerPlaying = false;
+            } else if (event.data === YT.PlayerState.ENDED) {
+                console.log('🎬 Video terminado, iniciando transición de 5 segundos...');
+                isPlayerPlaying = false;
+                currentSongEnded = true;
+                
+                // Cancelar timer de fallback si estaba corriendo
+                if (autoplayTimer) {
+                    clearTimeout(autoplayTimer);
+                    autoplayTimer = null;
+                }
+                
+                // Iniciar la transición a la siguiente canción
+                if (!transitionInProgress) {
+                    showTransitionScreen();
+                }
             }
         }
 
         // Mostrar pantalla de transición entre canciones
         function showTransitionScreen() {
+            if (transitionInProgress) {
+                console.log('⚠️ Transición ya en progreso, ignorando nueva solicitud');
+                return;
+            }
+            
+            transitionInProgress = true;
+            console.log('🔄 Iniciando transición a siguiente canción');
+            
             // Limpiar el reproductor
             const container = document.getElementById('player-container');
-            container.innerHTML = '';
+            if (container) {
+                container.innerHTML = '';
+            }
 
             // Mostrar pantalla de espera con fondo
             startCarousel();
@@ -406,7 +446,8 @@
 
             // Esperar 5 segundos antes de avanzar a la siguiente canción
             setTimeout(() => {
-                console.log('⏭️ Transición completada, avanzando a la siguiente canción');
+                console.log('⏭️ Transición completada (5 segundos), avanzando a la siguiente canción');
+                transitionInProgress = false;
                 advanceToNextSong();
             }, 5000);
         }
@@ -414,6 +455,7 @@
         // Función para avanzar automáticamente a la siguiente canción
         async function advanceToNextSong() {
             console.log('⏭️ Avanzando automáticamente a la siguiente canción...');
+            
             try {
                 const response = await fetch(`${API_BASE_URL}/canciones/siguiente`, {
                     method: 'POST',
@@ -421,15 +463,27 @@
                 });
 
                 if (response.status === 204) {
-                    console.log('✅ No hay más canciones en la cola');
+                    console.log('✅ No hay más canciones en la cola (204 No Content)');
                     const container = document.getElementById('player-container');
                     if (container) container.innerHTML = '';
                     startCarousel();
-                } else if (response.ok) {
+                    transitionInProgress = false;
+                    
+                    // Limpiar cualquier timer restante
+                    if (autoplayTimer) {
+                        clearTimeout(autoplayTimer);
+                        autoplayTimer = null;
+                    }
+                    return;
+                }
+                
+                if (response.ok) {
                     // Intentar usar la respuesta JSON como fallback en caso de que
                     // el evento WebSocket `play_song` no llegue al cliente.
                     try {
                         const data = await response.json();
+                        console.log('📥 Respuesta de siguiente recibida:', data);
+                        
                         // El endpoint retorna PlayNextResponse con `play_url` y `cancion`.
                         let videoId = null;
                         let duration = 0;
@@ -442,61 +496,107 @@
                                 const parts = u.pathname.split('/');
                                 videoId = parts.pop() || parts.pop();
                             } catch (e) {
-                                console.warn('No se pudo parsear play_url:', e);
+                                console.warn('⚠️ No se pudo parsear play_url:', e);
                             }
                         }
 
                         if (videoId) {
-                            console.log('✅ Iniciando reproducción (fallback HTTP) de:', videoId);
+                            console.log('✅ Iniciando reproducción (fallback HTTP) de:', videoId, 'duración:', duration);
+                            transitionInProgress = false;
                             playVideo(videoId, duration);
                         } else {
-                            console.log('✅ Siguiente canción iniciada automáticamente (sin videoId en respuesta)');
+                            console.log('⚠️ Siguiente canción iniciada automáticamente (sin videoId en respuesta)');
+                            transitionInProgress = false;
                         }
                     } catch (err) {
-                        console.warn('No se pudo leer la respuesta JSON de /siguiente:', err);
-                        console.log('✅ Siguiente canción iniciada automáticamente');
+                        console.warn('⚠️ No se pudo leer la respuesta JSON de /siguiente:', err);
+                        console.log('✅ Siguiente canción iniciada automáticamente (confiando en WebSocket)');
+                        transitionInProgress = false;
                     }
                 } else {
-                    console.error('❌ Error al avanzar:', response.status);
+                    console.error('❌ Error al avanzar:', response.status, response.statusText);
+                    transitionInProgress = false;
+                    
+                    // Intentar recuperarse mostrando la cola nuevamente
+                    setTimeout(() => {
+                        fetchAndUpdateQueue();
+                    }, 2000);
                 }
             } catch (error) {
                 console.error('❌ Error en advanceToNextSong:', error);
+                transitionInProgress = false;
+                
+                // Intenta recuperarse
+                setTimeout(() => {
+                    try {
+                        fetchAndUpdateQueue();
+                    } catch (e) {
+                        console.error('❌ Error recuperándose en advanceToNextSong:', e);
+                    }
+                }, 2000);
             }
         }
 
         function playVideo(videoId, duration = 0) {
-            console.log('🎵 playVideo called with:', videoId, 'duration:', duration);
+            console.log('🎵 playVideo called with:', videoId, 'duration:', duration, 'seconds');
 
             // Guardar el video actual para poder reiniciarlo
             currentVideoId = videoId;
             currentVideoDuration = duration;
+            currentSongEnded = false;
+            isPlayerPlaying = false;
 
-            // Limpiar temporizador anterior si existe (ya no lo necesitamos)
+            // Limpiar temporizador anterior si existe
             if (autoplayTimer) {
                 clearTimeout(autoplayTimer);
                 autoplayTimer = null;
-                console.log('🔄 Temporizador anterior limpiado (ya no se usa)');
+                console.log('🔄 Temporizador anterior limpiado');
             }
 
             stopCarousel(); // Oculta standby, muestra overlay y detiene carrusel
 
-            // Verificamos si el iframe realmente existe (puede haber sido borrado por la transición)
-            const iframeExists = document.getElementById('youtube-iframe');
+            try {
+                // Verificamos si el iframe realmente existe (puede haber sido borrado por la transición)
+                const iframeExists = document.getElementById('youtube-iframe');
 
-            // Si el reproductor ya existe y el iframe está en el DOM, cargar el nuevo video
-            if (ytPlayer && ytPlayer.loadVideoById && iframeExists) {
-                console.log('🔄 Cargando nuevo video en reproductor existente');
-                ytPlayer.loadVideoById(videoId);
-            } else {
-                // Crear nuevo reproductor (el contenedor fue limpiado o es la primera carga)
-                console.log('🆕 Creando nuevo reproductor');
-                createYouTubePlayer(videoId);
+                // Si el reproductor ya existe y el iframe está en el DOM, cargar el nuevo video
+                if (ytPlayer && ytPlayer.loadVideoById && iframeExists) {
+                    console.log('🔄 Cargando nuevo video en reproductor existente');
+                    ytPlayer.loadVideoById(videoId);
+                } else {
+                    // Crear nuevo reproductor (el contenedor fue limpiado o es la primera carga)
+                    console.log('🆕 Creando nuevo reproductor');
+                    createYouTubePlayer(videoId);
+                }
+
+                // NUEVO: Establecer temporizador de fallback basado en la duración del video
+                // Si el evento ENDED no se dispara, este timer forzará el avance a la siguiente canción
+                if (duration > 0) {
+                    // Añadir 2 segundos de buffer para seguridad
+                    const fallbackTimeMs = (duration + 2) * 1000;
+                    console.log(`⏱️ Temporizador de fallback establecido para ${duration + 2} segundos (${fallbackTimeMs}ms)`);
+                    
+                    autoplayTimer = setTimeout(() => {
+                        console.log('⚠️ FALLBACK TIMER ACTIVADO: El evento ENDED no se disparó, forzando transición');
+                        autoplayTimer = null;
+                        
+                        // Evitar múltiples transiciones simultáneas
+                        if (!transitionInProgress) {
+                            showTransitionScreen();
+                        }
+                    }, fallbackTimeMs);
+                } else {
+                    console.log('⚠️ No se estableció timer de fallback (duración desconocida)');
+                }
+            } catch (error) {
+                console.error('❌ Error en playVideo:', error);
+                // Intenta al menos mostrar la pantalla de transición para recuperarse
+                setTimeout(() => {
+                    if (!transitionInProgress) {
+                        showTransitionScreen();
+                    }
+                }, 10000);
             }
-
-            // Pre-carga deshabilitada: no se inicia watcher ni preloader
-
-            // NOTA: Ya no usamos temporizador porque detectamos el fin del video automáticamente
-            // con el evento onStateChange del YouTube IFrame API
         }
 
         // Pre-carga totalmente eliminada: no existe handleFiftyPercentPreLoad
@@ -568,8 +668,9 @@
                     }
 
                     if (videoId) {
-                        console.log('Recibida orden de reproducir:', videoId);
+                        console.log('▶️ Recibida orden de reproducir:', videoId);
                         const duration = data.payload.duracion_seconds || data.payload.duration || 0;
+                        transitionInProgress = false;  // Marcar que salimos de transición
                         playVideo(videoId, duration);
 
                         // Forzar actualización de la cola inmediatamente para sincronizar el título/artista
@@ -578,10 +679,10 @@
                         try {
                             fetchAndUpdateQueue();
                         } catch (e) {
-                            console.warn('No se pudo actualizar la cola tras play_song:', e);
+                            console.warn('⚠️ No se pudo actualizar la cola tras play_song:', e);
                         }
                     } else {
-                        console.error('No se pudo extraer el ID de YouTube:', data.payload);
+                        console.error('❌ No se pudo extraer el ID de YouTube:', data.payload);
                     }
                 }
 
