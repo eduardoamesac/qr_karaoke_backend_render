@@ -176,21 +176,30 @@ function renderReportTable(data, type, container) {
 
     // Encabezados según tipo
     let headers = [];
-    if (type.includes('songs')) {
-        headers = ['Posición', 'Canción', 'Cantidad'];
-    } else if (type.includes('products')) {
-        headers = ['Posición', 'Producto', 'Cantidad'];
-    } else if (type.includes('income') && type.includes('table')) {
-        headers = ['Mesa', 'Ingresos'];
-    } else if (type.includes('songs-by-table')) {
-        headers = ['Mesa', 'Canciones'];
-    } else if (type.includes('user')) {
-        headers = ['Usuario', 'Canciones'];
-    } else if (type.includes('hourly')) {
-        headers = ['Hora', 'Canciones'];
-    } else if (type.includes('inactive')) {
-        headers = ['Usuario', 'Mesa', 'Estado'];
-    }
+
+// ESPECÍFICOS PRIMERO
+if (type.includes('songs-by-user')) {
+    headers = ['Usuario', 'Canciones'];
+} 
+else if (type.includes('songs-by-table')) {
+    headers = ['Mesa', 'Canciones'];
+} 
+else if (type.includes('income') && type.includes('table')) {
+    headers = ['Mesa', 'Ingresos'];
+} 
+else if (type.includes('hourly')) {
+    headers = ['Hora', 'Canciones'];
+} 
+else if (type.includes('inactive')) {
+    headers = ['Usuario', 'Mesa', 'Estado'];
+} 
+else if (type.includes('products')) {
+    headers = ['Posición', 'Producto', 'Cantidad'];
+} 
+// Solo los tops llevan posición
+else if (type.includes('songs')) {
+    headers = ['Posición', 'Canción', 'Cantidad'];
+}
 
     const thead = document.createElement('thead');
     const headerRow = document.createElement('tr');

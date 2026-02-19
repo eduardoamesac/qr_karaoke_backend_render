@@ -14160,3 +14160,62 @@ TypeError: can't subtract offset-naive and offset-aware datetimes
 2026-02-19 11:05:12,965 - queue_manager - INFO - Cache unificado refrescado exitosamente.
 2026-02-19 11:05:44,845 - queue_manager - INFO - Cache unificado refrescado exitosamente.
 2026-02-19 11:05:44,981 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-19 11:10:51,455 - song_credits_background - INFO - Credits background task started
+2026-02-19 11:10:51,803 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-19 11:10:51,859 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-19 11:10:56,885 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-19 11:10:56,927 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-19 11:11:04,717 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-19 11:11:04,765 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-19 11:18:47,860 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-19 11:18:47,910 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-19 11:18:57,217 - youtube - INFO - Búsqueda [Pública] en YouTube con el término: 'el heredero' (Karaoke Mode: True)
+2026-02-19 11:18:57,218 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'el heredero' (Karaoke Mode: True)
+2026-02-19 11:18:59,232 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-02-19 11:18:59,232 - youtube - INFO - Búsqueda por texto: 'el heredero karaoke'
+2026-02-19 11:18:59,234 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-02-19 11:19:00,124 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=el+heredero+karaoke&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-02-19 11:19:00,132 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-02-19 11:19:00,133 - youtube - INFO - IDs de video encontrados: ['4RU2bhSzTOA', 'H2noUnLd3Bs', 'JOqM_Jp2Peo', 'dChlni-iG6k', 'AfFD9ZVwjfI', 'bZLojmRvRd8', 'tvUc8GEovac', 'PwlHZJEEbDo', 'eziSvAH4xU0', 'oTgnjYc6ngQ']
+2026-02-19 11:19:00,135 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-02-19 11:19:00,275 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=4RU2bhSzTOA%2CH2noUnLd3Bs%2CJOqM_Jp2Peo%2CdChlni-iG6k%2CAfFD9ZVwjfI%2CbZLojmRvRd8%2CtvUc8GEovac%2CPwlHZJEEbDo%2CeziSvAH4xU0%2CoTgnjYc6ngQ&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-02-19 11:19:00,290 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-02-19 11:19:00,294 - youtube - INFO - Procesamiento finalizado. Se encontraron 9 resultados formateados.
+2026-02-19 11:19:06,429 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-19 11:19:06,512 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-19 11:19:06,555 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-19 11:19:06,600 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-19 11:19:06,637 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-19 11:19:16,834 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-19 11:19:16,874 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-19 11:19:51,683 - song_credits_background - INFO - Crédito 15 expirado para usuario 4
+2026-02-19 11:20:26,365 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-19 11:20:26,427 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-19 11:57:23,076 - song_credits_background - INFO - Credits background task started
+2026-02-19 11:57:23,315 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-19 11:57:23,355 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-19 11:57:24,545 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-19 11:57:24,640 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-19 11:57:28,507 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-19 11:57:28,549 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-19 11:57:55,542 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-19 11:57:55,608 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-19 11:59:09,773 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-19 11:59:09,841 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-19 15:02:47,270 - song_credits_background - INFO - Crédito 14 expirado para usuario 2
+2026-02-19 15:08:19,589 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-19 15:08:19,677 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-19 15:08:19,850 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-19 15:08:19,926 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-19 15:08:20,990 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-19 15:08:21,037 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-19 15:22:19,966 - song_credits_background - INFO - Credits background task started
+2026-02-19 15:22:21,948 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-19 15:22:21,996 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-19 15:24:25,855 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-19 15:24:25,922 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-19 15:46:56,183 - song_credits_background - INFO - Credits background task started
+2026-02-19 15:46:58,144 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-19 15:46:58,178 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-19 15:47:44,539 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-19 15:47:44,625 - queue_manager - INFO - Cache unificado refrescado exitosamente.
