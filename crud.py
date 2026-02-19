@@ -783,17 +783,17 @@ def get_tiempo_promedio_espera(db: Session):
 
 def get_actividad_por_hora(db: Session):
     """
-    Obtiene un reporte de la cantidad de canciones cantadas por cada hora del dÃƒÂƒÃ‚Â­a.
+    Obtiene un reporte de la cantidad de canciones cantadas por cada hora del dia.
+    Usa HOUR() para MySQL.
     """
     return (
         db.query(
-            # Usamos strftime para SQLite para extraer la hora.
-            # Para PostgreSQL serÃƒÂƒÃ‚Â­a: extract('hour', models.Cancion.started_at)
-            func.strftime('%H', models.Cancion.started_at).label("hora"),
+            # Usamos HOUR() para MySQL para extraer la hora.
+            func.hour(models.Cancion.started_at).label("hora"),
             func.count(models.Cancion.id).label("canciones_cantadas"),
         )
         .filter(models.Cancion.estado == "cantada", models.Cancion.started_at.isnot(None))
-        .group_by(func.strftime('%H', models.Cancion.started_at))
+        .group_by(func.hour(models.Cancion.started_at))
         .order_by(func.count(models.Cancion.id).desc())
         .all()
     )

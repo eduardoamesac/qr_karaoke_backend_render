@@ -208,28 +208,21 @@ function renderReportTable(data, type, container) {
         if (index === 0) console.log('First row data for type', type, ':', row);
 
         const tr = document.createElement('tr');
-        if (type.includes('songs') || type.includes('products')) {
-            // FIX: Added row.cantidad_total to support product reports
-            const cantidad = row.cantidad || row.cantidad_total || row.veces_cantada || row.count;
+        // Check most specific types first before generic checks
+        if (type.includes('songs-by-table')) {
             tr.innerHTML = `
-                <td>#${index + 1}</td>
-                <td>${row.nombre || row.titulo}</td>
-                <td><strong>${cantidad}</strong></td>
+                <td>${row.mesa_nombre}</td>
+                <td><strong>${row.canciones_cantadas}</strong></td>
             `;
         } else if (type.includes('income') && type.includes('table')) {
             tr.innerHTML = `
                 <td>${row.mesa_nombre}</td>
                 <td><strong>$${parseFloat(row.ingresos_totales || 0).toFixed(2)}</strong></td>
             `;
-        } else if (type.includes('songs-by-table')) {
-            tr.innerHTML = `
-                <td>${row.mesa_nombre}</td>
-                <td><strong>${row.canciones_cantadas}</strong></td>
-            `;
-        } else if (type.includes('user')) {
+        } else if (type.includes('songs-by-user') || (type.includes('user') && type.includes('rejected'))) {
             tr.innerHTML = `
                 <td>${row.nick}</td>
-                <td><strong>${row.canciones_cantadas || row.cantidad}</strong></td>
+                <td><strong>${row.canciones_cantadas || row.canciones_rechazadas || row.cantidad}</strong></td>
             `;
         } else if (type.includes('hourly')) {
             tr.innerHTML = `
@@ -241,6 +234,14 @@ function renderReportTable(data, type, container) {
                 <td>${row.nick}</td>
                 <td>${row.mesa_nombre || 'N/A'}</td>
                 <td><span class="bees-badge bees-badge-warning">Sin consumo</span></td>
+            `;
+        } else if (type.includes('songs') || type.includes('products')) {
+            // Generic handler for top-songs, top-products, top-rejected-songs
+            const cantidad = row.cantidad || row.cantidad_total || row.veces_cantada || row.veces_rechazada || row.count;
+            tr.innerHTML = `
+                <td>#${index + 1}</td>
+                <td>${row.nombre || row.titulo}</td>
+                <td><strong>${cantidad}</strong></td>
             `;
         }
         tbody.appendChild(tr);
