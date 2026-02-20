@@ -283,12 +283,6 @@ class ReporteIngresosPorCategoria(BaseModel):
     categoria: str
     ingresos_totales: Decimal
 
-class AdminLogView(BaseModel):
-    timestamp: datetime
-    action: str
-    details: Optional[str] = None # Optional[str] es mejor que None
-    model_config = ConfigDict(from_attributes=True)
-
 # --- Schemas para Claves de API de Admin ---
 class AdminApiKeyCreate(BaseModel):
     description: str

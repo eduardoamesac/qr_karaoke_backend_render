@@ -42,6 +42,7 @@ class Usuario(Base):
     last_active = Column(DateTime, default=now_bogota)
     is_silenced = Column(Boolean, default=False) # Nuevo campo para silenciar
     is_active = Column(Boolean, default=True)  # Para desconectar usuarios sin eliminar
+    is_banned = Column(Boolean, default=False)  # Nuevo campo para marcar nick baneado
     
     # Sistema de créditos para canciones: al ingresar se da 1, luego se compra con productos
     song_credits = Column(Integer, default=1)  # Créditos disponibles para agregar canciones
@@ -107,19 +108,6 @@ class Consumo(Base):
     cuenta = relationship("Cuenta", back_populates="consumos")
     is_dispatched = Column(Boolean, default=False) # Nuevo campo para marcar si ya fue entregado
 
-class BannedNick(Base):
-    __tablename__ = "banned_nicks"
-    id = Column(Integer, primary_key=True, index=True)
-    nick = Column(String(100), unique=True, index=True)
-    banned_at = Column(DateTime, default=now_bogota)
-
-class AdminLog(Base):
-    __tablename__ = "admin_logs"
-    id = Column(Integer, primary_key=True, index=True)
-    timestamp = Column(DateTime, default=now_bogota)
-    action = Column(String(100), index=True)
-    details = Column(String(500), nullable=True)
-
 class AdminApiKey(Base):
     __tablename__ = "admin_api_keys"
     id = Column(Integer, primary_key=True, index=True)
@@ -162,11 +150,3 @@ class SongCredits(Base):
     consumed_by_song_id = Column(Integer, ForeignKey("canciones.id"), nullable=True)  # Canción que consumió estos créditos
     
     usuario = relationship("Usuario")
-    
-
-class ConfiguracionGlobal(Base):
-    __tablename__ = "configuracion_global"
-
-    id = Column(Integer, primary_key=True, index=True)
-    clave = Column(String(100), unique=True, nullable=False)
-    valor = Column(String(100), nullable=False)

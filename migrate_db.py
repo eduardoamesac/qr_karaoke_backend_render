@@ -40,10 +40,7 @@ def migrate():
          "canciones",
          "pagos",
          "consumos",
-         "banned_nicks",
-         "admin_logs",
-         "admin_api_keys",
-         "configuracion_global"
+         "admin_api_keys"
     ]
 
     # Disable foreign key checks temporarily to allow insertion if there are slight circular dependencies or ordering issues

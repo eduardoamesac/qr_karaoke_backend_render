@@ -169,7 +169,6 @@ async def aprobar_cancion(cancion_id: int, db: Session = Depends(get_db), api_ke
     db_cancion = crud.update_cancion_estado(db, cancion_id=cancion_id, nuevo_estado="aprobado")
     if not db_cancion:
         raise HTTPException(status_code=404, detail="Canción no encontrada")
-    crud.create_admin_log_entry(db, action="APPROVE_SONG", details=f"Canción '{db_cancion.titulo}' aprobada.")
     await crud.start_next_song_if_autoplay_and_idle(db)
     queue_manager.refresh_queue(db)
     await websocket_manager.manager.broadcast_queue_update()
@@ -191,7 +190,6 @@ async def rechazar_cancion(cancion_id: int, db: Session = Depends(get_db), api_k
         raise HTTPException(status_code=403, detail="Solo se pueden eliminar canciones pendientes, en cola lazy o aprobadas")
     
     db_cancion = crud.update_cancion_estado(db, cancion_id=cancion_id, nuevo_estado="rechazada")
-    crud.create_admin_log_entry(db, action="REJECT_SONG", details=f"Canción '{db_cancion.titulo}' rechazada.")
     
     # NUEVO: Refrescar la cola ANTES de chequear la siguiente lazy para que el cache esté al día
     queue_manager.refresh_queue(db)
@@ -283,13 +281,6 @@ async def play_song_now(cancion_id: int, db: Session = Depends(get_db), api_key:
         youtube_id=db_cancion.youtube_id,
         duration_seconds=db_cancion.duracion_seconds or 0
     )
-
-    # Registrar la acción en logs de admin
-    try:
-        import crud as _crud
-        _crud.create_admin_log_entry(db, action="PLAY_SONG", details=f"Reproduciendo manualmente: {db_cancion.titulo}")
-    except Exception:
-        pass
 
     return {"mensaje": f"Reproduciendo: {db_cancion.titulo}"}
 

@@ -749,22 +749,17 @@ def is_nick_banned(db: Session, nick: str):
 
 def ban_usuario(db: Session, usuario_id: int):
     """
-    Banea a un usuario: aÃƒÂƒÃ‚Â±ade su nick a la lista de baneados y luego lo elimina.
+    Banea a un usuario: marca su nick como baneado (is_banned=True) y lo elimina.
     """
     db_usuario = db.query(models.Usuario).filter(models.Usuario.id == usuario_id).first()
     if not db_usuario:
         return None
 
-    # 1. AÃƒÂƒÃ‚Â±adir el nick a la lista de baneados si no existe
-    nick_baneado_existente = db.query(models.BannedNick).filter(models.BannedNick.nick.ilike(db_usuario.nick)).first()
-    if not nick_baneado_existente:
-        banned_nick_entry = models.BannedNick(nick=db_usuario.nick)
-        db.add(banned_nick_entry)
-        # Hacemos un commit intermedio para asegurar que el nick baneado se guarde
-        # antes de proceder con el borrado del usuario.
-        db.commit()
+    # 1. Marcar el nick como baneado (es suficiente para evitar que se vuelva a registrar)
+    db_usuario.is_banned = True
+    db.commit()
 
-    # 2. Eliminar al usuario y sus datos asociados (reutilizamos la funciÃƒÂƒÃ‚Â³n existente)
+    # 2. Eliminar al usuario y sus datos asociados
     delete_usuario(db, usuario_id=usuario_id)
 
     return db_usuario
@@ -828,19 +823,19 @@ def set_usuario_silenciado(db: Session, usuario_id: int, silenciar: bool):
 
 def unban_nick(db: Session, nick: str):
     """
-    Elimina un nick de la lista de baneados para permitir que se vuelva a registrar.
+    Elimina el ban de un nick encontrando el usuario y marcando is_banned=False.
     """
-    banned_nick_entry = db.query(models.BannedNick).filter(models.BannedNick.nick.ilike(nick)).first()
-    if banned_nick_entry:
-        db.delete(banned_nick_entry)
+    # Buscar usuario con ese nick (aunque esté baneado o inactivo)
+    banned_usuario = db.query(models.Usuario).filter(models.Usuario.nick.ilike(nick)).first()
+    if banned_usuario:
+        banned_usuario.is_banned = False
         db.commit()
-    return banned_nick_entry
-
+    return banned_usuario
 def get_banned_nicks(db: Session):
     """
-    Obtiene una lista de todos los nicks baneados.
+    Obtiene una lista de todos los usuarios con nicks baneados (is_banned=True).
     """
-    return db.query(models.BannedNick).order_by(models.BannedNick.banned_at.desc()).all()
+    return db.query(models.Usuario).filter(models.Usuario.is_banned == True).all()
 
 def get_canciones_mas_rechazadas(db: Session, limit: int = 10):
     """
@@ -890,17 +885,6 @@ def get_ingresos_por_categoria(db: Session):
         .order_by(func.sum(models.Consumo.valor_total).desc())
         .all()
     )
-
-def create_admin_log_entry(db: Session, action: str, details: Optional[str] = None):
-    """Crea una nueva entrada en el log de administraciÃƒÂƒÃ‚Â³n."""
-    log_entry = models.AdminLog(action=action, details=details)
-    db.add(log_entry)
-    db.commit()
-    return log_entry
-
-def get_admin_logs(db: Session, limit: int = 100):
-    """Obtiene las ÃƒÂƒÃ‚Âºltimas entradas del log de administraciÃƒÂƒÃ‚Â³n."""
-    return db.query(models.AdminLog).order_by(models.AdminLog.timestamp.desc()).limit(limit).all()
 
 def get_productos_menos_consumidos(db: Session, limit: int = 5):
     """
@@ -1406,22 +1390,6 @@ def delete_consumo(db: Session, consumo_id: int):
 
     return True
 
-def get_config(db: Session, key: str):
-    """Obtiene un valor de configuraciÃƒÂƒÃ‚Â³n por su clave (clave)."""
-    return db.query(models.ConfiguracionGlobal).filter(models.ConfiguracionGlobal.clave == key).first()
-
-def update_config(db: Session, key: str, value: str):
-    """Establece o actualiza un valor de configuraciÃƒÂƒÃ‚Â³n (clave)."""
-    db_config = db.query(models.ConfiguracionGlobal).filter(models.ConfiguracionGlobal.clave == key).first()
-    if db_config:
-        db_config.value = value
-    else:
-        db_config = models.ConfiguracionGlobal(clave=key, valor=value)
-        db.add(db_config)
-    db.commit()
-    db.refresh(db_config)
-    return db_config
-
 def get_or_create_dj_user(db: Session) -> models.Usuario:
     """
     Busca al usuario 'DJ'. Si no existe, lo crea sin asociarlo a una mesa.
@@ -1738,7 +1706,6 @@ async def start_next_song_if_autoplay_and_idle(db: Session):
         # para que la cola se actualice y el reproductor comience a reproducir.
         await websocket_manager.manager.broadcast_queue_update()
         await websocket_manager.manager.broadcast_play_song(next_song.youtube_id, next_song.duracion_seconds or 0)
-        create_admin_log_entry(db, action="AUTO_START", details=f"Iniciada automÃƒÂƒÃ‚Â¡ticamente la canciÃƒÂƒÃ‚Â³n '{next_song.titulo}'.")
 
 async def avanzar_cola_automaticamente(db: Session):
     """
@@ -2028,7 +1995,6 @@ def aprobar_siguiente_cancion_lazy(db: Session):
     from queue_manager import queue_manager
     queue_manager.refresh_queue(db)
 
-    create_admin_log_entry(db, action="LAZY_APPROVAL", details=f"Cancion '{siguiente.titulo}' aprobada automaticamente (lazy).")
     return siguiente
 
 def get_cola_completa_con_lazy(db: Session):

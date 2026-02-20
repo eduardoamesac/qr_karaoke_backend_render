@@ -61,9 +61,8 @@ class QueueDebugger:
         ).order_by(models.Cancion.created_at.asc()).all()
 
         # ========== SECCIÓN 5: Historial reciente ==========
-        recent_logs = db.query(models.AdminLog).order_by(
-            models.AdminLog.timestamp.desc()
-        ).limit(20).all()
+        # AdminLog deprecated - table removed in database migration
+        recent_logs = []
 
         # ========== SECCIÓN 6: Validaciones ==========
         issues = []

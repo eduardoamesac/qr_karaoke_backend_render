@@ -45,13 +45,11 @@ def admin_login(login_data: schemas.AdminLoginRequest, db: Session = Depends(get
     
     # 1. Verificar Clave Maestra
     if key == MASTER_API_KEY:
-        crud.create_admin_log_entry(db, action="LOGIN", details="Inicio de sesión con SUPER CLAVE MAESTRA.")
         return {"success": True, "description": "Super Admin", "token": key}
 
     # 2. Verificar Clave de Base de Datos
     db_key = crud.get_admin_api_key(db, key=key)
     if db_key:
-        crud.create_admin_log_entry(db, action="LOGIN", details=f"Inicio de sesión: {db_key.description}")
         # Opcional: actualizar last_used
         db_key.last_used = crud.now_bogota()
         db.commit()
@@ -62,10 +60,7 @@ def admin_login(login_data: schemas.AdminLoginRequest, db: Session = Depends(get
 
 def create_admin_log_error(db: Session, action: str, details: str):
     """Helper local para loguear errores sin exponer crud si no es necesario"""
-    try:
-        crud.create_admin_log_entry(db, action=action, details=details)
-    except:
-        pass
+    pass
 
 # --- Rutas Públicas (para usuarios en mesas) ---
 
@@ -107,7 +102,6 @@ async def reset_night(background_tasks: BackgroundTasks, db: Session = Depends(g
     TAMBIÉN REINICIA EL SERVIDOR para evitar conflictos de estado.
     """
     crud.reset_database_for_new_night(db)
-    crud.create_admin_log_entry(db, action="RESET_NIGHT", details="El sistema ha sido reiniciado para una nueva noche.")
     
     # Después de borrar todo, notificamos a los clientes para que la cola se vacíe
     queue_manager.refresh_queue(db)
@@ -126,7 +120,6 @@ def set_closing_time(closing_time: schemas.ClosingTimeUpdate, db: Session = Depe
     """
     # Aquí se podría añadir una validación del formato de la hora
     config.settings.KARAOKE_CIERRE = closing_time.hora_cierre # Actualiza la hora de cierre en la configuración
-    crud.create_admin_log_entry(db, action="SET_CLOSING_TIME", details=f"Hora de cierre actualizada a {config.settings.KARAOKE_CIERRE}")
     return {"mensaje": f"La hora de cierre ha sido actualizada a {config.settings.KARAOKE_CIERRE}"}
 
 @router.get("/get-closing-time", response_model=schemas.ClosingTimeUpdate, summary="Obtener la hora de cierre actual")
@@ -166,15 +159,6 @@ def get_queue_state(db: Session = Depends(get_db)):
     
     state = QueueSynchronizer.get_definitive_state(db)
     
-    # Log para auditoría
-    crud.create_admin_log_entry(
-        db,
-        action="GET_QUEUE_STATE",
-        details=f"Estado solicitado. Revisión: {state['revision']}, "
-                f"now_playing: {state['now_playing']['id'] if state['now_playing'] else 'None'}, "
-                f"upcoming: {len(state['upcoming'])}, lazy: {len(state['lazy_queue'])}"
-    )
-    
     return state
 
 
@@ -205,12 +189,6 @@ def queue_debug(db: Session = Depends(get_db)):
     from queue_debugger import QueueDebugger
     
     report = QueueDebugger.get_full_debug_report(db)
-    
-    crud.create_admin_log_entry(
-        db,
-        action="DEBUG_QUEUE",
-        details=f"Reporte de debug solicitado. Issues: {report['integrity_checks']['issues_detected']}"
-    )
     
     return report
 
@@ -281,14 +259,6 @@ def compare_ui_vs_reality(ui_state: dict, db: Session = Depends(get_db)):
     
     comparison = QueueDebugger.get_ui_vs_reality_comparison(db, ui_state)
     
-    # Log si hay problemas
-    if comparison["summary"]["critical_issues"] > 0:
-        crud.create_admin_log_entry(
-            db,
-            action="DEBUG_UI_REALITY_MISMATCH",
-            details=f"Desincronización detectada: {comparison['summary']['critical_issues']} problemas críticos"
-        )
-    
     return comparison
 
 
@@ -304,7 +274,6 @@ async def broadcast_message(notificacion: schemas.Notificacion, db: Session = De
     asyncio.create_task(
         websocket_manager.manager.broadcast_notification(notificacion.mensaje)
     )
-    crud.create_admin_log_entry(db, action="BROADCAST_MESSAGE", details=f"Mensaje enviado: '{notificacion.mensaje}'")
     return {"message": "Mensaje enviado a todos los usuarios."}
 
 
@@ -366,7 +335,6 @@ def unban_user_nick(unban_data: schemas.NickUnban, db: Session = Depends(get_db)
         raise HTTPException(
             status_code=404, detail=f"El nick '{unban_data.nick}' no se encontraba en la lista de baneados."
         )
-    crud.create_admin_log_entry(db, action="UNBAN_NICK", details=f"Nick '{unban_data.nick}' perdonado.")
     return {"mensaje": f"El nick '{unban_data.nick}' ha sido perdonado y puede volver a registrarse."}
 
 @router.get("/banned-nicks", response_model=List[schemas.BannedNickView], summary="Ver la lista de nicks baneados")
@@ -411,7 +379,6 @@ def delete_table(mesa_id: int, db: Session = Depends(get_db)):
         )
 
     crud.delete_mesa(db, mesa_id=mesa_id)
-    crud.create_admin_log_entry(db, action="DELETE_TABLE", details=f"Mesa '{db_mesa.nombre}' (ID: {mesa_id}) eliminada.")
     return Response(status_code=204)
 
 @router.post("/tables/{mesa_id}/activate", response_model=schemas.Mesa, summary="Activar una mesa")
@@ -422,7 +389,6 @@ def activate_table(mesa_id: int, db: Session = Depends(get_db)):
     db_mesa = crud.set_mesa_active_status(db, mesa_id=mesa_id, is_active=True)
     if not db_mesa:
         raise HTTPException(status_code=404, detail="Mesa no encontrada.")
-    crud.create_admin_log_entry(db, action="ACTIVATE_TABLE", details=f"Mesa '{db_mesa.nombre}' (ID: {mesa_id}) activada.")
     return db_mesa
 
 @router.post("/tables/{mesa_id}/deactivate", response_model=schemas.Mesa, summary="Desactivar una mesa")
@@ -433,7 +399,6 @@ def deactivate_table(mesa_id: int, db: Session = Depends(get_db)):
     db_mesa = crud.set_mesa_active_status(db, mesa_id=mesa_id, is_active=False)
     if not db_mesa:
         raise HTTPException(status_code=404, detail="Mesa no encontrada.")
-    crud.create_admin_log_entry(db, action="DEACTIVATE_TABLE", details=f"Mesa '{db_mesa.nombre}' (ID: {mesa_id}) desactivada.")
     return db_mesa
 
 @router.get("/reports/income-by-category", response_model=List[schemas.ReporteIngresosPorCategoria], summary="Obtener los ingresos por categoría de producto")
@@ -522,7 +487,6 @@ async def delete_user(usuario_id: int, db: Session = Depends(get_db)):
             detail="Usuario no encontrado."
         )
     
-    crud.create_admin_log_entry(db, action="DELETE_USER", details=f"Usuario '{usuario_eliminado.nick}' (ID: {usuario_id}) eliminado.")
     await websocket_manager.manager.broadcast_queue_update()
     return Response(status_code=204)
 
@@ -536,7 +500,6 @@ async def ban_user(usuario_id: int, db: Session = Depends(get_db)):
     if not usuario_baneado:
         raise HTTPException(status_code=404, detail="Usuario no encontrado.")
     
-    crud.create_admin_log_entry(db, action="BAN_USER", details=f"Usuario '{usuario_baneado.nick}' (ID: {usuario_id}) baneado.")
     await websocket_manager.manager.broadcast_queue_update()
     return Response(status_code=204)
 
@@ -640,7 +603,6 @@ def add_points_to_user(usuario_id: int, puntos_update: schemas.UsuarioPuntosUpda
             status_code=404,
             detail="Usuario no encontrado."
         )
-    crud.create_admin_log_entry(db, action="ADD_POINTS", details=f"Añadidos {puntos_update.puntos} puntos al usuario '{db_usuario.nick}' (ID: {usuario_id}).")
     return db_usuario
 
 @router.put("/users/{usuario_id}/edit-nick", response_model=schemas.UsuarioPublico, summary="Editar el nick de un usuario")
@@ -654,7 +616,6 @@ def edit_user_nick(usuario_id: int, nick_update: schemas.UsuarioNickUpdate, db: 
             status_code=404,
             detail="Usuario no encontrado."
         )
-    crud.create_admin_log_entry(db, action="EDIT_NICK", details=f"Nick del usuario ID {usuario_id} cambiado a '{nick_update.nick}'.")
     return db_usuario
 
 @router.get("/reports/songs-by-user", response_model=List[schemas.ReporteCancionesPorUsuario], summary="Obtener cantidad de canciones por usuario")
@@ -685,7 +646,6 @@ async def reorder_queue(orden: schemas.ReordenarCola, db: Session = Depends(get_
     """
     crud.reordenar_cola_manual(db, canciones_ids=orden.canciones_ids)
     # Notificamos a todos los clientes de la nueva cola
-    crud.create_admin_log_entry(db, action="REORDER_QUEUE", details=f"Cola reordenada manualmente. Nuevo orden: {orden.canciones_ids}")
     queue_manager.refresh_queue(db)
     await websocket_manager.manager.broadcast_queue_update()
     return {"mensaje": "La cola ha sido reordenada manualmente."}
@@ -712,7 +672,6 @@ async def move_song_to_top_endpoint(cancion_id: int, db: Session = Depends(get_d
             detail="La canción no fue encontrada o no está en estado 'aprobado'."
         )
     
-    crud.create_admin_log_entry(db, action="MOVE_SONG_TOP", details=f"Canción '{cancion_movida.titulo}' (ID: {cancion_id}) movida al principio.")
     queue_manager.refresh_queue(db)
     await websocket_manager.manager.broadcast_queue_update()
     return {"mensaje": f"La canción '{cancion_movida.titulo}' ha sido movida al principio de la cola."}
@@ -723,7 +682,6 @@ async def restart_current_song(db: Session = Depends(get_db)):
     **[Admin]** Reinicia la canción que se está reproduciendo actualmente.
     """
     await websocket_manager.manager.broadcast_restart_song()
-    crud.create_admin_log_entry(db, action="RESTART_SONG", details="Canción actual reiniciada.")
     return {"mensaje": "Canción reiniciada."}
 
 @router.post("/player/pause", status_code=200, summary="Pausar la reproducción")
@@ -732,7 +690,6 @@ async def pause_playback(db: Session = Depends(get_db)):
     **[Admin]** Pausa la reproducción en el player.
     """
     await websocket_manager.manager.broadcast_pause()
-    crud.create_admin_log_entry(db, action="PAUSE_PLAYBACK", details="Reproducción pausada por admin.")
     return {"mensaje": "Reproducción pausada."}
 
 @router.post("/player/resume", status_code=200, summary="Reanudar la reproducción")
@@ -741,7 +698,6 @@ async def resume_playback(db: Session = Depends(get_db)):
     **[Admin]** Reanuda la reproducción en el player.
     """
     await websocket_manager.manager.broadcast_resume()
-    crud.create_admin_log_entry(db, action="RESUME_PLAYBACK", details="Reproducción reanudada por admin.")
     return {"mensaje": "Reproducción reanudada."}
 
 @router.get("/canciones/pending", response_model=List[schemas.CancionAdminView], summary="Obtener canciones pendientes por aprobar")
@@ -760,7 +716,6 @@ async def approve_pending_song(cancion_id: int, db: Session = Depends(get_db), a
     if not db_cancion:
         raise HTTPException(status_code=404, detail="Canción no encontrada o no está pendiente.")
     
-    crud.create_admin_log_entry(db, action="APPROVE_SONG", details=f"Canción '{db_cancion.titulo}' aprobada manualmente.")
     queue_manager.refresh_queue(db)
     await websocket_manager.manager.broadcast_queue_update()
     return db_cancion
@@ -791,7 +746,6 @@ async def move_pending_song_up(cancion_id: int, db: Session = Depends(get_db), a
         previous_song.created_at = temp_created
         db.commit()
     
-    crud.create_admin_log_entry(db, action="MOVE_PENDING_UP", details=f"Canción '{db_cancion.titulo}' movida hacia arriba en cola pendiente.")
     await websocket_manager.manager.broadcast_queue_update()
     return {"mensaje": "Canción movida hacia arriba."}
 
@@ -821,7 +775,6 @@ async def move_pending_song_down(cancion_id: int, db: Session = Depends(get_db),
         next_song.created_at = temp_created
         db.commit()
     
-    crud.create_admin_log_entry(db, action="MOVE_PENDING_DOWN", details=f"Canción '{db_cancion.titulo}' movida hacia abajo en cola pendiente.")
     await websocket_manager.manager.broadcast_queue_update()
     return {"mensaje": "Canción movida hacia abajo."}
 
@@ -850,13 +803,6 @@ async def move_lazy_song_up(cancion_id: int, db: Session = Depends(get_db), api_
     
     if not result["success"]:
         raise HTTPException(status_code=400, detail=result["error"])
-    
-    # Log de auditoría
-    crud.create_admin_log_entry(
-        db,
-        action="MOVE_LAZY_UP",
-        details=f"Canción ID {cancion_id} movida hacia arriba (Revisión {result['queue_state']['revision']})"
-    )
     
     # Broadcast DEFINITIVO
     await websocket_manager.manager.broadcast_queue_update()
@@ -890,13 +836,6 @@ async def move_lazy_song_down(cancion_id: int, db: Session = Depends(get_db), ap
     if not result["success"]:
         raise HTTPException(status_code=400, detail=result["error"])
     
-    # Log de auditoría
-    crud.create_admin_log_entry(
-        db,
-        action="MOVE_LAZY_DOWN",
-        details=f"Canción ID {cancion_id} movida hacia abajo (Revisión {result['queue_state']['revision']})"
-    )
-    
     # Broadcast DEFINITIVO
     await websocket_manager.manager.broadcast_queue_update()
     
@@ -922,12 +861,6 @@ async def approve_next_lazy_song(db: Session = Depends(get_db), api_key: str = D
 
     # Incrementar versión para invalidar cache frontend
     new_revision = QueueSynchronizer.increment_revision(db)
-
-    crud.create_admin_log_entry(
-        db,
-        action="APPROVE_LAZY_NEXT",
-        details=f"Canción ID {siguiente.id} '{siguiente.titulo}' aprobada. Revisión: {new_revision}"
-    )
 
     # Si no hay canción en reproducción, intentar iniciar la siguiente automáticamente
     try:
@@ -980,12 +913,6 @@ async def revert_approved_song(cancion_id: int, db: Session = Depends(get_db), a
     # Incrementar versión
     new_revision = QueueSynchronizer.increment_revision(db)
 
-    crud.create_admin_log_entry(
-        db,
-        action="REVERT_APPROVAL",
-        details=f"Aprobación revertida para ID {cancion_id}. Revisión: {new_revision}"
-    )
-    
     queue_manager.refresh_queue(db)
     await websocket_manager.manager.broadcast_queue_update()
     
@@ -1205,9 +1132,6 @@ async def admin_mark_consumo_despachado(consumo_id: int, db: Session = Depends(g
     db_consumo.is_dispatched = True
     db.commit()
 
-    # Log the action
-    crud.create_admin_log_entry(db, action="MARK_CONSUMO_DESPACHADO", details=f"Consumo ID {consumo_id} marcado como despachado.")
-
     # Notify clients that this consumption should be removed from recent lists
     try:
         await websocket_manager.manager.broadcast_consumo_deleted({'id': consumo_id})
@@ -1344,8 +1268,6 @@ async def create_pago_endpoint(pago: schemas.PagoCreate, db: Session = Depends(g
     if not db_pago:
         raise HTTPException(status_code=404, detail="La mesa especificada no fue encontrada.")
     
-    crud.create_admin_log_entry(db, action="CREATE_PAGO", details=f"Registrado pago de ${pago.monto} para la mesa ID {pago.mesa_id}.")
-    
     # Podríamos emitir un evento por WebSocket si quisiéramos actualizar la vista en tiempo real
     # await websocket_manager.manager.broadcast_payment_update(pago.mesa_id)
     return db_pago
@@ -1364,13 +1286,6 @@ def get_table_summary(mesa_id: int, db: Session = Depends(get_db)):
         )
     return summary_data
 
-
-@router.get("/logs", response_model=List[schemas.AdminLogView], summary="Ver el log de acciones administrativas")
-def get_admin_logs_endpoint(db: Session = Depends(get_db), limit: int = 100):
-    """
-    **[Admin]** Devuelve un log de las últimas acciones realizadas por administradores.
-    """
-    return crud.get_admin_logs(db, limit=limit)
 
 @router.get("/reports/silver-users", response_model=List[schemas.UsuarioPublico], summary="Obtener usuarios de nivel Plata")
 def get_silver_users_report(db: Session = Depends(get_db)):
@@ -1487,8 +1402,6 @@ async def admin_add_song_to_mesa(
     # Notificar a todos los clientes sobre la nueva cola
     await websocket_manager.manager.broadcast_queue_update()
     
-    crud.create_admin_log_entry(db, action="ADMIN_ADD_SONG_TO_TABLE", details=f"Canción '{cancion_aprobada.titulo}' añadida a la mesa ID {mesa_id}.")
-    
     return cancion_aprobada
 
 # --- Gestión de Claves de API ---
@@ -1500,7 +1413,6 @@ def create_new_api_key(key_data: schemas.AdminApiKeyCreate, db: Session = Depend
     La clave solo se mostrará una vez, ¡guárdala en un lugar seguro!
     """
     new_key = crud.create_admin_api_key(db, description=key_data.description)
-    crud.create_admin_log_entry(db, action="CREATE_API_KEY", details=f"Nueva clave de API creada: '{key_data.description}'")
     return new_key
 
 @router.get("/api-keys", response_model=List[schemas.AdminApiKeyInfo], summary="Listar todas las claves de API")
@@ -1519,7 +1431,6 @@ def delete_api_key(key_id: int, db: Session = Depends(get_db)):
     deleted_key = crud.delete_admin_api_key(db, key_id=key_id)
     if not deleted_key:
         raise HTTPException(status_code=404, detail="Clave de API no encontrada.")
-    crud.create_admin_log_entry(db, action="DELETE_API_KEY", details=f"Clave de API ID {key_id} ('{deleted_key.description}') eliminada.")
     return Response(status_code=204)
 
 # --- Cuentas por Mesa endpoints ---
@@ -1586,9 +1497,6 @@ def close_table_session(mesa_id: int, db: Session = Depends(get_db)):
     
     if not result.get("success", False):
         raise HTTPException(status_code=400, detail=result.get("message", "Error al cerrar la sesión."))
-    
-    # Registrar la acción en el log de administración
-    crud.create_admin_log_entry(db, action="CLOSE_TABLE_SESSION", details=f"Sesión cerrada para mesa {mesa_id}. Canciones eliminadas: {result.get('canciones_eliminadas', 0)}")
     
     return result
 

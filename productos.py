@@ -32,7 +32,6 @@ async def create_product(producto: schemas.ProductoCreate, db: Session = Depends
             raise HTTPException(status_code=400, detail="Un producto con este nombre ya existe.")
 
         new_product = crud.create_producto(db=db, producto=producto)
-        crud.create_admin_log_entry(db, action="CREATE_PRODUCT", details=f"Producto '{new_product.nombre}' creado.")
         # Lanzamos el broadcast como tarea de fondo para evitar que fallos en WS provoquen 500s
         try:
             import asyncio
@@ -84,7 +83,6 @@ async def update_product(producto_id: int, producto: schemas.ProductoCreate, db:
     db_producto = crud.update_producto(db, producto_id=producto_id, producto_update=producto)
     if not db_producto:
         raise HTTPException(status_code=404, detail="Producto no encontrado.")
-    crud.create_admin_log_entry(db, action="UPDATE_PRODUCT", details=f"Producto '{db_producto.nombre}' (ID: {producto_id}) actualizado.")
     await websocket_manager.manager.broadcast_product_update() # Notificamos
     return JSONResponse(content=jsonable_encoder(db_producto, custom_encoder={Decimal: lambda v: float(v)}))
 
@@ -101,10 +99,10 @@ async def delete_product(producto_id: int, db: Session = Depends(get_db), api_ke
     
     # Si deleted_product existe, fue desactivado (tiene consumos asociados)
     if deleted_product:
-        crud.create_admin_log_entry(db, action="DEACTIVATE_PRODUCT", details=f"Producto '{deleted_product.nombre}' (ID: {producto_id}) desactivado (tiene consumos asociados).")
+        pass  # Producto desactivado
     else:
         # Si deleted_product es None pero no hubo error, fue eliminado permanentemente
-        crud.create_admin_log_entry(db, action="DELETE_PRODUCT", details=f"Producto (ID: {producto_id}) eliminado permanentemente.")
+        pass  # Producto eliminado
     
     await websocket_manager.manager.broadcast_product_update() # Notificamos
     return Response(status_code=204)
@@ -121,7 +119,6 @@ async def edit_product_price(producto_id: int, valor_update: schemas.ProductoVal
             detail="Producto no encontrado."
         )
     
-    crud.create_admin_log_entry(db, action="EDIT_PRODUCT_PRICE", details=f"Precio del producto '{db_producto.nombre}' (ID: {producto_id}) cambiado a {valor_update.valor}.")
     await websocket_manager.manager.broadcast_product_update() # Notificamos
     return JSONResponse(content=jsonable_encoder(db_producto, custom_encoder={Decimal: lambda v: float(v)}))
 
@@ -133,7 +130,6 @@ async def deactivate_product(producto_id: int, db: Session = Depends(get_db), ap
     db_producto = crud.update_producto_active_status(db, producto_id=producto_id, is_active=False)
     if not db_producto:
         raise HTTPException(status_code=404, detail="Producto no encontrado.")
-    crud.create_admin_log_entry(db, action="DEACTIVATE_PRODUCT", details=f"Producto '{db_producto.nombre}' (ID: {producto_id}) desactivado.")
     await websocket_manager.manager.broadcast_product_update() # Notificamos
     return JSONResponse(content=jsonable_encoder(db_producto, custom_encoder={Decimal: lambda v: float(v)}))
 
@@ -145,7 +141,6 @@ async def activate_product(producto_id: int, db: Session = Depends(get_db), api_
     db_producto = crud.update_producto_active_status(db, producto_id=producto_id, is_active=True)
     if not db_producto:
         raise HTTPException(status_code=404, detail="Producto no encontrado.")
-    crud.create_admin_log_entry(db, action="ACTIVATE_PRODUCT", details=f"Producto '{db_producto.nombre}' (ID: {producto_id}) reactivado.")
     await websocket_manager.manager.broadcast_product_update() # Notificamos
     return JSONResponse(content=jsonable_encoder(db_producto, custom_encoder={Decimal: lambda v: float(v)}))
 
@@ -188,12 +183,7 @@ async def upload_product_image(
     db.commit()  # Hacer commit de toda la transacción
     
     # Log después del commit exitoso
-    try:
-        crud.create_admin_log_entry(db, action="UPLOAD_PRODUCT_IMAGE", details=f"Imagen subida para producto ID {producto_id}")
-    except Exception as e:
-        import logging
-        logging.getLogger(__name__).exception(f"Error creando log de imagen: {e}")
-        # No lanzamos excepción porque la imagen ya fue guardada exitosamente
+    # Imagen guardada exitosamente
 
     # Notificar a los clientes conectados (si usas WebSocket)
     try:
