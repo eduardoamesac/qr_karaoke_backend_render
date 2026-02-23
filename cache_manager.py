@@ -230,6 +230,59 @@ class CacheManager:
             if cache_file.exists():
                 cache_file.unlink()
     
+    # ========================================================================
+    # FUNCIONES DE CACHÉ DE REVISIÓN DE COLA
+    # ========================================================================
+    
+    def _get_queue_revision_cache_file(self) -> Path:
+        """Obtiene la ruta del archivo de caché de revisión de cola"""
+        return self.cache_dir / "queue_revision.json"
+    
+    def _load_queue_revision_cache(self) -> Dict[str, Any]:
+        """Carga caché de revisión de cola desde JSON"""
+        cache_file = self._get_queue_revision_cache_file()
+        if cache_file.exists():
+            try:
+                with open(cache_file, 'r', encoding='utf-8') as f:
+                    return json.load(f)
+            except Exception as e:
+                print(f"Error cargando caché de revisión de cola: {e}")
+        
+        return {"revision": 0, "updated_at": now_bogota().isoformat()}
+    
+    def _save_queue_revision_cache(self, data: Dict[str, Any]) -> None:
+        """Guarda caché de revisión de cola a JSON"""
+        cache_file = self._get_queue_revision_cache_file()
+        try:
+            with open(cache_file, 'w', encoding='utf-8') as f:
+                json.dump(data, f, indent=2, ensure_ascii=False, default=str)
+        except Exception as e:
+            print(f"Error guardando caché de revisión de cola: {e}")
+    
+    def get_queue_revision(self) -> int:
+        """Obtiene la revisión actual de la cola desde caché"""
+        with self.lock:
+            data = self._load_queue_revision_cache()
+            return int(data.get("revision", 0))
+    
+    def increment_queue_revision(self) -> int:
+        """Incrementa la revisión de la cola y retorna el nuevo valor"""
+        with self.lock:
+            data = self._load_queue_revision_cache()
+            new_revision = int(data.get("revision", 0)) + 1
+            data["revision"] = new_revision
+            data["updated_at"] = now_bogota().isoformat()
+            self._save_queue_revision_cache(data)
+            return new_revision
+    
+    def set_queue_revision(self, revision: int) -> None:
+        """Establece la revisión de la cola a un valor específico"""
+        with self.lock:
+            data = self._load_queue_revision_cache()
+            data["revision"] = revision
+            data["updated_at"] = now_bogota().isoformat()
+            self._save_queue_revision_cache(data)
+    
     def _load_cache(self) -> None:
         """Carga todos los caché existentes al iniciar"""
         # Cargar todos los archivos de caché

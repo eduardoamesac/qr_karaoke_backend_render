@@ -20,6 +20,7 @@ from sqlalchemy.orm import Session
 import models
 from timezone_utils import now_bogota
 from fastapi.encoders import jsonable_encoder
+from cache_manager import cache_manager
 
 logger = logging.getLogger(__name__)
 
@@ -71,11 +72,8 @@ class QueueSynchronizer:
                 )
                 upcoming = [s for s in upcoming if s.id != now_playing.id]
 
-        # PASO 4: Obtener versión (usa BD directa)
-        version_record = db.query(models.ConfiguracionGlobal).filter(
-            models.ConfiguracionGlobal.clave == "queue_revision"
-        ).first()
-        revision = int(version_record.valor) if version_record else 0
+        # PASO 4: Obtener versión (usa cache JSON en lugar de BD)
+        revision = cache_manager.get_queue_revision()
 
         # PASO 5: Serializar con integridad
         payload = {
@@ -103,18 +101,9 @@ class QueueSynchronizer:
     @staticmethod
     def increment_revision(db: Session) -> int:
         """Incrementa el número de revisión para invalidar cache del frontend."""
-        version_record = db.query(models.ConfiguracionGlobal).filter(
-            models.ConfiguracionGlobal.clave == "queue_revision"
-        ).first()
-
-        if version_record:
-            version_record.valor = str(int(version_record.valor) + 1)
-        else:
-            version_record = models.ConfiguracionGlobal(clave="queue_revision", valor="1")
-            db.add(version_record)
-
-        db.commit()
-        return int(version_record.valor)
+        # Usar cache JSON en lugar de BD
+        new_revision = cache_manager.increment_queue_revision()
+        return new_revision
 
     @staticmethod
     def validate_song_still_valid(db: Session, cancion_id: int, expected_state: str) -> bool:

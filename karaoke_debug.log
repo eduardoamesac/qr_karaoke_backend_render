@@ -14234,3 +14234,498 @@ TypeError: can't subtract offset-naive and offset-aware datetimes
 2026-02-19 16:41:08,233 - queue_manager - INFO - Cache unificado refrescado exitosamente.
 2026-02-19 16:41:08,268 - queue_manager - INFO - Cache unificado refrescado exitosamente.
 2026-02-19 16:41:25,211 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 09:39:08,931 - song_credits_background - INFO - Credits background task started
+2026-02-23 09:47:50,574 - song_credits_background - INFO - Credits background task started
+2026-02-23 09:52:01,800 - song_credits_background - INFO - Credits background task started
+2026-02-23 10:04:07,917 - song_credits_background - INFO - Credits background task started
+2026-02-23 10:04:26,669 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:04:26,697 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:04:26,699 - websocket_manager - ERROR - Error broadcasting queue update: module 'models' has no attribute 'ConfiguracionGlobal'
+Traceback (most recent call last):
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend_render\websocket_manager.py", line 62, in broadcast_queue_update
+    queue_state = QueueSynchronizer.get_definitive_state(db)
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend_render\queue_synchronizer.py", line 75, in get_definitive_state
+    version_record = db.query(models.ConfiguracionGlobal).filter(
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'models' has no attribute 'ConfiguracionGlobal'
+2026-02-23 10:08:24,607 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:08:24,662 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:08:24,678 - websocket_manager - ERROR - Error broadcasting queue update: module 'models' has no attribute 'ConfiguracionGlobal'
+Traceback (most recent call last):
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend_render\websocket_manager.py", line 62, in broadcast_queue_update
+    queue_state = QueueSynchronizer.get_definitive_state(db)
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend_render\queue_synchronizer.py", line 75, in get_definitive_state
+    version_record = db.query(models.ConfiguracionGlobal).filter(
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'models' has no attribute 'ConfiguracionGlobal'
+2026-02-23 10:08:24,874 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:08:49,975 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:09:20,795 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'amistades peligrosas'
+2026-02-23 10:09:20,796 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'amistades peligrosas' (Karaoke Mode: False)
+2026-02-23 10:09:22,855 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-02-23 10:09:22,856 - youtube - INFO - Búsqueda por texto: 'amistades peligrosas'
+2026-02-23 10:09:22,857 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-02-23 10:09:23,585 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=amistades+peligrosas&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-02-23 10:09:23,592 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-02-23 10:09:23,594 - youtube - INFO - IDs de video encontrados: ['95JHOXoXR6M', 'bWQul83KtqI', '2OFTs7ix9w0', 'e48oXY7QMm8', 'u6c45acypTQ', 'k6c7UUhScPw', 'GBH9Nll5nFA', 'yfk0OfK_8Hw', 'Tsj8e9x9S_s', 'DAYG6nlF-to']
+2026-02-23 10:09:23,596 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-02-23 10:09:23,834 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=95JHOXoXR6M%2CbWQul83KtqI%2C2OFTs7ix9w0%2Ce48oXY7QMm8%2Cu6c45acypTQ%2Ck6c7UUhScPw%2CGBH9Nll5nFA%2Cyfk0OfK_8Hw%2CTsj8e9x9S_s%2CDAYG6nlF-to&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-02-23 10:09:23,841 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-02-23 10:09:23,843 - youtube - INFO - Procesamiento finalizado. Se encontraron 10 resultados formateados.
+2026-02-23 10:09:23,864 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'amistades peligrosas'
+2026-02-23 10:09:23,865 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'amistades peligrosas' (Karaoke Mode: False)
+2026-02-23 10:09:25,419 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-02-23 10:09:25,419 - youtube - INFO - Búsqueda por texto: 'amistades peligrosas'
+2026-02-23 10:09:25,420 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-02-23 10:09:26,040 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=amistades+peligrosas&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-02-23 10:09:26,045 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-02-23 10:09:26,045 - youtube - INFO - IDs de video encontrados: ['95JHOXoXR6M', 'bWQul83KtqI', '2OFTs7ix9w0', 'e48oXY7QMm8', 'u6c45acypTQ', 'k6c7UUhScPw', 'GBH9Nll5nFA', 'yfk0OfK_8Hw', 'Tsj8e9x9S_s', 'DAYG6nlF-to']
+2026-02-23 10:09:26,047 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-02-23 10:09:26,275 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=95JHOXoXR6M%2CbWQul83KtqI%2C2OFTs7ix9w0%2Ce48oXY7QMm8%2Cu6c45acypTQ%2Ck6c7UUhScPw%2CGBH9Nll5nFA%2Cyfk0OfK_8Hw%2CTsj8e9x9S_s%2CDAYG6nlF-to&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-02-23 10:09:26,282 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-02-23 10:09:26,284 - youtube - INFO - Procesamiento finalizado. Se encontraron 10 resultados formateados.
+2026-02-23 10:09:35,185 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'amistades peligrosas'
+2026-02-23 10:09:35,186 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'amistades peligrosas' (Karaoke Mode: False)
+2026-02-23 10:09:36,630 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-02-23 10:09:36,631 - youtube - INFO - Búsqueda por texto: 'amistades peligrosas'
+2026-02-23 10:09:36,632 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-02-23 10:09:37,211 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=amistades+peligrosas&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-02-23 10:09:37,217 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-02-23 10:09:37,218 - youtube - INFO - IDs de video encontrados: ['95JHOXoXR6M', 'bWQul83KtqI', '2OFTs7ix9w0', 'e48oXY7QMm8', 'u6c45acypTQ', 'k6c7UUhScPw', 'GBH9Nll5nFA', 'yfk0OfK_8Hw', 'Tsj8e9x9S_s', 'DAYG6nlF-to']
+2026-02-23 10:09:37,219 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-02-23 10:09:37,412 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=95JHOXoXR6M%2CbWQul83KtqI%2C2OFTs7ix9w0%2Ce48oXY7QMm8%2Cu6c45acypTQ%2Ck6c7UUhScPw%2CGBH9Nll5nFA%2Cyfk0OfK_8Hw%2CTsj8e9x9S_s%2CDAYG6nlF-to&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-02-23 10:09:37,419 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-02-23 10:09:37,421 - youtube - INFO - Procesamiento finalizado. Se encontraron 10 resultados formateados.
+2026-02-23 10:09:37,440 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'amistades peligrosas'
+2026-02-23 10:09:37,446 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'amistades peligrosas' (Karaoke Mode: False)
+2026-02-23 10:09:39,067 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-02-23 10:09:39,068 - youtube - INFO - Búsqueda por texto: 'amistades peligrosas'
+2026-02-23 10:09:39,070 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-02-23 10:09:39,669 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=amistades+peligrosas&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-02-23 10:09:39,673 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-02-23 10:09:39,676 - youtube - INFO - IDs de video encontrados: ['95JHOXoXR6M', 'bWQul83KtqI', '2OFTs7ix9w0', 'e48oXY7QMm8', 'u6c45acypTQ', 'k6c7UUhScPw', 'GBH9Nll5nFA', 'yfk0OfK_8Hw', 'Tsj8e9x9S_s', 'DAYG6nlF-to']
+2026-02-23 10:09:39,679 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-02-23 10:09:39,854 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=95JHOXoXR6M%2CbWQul83KtqI%2C2OFTs7ix9w0%2Ce48oXY7QMm8%2Cu6c45acypTQ%2Ck6c7UUhScPw%2CGBH9Nll5nFA%2Cyfk0OfK_8Hw%2CTsj8e9x9S_s%2CDAYG6nlF-to&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-02-23 10:09:39,862 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-02-23 10:09:39,863 - youtube - INFO - Procesamiento finalizado. Se encontraron 10 resultados formateados.
+2026-02-23 10:09:43,365 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:09:43,429 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:09:43,460 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:09:43,514 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:09:43,538 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:09:43,567 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:09:43,568 - websocket_manager - ERROR - Error broadcasting queue update: module 'models' has no attribute 'ConfiguracionGlobal'
+Traceback (most recent call last):
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend_render\websocket_manager.py", line 62, in broadcast_queue_update
+    queue_state = QueueSynchronizer.get_definitive_state(db)
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend_render\queue_synchronizer.py", line 75, in get_definitive_state
+    version_record = db.query(models.ConfiguracionGlobal).filter(
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'models' has no attribute 'ConfiguracionGlobal'
+2026-02-23 10:09:43,595 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=Tsj8e9x9S_s, duration_seconds=262
+2026-02-23 10:09:43,623 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:09:43,667 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:09:43,699 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:09:43,711 - websocket_manager - ERROR - Error broadcasting queue update: module 'models' has no attribute 'ConfiguracionGlobal'
+Traceback (most recent call last):
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend_render\websocket_manager.py", line 62, in broadcast_queue_update
+    queue_state = QueueSynchronizer.get_definitive_state(db)
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend_render\queue_synchronizer.py", line 75, in get_definitive_state
+    version_record = db.query(models.ConfiguracionGlobal).filter(
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'models' has no attribute 'ConfiguracionGlobal'
+2026-02-23 10:09:43,923 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:09:43,974 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:11:09,789 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'heredero'
+2026-02-23 10:11:09,789 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'heredero' (Karaoke Mode: False)
+2026-02-23 10:11:11,217 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-02-23 10:11:11,219 - youtube - INFO - Búsqueda por texto: 'heredero'
+2026-02-23 10:11:11,220 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-02-23 10:11:11,859 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=heredero&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-02-23 10:11:11,863 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-02-23 10:11:11,864 - youtube - INFO - IDs de video encontrados: ['KI3pWvM19Pc', 'sU8FqZQOK3k', 'bZLojmRvRd8', 'O_Jv-_nEqWk', 'tvUc8GEovac', 'NP3LASw8uWY', 'mspgrI-m06I', 'l5JmIWJDOIw', '9o1ea3O_GTs', 'dLeN4bdCuiM', 'm7S0LBdMpPU', 'Zk9q-g3DsAo', 'KTT2QhqY23g', 'IfoPQ7mGIT0', '76aba24n66U', '7DQp2ZO-m5g', 'SAe4DxIadxM', '3JKeF3E_lLU', 'tgP8IWUXY_s', 'nynPa8zqRdc', 'bu5WOIoGAIU', 'N51Iw0B6mYY', 'ibhzpdh6WDg', 'uswZszIYTj0']
+2026-02-23 10:11:11,867 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-02-23 10:11:12,114 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=KI3pWvM19Pc%2CsU8FqZQOK3k%2CbZLojmRvRd8%2CO_Jv-_nEqWk%2CtvUc8GEovac%2CNP3LASw8uWY%2CmspgrI-m06I%2Cl5JmIWJDOIw%2C9o1ea3O_GTs%2CdLeN4bdCuiM%2Cm7S0LBdMpPU%2CZk9q-g3DsAo%2CKTT2QhqY23g%2CIfoPQ7mGIT0%2C76aba24n66U%2C7DQp2ZO-m5g%2CSAe4DxIadxM%2C3JKeF3E_lLU%2CtgP8IWUXY_s%2CnynPa8zqRdc%2Cbu5WOIoGAIU%2CN51Iw0B6mYY%2Cibhzpdh6WDg%2CuswZszIYTj0&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-02-23 10:11:12,131 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-02-23 10:11:12,134 - youtube - INFO - Procesamiento finalizado. Se encontraron 22 resultados formateados.
+2026-02-23 10:11:12,147 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'heredero'
+2026-02-23 10:11:12,158 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'heredero' (Karaoke Mode: False)
+2026-02-23 10:11:13,810 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-02-23 10:11:13,811 - youtube - INFO - Búsqueda por texto: 'heredero'
+2026-02-23 10:11:13,812 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-02-23 10:11:14,536 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=heredero&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-02-23 10:11:14,539 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-02-23 10:11:14,540 - youtube - INFO - IDs de video encontrados: ['KI3pWvM19Pc', 'sU8FqZQOK3k', 'bZLojmRvRd8', 'l5JmIWJDOIw', 'O_Jv-_nEqWk', 'tvUc8GEovac', 'NP3LASw8uWY', 'mspgrI-m06I', '9o1ea3O_GTs']
+2026-02-23 10:11:14,541 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-02-23 10:11:14,708 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=KI3pWvM19Pc%2CsU8FqZQOK3k%2CbZLojmRvRd8%2Cl5JmIWJDOIw%2CO_Jv-_nEqWk%2CtvUc8GEovac%2CNP3LASw8uWY%2CmspgrI-m06I%2C9o1ea3O_GTs&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-02-23 10:11:14,717 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-02-23 10:11:14,720 - youtube - INFO - Procesamiento finalizado. Se encontraron 8 resultados formateados.
+2026-02-23 10:11:15,711 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:11:15,756 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:11:15,782 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:11:15,813 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:11:15,847 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:11:15,852 - websocket_manager - ERROR - Error broadcasting queue update: module 'models' has no attribute 'ConfiguracionGlobal'
+Traceback (most recent call last):
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend_render\websocket_manager.py", line 62, in broadcast_queue_update
+    queue_state = QueueSynchronizer.get_definitive_state(db)
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend_render\queue_synchronizer.py", line 75, in get_definitive_state
+    version_record = db.query(models.ConfiguracionGlobal).filter(
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'models' has no attribute 'ConfiguracionGlobal'
+2026-02-23 10:11:15,917 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:11:23,122 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:11:23,170 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:11:23,199 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:11:23,232 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:11:23,264 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:11:23,265 - websocket_manager - ERROR - Error broadcasting queue update: module 'models' has no attribute 'ConfiguracionGlobal'
+Traceback (most recent call last):
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend_render\websocket_manager.py", line 62, in broadcast_queue_update
+    queue_state = QueueSynchronizer.get_definitive_state(db)
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend_render\queue_synchronizer.py", line 75, in get_definitive_state
+    version_record = db.query(models.ConfiguracionGlobal).filter(
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'models' has no attribute 'ConfiguracionGlobal'
+2026-02-23 10:11:23,348 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:11:26,235 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:11:26,281 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:11:26,312 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:11:26,342 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:11:26,369 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:11:26,374 - websocket_manager - ERROR - Error broadcasting queue update: module 'models' has no attribute 'ConfiguracionGlobal'
+Traceback (most recent call last):
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend_render\websocket_manager.py", line 62, in broadcast_queue_update
+    queue_state = QueueSynchronizer.get_definitive_state(db)
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend_render\queue_synchronizer.py", line 75, in get_definitive_state
+    version_record = db.query(models.ConfiguracionGlobal).filter(
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'models' has no attribute 'ConfiguracionGlobal'
+2026-02-23 10:11:26,442 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:11:44,952 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:13:11,069 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:13:34,159 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'amistades peligrosas'
+2026-02-23 10:13:34,160 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'amistades peligrosas' (Karaoke Mode: False)
+2026-02-23 10:13:35,794 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-02-23 10:13:35,795 - youtube - INFO - Búsqueda por texto: 'amistades peligrosas'
+2026-02-23 10:13:35,796 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-02-23 10:13:36,423 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=amistades+peligrosas&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-02-23 10:13:36,427 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-02-23 10:13:36,428 - youtube - INFO - IDs de video encontrados: ['95JHOXoXR6M', 'bWQul83KtqI', 'u6c45acypTQ', 'e48oXY7QMm8', '2OFTs7ix9w0', 'k6c7UUhScPw', 'GBH9Nll5nFA', 'yfk0OfK_8Hw', 'Tsj8e9x9S_s', 'hsi2mXZpOac']
+2026-02-23 10:13:36,430 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-02-23 10:13:36,630 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=95JHOXoXR6M%2CbWQul83KtqI%2Cu6c45acypTQ%2Ce48oXY7QMm8%2C2OFTs7ix9w0%2Ck6c7UUhScPw%2CGBH9Nll5nFA%2Cyfk0OfK_8Hw%2CTsj8e9x9S_s%2Chsi2mXZpOac&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-02-23 10:13:36,642 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-02-23 10:13:36,653 - youtube - INFO - Procesamiento finalizado. Se encontraron 10 resultados formateados.
+2026-02-23 10:13:36,684 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'amistades peligrosas'
+2026-02-23 10:13:36,740 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'amistades peligrosas' (Karaoke Mode: False)
+2026-02-23 10:13:38,430 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-02-23 10:13:38,431 - youtube - INFO - Búsqueda por texto: 'amistades peligrosas'
+2026-02-23 10:13:38,431 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-02-23 10:13:38,998 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=amistades+peligrosas&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-02-23 10:13:39,003 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-02-23 10:13:39,004 - youtube - INFO - IDs de video encontrados: ['95JHOXoXR6M', 'bWQul83KtqI', '2OFTs7ix9w0', 'e48oXY7QMm8', 'u6c45acypTQ', 'k6c7UUhScPw', 'GBH9Nll5nFA', 'yfk0OfK_8Hw', 'Tsj8e9x9S_s', 'DAYG6nlF-to']
+2026-02-23 10:13:39,011 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-02-23 10:13:39,204 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=95JHOXoXR6M%2CbWQul83KtqI%2C2OFTs7ix9w0%2Ce48oXY7QMm8%2Cu6c45acypTQ%2Ck6c7UUhScPw%2CGBH9Nll5nFA%2Cyfk0OfK_8Hw%2CTsj8e9x9S_s%2CDAYG6nlF-to&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-02-23 10:13:39,210 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-02-23 10:13:39,212 - youtube - INFO - Procesamiento finalizado. Se encontraron 10 resultados formateados.
+2026-02-23 10:13:43,206 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:13:43,255 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:13:43,284 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:13:43,315 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:13:43,350 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:13:43,361 - websocket_manager - ERROR - Error broadcasting queue update: module 'models' has no attribute 'ConfiguracionGlobal'
+Traceback (most recent call last):
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend_render\websocket_manager.py", line 62, in broadcast_queue_update
+    queue_state = QueueSynchronizer.get_definitive_state(db)
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend_render\queue_synchronizer.py", line 75, in get_definitive_state
+    version_record = db.query(models.ConfiguracionGlobal).filter(
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'models' has no attribute 'ConfiguracionGlobal'
+2026-02-23 10:13:43,455 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:13:46,874 - queue_synchronizer - INFO - REORDER_LAZY_SAFE: Song 5 move-up by api_key_zxc12345...
+2026-02-23 10:13:46,907 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:15:08,726 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'el mayor de las ranas'
+2026-02-23 10:15:08,728 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'el mayor de las ranas' (Karaoke Mode: False)
+2026-02-23 10:15:10,374 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-02-23 10:15:10,375 - youtube - INFO - Búsqueda por texto: 'el mayor de las ranas'
+2026-02-23 10:15:10,376 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-02-23 10:15:10,928 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=el+mayor+de+las+ranas&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-02-23 10:15:10,932 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-02-23 10:15:10,933 - youtube - INFO - IDs de video encontrados: ['4Ez2wJnlwag', '1a3REFH83WA', 'ftfeDRZA5iE', 'DjfaCC3ZKs8', 'IRSedFplzCc', 'onGJj-JIBZk', 'rERCTLp4CK8', '2JbrCXDNGcA', 'UjYXahcriA0', 'UAAy5oTPUOE']
+2026-02-23 10:15:10,934 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-02-23 10:15:11,107 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=4Ez2wJnlwag%2C1a3REFH83WA%2CftfeDRZA5iE%2CDjfaCC3ZKs8%2CIRSedFplzCc%2ConGJj-JIBZk%2CrERCTLp4CK8%2C2JbrCXDNGcA%2CUjYXahcriA0%2CUAAy5oTPUOE&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-02-23 10:15:11,114 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-02-23 10:15:11,116 - youtube - INFO - Procesamiento finalizado. Se encontraron 10 resultados formateados.
+2026-02-23 10:15:11,132 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'el mayor de las ranas'
+2026-02-23 10:15:11,133 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'el mayor de las ranas' (Karaoke Mode: False)
+2026-02-23 10:15:12,755 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-02-23 10:15:12,756 - youtube - INFO - Búsqueda por texto: 'el mayor de las ranas'
+2026-02-23 10:15:12,757 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-02-23 10:15:13,394 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=el+mayor+de+las+ranas&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-02-23 10:15:13,398 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-02-23 10:15:13,399 - youtube - INFO - IDs de video encontrados: ['4Ez2wJnlwag', '1a3REFH83WA', 'DjfaCC3ZKs8', 'ftfeDRZA5iE', 'onGJj-JIBZk', 'UAAy5oTPUOE', '2JbrCXDNGcA', 'rERCTLp4CK8', 'IRSedFplzCc', 'UjYXahcriA0']
+2026-02-23 10:15:13,402 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-02-23 10:15:13,574 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=4Ez2wJnlwag%2C1a3REFH83WA%2CDjfaCC3ZKs8%2CftfeDRZA5iE%2ConGJj-JIBZk%2CUAAy5oTPUOE%2C2JbrCXDNGcA%2CrERCTLp4CK8%2CIRSedFplzCc%2CUjYXahcriA0&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-02-23 10:15:13,581 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-02-23 10:15:13,583 - youtube - INFO - Procesamiento finalizado. Se encontraron 10 resultados formateados.
+2026-02-23 10:15:25,099 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:15:25,152 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:15:25,193 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:15:25,226 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:15:25,261 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:15:25,264 - websocket_manager - ERROR - Error broadcasting queue update: module 'models' has no attribute 'ConfiguracionGlobal'
+Traceback (most recent call last):
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend_render\websocket_manager.py", line 62, in broadcast_queue_update
+    queue_state = QueueSynchronizer.get_definitive_state(db)
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend_render\queue_synchronizer.py", line 75, in get_definitive_state
+    version_record = db.query(models.ConfiguracionGlobal).filter(
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'models' has no attribute 'ConfiguracionGlobal'
+2026-02-23 10:15:25,337 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:15:32,653 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:15:32,702 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:15:32,745 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:15:32,787 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:15:32,815 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:15:32,817 - websocket_manager - ERROR - Error broadcasting queue update: module 'models' has no attribute 'ConfiguracionGlobal'
+Traceback (most recent call last):
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend_render\websocket_manager.py", line 62, in broadcast_queue_update
+    queue_state = QueueSynchronizer.get_definitive_state(db)
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend_render\queue_synchronizer.py", line 75, in get_definitive_state
+    version_record = db.query(models.ConfiguracionGlobal).filter(
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'models' has no attribute 'ConfiguracionGlobal'
+2026-02-23 10:15:32,886 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:15:43,428 - queue_synchronizer - INFO - REORDER_LAZY_SAFE: Song 5 move-up by api_key_zxc12345...
+2026-02-23 10:15:43,458 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:16:10,947 - random_scorer - INFO - Puntaje aleatorio calculado: 100
+2026-02-23 10:16:11,074 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:16:11,207 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:16:11,275 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:16:11,462 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:16:11,520 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:16:11,570 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:16:11,574 - websocket_manager - ERROR - Error broadcasting queue update: module 'models' has no attribute 'ConfiguracionGlobal'
+Traceback (most recent call last):
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend_render\websocket_manager.py", line 62, in broadcast_queue_update
+    queue_state = QueueSynchronizer.get_definitive_state(db)
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend_render\queue_synchronizer.py", line 75, in get_definitive_state
+    version_record = db.query(models.ConfiguracionGlobal).filter(
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'models' has no attribute 'ConfiguracionGlobal'
+2026-02-23 10:21:51,970 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:21:52,132 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:21:52,223 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:22:05,457 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:22:05,481 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:22:05,508 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:22:05,510 - websocket_manager - ERROR - Error broadcasting queue update: module 'models' has no attribute 'ConfiguracionGlobal'
+Traceback (most recent call last):
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend_render\websocket_manager.py", line 62, in broadcast_queue_update
+    queue_state = QueueSynchronizer.get_definitive_state(db)
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend_render\queue_synchronizer.py", line 75, in get_definitive_state
+    version_record = db.query(models.ConfiguracionGlobal).filter(
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'models' has no attribute 'ConfiguracionGlobal'
+2026-02-23 10:22:05,523 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=sU8FqZQOK3k, duration_seconds=196
+2026-02-23 10:22:05,633 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:25:25,359 - random_scorer - INFO - Puntaje aleatorio calculado: 82
+2026-02-23 10:25:25,430 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:25:25,467 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:25:25,554 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:25:25,592 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:25:25,671 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:25:25,723 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:25:25,764 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:25:25,768 - websocket_manager - ERROR - Error broadcasting queue update: module 'models' has no attribute 'ConfiguracionGlobal'
+Traceback (most recent call last):
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend_render\websocket_manager.py", line 62, in broadcast_queue_update
+    queue_state = QueueSynchronizer.get_definitive_state(db)
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend_render\queue_synchronizer.py", line 75, in get_definitive_state
+    version_record = db.query(models.ConfiguracionGlobal).filter(
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'models' has no attribute 'ConfiguracionGlobal'
+2026-02-23 10:25:25,784 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=Tsj8e9x9S_s, duration_seconds=262
+2026-02-23 10:25:26,094 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:28:29,845 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'amistades peligrosas'
+2026-02-23 10:28:29,866 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'amistades peligrosas' (Karaoke Mode: False)
+2026-02-23 10:28:31,467 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-02-23 10:28:31,468 - youtube - INFO - Búsqueda por texto: 'amistades peligrosas'
+2026-02-23 10:28:31,469 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-02-23 10:28:32,378 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=amistades+peligrosas&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-02-23 10:28:32,383 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-02-23 10:28:32,384 - youtube - INFO - IDs de video encontrados: ['95JHOXoXR6M', 'bWQul83KtqI', '2OFTs7ix9w0', 'e48oXY7QMm8', 'u6c45acypTQ', 'k6c7UUhScPw', 'GBH9Nll5nFA', 'yfk0OfK_8Hw', 'Tsj8e9x9S_s', 'DAYG6nlF-to']
+2026-02-23 10:28:32,386 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-02-23 10:28:32,578 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=95JHOXoXR6M%2CbWQul83KtqI%2C2OFTs7ix9w0%2Ce48oXY7QMm8%2Cu6c45acypTQ%2Ck6c7UUhScPw%2CGBH9Nll5nFA%2Cyfk0OfK_8Hw%2CTsj8e9x9S_s%2CDAYG6nlF-to&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-02-23 10:28:32,584 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-02-23 10:28:32,586 - youtube - INFO - Procesamiento finalizado. Se encontraron 10 resultados formateados.
+2026-02-23 10:28:32,601 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'amistades peligrosas'
+2026-02-23 10:28:32,680 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'amistades peligrosas' (Karaoke Mode: False)
+2026-02-23 10:28:34,307 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-02-23 10:28:34,308 - youtube - INFO - Búsqueda por texto: 'amistades peligrosas'
+2026-02-23 10:28:34,309 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-02-23 10:28:34,981 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=amistades+peligrosas&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-02-23 10:28:34,984 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-02-23 10:28:34,985 - youtube - INFO - IDs de video encontrados: ['95JHOXoXR6M', 'bWQul83KtqI', '2OFTs7ix9w0', 'e48oXY7QMm8', 'u6c45acypTQ', 'k6c7UUhScPw', 'GBH9Nll5nFA', 'yfk0OfK_8Hw', 'Tsj8e9x9S_s', 'DAYG6nlF-to']
+2026-02-23 10:28:34,986 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-02-23 10:28:35,212 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=95JHOXoXR6M%2CbWQul83KtqI%2C2OFTs7ix9w0%2Ce48oXY7QMm8%2Cu6c45acypTQ%2Ck6c7UUhScPw%2CGBH9Nll5nFA%2Cyfk0OfK_8Hw%2CTsj8e9x9S_s%2CDAYG6nlF-to&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-02-23 10:28:35,218 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-02-23 10:28:35,220 - youtube - INFO - Procesamiento finalizado. Se encontraron 10 resultados formateados.
+2026-02-23 10:28:38,955 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:28:39,006 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:28:39,034 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:28:39,066 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:28:39,096 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:28:39,098 - websocket_manager - ERROR - Error broadcasting queue update: module 'models' has no attribute 'ConfiguracionGlobal'
+Traceback (most recent call last):
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend_render\websocket_manager.py", line 62, in broadcast_queue_update
+    queue_state = QueueSynchronizer.get_definitive_state(db)
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend_render\queue_synchronizer.py", line 75, in get_definitive_state
+    version_record = db.query(models.ConfiguracionGlobal).filter(
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'models' has no attribute 'ConfiguracionGlobal'
+2026-02-23 10:28:39,167 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:28:46,940 - queue_synchronizer - INFO - REORDER_LAZY_SAFE: Song 8 move-up by api_key_zxc12345...
+2026-02-23 10:28:46,975 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:29:14,164 - queue_synchronizer - INFO - REORDER_LAZY_SAFE: Song 8 move-up by api_key_zxc12345...
+2026-02-23 10:29:14,201 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:29:20,897 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:29:50,199 - random_scorer - INFO - Puntaje aleatorio calculado: 87
+2026-02-23 10:29:50,255 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:29:50,283 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:29:50,338 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:29:50,371 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:29:50,428 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:29:50,460 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:29:50,497 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:29:50,500 - websocket_manager - ERROR - Error broadcasting queue update: module 'models' has no attribute 'ConfiguracionGlobal'
+Traceback (most recent call last):
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend_render\websocket_manager.py", line 62, in broadcast_queue_update
+    queue_state = QueueSynchronizer.get_definitive_state(db)
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend_render\queue_synchronizer.py", line 75, in get_definitive_state
+    version_record = db.query(models.ConfiguracionGlobal).filter(
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'models' has no attribute 'ConfiguracionGlobal'
+2026-02-23 10:29:50,517 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=KI3pWvM19Pc, duration_seconds=198
+2026-02-23 10:29:50,827 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:30:01,475 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'amistades peligrosas'
+2026-02-23 10:30:01,477 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'amistades peligrosas' (Karaoke Mode: False)
+2026-02-23 10:30:03,256 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-02-23 10:30:03,257 - youtube - INFO - Búsqueda por texto: 'amistades peligrosas'
+2026-02-23 10:30:03,258 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-02-23 10:30:03,839 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=amistades+peligrosas&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-02-23 10:30:03,842 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-02-23 10:30:03,843 - youtube - INFO - IDs de video encontrados: ['95JHOXoXR6M', 'bWQul83KtqI', '2OFTs7ix9w0', 'e48oXY7QMm8', 'u6c45acypTQ', 'k6c7UUhScPw', 'GBH9Nll5nFA', 'yfk0OfK_8Hw', 'Tsj8e9x9S_s', 'DAYG6nlF-to']
+2026-02-23 10:30:03,844 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-02-23 10:30:04,022 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=95JHOXoXR6M%2CbWQul83KtqI%2C2OFTs7ix9w0%2Ce48oXY7QMm8%2Cu6c45acypTQ%2Ck6c7UUhScPw%2CGBH9Nll5nFA%2Cyfk0OfK_8Hw%2CTsj8e9x9S_s%2CDAYG6nlF-to&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-02-23 10:30:04,029 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-02-23 10:30:04,031 - youtube - INFO - Procesamiento finalizado. Se encontraron 10 resultados formateados.
+2026-02-23 10:30:04,130 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'amistades peligrosas'
+2026-02-23 10:30:04,136 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'amistades peligrosas' (Karaoke Mode: False)
+2026-02-23 10:30:05,836 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-02-23 10:30:05,837 - youtube - INFO - Búsqueda por texto: 'amistades peligrosas'
+2026-02-23 10:30:05,838 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-02-23 10:30:06,505 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=amistades+peligrosas&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-02-23 10:30:06,508 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-02-23 10:30:06,509 - youtube - INFO - IDs de video encontrados: ['95JHOXoXR6M', 'bWQul83KtqI', '2OFTs7ix9w0', 'u6c45acypTQ', 'e48oXY7QMm8', 'Z-8kzNM7x54', 'k6c7UUhScPw', 'yfk0OfK_8Hw', 'Tsj8e9x9S_s', 'GBH9Nll5nFA']
+2026-02-23 10:30:06,510 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-02-23 10:30:06,720 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=95JHOXoXR6M%2CbWQul83KtqI%2C2OFTs7ix9w0%2Cu6c45acypTQ%2Ce48oXY7QMm8%2CZ-8kzNM7x54%2Ck6c7UUhScPw%2Cyfk0OfK_8Hw%2CTsj8e9x9S_s%2CGBH9Nll5nFA&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-02-23 10:30:06,743 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-02-23 10:30:06,745 - youtube - INFO - Procesamiento finalizado. Se encontraron 10 resultados formateados.
+2026-02-23 10:30:08,668 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:30:08,717 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:30:08,745 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:30:08,774 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:30:08,810 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:30:08,812 - websocket_manager - ERROR - Error broadcasting queue update: module 'models' has no attribute 'ConfiguracionGlobal'
+Traceback (most recent call last):
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend_render\websocket_manager.py", line 62, in broadcast_queue_update
+    queue_state = QueueSynchronizer.get_definitive_state(db)
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend_render\queue_synchronizer.py", line 75, in get_definitive_state
+    version_record = db.query(models.ConfiguracionGlobal).filter(
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'models' has no attribute 'ConfiguracionGlobal'
+2026-02-23 10:30:08,871 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:31:47,813 - queue_synchronizer - INFO - REORDER_LAZY_SAFE: Song 7 move-down by api_key_zxc12345...
+2026-02-23 10:31:47,849 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:33:11,826 - random_scorer - INFO - Puntaje aleatorio calculado: 96
+2026-02-23 10:33:11,879 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:33:11,909 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:33:11,966 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:33:11,997 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:33:12,044 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:33:12,073 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:33:12,105 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:33:12,107 - websocket_manager - ERROR - Error broadcasting queue update: module 'models' has no attribute 'ConfiguracionGlobal'
+Traceback (most recent call last):
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend_render\websocket_manager.py", line 62, in broadcast_queue_update
+    queue_state = QueueSynchronizer.get_definitive_state(db)
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend_render\queue_synchronizer.py", line 75, in get_definitive_state
+    version_record = db.query(models.ConfiguracionGlobal).filter(
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'models' has no attribute 'ConfiguracionGlobal'
+2026-02-23 10:33:12,122 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=tvUc8GEovac, duration_seconds=181
+2026-02-23 10:33:12,288 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:36:29,717 - song_credits_background - INFO - Credits background task started
+2026-02-23 10:36:29,854 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:36:29,880 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:36:29,950 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:36:29,977 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:36:30,061 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:37:07,293 - random_scorer - INFO - Puntaje aleatorio calculado: 97
+2026-02-23 10:37:07,358 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:37:07,386 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:37:07,443 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:37:07,471 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:37:07,528 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:37:07,610 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:37:07,638 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:37:07,649 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=Tsj8e9x9S_s, duration_seconds=262
+2026-02-23 10:37:07,789 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:39:20,462 - song_credits_background - INFO - Credits background task started
+2026-02-23 10:39:20,593 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:39:20,628 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:39:20,634 - websocket_manager - ERROR - Error broadcasting queue update: module 'models' has no attribute 'ConfiguracionGlobal'
+Traceback (most recent call last):
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend_render\websocket_manager.py", line 62, in broadcast_queue_update
+    queue_state = QueueSynchronizer.get_definitive_state(db)
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend_render\queue_synchronizer.py", line 75, in get_definitive_state
+    version_record = db.query(models.ConfiguracionGlobal).filter(
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'models' has no attribute 'ConfiguracionGlobal'
+2026-02-23 10:39:20,776 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:39:20,814 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:39:20,819 - websocket_manager - ERROR - Error broadcasting queue update: module 'models' has no attribute 'ConfiguracionGlobal'
+Traceback (most recent call last):
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend_render\websocket_manager.py", line 62, in broadcast_queue_update
+    queue_state = QueueSynchronizer.get_definitive_state(db)
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend_render\queue_synchronizer.py", line 75, in get_definitive_state
+    version_record = db.query(models.ConfiguracionGlobal).filter(
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'models' has no attribute 'ConfiguracionGlobal'
+2026-02-23 10:39:21,004 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:41:20,071 - song_credits_background - INFO - Credits background task started
+2026-02-23 10:41:33,085 - song_credits_background - INFO - Credits background task started
+2026-02-23 10:41:33,279 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:41:33,320 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:41:33,337 - websocket_manager - ERROR - Error broadcasting queue update: module 'models' has no attribute 'ConfiguracionGlobal'
+Traceback (most recent call last):
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend_render\websocket_manager.py", line 62, in broadcast_queue_update
+    queue_state = QueueSynchronizer.get_definitive_state(db)
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend_render\queue_synchronizer.py", line 76, in get_definitive_state
+    version_record = db.query(models.ConfiguracionGlobal).filter(
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'models' has no attribute 'ConfiguracionGlobal'
+2026-02-23 10:41:33,477 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:41:44,073 - song_credits_background - INFO - Credits background task started
+2026-02-23 10:41:44,220 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:41:44,266 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:41:44,668 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:41:59,727 - song_credits_background - INFO - Credits background task started
+2026-02-23 10:41:59,859 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:41:59,884 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:41:59,963 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:42:12,759 - song_credits_background - INFO - Credits background task started
+2026-02-23 10:42:12,900 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:42:12,923 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:42:13,002 - queue_manager - INFO - Cache unificado refrescado exitosamente.
