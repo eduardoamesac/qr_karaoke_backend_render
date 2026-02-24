@@ -319,6 +319,19 @@ def get_table_payment_status(db: Session, mesa_id: int) -> Optional[dict]:
         "pagos": pagos_detalle
     }
 
+def get_all_tables_payment_status(db: Session):
+    """Devuelve el estado de cuenta para todas las mesas (lista de dicts)."""
+    mesas = cache.get_all_mesas() or []
+    result = []
+    for m in mesas:
+        mesa_id = m.get("id")
+        if mesa_id is None:
+            continue
+        status = get_table_payment_status(db, mesa_id)
+        if status:
+            result.append(status)
+    return result
+
 # ================================================================================
 # FUNCIONES PARA ADMIN API KEYS (En BD)
 # ================================================================================
