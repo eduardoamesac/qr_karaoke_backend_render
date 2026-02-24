@@ -5,33 +5,6 @@ import datetime
 from database import Base
 from timezone_utils import now_bogota
 
-class Mesa(Base):
-    __tablename__ = "mesas"
-
-    id = Column(Integer, primary_key=True, index=True)
-    nombre = Column(String(200), index=True)
-    qr_code = Column(String(100), unique=True, index=True)
-    is_active = Column(Boolean, default=True) # Nuevo campo para activar/desactivar
-
-    # Relaciones: Una mesa puede tener muchos usuarios y consumos
-    usuarios = relationship("Usuario", back_populates="mesa")
-    consumos = relationship("Consumo", back_populates="mesa")  # NUEVO: Relación con consumos
-    pagos = relationship("Pago", back_populates="mesa") # Relación con Pagos
-    cuentas = relationship("Cuenta", back_populates="mesa") # Relación con Cuentas
-
-class Cuenta(Base):
-    __tablename__ = "cuentas"
-
-    id = Column(Integer, primary_key=True, index=True)
-    mesa_id = Column(Integer, ForeignKey("mesas.id"))
-    is_active = Column(Boolean, default=True)
-    created_at = Column(DateTime, default=now_bogota)
-    closed_at = Column(DateTime, nullable=True)
-
-    mesa = relationship("Mesa", back_populates="cuentas")
-    consumos = relationship("Consumo", back_populates="cuenta")
-    pagos = relationship("Pago", back_populates="cuenta")
-
 class Usuario(Base):
     __tablename__ = "usuarios"
 
@@ -40,73 +13,23 @@ class Usuario(Base):
     puntos = Column(Integer, default=0)
     nivel = Column(String(50), default="bronce")  # bronce, plata, oro
     last_active = Column(DateTime, default=now_bogota)
-    is_silenced = Column(Boolean, default=False) # Nuevo campo para silenciar
-    is_active = Column(Boolean, default=True)  # Para desconectar usuarios sin eliminar
-    is_banned = Column(Boolean, default=False)  # Nuevo campo para marcar nick baneado
-    
-    # Sistema de créditos para canciones: al ingresar se da 1, luego se compra con productos
-    song_credits = Column(Integer, default=1)  # Créditos disponibles para agregar canciones
-    credits_added_at = Column(DateTime, default=now_bogota)  # Última vez que se agregaron créditos
-    last_song_added_at = Column(DateTime, nullable=True)  # Última vez que agregó una canción
-    
-    mesa_id = Column(Integer, ForeignKey("mesas.id"))
-
-    # Relaciones: Un usuario pertenece a una mesa y puede tener muchas canciones
-    mesa = relationship("Mesa", back_populates="usuarios")
-    canciones = relationship("Cancion", back_populates="usuario")
-    # Los consumos ahora se asignan a la mesa, no al usuario individual
-
-class Cancion(Base):
-    __tablename__ = "canciones"
-
-    id = Column(Integer, primary_key=True, index=True)
-    youtube_id = Column(String(50), index=True)
-    titulo = Column(String(200))
-    duracion_seconds = Column(Integer, default=0)
-    estado = Column(String(50), default="pendiente")  # pendiente, pendiente_lazy, aprobado, reproduciendo, cantada, rechazada
-    started_at = Column(DateTime, nullable=True)  # Hora en que empieza a sonar
-    orden_manual = Column(Integer, nullable=True)  # Posición manual establecida por el admin
-    puntuacion_ia = Column(Integer, nullable=True) # Nuevo campo para el puntaje de la IA
-    is_karaoke = Column(Boolean, default=True)  # True: cantar (mostrar puntaje), False: escuchar (no mostrar puntaje)
-    created_at = Column(DateTime, default=now_bogota)  # Hora en que se añade
-    approved_at = Column(DateTime, nullable=True)  # Hora en que fue aprobada (10 min después de created_at)
-    finished_at = Column(DateTime, nullable=True) # Hora en que se termina de cantar
-    
-    usuario_id = Column(Integer, ForeignKey("usuarios.id"))
-    usuario = relationship("Usuario", back_populates="canciones")
+    is_silenced = Column(Boolean, default=False)
+    is_active = Column(Boolean, default=True)
+    is_banned = Column(Boolean, default=False)
+    song_credits = Column(Integer, default=1)
+    credits_added_at = Column(DateTime, default=now_bogota)
+    last_song_added_at = Column(DateTime, nullable=True)
 
 class Producto(Base):
     __tablename__ = "productos"
     id = Column(Integer, primary_key=True, index=True)
     nombre = Column(String(200), unique=True, index=True)
     categoria = Column(String(100), index=True, default="General")
-    valor = Column(Numeric(10, 2))  # Precio de venta
-    costo = Column(Numeric(10, 2), default=0)  # Precio de compra
+    valor = Column(Numeric(10, 2))
+    costo = Column(Numeric(10, 2), default=0)
     stock = Column(Integer, default=0)
-    imagen_url = Column(String(500), nullable=True) # Columna para la URL de la imagen
+    imagen_url = Column(String(500), nullable=True)
     is_active = Column(Boolean, default=True)
-
-    consumos = relationship("Consumo", back_populates="producto")
-
-class Consumo(Base):
-    __tablename__ = "consumos"
-
-    id = Column(Integer, primary_key=True, index=True)
-    cantidad = Column(Integer, default=1)
-    valor_total = Column(Numeric(10, 2))  # Valor total de la transacción (cantidad * precio_unitario)
-    created_at = Column(DateTime, default=now_bogota)
-    
-    producto_id = Column(Integer, ForeignKey("productos.id"))
-    mesa_id = Column(Integer, ForeignKey("mesas.id"))  # CAMBIO: Consumos asignados a mesa, no usuario
-    usuario_id = Column(Integer, ForeignKey("usuarios.id"), nullable=True)  # Referencia opcional para tracking
-    
-    producto = relationship("Producto", back_populates="consumos")
-    mesa = relationship("Mesa", back_populates="consumos")  # Relación con mesa
-    usuario = relationship("Usuario")  # Relación sin backref (solo para consultas)
-    
-    cuenta_id = Column(Integer, ForeignKey("cuentas.id"), nullable=True) # Nueva columna
-    cuenta = relationship("Cuenta", back_populates="consumos")
-    is_dispatched = Column(Boolean, default=False) # Nuevo campo para marcar si ya fue entregado
 
 class AdminApiKey(Base):
     __tablename__ = "admin_api_keys"
@@ -124,29 +47,4 @@ class Pago(Base):
     monto = Column(Numeric(10, 2), nullable=False)
     metodo_pago = Column(String(50), default="Efectivo")
     created_at = Column(DateTime, default=now_bogota)
-
-    mesa_id = Column(Integer, ForeignKey("mesas.id"))
-
-    # Relación: Un pago pertenece a una mesa
-    mesa = relationship("Mesa", back_populates="pagos")
-    
-    cuenta_id = Column(Integer, ForeignKey("cuentas.id"), nullable=True) # Nueva columna
-    cuenta = relationship("Cuenta", back_populates="pagos")
-
-
-class SongCredits(Base):
-    """
-    Modelo para tracking de créditos de canciones por usuario.
-    Cada compra de producto asigna créditos que decaen 100 puntos cada minuto.
-    """
-    __tablename__ = "song_credits"
-
-    id = Column(Integer, primary_key=True, index=True)
-    usuario_id = Column(Integer, ForeignKey("usuarios.id"), nullable=False, index=True)
-    credits_value = Column(Integer, default=0)  # Valor de créditos (ej: 5000 pesos = 5000 puntos)
-    created_at = Column(DateTime, default=now_bogota)
-    expires_at = Column(DateTime, nullable=True)  # Fecha de expiración cuando llega a 0
-    consumed_at = Column(DateTime, nullable=True)  # Fecha cuando el usuario agregó una canción
-    consumed_by_song_id = Column(Integer, ForeignKey("canciones.id"), nullable=True)  # Canción que consumió estos créditos
-    
-    usuario = relationship("Usuario")
+    mesa_id = Column(Integer)  # ID de mesa en cache JSON (no BD)

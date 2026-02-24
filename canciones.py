@@ -8,13 +8,13 @@ from sqlalchemy.orm import Session
 from typing import List
 
 import crud, schemas, models, config
-from database import SessionLocal # get_db se importará desde aquí
+from database import SessionLocal
 import websocket_manager
 from security import api_key_auth
 from cache_manager import cache_manager
 from queue_manager import queue_manager
 
-router = APIRouter() # El prefijo y las etiquetas se pueden definir aquí o al incluir el router en main.py
+router = APIRouter()
 
 # Dependencia para obtener la sesión de la base de datos
 def get_db():
@@ -35,15 +35,12 @@ async def avanzar_cola(db: Session = Depends(get_db)):
     """
     Avanza la cola a la siguiente canción.
     """
-    # Avanzamos la cola manualmente
     nueva_cancion = await crud.avanzar_cola_automaticamente(db)
 
     if not nueva_cancion:
-        # Si no hay más canciones
         return Response(status_code=204)
 
-    # Construimos la URL de YouTube en modo embed
-    youtube_url = f"https://www.youtube.com/embed/{nueva_cancion.youtube_id}?autoplay=1&fs=1"
+    youtube_url = f"https://www.youtube.com/embed/{nueva_cancion['youtube_id']}?autoplay=1&fs=1"
 
     return schemas.PlayNextResponse(
         play_url=youtube_url,
@@ -63,8 +60,6 @@ async def anadir_cancion(
 ):
     """
     Añade una nueva canción a la lista personal de un usuario, si hay créditos disponibles.
-    NUEVO: El usuario obtiene 1 crédito al ingresar, y puede agregar más créditos comprando productos.
-    Los créditos decaen 100 puntos cada minuto hasta llegar a 0.
     """
     db_usuario = crud.get_usuario_by_id(db, usuario_id=usuario_id)
     if not db_usuario:
@@ -72,16 +67,14 @@ async def anadir_cancion(
     if db_usuario.is_silenced:
         raise HTTPException(status_code=403, detail="No tienes permiso para añadir más canciones.")
 
-    # NUEVO: Verificar que el usuario tenga créditos disponibles
     available_credits = crud.get_available_song_credits(db, usuario_id)
     if available_credits <= 0:
         credits_detail = crud.get_user_credits_detail(db, usuario_id)
         raise HTTPException(
-            status_code=402,  # Payment Required
+            status_code=402,
             detail=f"No tienes créditos disponibles para agregar canciones. Debes hacer un pedido para restablecer tus derechos. Minutos hasta alcanzar 0: {credits_detail.get('minutes_to_zero', 0):.1f}"
         )
 
-    # Validar hora de cierre
     hora_cierre_str = config.settings.KARAOKE_CIERRE
     try:
         h, m = map(int, hora_cierre_str.split(':'))
@@ -96,7 +89,6 @@ async def anadir_cancion(
     if ahora >= hora_cierre:
         raise HTTPException(status_code=400, detail="Ya no se aceptan más canciones por hoy.")
 
-    # Verificar duración proyectada
     tiempo_restante_segundos = (hora_cierre - ahora).total_seconds()
     duracion_cola_actual = crud.get_duracion_total_cola_aprobada(db)
     duracion_total_proyectada = duracion_cola_actual + (cancion.duracion_seconds or 0)
@@ -107,7 +99,6 @@ async def anadir_cancion(
             detail="No hay tiempo suficiente para añadir esta canción antes del cierre."
         )
 
-    # Verificar duplicados a nivel de mesa (evita que usuarios de la misma mesa agreguen la misma canción)
     cancion_existente = crud.check_if_song_in_user_list(db, usuario_id=usuario_id, youtube_id=cancion.youtube_id)
     if cancion_existente:
         raise HTTPException(
@@ -115,37 +106,22 @@ async def anadir_cancion(
             detail=f"Esta canción ya está en la cola de tu mesa. '{cancion.titulo}' fue agregada por otro usuario de tu mesa."
         )
 
-    # Crear canción
     db_cancion = crud.create_cancion_para_usuario(db=db, cancion=cancion, usuario_id=usuario_id)
     
-    # NUEVO: Agregar a caché
     cancion_dict = jsonable_encoder(db_cancion)
     cache_manager.add_song_to_cache(usuario_id, cancion_dict)
     
-    # NUEVO: Consumir un crédito para esta canción
-    if not crud.consume_song_credit(db, usuario_id, db_cancion.id):
-        # No debería pasar porque ya verificamos arriba, pero por seguridad
-        crud.delete_cancion(db, db_cancion.id)
-        cache_manager.delete_song_from_cache(usuario_id, db_cancion.id)
+    if not crud.consume_song_credit(db, usuario_id, db_cancion['id']):
+        cache_manager.delete_song_from_cache(db_cancion['id'], usuario_id=usuario_id)
         raise HTTPException(status_code=402, detail="Error al consumir crédito. Intenta nuevamente.")
     
+    cancion_final = crud.update_cancion_estado(db, cancion_id=db_cancion['id'], nuevo_estado="pendiente_lazy")
     
-    # LAZY APPROVAL: Cambiar estado a pendiente_lazy por defecto
-    # Esto permite que el usuario pueda reordenarlas con flechas
-    # La primera se aprobará automáticamente si no hay nada en cola
-    
-    # Cambiar directamente a pendiente_lazy (creada en este estado)
-    cancion_final = crud.update_cancion_estado(db, cancion_id=db_cancion.id, nuevo_estado="pendiente_lazy")
-    
-    # Verificar si no hay nada en la cola (reproduciendo o aprobado)
-    hay_cancion_activa = db.query(models.Cancion).filter(
-        models.Cancion.estado.in_(["reproduciendo", "aprobado"])
-    ).first()
+    canciones_activas = (cache_manager.get_songs_by_estado("reproduciendo") or []) + (cache_manager.get_songs_by_estado("aprobado") or [])
+    hay_cancion_activa = len(canciones_activas) > 0
     
     if not hay_cancion_activa:
-        # No hay nada en la cola, aprobar esta inmediatamente
-        # para que comience a reproducirse (si autoplay está activo)
-        cancion_final = crud.update_cancion_estado(db, cancion_id=db_cancion.id, nuevo_estado="aprobado")
+        cancion_final = crud.update_cancion_estado(db, cancion_id=db_cancion['id'], nuevo_estado="aprobado")
         await crud.start_next_song_if_autoplay_and_idle(db)
     
     queue_manager.refresh_queue(db)
@@ -176,17 +152,17 @@ async def aprobar_cancion(cancion_id: int, db: Session = Depends(get_db), api_ke
 
 @router.post("/{cancion_id}/rechazar", response_model=schemas.Cancion, summary="Rechazar una canción")
 async def rechazar_cancion(cancion_id: int, db: Session = Depends(get_db), api_key: str = Depends(api_key_auth)):
-    db_cancion = db.query(models.Cancion).filter(models.Cancion.id == cancion_id).first()
+    db_cancion = cache_manager.get_song_by_id(cancion_id)
     
     if not db_cancion:
         raise HTTPException(status_code=404, detail="Canción no encontrada")
     
     # Validar que la canción no esté ya reproduciéndose o cantada
-    if db_cancion.estado in ['reproduciendo', 'cantada']:
+    if db_cancion.get('estado') in ['reproduciendo', 'cantada']:
         raise HTTPException(status_code=403, detail="No se puede eliminar: la canción ya está en reproducción o fue cantada")
     
     # Solo se pueden rechazar canciones en estado 'pendiente', 'pendiente_lazy' o 'aprobado' (si no está sonando)
-    if db_cancion.estado not in ['pendiente', 'pendiente_lazy', 'aprobado']:
+    if db_cancion.get('estado') not in ['pendiente', 'pendiente_lazy', 'aprobado']:
         raise HTTPException(status_code=403, detail="Solo se pueden eliminar canciones pendientes, en cola lazy o aprobadas")
     
     db_cancion = crud.update_cancion_estado(db, cancion_id=cancion_id, nuevo_estado="rechazada")
@@ -204,9 +180,8 @@ async def admin_anadir_cancion(cancion: schemas.CancionCreate, db: Session = Dep
     db_cancion = crud.create_cancion_para_usuario(db=db, cancion=cancion, usuario_id=dj_user.id)
     
     # LAZY APPROVAL: Solo aprobar si no hay nada en la cola
-    hay_cancion_activa = db.query(models.Cancion).filter(
-        models.Cancion.estado.in_(["reproduciendo", "aprobado"])
-    ).first()
+    canciones_activas = (cache_manager.get_songs_by_estado("reproduciendo") or []) + (cache_manager.get_songs_by_estado("aprobado") or [])
+    hay_cancion_activa = len(canciones_activas) > 0
     
     if hay_cancion_activa:
         cancion_final = crud.update_cancion_estado(db, cancion_id=db_cancion.id, nuevo_estado="pendiente_lazy")
@@ -254,35 +229,36 @@ async def play_song_now(cancion_id: int, db: Session = Depends(get_db), api_key:
     """
     **[Admin]** Envía la orden de reproducir una canción específica en el player.
     """
-    db_cancion = db.query(models.Cancion).filter(models.Cancion.id == cancion_id).first()
+    db_cancion = cache_manager.get_song_by_id(cancion_id)
     if not db_cancion:
         raise HTTPException(status_code=404, detail="Canción no encontrada.")
 
-    # Marcar la canción seleccionada como 'reproduciendo' en la base de datos
-    # y actualizar el estado de la canción previamente en reproducción si existe.
     from timezone_utils import now_bogota
 
-    # Marcar la canción que estaba reproduciéndose como 'cantada' (si aplica)
-    current_playing = db.query(models.Cancion).filter(models.Cancion.estado == 'reproduciendo').first()
-    if current_playing and current_playing.id != db_cancion.id:
-        current_playing.estado = 'cantada'
-        current_playing.finished_at = now_bogota()
+    canciones_reproduciendo = cache_manager.get_songs_by_estado('reproduciendo')
+    if canciones_reproduciendo:
+        current_playing = canciones_reproduciendo[0]
+        if current_playing['id'] != cancion_id:
+            cache_manager.update_song_in_cache(current_playing['id'], {
+                'estado': 'cantada',
+                'finished_at': now_bogota().isoformat()
+            })
 
-    # Marcar la nueva canción como reproduciendo
-    db_cancion.estado = 'reproduciendo'
-    db_cancion.started_at = now_bogota()
-    db.commit()
-    db.refresh(db_cancion)
-
-    # Notificar a los clientes que la cola cambió y pedir al player que reproduzca
+    cache_manager.update_song_in_cache(cancion_id, {
+        'estado': 'reproduciendo',
+        'started_at': now_bogota().isoformat()
+    })
+    
+    db_cancion = cache_manager.get_song_by_id(cancion_id)
+    
     queue_manager.refresh_queue(db)
     await websocket_manager.manager.broadcast_queue_update()
     await websocket_manager.manager.broadcast_play_song(
-        youtube_id=db_cancion.youtube_id,
-        duration_seconds=db_cancion.duracion_seconds or 0
+        youtube_id=db_cancion['youtube_id'],
+        duration_seconds=db_cancion.get('duracion_seconds', 0)
     )
 
-    return {"mensaje": f"Reproduciendo: {db_cancion.titulo}"}
+    return {"mensaje": f"Reproduciendo: {db_cancion['titulo']}"}
 
 @router.delete("/{cancion_id}", status_code=204, summary="Eliminar una canción de la lista personal")
 async def eliminar_cancion(cancion_id: int, usuario_id: int, db: Session = Depends(get_db)):
@@ -291,27 +267,24 @@ async def eliminar_cancion(cancion_id: int, usuario_id: int, db: Session = Depen
     Solo se puede eliminar si la canción pertenece al usuario y está en estado 'pendiente' o 'aprobado'.
     No se puede eliminar si ya está 'reproduciendo' o 'cantada'.
     """
-    db_cancion = db.query(models.Cancion).filter(models.Cancion.id == cancion_id, models.Cancion.usuario_id == usuario_id).first()
+    db_cancion = cache_manager.get_song_by_id(cancion_id)
 
-    if not db_cancion:
+    if not db_cancion or db_cancion.get('usuario_id') != usuario_id:
         raise HTTPException(status_code=404, detail="Canción no encontrada o no te pertenece.")
-    if db_cancion.estado not in ['pendiente', 'aprobado', 'pendiente_lazy']:
+    
+    if db_cancion.get('estado') not in ['pendiente', 'aprobado', 'pendiente_lazy']:
         raise HTTPException(status_code=400, detail="No se puede eliminar una canción que ya está reproduciendo o ha sido cantada.")
 
-    # Si la canción estaba aprobada, intentamos aprobar la siguiente lazy
-    fue_aprobada = db_cancion.estado == 'aprobado'
+    fue_aprobada = db_cancion.get('estado') == 'aprobado'
     
-    crud.delete_cancion(db, cancion_id=cancion_id)
+    cache_manager.delete_song_from_cache(cancion_id, usuario_id=usuario_id)
     
-    # NUEVO: Refrescar cache antes de chequear lazy
     queue_manager.refresh_queue(db)
     
     if fue_aprobada:
         crud.check_and_approve_next_lazy_song(db)
     
-    cache_manager.delete_song_from_cache(usuario_id, cancion_id)
-    
-    await websocket_manager.manager.broadcast_queue_update() # Notificar actualización de la cola
+    await websocket_manager.manager.broadcast_queue_update()
     return Response(status_code=204)
 @router.post("/{cancion_id}/mover-arriba", response_model=schemas.Cancion, summary="Mover una canciÃ³n pendiente_lazy hacia arriba")
 async def mover_cancion_arriba(cancion_id: int, usuario_id: int, db: Session = Depends(get_db)):

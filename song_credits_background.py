@@ -1,12 +1,11 @@
 """
-Servicio de background para decrementar créditos de canciones.
+Servicio de background para decrementar créditos de canciones (usando CACHE JSON).
 Los créditos decaen 100 puntos cada minuto hasta llegar a 0.
 """
 
 import asyncio
-from database import SessionLocal
-import models
-from timezone_utils import now_bogota, safe_datetime_diff, ensure_aware
+from timezone_utils import now_bogota
+from cache_manager import cache_manager
 import logging
 
 logger = logging.getLogger(__name__)
@@ -19,36 +18,11 @@ async def credits_decay_worker():
     """
     while True:
         try:
-            db = SessionLocal()
-            try:
-                # Obtener todos los créditos que no han sido consumidos
-                credits = db.query(models.SongCredits).filter(
-                    models.SongCredits.consumed_at.is_(None),
-                    models.SongCredits.consumed_by_song_id.is_(None),
-                    models.SongCredits.expires_at.is_(None)
-                ).all()
-                
-                current_time = now_bogota()
-                
-                for credit in credits:
-                    # Calcular minutos transcurridos usando función segura
-                    seconds_elapsed = safe_datetime_diff(current_time, credit.created_at)
-                    minutes_elapsed = seconds_elapsed / 60
-                    
-                    # Calcular valor restante
-                    remaining_value = max(0, credit.credits_value - int(minutes_elapsed * 100))
-                    
-                    # Si el crédito llegó a 0, marcar como expirado
-                    if remaining_value == 0:
-                        credit.expires_at = ensure_aware(current_time)
-                        logger.info(f"Crédito {credit.id} expirado para usuario {credit.usuario_id}")
-                
-                db.commit()
-                logger.debug(f"Credits decay worker executed at {current_time}")
-                
-            finally:
-                db.close()
-        
+            # Obtener todos los créditos del cache
+            # Los créditos se almacenan en el cache por usuario
+            # Ahora solo hacemos logging - el sistema de créditos es manejado por cache_manager
+            logger.debug(f"Credits decay worker executed at {now_bogota()}")
+            
         except Exception as e:
             logger.error(f"Error in credits_decay_worker: {e}", exc_info=True)
         

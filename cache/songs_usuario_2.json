@@ -921,6 +921,76 @@
           "qr_code": "karaoke-mesa-01"
         }
       }
+    },
+    {
+      "titulo": "Bailando Bachata Chayanne Karaoke",
+      "youtube_id": "fLDzTeRHl_s",
+      "estado": "pendiente",
+      "started_at": null,
+      "puntuacion_ia": null,
+      "created_at": "2026-02-23T11:39:09",
+      "finished_at": null,
+      "duracion_seconds": 177,
+      "id": 17,
+      "orden_manual": null,
+      "is_karaoke": true,
+      "approved_at": null,
+      "usuario_id": 2,
+      "usuario": {
+        "puntos": 0,
+        "nick": "Toscana-Usuario1",
+        "last_active": "2026-02-23T11:38:49",
+        "is_active": true,
+        "song_credits": 1,
+        "last_song_added_at": null,
+        "id": 2,
+        "nivel": "bronce",
+        "is_silenced": false,
+        "is_banned": false,
+        "credits_added_at": "2026-02-23T11:38:49",
+        "mesa_id": 1,
+        "mesa": {
+          "id": 1,
+          "is_active": true,
+          "nombre": "Toscana",
+          "qr_code": "karaoke-mesa-01"
+        }
+      }
+    },
+    {
+      "titulo": "KARAOKE La Bachata Manuel Turizo",
+      "youtube_id": "QNZkxrcwQAE",
+      "estado": "pendiente",
+      "started_at": null,
+      "puntuacion_ia": null,
+      "created_at": "2026-02-23T11:39:24",
+      "finished_at": null,
+      "duracion_seconds": 168,
+      "id": 18,
+      "orden_manual": null,
+      "is_karaoke": true,
+      "approved_at": null,
+      "usuario_id": 2,
+      "usuario": {
+        "puntos": 0,
+        "nick": "Toscana-Usuario1",
+        "last_active": "2026-02-23T11:38:49",
+        "is_active": true,
+        "song_credits": 1,
+        "last_song_added_at": null,
+        "id": 2,
+        "nivel": "bronce",
+        "is_silenced": false,
+        "is_banned": false,
+        "credits_added_at": "2026-02-23T11:38:49",
+        "mesa_id": 1,
+        "mesa": {
+          "id": 1,
+          "is_active": true,
+          "nombre": "Toscana",
+          "qr_code": "karaoke-mesa-01"
+        }
+      }
     }
   ]
 }

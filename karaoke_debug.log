@@ -14729,3 +14729,741 @@ AttributeError: module 'models' has no attribute 'ConfiguracionGlobal'
 2026-02-23 10:42:12,900 - queue_manager - INFO - Cache unificado refrescado exitosamente.
 2026-02-23 10:42:12,923 - queue_manager - INFO - Cache unificado refrescado exitosamente.
 2026-02-23 10:42:13,002 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:48:49,170 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 10:48:49,196 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:16:40,697 - song_credits_background - INFO - Credits background task started
+2026-02-23 11:17:08,071 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:17:08,167 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:18:06,420 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:22:07,068 - queue_synchronizer - INFO - REORDER_LAZY_SAFE: Song 9 move-up by api_key_zxc12345...
+2026-02-23 11:22:07,106 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:22:19,400 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'heredero'
+2026-02-23 11:22:19,403 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'heredero' (Karaoke Mode: False)
+2026-02-23 11:22:21,730 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-02-23 11:22:21,731 - youtube - INFO - Búsqueda por texto: 'heredero'
+2026-02-23 11:22:21,732 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-02-23 11:22:22,384 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=heredero&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-02-23 11:22:22,392 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-02-23 11:22:22,394 - youtube - INFO - IDs de video encontrados: ['KI3pWvM19Pc', 'sU8FqZQOK3k', 'l5JmIWJDOIw', 'Zk9q-g3DsAo', 'bZLojmRvRd8', 'NP3LASw8uWY', 'O_Jv-_nEqWk', 'mspgrI-m06I', 'tvUc8GEovac']
+2026-02-23 11:22:22,403 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-02-23 11:22:22,593 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=KI3pWvM19Pc%2CsU8FqZQOK3k%2Cl5JmIWJDOIw%2CZk9q-g3DsAo%2CbZLojmRvRd8%2CNP3LASw8uWY%2CO_Jv-_nEqWk%2CmspgrI-m06I%2CtvUc8GEovac&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-02-23 11:22:22,613 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-02-23 11:22:22,619 - youtube - INFO - Procesamiento finalizado. Se encontraron 8 resultados formateados.
+2026-02-23 11:22:22,647 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'heredero'
+2026-02-23 11:22:22,683 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'heredero' (Karaoke Mode: False)
+2026-02-23 11:22:24,365 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-02-23 11:22:24,366 - youtube - INFO - Búsqueda por texto: 'heredero'
+2026-02-23 11:22:24,367 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-02-23 11:22:24,877 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=heredero&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-02-23 11:22:24,881 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-02-23 11:22:24,881 - youtube - INFO - IDs de video encontrados: ['KI3pWvM19Pc', 'sU8FqZQOK3k', 'bZLojmRvRd8', 'l5JmIWJDOIw', 'O_Jv-_nEqWk', 'tvUc8GEovac', 'NP3LASw8uWY', 'mspgrI-m06I', '9o1ea3O_GTs']
+2026-02-23 11:22:24,882 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-02-23 11:22:25,060 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=KI3pWvM19Pc%2CsU8FqZQOK3k%2CbZLojmRvRd8%2Cl5JmIWJDOIw%2CO_Jv-_nEqWk%2CtvUc8GEovac%2CNP3LASw8uWY%2CmspgrI-m06I%2C9o1ea3O_GTs&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-02-23 11:22:25,067 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-02-23 11:22:25,069 - youtube - INFO - Procesamiento finalizado. Se encontraron 8 resultados formateados.
+2026-02-23 11:22:26,244 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:22:26,287 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:22:26,437 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:22:31,613 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:22:35,195 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:23:25,712 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'heredero'
+2026-02-23 11:23:25,716 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'heredero' (Karaoke Mode: False)
+2026-02-23 11:23:27,485 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-02-23 11:23:27,486 - youtube - INFO - Búsqueda por texto: 'heredero'
+2026-02-23 11:23:27,487 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-02-23 11:23:28,117 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=heredero&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-02-23 11:23:28,120 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-02-23 11:23:28,121 - youtube - INFO - IDs de video encontrados: ['KI3pWvM19Pc', 'sU8FqZQOK3k', 'bZLojmRvRd8', 'l5JmIWJDOIw', 'O_Jv-_nEqWk', 'tvUc8GEovac', 'NP3LASw8uWY', 'mspgrI-m06I', '9o1ea3O_GTs']
+2026-02-23 11:23:28,122 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-02-23 11:23:28,316 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=KI3pWvM19Pc%2CsU8FqZQOK3k%2CbZLojmRvRd8%2Cl5JmIWJDOIw%2CO_Jv-_nEqWk%2CtvUc8GEovac%2CNP3LASw8uWY%2CmspgrI-m06I%2C9o1ea3O_GTs&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-02-23 11:23:28,327 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-02-23 11:23:28,330 - youtube - INFO - Procesamiento finalizado. Se encontraron 8 resultados formateados.
+2026-02-23 11:23:28,347 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'heredero'
+2026-02-23 11:23:28,349 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'heredero' (Karaoke Mode: False)
+2026-02-23 11:23:30,038 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-02-23 11:23:30,038 - youtube - INFO - Búsqueda por texto: 'heredero'
+2026-02-23 11:23:30,040 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-02-23 11:23:30,618 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=heredero&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-02-23 11:23:30,623 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-02-23 11:23:30,624 - youtube - INFO - IDs de video encontrados: ['KI3pWvM19Pc', 'sU8FqZQOK3k', 'bZLojmRvRd8', 'l5JmIWJDOIw', 'O_Jv-_nEqWk', 'tvUc8GEovac', 'NP3LASw8uWY', 'mspgrI-m06I', '9o1ea3O_GTs']
+2026-02-23 11:23:30,626 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-02-23 11:23:30,812 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:23:30,881 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:23:30,910 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:23:30,956 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:23:30,980 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:23:30,992 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=KI3pWvM19Pc%2CsU8FqZQOK3k%2CbZLojmRvRd8%2Cl5JmIWJDOIw%2CO_Jv-_nEqWk%2CtvUc8GEovac%2CNP3LASw8uWY%2CmspgrI-m06I%2C9o1ea3O_GTs&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-02-23 11:23:31,010 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-02-23 11:23:31,014 - youtube - INFO - Procesamiento finalizado. Se encontraron 8 resultados formateados.
+2026-02-23 11:23:31,102 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:23:33,767 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:23:33,815 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:23:33,842 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:23:33,873 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:23:33,899 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:23:34,013 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:24:05,979 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'jhony rivera y sebastian ayala'
+2026-02-23 11:24:05,981 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'jhony rivera y sebastian ayala' (Karaoke Mode: False)
+2026-02-23 11:24:07,661 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-02-23 11:24:07,662 - youtube - INFO - Búsqueda por texto: 'jhony rivera y sebastian ayala'
+2026-02-23 11:24:07,663 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-02-23 11:24:08,273 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=jhony+rivera+y+sebastian+ayala&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-02-23 11:24:08,278 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-02-23 11:24:08,279 - youtube - INFO - IDs de video encontrados: ['6kyJCaBg0Ys', '69NZ0WUo0dM', 'hb5t-D5QVBI', 'U9GFert9tkU', 'xnO-49PvGCY', '5yLGjXTF6MY', 'Z11kRI4Ewq4', '8ocO7EuqQfY', 'aJ5wyBE9M_0', 'EwxwsOeY9kQ']
+2026-02-23 11:24:08,282 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-02-23 11:24:08,493 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=6kyJCaBg0Ys%2C69NZ0WUo0dM%2Chb5t-D5QVBI%2CU9GFert9tkU%2CxnO-49PvGCY%2C5yLGjXTF6MY%2CZ11kRI4Ewq4%2C8ocO7EuqQfY%2CaJ5wyBE9M_0%2CEwxwsOeY9kQ&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-02-23 11:24:08,503 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-02-23 11:24:08,505 - youtube - INFO - Procesamiento finalizado. Se encontraron 10 resultados formateados.
+2026-02-23 11:24:08,524 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'jhony rivera y sebastian ayala'
+2026-02-23 11:24:08,526 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'jhony rivera y sebastian ayala' (Karaoke Mode: False)
+2026-02-23 11:24:10,350 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-02-23 11:24:10,351 - youtube - INFO - Búsqueda por texto: 'jhony rivera y sebastian ayala'
+2026-02-23 11:24:10,352 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-02-23 11:24:10,685 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:24:10,740 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:24:10,766 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:24:10,797 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:24:10,824 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:24:10,932 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=jhony+rivera+y+sebastian+ayala&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-02-23 11:24:10,939 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-02-23 11:24:10,958 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:24:10,963 - youtube - INFO - IDs de video encontrados: ['6kyJCaBg0Ys', '69NZ0WUo0dM', 'hb5t-D5QVBI', 'U9GFert9tkU', 'xnO-49PvGCY', '5yLGjXTF6MY', 'Z11kRI4Ewq4', '8ocO7EuqQfY', 'aJ5wyBE9M_0', 'EwxwsOeY9kQ']
+2026-02-23 11:24:10,967 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-02-23 11:24:11,158 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=6kyJCaBg0Ys%2C69NZ0WUo0dM%2Chb5t-D5QVBI%2CU9GFert9tkU%2CxnO-49PvGCY%2C5yLGjXTF6MY%2CZ11kRI4Ewq4%2C8ocO7EuqQfY%2CaJ5wyBE9M_0%2CEwxwsOeY9kQ&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-02-23 11:24:11,172 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-02-23 11:24:11,177 - youtube - INFO - Procesamiento finalizado. Se encontraron 10 resultados formateados.
+2026-02-23 11:24:26,865 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'rok de los 80'
+2026-02-23 11:24:26,866 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'rok de los 80' (Karaoke Mode: False)
+2026-02-23 11:24:28,575 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-02-23 11:24:28,576 - youtube - INFO - Búsqueda por texto: 'rok de los 80'
+2026-02-23 11:24:28,577 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-02-23 11:24:29,193 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=rok+de+los+80&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-02-23 11:24:29,197 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-02-23 11:24:29,198 - youtube - INFO - IDs de video encontrados: ['NgEJ9gMxP90', '22vG8VVDrkU', 'Ck4iQpnDIJ0', 'BRuHGchMrD8', 'Xwy-3aI435o', 'xdkWYD7hjrQ', 'ot2z93I30r0', 'XvDw0LXZCNI', '4N1iwQxiHrs', 'B8PgV9zNhJc']
+2026-02-23 11:24:29,199 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-02-23 11:24:29,436 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=NgEJ9gMxP90%2C22vG8VVDrkU%2CCk4iQpnDIJ0%2CBRuHGchMrD8%2CXwy-3aI435o%2CxdkWYD7hjrQ%2Cot2z93I30r0%2CXvDw0LXZCNI%2C4N1iwQxiHrs%2CB8PgV9zNhJc&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-02-23 11:24:29,445 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-02-23 11:24:29,447 - youtube - INFO - Procesamiento finalizado. Se encontraron 6 resultados formateados.
+2026-02-23 11:24:29,489 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'rok de los 80'
+2026-02-23 11:24:29,503 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'rok de los 80' (Karaoke Mode: False)
+2026-02-23 11:24:31,215 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-02-23 11:24:31,215 - youtube - INFO - Búsqueda por texto: 'rok de los 80'
+2026-02-23 11:24:31,218 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-02-23 11:24:31,853 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=rok+de+los+80&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-02-23 11:24:31,857 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-02-23 11:24:31,858 - youtube - INFO - IDs de video encontrados: ['22vG8VVDrkU', 'Ck4iQpnDIJ0', 'NgEJ9gMxP90', 'ot2z93I30r0', 'B8PgV9zNhJc', 'jQOic7ijAn0', 'sDhEN3xpKA0', 'IUaSbdsi3pE', '4N1iwQxiHrs', 'bLH4DqwcVNM']
+2026-02-23 11:24:31,859 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-02-23 11:24:32,058 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=22vG8VVDrkU%2CCk4iQpnDIJ0%2CNgEJ9gMxP90%2Cot2z93I30r0%2CB8PgV9zNhJc%2CjQOic7ijAn0%2CsDhEN3xpKA0%2CIUaSbdsi3pE%2C4N1iwQxiHrs%2CbLH4DqwcVNM&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-02-23 11:24:32,072 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-02-23 11:24:32,076 - youtube - INFO - Procesamiento finalizado. Se encontraron 2 resultados formateados.
+2026-02-23 11:24:50,556 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:24:50,615 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:24:50,643 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:24:50,673 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:24:50,703 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:24:50,826 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:24:52,481 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:24:52,531 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:24:52,566 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:24:52,621 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:24:52,670 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:24:52,836 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:24:57,106 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:24:57,159 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:24:57,198 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:24:57,230 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:24:57,261 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:24:57,419 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:25:08,086 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'amistades peligrosas'
+2026-02-23 11:25:08,088 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'amistades peligrosas' (Karaoke Mode: False)
+2026-02-23 11:25:09,664 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-02-23 11:25:09,665 - youtube - INFO - Búsqueda por texto: 'amistades peligrosas'
+2026-02-23 11:25:09,666 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-02-23 11:25:10,285 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=amistades+peligrosas&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-02-23 11:25:10,290 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-02-23 11:25:10,291 - youtube - INFO - IDs de video encontrados: ['95JHOXoXR6M', 'bWQul83KtqI', '2OFTs7ix9w0', 'e48oXY7QMm8', 'u6c45acypTQ', 'k6c7UUhScPw', 'GBH9Nll5nFA', 'yfk0OfK_8Hw', 'Tsj8e9x9S_s', 'DAYG6nlF-to']
+2026-02-23 11:25:10,294 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-02-23 11:25:10,485 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=95JHOXoXR6M%2CbWQul83KtqI%2C2OFTs7ix9w0%2Ce48oXY7QMm8%2Cu6c45acypTQ%2Ck6c7UUhScPw%2CGBH9Nll5nFA%2Cyfk0OfK_8Hw%2CTsj8e9x9S_s%2CDAYG6nlF-to&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-02-23 11:25:10,497 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-02-23 11:25:10,499 - youtube - INFO - Procesamiento finalizado. Se encontraron 10 resultados formateados.
+2026-02-23 11:25:10,521 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'amistades peligrosas'
+2026-02-23 11:25:10,583 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'amistades peligrosas' (Karaoke Mode: False)
+2026-02-23 11:25:12,388 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-02-23 11:25:12,389 - youtube - INFO - Búsqueda por texto: 'amistades peligrosas'
+2026-02-23 11:25:12,389 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-02-23 11:25:12,971 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=amistades+peligrosas&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-02-23 11:25:12,974 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-02-23 11:25:12,975 - youtube - INFO - IDs de video encontrados: ['95JHOXoXR6M', 'bWQul83KtqI', '2OFTs7ix9w0', 'u6c45acypTQ', 'GBH9Nll5nFA', 'e48oXY7QMm8', 'yfk0OfK_8Hw', 'Tsj8e9x9S_s', 'UsrIyimnViM', 'DAYG6nlF-to']
+2026-02-23 11:25:12,977 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-02-23 11:25:13,118 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=95JHOXoXR6M%2CbWQul83KtqI%2C2OFTs7ix9w0%2Cu6c45acypTQ%2CGBH9Nll5nFA%2Ce48oXY7QMm8%2Cyfk0OfK_8Hw%2CTsj8e9x9S_s%2CUsrIyimnViM%2CDAYG6nlF-to&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-02-23 11:25:13,147 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-02-23 11:25:13,157 - youtube - INFO - Procesamiento finalizado. Se encontraron 10 resultados formateados.
+2026-02-23 11:25:15,626 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:25:15,676 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:25:15,703 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:25:15,732 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:25:15,768 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:25:15,920 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:25:24,207 - queue_synchronizer - INFO - REORDER_LAZY_SAFE: Song 9 move-down by api_key_zxc12345...
+2026-02-23 11:25:24,240 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:25:24,328 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:25:24,374 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:25:24,388 - queue_synchronizer - INFO - REORDER_LAZY_SUCCESS: Song 9 moved down. Revision: 1
+2026-02-23 11:25:24,437 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:25:24,473 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:25:24,599 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:25:30,767 - queue_synchronizer - INFO - REORDER_LAZY_SAFE: Song 10 move-up by api_key_zxc12345...
+2026-02-23 11:25:30,801 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:25:30,850 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:25:30,882 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:25:30,896 - queue_synchronizer - INFO - REORDER_LAZY_SUCCESS: Song 10 moved up. Revision: 2
+2026-02-23 11:25:30,933 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:25:30,966 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:25:31,078 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:25:44,239 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:25:44,307 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:25:44,381 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:25:44,424 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:25:44,559 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:27:55,528 - random_scorer - INFO - Puntaje aleatorio calculado: 99
+2026-02-23 11:27:55,719 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:27:55,838 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:27:55,964 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:27:56,162 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:27:56,351 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:27:56,414 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:27:56,474 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:27:56,513 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=DjfaCC3ZKs8, duration_seconds=173
+2026-02-23 11:27:56,693 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:30:50,289 - random_scorer - INFO - Puntaje aleatorio calculado: 80
+2026-02-23 11:30:50,340 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:30:50,381 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:30:50,437 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:30:50,468 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:30:50,515 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:30:50,544 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:30:50,577 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:30:50,589 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=rERCTLp4CK8, duration_seconds=173
+2026-02-23 11:30:50,806 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:33:59,219 - random_scorer - INFO - Puntaje aleatorio calculado: 85
+2026-02-23 11:33:59,269 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:33:59,298 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:33:59,348 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:33:59,383 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:33:59,431 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:33:59,463 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:33:59,492 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:33:59,520 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=sU8FqZQOK3k, duration_seconds=196
+2026-02-23 11:33:59,774 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:38:16,294 - random_scorer - INFO - Puntaje aleatorio calculado: 92
+2026-02-23 11:38:16,356 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:38:16,399 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:38:16,468 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:38:16,522 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:38:16,591 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:38:16,647 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:38:16,699 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:38:16,715 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=Tsj8e9x9S_s, duration_seconds=262
+2026-02-23 11:38:16,895 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:38:29,231 - queue_synchronizer - INFO - REORDER_LAZY_SAFE: Song 16 move-up by api_key_zxc12345...
+2026-02-23 11:38:29,265 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:38:29,317 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:38:29,343 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:38:29,349 - queue_synchronizer - INFO - REORDER_LAZY_SUCCESS: Song 16 moved up. Revision: 3
+2026-02-23 11:38:29,382 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:38:29,409 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:38:29,494 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:38:48,986 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:38:49,039 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:39:04,174 - youtube - INFO - Búsqueda [Pública] en YouTube con el término: 'bachata' (Karaoke Mode: True)
+2026-02-23 11:39:04,175 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'bachata' (Karaoke Mode: True)
+2026-02-23 11:39:05,724 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-02-23 11:39:05,725 - youtube - INFO - Búsqueda por texto: 'bachata karaoke'
+2026-02-23 11:39:05,726 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-02-23 11:39:06,415 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=bachata+karaoke&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-02-23 11:39:06,421 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-02-23 11:39:06,422 - youtube - INFO - IDs de video encontrados: ['RvYAN4b91CE', 'fLDzTeRHl_s', 's1G_7FCDtQQ', 'QNZkxrcwQAE', '7J6McScWGMA', 'eupJ1SCfd30', 'A6Y3fX6bmrU', 'F-PMXvT_8uc', 'vbbAcEhSrxE', 'JaibW4e9dXI']
+2026-02-23 11:39:06,426 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-02-23 11:39:06,604 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=RvYAN4b91CE%2CfLDzTeRHl_s%2Cs1G_7FCDtQQ%2CQNZkxrcwQAE%2C7J6McScWGMA%2CeupJ1SCfd30%2CA6Y3fX6bmrU%2CF-PMXvT_8uc%2CvbbAcEhSrxE%2CJaibW4e9dXI&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-02-23 11:39:06,614 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-02-23 11:39:06,617 - youtube - INFO - Procesamiento finalizado. Se encontraron 10 resultados formateados.
+2026-02-23 11:39:09,101 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:39:09,173 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:39:09,209 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:39:09,257 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:39:09,298 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:39:24,219 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:39:24,277 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:39:24,318 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:39:24,355 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:39:24,388 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:39:37,144 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:39:37,174 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:39:51,415 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:39:51,444 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:40:41,125 - song_credits_background - INFO - Crédito 1 expirado para usuario 2
+2026-02-23 11:42:40,803 - random_scorer - INFO - Puntaje aleatorio calculado: 100
+2026-02-23 11:42:40,856 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:42:40,884 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:42:40,936 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:42:40,972 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:42:41,015 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:42:41,043 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:42:41,072 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:42:41,083 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=tvUc8GEovac, duration_seconds=181
+2026-02-23 11:42:41,240 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:42:41,912 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:43:38,424 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:43:38,460 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:43:38,642 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:43:38,674 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:43:38,946 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:43:38,978 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:43:41,180 - song_credits_background - INFO - Crédito 2 expirado para usuario 2
+2026-02-23 11:43:41,181 - song_credits_background - INFO - Crédito 3 expirado para usuario 2
+2026-02-23 11:43:41,182 - song_credits_background - INFO - Crédito 4 expirado para usuario 2
+2026-02-23 11:43:54,030 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:45:09,670 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:45:45,137 - random_scorer - INFO - Puntaje aleatorio calculado: 98
+2026-02-23 11:45:45,202 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:45:45,260 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:45:45,355 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:45:45,448 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:45:45,527 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:45:45,562 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:45:45,599 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:45:45,613 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=QNZkxrcwQAE, duration_seconds=168
+2026-02-23 11:45:45,943 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:46:34,244 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:49:09,359 - random_scorer - INFO - Puntaje aleatorio calculado: 96
+2026-02-23 11:49:09,408 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:49:09,437 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:49:09,488 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:49:09,524 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:49:09,567 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:49:09,597 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:49:09,625 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:49:09,633 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=fLDzTeRHl_s, duration_seconds=177
+2026-02-23 11:49:09,854 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:49:40,768 - queue_synchronizer - INFO - REORDER_LAZY_SAFE: Song 12 move-down by api_key_zxc12345...
+2026-02-23 11:51:18,843 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:52:19,944 - random_scorer - INFO - Puntaje aleatorio calculado: 93
+2026-02-23 11:52:20,087 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:52:20,231 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:52:20,332 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:52:20,397 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:52:20,481 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:52:20,528 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:52:20,573 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:52:20,589 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=6kyJCaBg0Ys, duration_seconds=202
+2026-02-23 11:52:21,107 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:52:36,117 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 11:54:09,305 - queue_manager - INFO - Cache unificado refrescado exitosamente.
+2026-02-23 15:17:47,470 - song_credits_background - INFO - Credits background task started
+2026-02-23 15:25:30,033 - song_credits_background - INFO - Credits background task started
+2026-02-23 15:25:58,234 - song_credits_background - INFO - Credits background task started
+2026-02-23 15:26:18,126 - song_credits_background - INFO - Credits background task started
+2026-02-23 15:26:47,220 - song_credits_background - INFO - Credits background task started
+2026-02-23 15:27:14,871 - song_credits_background - INFO - Credits background task started
+2026-02-23 15:31:45,963 - song_credits_background - INFO - Credits background task started
+2026-02-23 15:34:18,542 - song_credits_background - INFO - Credits background task started
+2026-02-23 15:34:50,951 - song_credits_background - INFO - Credits background task started
+2026-02-23 15:35:58,145 - song_credits_background - INFO - Credits background task started
+2026-02-23 15:37:26,886 - song_credits_background - INFO - Credits background task started
+2026-02-23 15:37:45,706 - song_credits_background - INFO - Credits background task started
+2026-02-23 15:38:51,242 - song_credits_background - INFO - Credits background task started
+2026-02-23 15:38:52,244 - song_credits_background - INFO - Credits background task started
+2026-02-23 15:39:06,427 - song_credits_background - INFO - Credits background task started
+2026-02-23 15:39:06,941 - song_credits_background - INFO - Credits background task started
+2026-02-23 15:39:58,605 - song_credits_background - INFO - Credits background task started
+2026-02-23 15:39:59,023 - song_credits_background - INFO - Credits background task started
+2026-02-23 15:40:46,165 - song_credits_background - INFO - Credits background task started
+2026-02-23 15:40:46,396 - song_credits_background - INFO - Credits background task started
+2026-02-23 15:41:57,076 - song_credits_background - INFO - Credits background task started
+2026-02-23 15:41:57,587 - song_credits_background - INFO - Credits background task started
+2026-02-23 15:44:09,586 - song_credits_background - INFO - Credits background task started
+2026-02-23 15:48:20,959 - song_credits_background - INFO - Credits background task started
+2026-02-23 15:53:01,154 - song_credits_background - INFO - Credits background task started
+2026-02-23 15:55:01,872 - song_credits_background - INFO - Credits background task started
+2026-02-23 16:18:31,912 - song_credits_background - ERROR - Error in credits_decay_worker: Lost connection to MySQL server during query
+Traceback (most recent call last):
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend\venv\Lib\site-packages\mysql\connector\connection_cext.py", line 772, in cmd_query
+    self._cmysql.query(
+    ~~~~~~~~~~~~~~~~~~^
+        query,
+        ^^^^^^
+    ...<3 lines>...
+        query_attrs=self.query_attrs,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+_mysql_connector.MySQLInterfaceError: Query execution was interrupted
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend\venv\Lib\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend\venv\Lib\site-packages\mysql\connector\cursor_cext.py", line 353, in execute
+    self._connection.cmd_query(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self._stmt_partition["mappable_stmt"],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+        raw_as_string=self._raw_as_string,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend\venv\Lib\site-packages\mysql\connector\opentelemetry\context_propagation.py", line 97, in wrapper
+    return method(cnx, *args, **kwargs)
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend\venv\Lib\site-packages\mysql\connector\connection_cext.py", line 781, in cmd_query
+    raise get_mysql_exception(
+        err.errno, msg=err.msg, sqlstate=err.sqlstate
+    ) from err
+mysql.connector.errors.DatabaseError: 1317 (70100): Query execution was interrupted
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend_render\song_credits_background.py", line 29, in credits_decay_worker
+    ).all()
+      ~~~^^
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend\venv\Lib\site-packages\sqlalchemy\orm\query.py", line 2704, in all
+    return self._iter().all()  # type: ignore
+           ~~~~~~~~~~^^
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend\venv\Lib\site-packages\sqlalchemy\orm\query.py", line 2857, in _iter
+    result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
+                                                  ~~~~~~~~~~~~~~~~~~~~^
+        statement,
+        ^^^^^^^^^^
+        params,
+        ^^^^^^^
+        execution_options={"_sa_orm_load_options": self.load_options},
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 2351, in execute
+    return self._execute_internal(
+           ~~~~~~~~~~~~~~~~~~~~~~^
+        statement,
+        ^^^^^^^^^^
+    ...<4 lines>...
+        _add_event=_add_event,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 2249, in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self,
+        ^^^^^
+    ...<4 lines>...
+        conn,
+        ^^^^^
+    )
+    ^
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend\venv\Lib\site-packages\sqlalchemy\orm\context.py", line 306, in orm_execute_statement
+    result = conn.execute(
+        statement, params or {}, execution_options=execution_options
+    )
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1419, in execute
+    return meth(
+        self,
+        distilled_parameters,
+        execution_options or NO_OPTIONS,
+    )
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend\venv\Lib\site-packages\sqlalchemy\sql\elements.py", line 527, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self, distilled_params, execution_options
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+        dialect,
+    ...<8 lines>...
+        cache_hit=cache_hit,
+    )
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^
+        dialect, context, statement, parameters
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        e, str_statement, effective_parameters, cursor, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 2363, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend\venv\Lib\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend\venv\Lib\site-packages\mysql\connector\cursor_cext.py", line 353, in execute
+    self._connection.cmd_query(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self._stmt_partition["mappable_stmt"],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+        raw_as_string=self._raw_as_string,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend\venv\Lib\site-packages\mysql\connector\opentelemetry\context_propagation.py", line 97, in wrapper
+    return method(cnx, *args, **kwargs)
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend\venv\Lib\site-packages\mysql\connector\connection_cext.py", line 781, in cmd_query
+    raise get_mysql_exception(
+        err.errno, msg=err.msg, sqlstate=err.sqlstate
+    ) from err
+sqlalchemy.exc.DatabaseError: (mysql.connector.errors.DatabaseError) 1317 (70100): Query execution was interrupted
+[SQL: SELECT song_credits.id AS song_credits_id, song_credits.usuario_id AS song_credits_usuario_id, song_credits.credits_value AS song_credits_credits_value, song_credits.created_at AS song_credits_created_at, song_credits.expires_at AS song_credits_expires_at, song_credits.consumed_at AS song_credits_consumed_at, song_credits.consumed_by_song_id AS song_credits_consumed_by_song_id 
+FROM song_credits 
+WHERE song_credits.consumed_at IS NULL AND song_credits.consumed_by_song_id IS NULL AND song_credits.expires_at IS NULL]
+(Background on this error at: https://sqlalche.me/e/20/4xp6)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend_render\song_credits_background.py", line 50, in credits_decay_worker
+    db.close()
+    ~~~~~~~~^^
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 2507, in close
+    self._close_impl(invalidate=False)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 2576, in _close_impl
+    transaction.close(invalidate)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "<string>", line 2, in close
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend\venv\Lib\site-packages\sqlalchemy\orm\state_changes.py", line 137, in _go
+    ret_value = fn(self, *arg, **kw)
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 1417, in close
+    transaction.close()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 2597, in close
+    self._do_close()
+    ~~~~~~~~~~~~~~^^
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 2735, in _do_close
+    self._close_impl()
+    ~~~~~~~~~~~~~~~~^^
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 2721, in _close_impl
+    self._connection_rollback_impl()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 2713, in _connection_rollback_impl
+    self.connection._rollback_impl()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1130, in _rollback_impl
+    self._handle_dbapi_exception(e, None, None, None, None)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 2366, in _handle_dbapi_exception
+    raise exc_info[1].with_traceback(exc_info[2])
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1128, in _rollback_impl
+    self.engine.dialect.do_rollback(self.connection)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend\venv\Lib\site-packages\sqlalchemy\engine\default.py", line 712, in do_rollback
+    dbapi_connection.rollback()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend\venv\Lib\site-packages\mysql\connector\connection_cext.py", line 611, in rollback
+    self._cmysql.rollback()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+_mysql_connector.MySQLInterfaceError: Lost connection to MySQL server during query
+2026-02-23 16:18:32,787 - sqlalchemy.pool.impl.QueuePool - ERROR - Exception during reset or similar
+Traceback (most recent call last):
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend\venv\Lib\site-packages\anyio\_core\_eventloop.py", line 162, in get_async_backend
+    return loaded_backends[asynclib_name]
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+KeyError: 'asyncio'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 985, in _finalize_fairy
+    fairy._reset(
+    ~~~~~~~~~~~~^
+        pool,
+        ^^^^^
+    ...<2 lines>...
+        asyncio_safe=can_manipulate_connection,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 1433, in _reset
+    pool._dialect.do_rollback(self)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend\venv\Lib\site-packages\sqlalchemy\engine\default.py", line 712, in do_rollback
+    dbapi_connection.rollback()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend\venv\Lib\site-packages\mysql\connector\connection_cext.py", line 611, in rollback
+    self._cmysql.rollback()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+_mysql_connector.MySQLInterfaceError: Lost connection to MySQL server during query
+2026-02-24 09:54:18,767 - song_credits_background - INFO - Credits background task started
+2026-02-24 09:54:18,770 - song_credits_background - ERROR - Error in credits_decay_worker: module 'models' has no attribute 'SongCredits'
+Traceback (most recent call last):
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend_render\song_credits_background.py", line 25, in credits_decay_worker
+    credits = db.query(models.SongCredits).filter(
+                       ^^^^^^^^^^^^^^^^^^
+AttributeError: module 'models' has no attribute 'SongCredits'
+2026-02-24 09:54:25,695 - song_credits_background - INFO - Credits background task started
+2026-02-24 09:54:25,697 - song_credits_background - ERROR - Error in credits_decay_worker: module 'models' has no attribute 'SongCredits'
+Traceback (most recent call last):
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend_render\song_credits_background.py", line 25, in credits_decay_worker
+    credits = db.query(models.SongCredits).filter(
+                       ^^^^^^^^^^^^^^^^^^
+AttributeError: module 'models' has no attribute 'SongCredits'
+2026-02-24 09:55:46,551 - song_credits_background - INFO - Credits background task started
+2026-02-24 09:55:46,553 - song_credits_background - ERROR - Error in credits_decay_worker: module 'models' has no attribute 'SongCredits'
+Traceback (most recent call last):
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend_render\song_credits_background.py", line 25, in credits_decay_worker
+    credits = db.query(models.SongCredits).filter(
+                       ^^^^^^^^^^^^^^^^^^
+AttributeError: module 'models' has no attribute 'SongCredits'
+2026-02-24 09:56:46,558 - song_credits_background - ERROR - Error in credits_decay_worker: module 'models' has no attribute 'SongCredits'
+Traceback (most recent call last):
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend_render\song_credits_background.py", line 25, in credits_decay_worker
+    credits = db.query(models.SongCredits).filter(
+                       ^^^^^^^^^^^^^^^^^^
+AttributeError: module 'models' has no attribute 'SongCredits'
+2026-02-24 09:57:46,571 - song_credits_background - ERROR - Error in credits_decay_worker: module 'models' has no attribute 'SongCredits'
+Traceback (most recent call last):
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend_render\song_credits_background.py", line 25, in credits_decay_worker
+    credits = db.query(models.SongCredits).filter(
+                       ^^^^^^^^^^^^^^^^^^
+AttributeError: module 'models' has no attribute 'SongCredits'
+2026-02-24 09:58:46,594 - song_credits_background - ERROR - Error in credits_decay_worker: module 'models' has no attribute 'SongCredits'
+Traceback (most recent call last):
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend_render\song_credits_background.py", line 25, in credits_decay_worker
+    credits = db.query(models.SongCredits).filter(
+                       ^^^^^^^^^^^^^^^^^^
+AttributeError: module 'models' has no attribute 'SongCredits'
+2026-02-24 09:59:46,603 - song_credits_background - ERROR - Error in credits_decay_worker: module 'models' has no attribute 'SongCredits'
+Traceback (most recent call last):
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend_render\song_credits_background.py", line 25, in credits_decay_worker
+    credits = db.query(models.SongCredits).filter(
+                       ^^^^^^^^^^^^^^^^^^
+AttributeError: module 'models' has no attribute 'SongCredits'
+2026-02-24 10:00:42,854 - song_credits_background - INFO - Credits background task started
+2026-02-24 10:00:53,374 - song_credits_background - INFO - Credits background task started
+2026-02-24 10:01:52,542 - song_credits_background - INFO - Credits background task started
+2026-02-24 10:01:53,583 - httpx - INFO - HTTP Request: GET http://testserver/salud "HTTP/1.1 200 OK"
+2026-02-24 10:01:54,022 - httpx - INFO - HTTP Request: GET http://testserver/openapi.json "HTTP/1.1 200 OK"
+2026-02-24 10:01:54,034 - httpx - INFO - HTTP Request: GET http://testserver/api/v1/usuarios "HTTP/1.1 307 Temporary Redirect"
+2026-02-24 10:01:54,060 - httpx - INFO - HTTP Request: GET http://testserver/api/v1/productos "HTTP/1.1 307 Temporary Redirect"
+2026-02-24 10:01:54,277 - httpx - INFO - HTTP Request: GET http://testserver/api/v1/productos/ "HTTP/1.1 200 OK"
+2026-02-24 10:02:27,975 - song_credits_background - INFO - Credits background task started
+2026-02-24 10:02:38,766 - song_credits_background - INFO - Credits background task started
+2026-02-24 10:02:51,114 - httpx - INFO - HTTP Request: GET http://testserver/salud "HTTP/1.1 200 OK"
+2026-02-24 10:02:51,496 - httpx - INFO - HTTP Request: GET http://testserver/openapi.json "HTTP/1.1 200 OK"
+2026-02-24 10:02:51,506 - httpx - INFO - HTTP Request: GET http://testserver/api/v1/usuarios "HTTP/1.1 307 Temporary Redirect"
+2026-02-24 10:02:51,584 - httpx - INFO - HTTP Request: GET http://testserver/api/v1/productos "HTTP/1.1 307 Temporary Redirect"
+2026-02-24 10:02:51,618 - httpx - INFO - HTTP Request: GET http://testserver/api/v1/productos/ "HTTP/1.1 200 OK"
+2026-02-24 10:03:24,223 - song_credits_background - INFO - Credits background task started
+2026-02-24 10:03:39,500 - httpx - INFO - HTTP Request: GET http://testserver/salud "HTTP/1.1 200 OK"
+2026-02-24 10:03:39,877 - httpx - INFO - HTTP Request: GET http://testserver/openapi.json "HTTP/1.1 200 OK"
+2026-02-24 10:03:39,886 - httpx - INFO - HTTP Request: GET http://testserver/api/v1/usuarios "HTTP/1.1 307 Temporary Redirect"
+2026-02-24 10:03:39,950 - httpx - INFO - HTTP Request: GET http://testserver/api/v1/usuarios/ "HTTP/1.1 200 OK"
+2026-02-24 10:03:39,959 - httpx - INFO - HTTP Request: GET http://testserver/api/v1/productos "HTTP/1.1 307 Temporary Redirect"
+2026-02-24 10:03:39,989 - httpx - INFO - HTTP Request: GET http://testserver/api/v1/productos/ "HTTP/1.1 200 OK"
+2026-02-24 10:05:21,106 - song_credits_background - INFO - Credits background task started
+2026-02-24 10:05:40,077 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-24 10:05:40,119 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-24 10:05:40,168 - websocket_manager - ERROR - Error broadcasting queue update: 'dict' object has no attribute 'estado'
+Traceback (most recent call last):
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend_render\websocket_manager.py", line 62, in broadcast_queue_update
+    queue_state = QueueSynchronizer.get_definitive_state(db)
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend_render\queue_synchronizer.py", line 93, in get_definitive_state
+    "all_lazy_states_pending_lazy": all(
+                                    ~~~^
+        s.estado == "pendiente_lazy" for s in state["lazy_queue"]
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ),
+    ^
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend_render\queue_synchronizer.py", line 94, in <genexpr>
+    s.estado == "pendiente_lazy" for s in state["lazy_queue"]
+    ^^^^^^^^
+AttributeError: 'dict' object has no attribute 'estado'
+2026-02-24 10:08:23,094 - song_credits_background - INFO - Credits background task started
+2026-02-24 10:08:23,107 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-24 10:08:23,107 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-24 10:08:23,110 - websocket_manager - ERROR - Error broadcasting queue update: 'dict' object has no attribute 'estado'
+Traceback (most recent call last):
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend_render\websocket_manager.py", line 62, in broadcast_queue_update
+    queue_state = QueueSynchronizer.get_definitive_state(db)
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend_render\queue_synchronizer.py", line 93, in get_definitive_state
+    "all_lazy_states_pending_lazy": all(
+                                    ~~~^
+        s.estado == "pendiente_lazy" for s in state["lazy_queue"]
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ),
+    ^
+  File "C:\Users\MARCO_MESA\Documents\qr_karaoke_backend_render\queue_synchronizer.py", line 94, in <genexpr>
+    s.estado == "pendiente_lazy" for s in state["lazy_queue"]
+    ^^^^^^^^
+AttributeError: 'dict' object has no attribute 'estado'
+2026-02-24 10:09:21,599 - song_credits_background - INFO - Credits background task started
+2026-02-24 10:09:30,300 - song_credits_background - INFO - Credits background task started
+2026-02-24 10:09:30,332 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-24 10:09:30,335 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-24 10:09:58,714 - song_credits_background - INFO - Credits background task started
+2026-02-24 10:09:58,742 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-24 10:09:58,744 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-24 10:10:15,648 - song_credits_background - INFO - Credits background task started
+2026-02-24 10:10:15,687 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-24 10:10:15,690 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-24 10:12:33,211 - song_credits_background - INFO - Credits background task started
+2026-02-24 10:12:38,244 - httpx - INFO - HTTP Request: GET http://testserver/health "HTTP/1.1 404 Not Found"
+2026-02-24 10:12:43,031 - song_credits_background - INFO - Credits background task started
+2026-02-24 10:12:43,047 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-24 10:12:43,052 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-24 10:12:57,477 - song_credits_background - INFO - Credits background task started
+2026-02-24 10:12:57,491 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-24 10:12:57,493 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-24 10:13:17,997 - song_credits_background - INFO - Credits background task started
+2026-02-24 10:13:35,961 - song_credits_background - INFO - Credits background task started
+2026-02-24 10:13:39,790 - httpx - INFO - HTTP Request: GET http://testserver/api/v1/admin/recent-consumos?limit=10 "HTTP/1.1 401 Unauthorized"
+2026-02-24 10:13:39,807 - httpx - INFO - HTTP Request: GET http://testserver/api/v1/admin/resumen-noche "HTTP/1.1 404 Not Found"
+2026-02-24 10:13:39,824 - httpx - INFO - HTTP Request: GET http://testserver/api/v1/queue/state "HTTP/1.1 404 Not Found"
+2026-02-24 10:13:48,726 - song_credits_background - INFO - Credits background task started
+2026-02-24 10:14:28,611 - song_credits_background - INFO - Credits background task started
+2026-02-24 10:14:38,769 - httpx - INFO - HTTP Request: GET http://testserver/api/v1/admin/summary "HTTP/1.1 401 Unauthorized"
+2026-02-24 10:15:31,587 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-24 10:15:31,601 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-24 10:16:13,467 - song_credits_background - INFO - Credits background task started
+2026-02-24 10:16:16,879 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-24 10:16:16,881 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-24 10:16:34,591 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-24 10:16:34,592 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-24 10:17:06,407 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-24 10:17:06,410 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-24 10:18:13,739 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-24 10:18:13,741 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-24 10:20:09,166 - song_credits_background - INFO - Credits background task started
+2026-02-24 10:20:09,186 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-24 10:20:09,187 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-24 10:20:57,717 - httpx - INFO - HTTP Request: GET http://testserver/api/v1/admin/summary "HTTP/1.1 401 Unauthorized"
+2026-02-24 10:22:49,888 - song_credits_background - INFO - Credits background task started
+2026-02-24 10:22:49,906 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-24 10:22:49,906 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-24 10:23:23,165 - song_credits_background - INFO - Credits background task started
+2026-02-24 10:23:23,547 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-24 10:23:23,548 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-24 10:24:02,786 - httpx - INFO - HTTP Request: GET http://testserver/api/v1/admin/summary "HTTP/1.1 401 Unauthorized"

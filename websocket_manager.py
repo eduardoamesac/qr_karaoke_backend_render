@@ -105,19 +105,24 @@ class ConnectionManager:
         payload = {"type": "reaction", "payload": reaction_payload}
         await self._broadcast(json.dumps(payload))
 
-    async def broadcast_song_finished(self, cancion: models.Cancion):
+    async def broadcast_song_finished(self, cancion: dict):
         """
         Envía un evento indicando que una canción ha terminado y su puntuación.
+        cancion es ahora un diccionario del cache, no un modelo ORM.
         """
-        # Determinar el nombre del cantante (mesa o nick)
-        cantante = cancion.usuario.mesa.nombre if (cancion.usuario and cancion.usuario.mesa) else (cancion.usuario.nick if cancion.usuario else "N/A")
+        # Extraer datos de la canción
+        titulo = cancion.get("titulo", "Desconocida")
+        usuario_nick = cancion.get("usuario_nick", "N/A")
+        puntuacion_ia = cancion.get("puntuacion_ia")
+        is_karaoke = cancion.get("is_karaoke", False)
+        
         payload = {
             "type": "song_finished",
             "payload": {
-                "titulo": cancion.titulo,
-                "usuario_nick": cantante, # Reutilizamos el campo 'usuario_nick' que espera el frontend
-                "puntuacion_ia": cancion.puntuacion_ia,
-                "is_karaoke": cancion.is_karaoke  # Nuevo campo para indicar si es karaoke
+                "titulo": titulo,
+                "usuario_nick": usuario_nick,
+                "puntuacion_ia": puntuacion_ia,
+                "is_karaoke": is_karaoke
             }
         }
         await self._broadcast(json.dumps(payload))

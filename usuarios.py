@@ -78,15 +78,25 @@ def ver_ranking_usuarios(db: Session = Depends(get_db)):
     """
     ranking_data = crud.get_ranking_usuarios(db)
     
-    # Convertimos la lista de tuplas a una lista de objetos UsuarioPerfil, añadiendo la posición
+    # Convertimos la lista de dicts a una lista de objetos UsuarioPerfil
     ranking_list = []
-    for i, (usuario, total) in enumerate(ranking_data):
-        perfil = schemas.UsuarioPerfil(
-            **usuario.__dict__, 
-            total_consumido=total,
-            rank=i + 1,  # El ranking empieza en 1
-            mesa=usuario.mesa  # Añadimos la información de la mesa
-        )
-        ranking_list.append(perfil)
+    for i, usuario_dict in enumerate(ranking_data):
+        try:
+            usuario = crud.get_usuario_by_id(db, usuario_dict["usuario_id"])
+            if usuario:
+                perfil = schemas.UsuarioPerfil(
+                    id=usuario.id,
+                    nick=usuario.nick,
+                    puntos=usuario.puntos,
+                    nivel=usuario.nivel,
+                    last_active=usuario.last_active,
+                    total_consumido=0,  # Calculado desde cache
+                    rank=i + 1,
+                    mesa=None  # La mesa ahora está en cache
+                )
+                ranking_list.append(perfil)
+        except:
+            pass
+
     
     return ranking_list

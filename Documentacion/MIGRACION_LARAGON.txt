@@ -1,0 +1,78 @@
+=======================================================================
+📝 GUÍA MIGRACIÓN A LARAGON - QR KARAOKE
+=======================================================================
+
+PASO 1: PREPARATIVOS
+--------------------
+✓ Asegúrate que Laragon esté corriendo (Laragon Dashboard abierto)
+✓ Verifica que HS (Laragon MySQL) esté conectado/disponible
+✓ Abre PowerShell como Administrador
+✓ Navega a: C:\Users\MARCO_MESA\Documents\qr_karaoke_backend_render
+
+PASO 2: EJECUTAR MIGRACIÓN
+--------------------------
+A. Para migración BÁSICA (misma máquina, mysql en PATH):
+   
+   .\migrate_to_laragon.ps1
+   
+B. Para migración AVANZADA (especoficando detalles):
+   
+   .\migrate_to_laragon.ps1 -SourceHost "localhost" -SourceUser "root" -SourceDB "mi_base_datos" -SourcePort "3306" -TargetHost "127.0.0.1" -TargetUser "root" -TargetPort "3306"
+
+PASO 3: CONFIGURAR LARAGON EN TU APP
+-------------------------------------
+
+Opción A: Variables de Entorno (Recomendado)
+   
+   Crea archivo: .env
+   
+   DB_HOST=127.0.0.1
+   DB_USER=root
+   DB_PASSWORD=
+   DB_NAME=mi_base_datos
+   DB_PORT=3306
+   ENVIRONMENT=development
+
+Opción B: Editar database_config.py
+   
+   Modifica los valores por defecto:
+   DB_HOST = "127.0.0.1"  # IP de Laragon
+   DB_PORT = 3306         # Puerto de Laragon HS
+   
+PASO 4: VERIFICACIÓN
+---------------------
+
+Ejecuta en tu terminal (con venv activado):
+   
+   python -c "from database_config import engine; conn = engine.connect(); print('✓ Conectado a Laragon'); conn.close()"
+
+PASO 5: REINICIAR APP
+---------------------
+
+   python main.py
+
+TROUBLESHOOTING
+--------------
+
+❌ "mysqldump no reconocido":
+   → Agregar MySQL al PATH de Windows
+   → O copiar mysql.exe y mysqldump.exe a System32
+   
+❌ "Acceso denegado":
+   → Verifica usuario/contraseña en -SourceUser y -TargetUser
+   → Asegúrate que el usuario MySQL existe en Laragon
+   
+❌ "Puerto 3306 en uso":
+   → Laragon está usando otro puerto
+   → Verifica en Laragon > MySQL > Port
+   → Úsalo en el parámetro -TargetPort
+
+NOTAS IMPORTANTES
+-----------------
+• La BD original se mantiene intacta
+• Se crea un dump temporal en %TEMP% (se elimina automáticamente)
+• Si la BD existe en Laragon, se borrará (¡CUIDADO!)
+• Laragon HS DEBE estar corriendo
+• Verifica credenciales correctas de tu MySQL actual
+
+=======================================================================

@@ -62,15 +62,16 @@ class QueueSynchronizer:
         now_playing = state["now_playing"]
         upcoming = state["upcoming"]
 
-        # Verificar que now_playing no esté en upcoming
+        # Verificar que now_playing no esté en upcoming (now_playing es dict)
         if now_playing:
-            upcoming_ids = [s.id for s in upcoming]
-            if now_playing.id in upcoming_ids:
+            upcoming_ids = [s.get("id") if isinstance(s, dict) else s.id for s in upcoming]
+            now_playing_id = now_playing.get("id") if isinstance(now_playing, dict) else now_playing.id
+            if now_playing_id in upcoming_ids:
                 logger.error(
-                    f"INTEGRITY ERROR: now_playing (ID {now_playing.id}) "
+                    f"INTEGRITY ERROR: now_playing (ID {now_playing_id}) "
                     f"también está en upcoming. Corrigiendo..."
                 )
-                upcoming = [s for s in upcoming if s.id != now_playing.id]
+                upcoming = [s for s in upcoming if (s.get("id") if isinstance(s, dict) else s.id) != now_playing_id]
 
         # PASO 4: Obtener versión (usa cache JSON en lugar de BD)
         revision = cache_manager.get_queue_revision()
@@ -85,13 +86,15 @@ class QueueSynchronizer:
             "pending": [jsonable_encoder(s) for s in state["pending"]],
             "_integrity_checks": {
                 "now_playing_not_in_upcoming": (
-                    now_playing is None or now_playing.id not in [s.id for s in upcoming]
+                    now_playing is None or 
+                    (now_playing.get("id") if isinstance(now_playing, dict) else now_playing.id) 
+                    not in [s.get("id") if isinstance(s, dict) else s.id for s in upcoming]
                 ),
                 "all_upcoming_states_approved": all(
-                    s.estado == "aprobado" for s in upcoming
+                    (s.get("estado") if isinstance(s, dict) else s.estado) == "aprobado" for s in upcoming
                 ),
                 "all_lazy_states_pending_lazy": all(
-                    s.estado == "pendiente_lazy" for s in state["lazy_queue"]
+                    (s.get("estado") if isinstance(s, dict) else s.estado) == "pendiente_lazy" for s in state["lazy_queue"]
                 ),
             }
         }
@@ -110,18 +113,19 @@ class QueueSynchronizer:
         """
         Valida que una canción existe y está en el estado esperado.
         Previene operaciones sobre canciones que cambiaron de estado.
+        Ahora usa cache en lugar de BD.
         """
-        cancion = db.query(models.Cancion).filter(
-            models.Cancion.id == cancion_id
-        ).first()
+        all_songs = cache_manager.get_all_songs()
+        cancion = next((s for s in all_songs if s.get("id") == cancion_id), None)
 
         if not cancion:
-            logger.warning(f"Song ID {cancion_id} no existe en BD")
+            logger.warning(f"Song ID {cancion_id} no existe en cache")
             return False
 
-        if cancion.estado != expected_state:
+        actual_state = cancion.get("estado")
+        if actual_state != expected_state:
             logger.warning(
-                f"Song ID {cancion_id} estado cambió de {expected_state} a {cancion.estado}"
+                f"Song ID {cancion_id} estado cambió de {expected_state} a {actual_state}"
             )
             return False
 
@@ -136,6 +140,7 @@ class QueueSynchronizer:
     ) -> Dict[str, Any]:
         """
         Reordena canción lazy de forma SEGURA.
+        Ahora usa cache en lugar de BD.
         
         SEGURIDADES:
         1. Valida que canción esté en estado pendiente_lazy
@@ -150,9 +155,8 @@ class QueueSynchronizer:
         )
 
         # PASO 1: Validar que canción existe y está en estado correcto
-        cancion = db.query(models.Cancion).filter(
-            models.Cancion.id == cancion_id
-        ).first()
+        all_songs = cache_manager.get_all_songs()
+        cancion = next((s for s in all_songs if s.get("id") == cancion_id), None)
 
         if not cancion:
             return {
@@ -161,24 +165,34 @@ class QueueSynchronizer:
                 "cancion_id": cancion_id
             }
 
-        if cancion.estado == "reproduciendo":
+        estado = cancion.get("estado")
+        if estado == "reproduciendo":
             return {
                 "success": False,
                 "error": "No se puede reordenar: canción está reproduciendo",
                 "cancion_id": cancion_id
             }
 
-        if cancion.estado != "pendiente_lazy":
+        if estado != "pendiente_lazy":
             return {
                 "success": False,
-                "error": f"Canción no está en lazy (está en {cancion.estado})",
+                "error": f"Canción no está en lazy (está en {estado})",
                 "cancion_id": cancion_id
             }
 
         # PASO 2: Obtener cola ACTUAL
         from crud import get_cola_lazy
         cola_actual = get_cola_lazy(db)
-        cola_ids = [s.id for s in cola_actual]
+        # Convertir a dicts si son objetos ORM, extraer IDs
+        cola_dicts = [
+            s if isinstance(s, dict) else {
+                "id": s.id,
+                "titulo": getattr(s, "titulo", ""),
+                "estado": getattr(s, "estado", "")
+            }
+            for s in cola_actual
+        ]
+        cola_ids = [s.get("id") for s in cola_dicts]
 
         # Encontrar índice
         try:
@@ -203,18 +217,18 @@ class QueueSynchronizer:
                 "cancion_id": cancion_id
             }
 
-        # PASO 4: Reordenar EN BD con orden_manual
-        cola_reordenada = cola_actual.copy()
+        # PASO 4: Reordenar en cache
+        cola_reordenada = cola_dicts.copy()
         cola_reordenada[current_idx], cola_reordenada[new_idx] = (
             cola_reordenada[new_idx],
             cola_reordenada[current_idx]
         )
 
-        # Asignar orden_manual secuencial (congelamos la cola dinámica)
-        for idx, song in enumerate(cola_reordenada):
-            song.orden_manual = idx + 1000  # 1000+ para evitar conflicto con aprobadas
-
-        db.commit()
+        # Actualizar orden en cache
+        for idx, song_dict in enumerate(cola_reordenada):
+            song_id = song_dict.get("id")
+            # Actualizar en cache
+            cache_manager.update_song(song_id, {"orden_manual": idx + 1000})
 
         # PASO 5: Incrementar versión
         new_revision = QueueSynchronizer.increment_revision(db)
@@ -252,54 +266,51 @@ class QueueSynchronizer:
     def detect_desynchronization(db: Session) -> Dict[str, Any]:
         """
         Detecta y reporta problemas de sincronización.
+        Ahora usa cache en lugar de BD.
         Útil para debugging.
         """
-        now_playing = db.query(models.Cancion).filter(
-            models.Cancion.estado == "reproduciendo"
-        ).first()
+        all_songs = cache_manager.get_all_songs()
 
-        upcoming = db.query(models.Cancion).filter(
-            models.Cancion.estado == "aprobado"
-        ).all()
-
-        lazy = db.query(models.Cancion).filter(
-            models.Cancion.estado == "pendiente_lazy"
-        ).all()
-
-        pending = db.query(models.Cancion).filter(
-            models.Cancion.estado == "pendiente"
-        ).all()
+        now_playing = next((s for s in all_songs if s.get("estado") == "reproduciendo"), None)
+        upcoming = [s for s in all_songs if s.get("estado") == "aprobado"]
+        lazy = [s for s in all_songs if s.get("estado") == "pendiente_lazy"]
+        pending = [s for s in all_songs if s.get("estado") == "pendiente"]
 
         issues = []
 
         # Chequeo 1: now_playing no debería estar en upcoming
-        if now_playing and now_playing.id in [s.id for s in upcoming]:
-            issues.append(
-                f"CRITICAL: now_playing (ID {now_playing.id}) "
-                f"también está en upcoming. State corrupted."
-            )
+        if now_playing:
+            now_playing_id = now_playing.get("id")
+            upcoming_ids = [s.get("id") for s in upcoming]
+            if now_playing_id in upcoming_ids:
+                issues.append(
+                    f"CRITICAL: now_playing (ID {now_playing_id}) "
+                    f"también está en upcoming. State corrupted."
+                )
 
         # Chequeo 2: Validar que no haya duplicados
         all_ids = (
-            ([now_playing.id] if now_playing else [])
-            + [s.id for s in upcoming]
-            + [s.id for s in lazy]
-            + [s.id for s in pending]
+            ([now_playing.get("id")] if now_playing else [])
+            + [s.get("id") for s in upcoming]
+            + [s.get("id") for s in lazy]
+            + [s.get("id") for s in pending]
         )
         if len(all_ids) != len(set(all_ids)):
-            issues.append("WARNING: Cancelled duplicates detected in queue states")
+            issues.append("WARNING: Duplicate canciones detected in queue states")
 
         # Chequeo 3: Validar que canciones reproduciendo tengan timestamps
-        if now_playing and (not now_playing.started_at or not now_playing.finished_at is None):
-            # OK, esperado
-            pass
-        elif now_playing:
-            issues.append(f"WARNING: now_playing (ID {now_playing.id}) tiene timestamps inválidos")
+        if now_playing:
+            started_at = now_playing.get("started_at")
+            finished_at = now_playing.get("finished_at")
+            if not started_at or finished_at is not None:
+                issues.append(
+                    f"WARNING: now_playing (ID {now_playing.get('id')}) tiene timestamps inválidos"
+                )
 
         return {
             "clean": len(issues) == 0,
             "issues": issues,
-            "now_playing_id": now_playing.id if now_playing else None,
+            "now_playing_id": now_playing.get("id") if now_playing else None,
             "upcoming_count": len(upcoming),
             "lazy_count": len(lazy),
             "pending_count": len(pending),

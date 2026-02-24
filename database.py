@@ -147,11 +147,11 @@ def get_pool_status():
 
 if ENVIRONMENT == "development":
     print(f"""
-    ℹ️  Database Configuration (Development):
-    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    INFO: Database Configuration (Development):
+    ================================================
     Host:        {DB_HOST}
     Database:    {DB_NAME}
     Pool Size:   {POOL_SIZE}
     Max Overflow: {MAX_OVERFLOW}
-    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    ================================================
     """)
