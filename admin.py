@@ -725,56 +725,47 @@ async def move_pending_song_up(cancion_id: int, db: Session = Depends(get_db), a
     """
     **[Admin]** Mueve una canción pendiente una posición hacia arriba en la cola.
     """
-    db_cancion = db.query(models.Cancion).filter(
-        models.Cancion.id == cancion_id,
-        models.Cancion.estado == 'pendiente'
-    ).first()
-    
-    if not db_cancion:
+    from cache_manager import cache_manager as cm
+    all_songs = cm.get_all_songs()
+    pending = sorted(
+        [s for s in all_songs if s.get('estado') == 'pendiente'],
+        key=lambda s: s.get('created_at', '')
+    )
+    idx = next((i for i, s in enumerate(pending) if s.get('id') == cancion_id), None)
+    if idx is None:
         raise HTTPException(status_code=404, detail="Canción pendiente no encontrada.")
-    
-    # Obtener la canción anterior en la cola pendiente
-    previous_song = db.query(models.Cancion).filter(
-        models.Cancion.estado == 'pendiente',
-        models.Cancion.created_at < db_cancion.created_at
-    ).order_by(models.Cancion.created_at.desc()).first()
-    
-    if previous_song:
-        # Intercambiar los tiempos de creación para mantener el orden
-        temp_created = db_cancion.created_at
-        db_cancion.created_at = previous_song.created_at
-        previous_song.created_at = temp_created
-        db.commit()
-    
+    if idx > 0:
+        # Intercambiar created_at con la anterior
+        prev = pending[idx - 1]
+        curr = pending[idx]
+        temp = curr.get('created_at')
+        cm.update_song_in_cache(curr['id'], {'created_at': prev.get('created_at')})
+        cm.update_song_in_cache(prev['id'], {'created_at': temp})
     await websocket_manager.manager.broadcast_queue_update()
     return {"mensaje": "Canción movida hacia arriba."}
+
 
 @router.post("/canciones/pending/{cancion_id}/move-down", status_code=200, summary="Mover canción pendiente hacia abajo")
 async def move_pending_song_down(cancion_id: int, db: Session = Depends(get_db), api_key: str = Depends(api_key_auth)):
     """
     **[Admin]** Mueve una canción pendiente una posición hacia abajo en la cola.
     """
-    db_cancion = db.query(models.Cancion).filter(
-        models.Cancion.id == cancion_id,
-        models.Cancion.estado == 'pendiente'
-    ).first()
-    
-    if not db_cancion:
+    from cache_manager import cache_manager as cm
+    all_songs = cm.get_all_songs()
+    pending = sorted(
+        [s for s in all_songs if s.get('estado') == 'pendiente'],
+        key=lambda s: s.get('created_at', '')
+    )
+    idx = next((i for i, s in enumerate(pending) if s.get('id') == cancion_id), None)
+    if idx is None:
         raise HTTPException(status_code=404, detail="Canción pendiente no encontrada.")
-    
-    # Obtener la canción siguiente en la cola pendiente
-    next_song = db.query(models.Cancion).filter(
-        models.Cancion.estado == 'pendiente',
-        models.Cancion.created_at > db_cancion.created_at
-    ).order_by(models.Cancion.created_at.asc()).first()
-    
-    if next_song:
-        # Intercambiar los tiempos de creación para mantener el orden
-        temp_created = db_cancion.created_at
-        db_cancion.created_at = next_song.created_at
-        next_song.created_at = temp_created
-        db.commit()
-    
+    if idx < len(pending) - 1:
+        # Intercambiar created_at con la siguiente
+        nxt = pending[idx + 1]
+        curr = pending[idx]
+        temp = curr.get('created_at')
+        cm.update_song_in_cache(curr['id'], {'created_at': nxt.get('created_at')})
+        cm.update_song_in_cache(nxt['id'], {'created_at': temp})
     await websocket_manager.manager.broadcast_queue_update()
     return {"mensaje": "Canción movida hacia abajo."}
 
@@ -877,7 +868,7 @@ async def approve_next_lazy_song(db: Session = Depends(get_db), api_key: str = D
     # Retornar estado definitivo también en respuesta
     state = QueueSynchronizer.get_definitive_state(db)
     return {
-        "mensaje": f"Canción '{siguiente.titulo}' aprobada.",
+        "mensaje": f"Canción '{siguiente.get('titulo', '')}' aprobada.",
         "cancion_aprobada": jsonable_encoder(siguiente),
         "queue_state": state
     }
@@ -896,19 +887,22 @@ async def revert_approved_song(cancion_id: int, db: Session = Depends(get_db), a
     if not db_cancion:
         raise HTTPException(status_code=404, detail="Canción no encontrada.")
 
-    # Solo permitimos revertir si actualmente está aprobada y no está reproduciéndose
-    if db_cancion.estado != 'aprobado':
+    # db_cancion es un dict del cache JSON (no un objeto SQLAlchemy)
+    estado_actual = db_cancion.get('estado')
+
+    # Solo permitimos revertir si actualmente está aprobada
+    if estado_actual != 'aprobado':
         raise HTTPException(status_code=400, detail="La canción no está en estado 'aprobado'.")
 
-    if db_cancion.estado == 'reproduciendo':
+    if estado_actual == 'reproduciendo':
         raise HTTPException(status_code=400, detail="No se puede deshacer: la canción ya está en reproducción.")
 
-    # Revertir
-    db_cancion.estado = 'pendiente_lazy'
-    db_cancion.approved_at = None
-
-    db.commit()
-    db.refresh(db_cancion)
+    # Revertir en cache (no en BD)
+    from cache_manager import cache_manager as cm
+    cm.update_song_in_cache(cancion_id, {
+        'estado': 'pendiente_lazy',
+        'approved_at': None
+    })
 
     # Incrementar versión
     new_revision = QueueSynchronizer.increment_revision(db)
@@ -918,9 +912,10 @@ async def revert_approved_song(cancion_id: int, db: Session = Depends(get_db), a
     
     # Retornar estado definitivo
     state = QueueSynchronizer.get_definitive_state(db)
+    cancion_actualizada = crud.get_cancion_by_id(db, cancion_id) or db_cancion
     return {
         "mensaje": "Aprobación revertida. Canción regresó a lazy.",
-        "cancion": jsonable_encoder(db_cancion),
+        "cancion": jsonable_encoder(cancion_actualizada),
         "queue_state": state
     }
 

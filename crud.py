@@ -664,26 +664,39 @@ def get_canciones_pendientes(db: Session):
     return [s for s in all_songs if s.get("estado") == "pendiente"]
 
 def enriquecer_cancion(db: Session, song: dict):
-    """Enriquece una canción del cache con info del usuario desde BD."""
-    usuario_id = song.get("usuario_id")
-    if not usuario_id:
-        return song
+    """Enriquece una canción del cache con info del usuario desde BD.
     
-    usuario = get_usuario_by_id(db, usuario_id)
-    if not usuario:
-        return song
-    
-    # Crear copia enriquecida
+    Siempre incluye el campo 'usuario' en la copia retornada para
+    satisfacer el schema CancionAdminView (campo requerido por Pydantic).
+    Si no se puede obtener el usuario, usa un dict de fallback.
+    """
     cancion_enriquecida = dict(song)
-    cancion_enriquecida["usuario"] = {
-        "id": usuario.id,
-        "nick": usuario.nick,
-        "puntos": usuario.puntos,
-        "nivel": usuario.nivel,
-        "song_credits": usuario.song_credits or 1,
-        "is_silenced": usuario.is_silenced,
-        "mesa": None  # Simplificado
-    }
+    usuario_id = song.get("usuario_id")
+    
+    usuario = get_usuario_by_id(db, usuario_id) if usuario_id else None
+    
+    if usuario:
+        cancion_enriquecida["usuario"] = {
+            "id": usuario.id,
+            "nick": usuario.nick,
+            "puntos": usuario.puntos,
+            "nivel": usuario.nivel,
+            "song_credits": usuario.song_credits or 1,
+            "is_silenced": usuario.is_silenced,
+            "mesa": None
+        }
+    else:
+        # Fallback para canciones de usuarios eliminados o sin usuario_id
+        cancion_enriquecida["usuario"] = {
+            "id": usuario_id or 0,
+            "nick": "DJ" if not usuario_id else f"Usuario #{usuario_id}",
+            "puntos": 0,
+            "nivel": "bronce",
+            "song_credits": 0,
+            "is_silenced": False,
+            "mesa": None
+        }
+    
     return cancion_enriquecida
 
 def get_cola_completa(db: Session):
