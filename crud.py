@@ -351,3 +351,149 @@ def limpiar_datos_prueba(db: Session):
     
     # Limpiar CACHE
     cache.clear_all()
+def get_cola_completa_con_lazy(db: Session):
+    """Obtiene la cola completa con todas las canciones agrupadas por estado.
+    
+    Retorna:
+    {
+        "now_playing": cancion_actual_dict o None,
+        "upcoming": [lista de canciones aprobadas],
+        "lazy_queue": [lista de canciones pendiente_lazy],
+        "pending": [lista de canciones pendientes]
+    }
+    """
+    all_songs = cache.get_all_songs()
+    
+    now_playing = None
+    upcoming = []
+    lazy_queue = []
+    pending = []
+    
+    for song in all_songs:
+        estado = song.get("estado", "pendiente")
+        
+        if estado == "reproduciendo":
+            now_playing = song
+        elif estado == "aprobado":
+            upcoming.append(song)
+        elif estado == "pendiente_lazy":
+            lazy_queue.append(song)
+        elif estado == "pendiente":
+            pending.append(song)
+    
+    return {
+        "now_playing": now_playing,
+        "upcoming": upcoming,
+        "lazy_queue": lazy_queue,
+        "pending": pending
+    }
+
+def get_cola_lazy(db: Session):
+    """Obtiene solo la cola lazy (pendiente_lazy)."""
+    all_songs = cache.get_all_songs()
+    return [s for s in all_songs if s.get("estado") == "pendiente_lazy"]
+
+# ================================================================================
+# FUNCIONES PARA CANCIONES (En CACHE)
+# ================================================================================
+
+def get_available_song_credits(db: Session, usuario_id: int) -> int:
+    """Obtiene los créditos disponibles de canciones para un usuario."""
+    usuario = get_usuario_by_id(db, usuario_id)
+    if not usuario:
+        return 0
+    return usuario.song_credits or 1
+
+def get_user_credits_detail(db: Session, usuario_id: int):
+    """Obtiene los detalles de créditos del usuario."""
+    usuario = get_usuario_by_id(db, usuario_id)
+    if not usuario:
+        return {"creditos": 0, "proxima_renovacion": None}
+    return {
+        "creditos": usuario.song_credits or 1,
+        "proxima_renovacion": usuario.credits_added_at
+    }
+
+def check_if_song_in_user_list(db: Session, usuario_id: int, youtube_id: str) -> bool:
+    """Verifica si una canción ya fue añadida por este usuario."""
+    all_songs = cache.get_all_songs()
+    for song in all_songs:
+        if song.get("youtube_id") == youtube_id and song.get("usuario_id") == usuario_id:
+            return True
+    return False
+
+def create_cancion_para_usuario(db: Session, cancion: schemas.CancionCreate, usuario_id: int):
+    """Crea una canción en cache para un usuario."""
+    from timezone_utils import now_bogota
+    
+    # Crear ID único para la canción combinando timestamp y usuario_id
+    import time
+    song_id = int(time.time() * 1000) + usuario_id
+    
+    song_data = {
+        "id": song_id,
+        "youtube_id": cancion.youtube_id,
+        "titulo": cancion.titulo,
+        "artista": cancion.artista,
+        "duracion": cancion.duracion,
+        "usuario_id": usuario_id,
+        "estado": "pendiente",
+        "created_at": now_bogota().isoformat(),
+        "approved_at": None,
+        "rejected_at": None,
+        "started_at": None,
+        "finished_at": None
+    }
+    
+    cache.add_song(song_data)
+    return song_data
+
+def consume_song_credit(db: Session, usuario_id: int, cancion_id: int) -> bool:
+    """Consume un crédito de canción del usuario."""
+    usuario = get_usuario_by_id(db, usuario_id)
+    if not usuario or (usuario.song_credits or 0) <= 0:
+        return False
+    
+    # Decrementar crédito
+    usuario.song_credits = (usuario.song_credits or 1) - 1
+    db.commit()
+    return True
+
+def update_cancion_estado(db: Session, cancion_id: int, nuevo_estado: str):
+    """Actualiza el estado de una canción en cache."""
+    all_songs = cache.get_all_songs()
+    for song in all_songs:
+        if song.get("id") == cancion_id:
+            song["estado"] = nuevo_estado
+            cache.update_song(cancion_id, {"estado": nuevo_estado})
+            return song
+    return None
+
+def get_duracion_total_cola_aprobada(db: Session) -> int:
+    """Obtiene la duración total de la cola de canciones aprobadas."""
+    all_songs = cache.get_all_songs()
+    total = 0
+    for song in all_songs:
+        if song.get("estado") == "aprobado":
+            total += int(song.get("duracion", 0))
+    return total
+
+async def start_next_song_if_autoplay_and_idle(db: Session):
+    """Inicia la siguiente canción si autoplay está activo e idle."""
+    # Este es un stub simplificado - la lógica real está en queue_manager
+    return None
+
+def check_and_approve_next_lazy_song(db: Session):
+    """Aprueba automáticamente la siguiente canción lazy si aplica."""
+    # Este es un stub simplificado - la lógica real está en queue_manager
+    pass
+
+async def avanzar_cola_automaticamente(db: Session):
+    """Avanza la cola automáticamente (siguiente canción)."""
+    # Este es un stub simplificado - la lógica real está en queue_manager
+    return None
+
+def get_canciones_pendientes(db: Session):
+    """Obtiene todas las canciones pendientes de aprobación."""
+    all_songs = cache.get_all_songs()
+    return [s for s in all_songs if s.get("estado") == "pendiente"]
