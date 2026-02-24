@@ -50,18 +50,23 @@ def create_mesa_endpoint(
     """
     db_mesa = crud.get_mesa_by_qr(db, qr_code=mesa.qr_code)
     if db_mesa:
-        if not db_mesa.is_active:
+        # db_mesa es un dict si viene del cache
+        is_active = db_mesa.get('is_active', True)
+        mesa_nombre = db_mesa.get('nombre')
+        mesa_id = db_mesa.get('id')
+        
+        if not is_active:
             # Reactivar mesa si existe pero está inactiva
-            db_mesa.is_active = True
-            if mesa.nombre and db_mesa.nombre != mesa.nombre:
-                db_mesa.nombre = mesa.nombre
-            db.commit()
-            db.refresh(db_mesa)
+            crud.set_mesa_active_status(db, mesa_id=mesa_id, is_active=True)
+            if mesa.nombre and mesa_nombre != mesa.nombre:
+                # Actualizar nombre si es necesario (asumiendo que crud tiene esta lógica o la implementamos)
+                db_mesa['nombre'] = mesa.nombre
+                cache.update_mesa(mesa_id, db_mesa)
             return db_mesa
         else:
             raise HTTPException(
                 status_code=400, 
-                detail=f"El código QR '{mesa.qr_code}' ya está registrado para la mesa '{db_mesa.nombre}'. Por favor, usa un código QR diferente."
+                detail=f"El código QR '{mesa.qr_code}' ya está registrado para la mesa '{mesa_nombre}'. Por favor, usa un código QR diferente."
             )
     try:
         return crud.create_mesa(db=db, mesa=mesa)
@@ -126,12 +131,15 @@ def conectar_usuario_a_mesa(
                 detail=f"La mesa '{qr_code_mesa_base}' no existe. Por favor, contacta al personal."
             )
         
+        mesa_id = db_mesa_temp.get('id')
+        mesa_nombre = db_mesa_temp.get('nombre')
+        
         # Encontrar el siguiente número de usuario disponible (1-10)
         usuario_numero = None
         for num in range(1, 11):
-            nick_test = f"{db_mesa_temp.nombre}-Usuario{num}"
+            nick_test = f"{mesa_nombre}-Usuario{num}"
             usuario_existente = db.query(models.Usuario).filter(
-                models.Usuario.mesa_id == db_mesa_temp.id,
+                models.Usuario.mesa_id == mesa_id,
                 models.Usuario.nick == nick_test,
                 models.Usuario.is_active == True
             ).first()
@@ -156,18 +164,22 @@ def conectar_usuario_a_mesa(
             detail=f"La mesa '{qr_code_mesa_base}' no existe. Por favor, contacta al personal."
         )
 
-    if not db_mesa.is_active:
+    is_active = db_mesa.get('is_active', True)
+    mesa_id = db_mesa.get('id')
+    mesa_nombre = db_mesa.get('nombre')
+
+    if not is_active:
         raise HTTPException(
             status_code=403, 
             detail="Esta mesa se encuentra desactivada temporalmente. Por favor, contacta al personal."
         )
     
     # Generar automáticamente el nick basado en la mesa y el número de usuario
-    nick_automatico = f"{db_mesa.nombre}-Usuario{usuario_numero}"
+    nick_automatico = f"{mesa_nombre}-Usuario{usuario_numero}"
     
     # Verificar si ya existe un usuario con este número en esta mesa
     db_usuario_existente = db.query(models.Usuario).filter(
-        models.Usuario.mesa_id == db_mesa.id,
+        models.Usuario.mesa_id == mesa_id,
         models.Usuario.nick == nick_automatico
     ).first()
     
@@ -185,7 +197,7 @@ def conectar_usuario_a_mesa(
     
     # Crear el nuevo usuario con el nick automático
     usuario_data = schemas.UsuarioCreate(nick=nick_automatico)
-    return crud.create_usuario_en_mesa(db=db, usuario=usuario_data, mesa_id=db_mesa.id)
+    return crud.create_usuario_en_mesa(db=db, usuario=usuario_data, mesa_id=mesa_id)
 
 @router.get("/{mesa_id}/usuarios-conectados", response_model=List[schemas.UsuarioConectado], summary="Ver usuarios conectados a una mesa")
 def get_usuarios_conectados(mesa_id: int, db: Session = Depends(get_db)):

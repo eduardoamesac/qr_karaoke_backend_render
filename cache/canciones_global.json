@@ -6,9 +6,10 @@
       "youtube_id": "dQw4w9WgXcQ",
       "titulo": "Test Song",
       "duracion_seconds": 213,
-      "estado": "pendiente_lazy",
+      "estado": "aprobado",
       "is_karaoke": true,
-      "created_at": "2026-02-23T15:39:07.075189-05:00"
+      "created_at": "2026-02-23T15:39:07.075189-05:00",
+      "approved_at": "2026-02-24T15:19:44.426898"
     },
     "1771948246342": {
       "id": 1771948246342,
@@ -109,6 +110,32 @@
       "usuario_id": 1,
       "estado": "pendiente",
       "created_at": "2026-02-24T10:50:58.954609-05:00",
+      "approved_at": null,
+      "rejected_at": null,
+      "started_at": null,
+      "finished_at": null
+    },
+    "1771949107054": {
+      "id": 1771949107054,
+      "youtube_id": "Tsj8e9x9S_s",
+      "titulo": "Me Quedare Solo",
+      "duracion": 262,
+      "usuario_id": 1,
+      "estado": "pendiente",
+      "created_at": "2026-02-24T11:05:07.053973-05:00",
+      "approved_at": null,
+      "rejected_at": null,
+      "started_at": null,
+      "finished_at": null
+    },
+    "1771949119489": {
+      "id": 1771949119489,
+      "youtube_id": "Tsj8e9x9S_s",
+      "titulo": "Me Quedare Solo",
+      "duracion": 262,
+      "usuario_id": 1,
+      "estado": "pendiente",
+      "created_at": "2026-02-24T11:05:19.488060-05:00",
       "approved_at": null,
       "rejected_at": null,
       "started_at": null,

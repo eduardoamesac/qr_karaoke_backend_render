@@ -10,6 +10,7 @@ class Usuario(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     nick = Column(String(100), index=True)
+    mesa_id = Column(Integer, nullable=True) # ID de mesa en cache JSON
     puntos = Column(Integer, default=0)
     nivel = Column(String(50), default="bronce")  # bronce, plata, oro
     last_active = Column(DateTime, default=now_bogota)

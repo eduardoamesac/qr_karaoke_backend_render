@@ -15621,3 +15621,69 @@ AttributeError: 'dict' object has no attribute 'estado'
 2026-02-24 10:55:12,601 - song_credits_background - INFO - Credits background task started
 2026-02-24 10:55:21,608 - song_credits_background - INFO - Credits background task started
 2026-02-24 10:56:27,116 - song_credits_background - INFO - Credits background task started
+2026-02-24 11:01:23,805 - song_credits_background - INFO - Credits background task started
+2026-02-24 11:01:24,304 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-24 11:01:24,305 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-24 11:04:07,930 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-24 11:04:07,931 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-24 11:04:59,171 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'amistades peligrosas'
+2026-02-24 11:04:59,173 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'amistades peligrosas' (Karaoke Mode: False)
+2026-02-24 11:05:01,139 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-02-24 11:05:01,140 - youtube - INFO - Búsqueda por texto: 'amistades peligrosas'
+2026-02-24 11:05:01,141 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-02-24 11:05:01,933 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=amistades+peligrosas&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-02-24 11:05:01,956 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-02-24 11:05:01,957 - youtube - INFO - IDs de video encontrados: ['95JHOXoXR6M', 'bWQul83KtqI', 'e48oXY7QMm8', '2OFTs7ix9w0', 'u6c45acypTQ', 'GBH9Nll5nFA', 'k6c7UUhScPw', 'gqeRv44OGCk', 'DAYG6nlF-to', 'UsrIyimnViM', 'Tsj8e9x9S_s', '2wUsAA7J3ko', 'hsi2mXZpOac', 'lz0JNw_Livg', 'S2fzpT0pb6w', 'Z-8kzNM7x54', 'yfk0OfK_8Hw', 'YVU3Kvrlg5Y', 'AlgFZj5Umq4', 'zIWaFvgnJMo', 'VKbjsUMz6UI', '0EVIO-qTqaE', 'GZvqOSe6i0M', 'u-xMi5TouKA', 'mH3ABbZn6dQ']
+2026-02-24 11:05:01,962 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-02-24 11:05:02,271 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=95JHOXoXR6M%2CbWQul83KtqI%2Ce48oXY7QMm8%2C2OFTs7ix9w0%2Cu6c45acypTQ%2CGBH9Nll5nFA%2Ck6c7UUhScPw%2CgqeRv44OGCk%2CDAYG6nlF-to%2CUsrIyimnViM%2CTsj8e9x9S_s%2C2wUsAA7J3ko%2Chsi2mXZpOac%2Clz0JNw_Livg%2CS2fzpT0pb6w%2CZ-8kzNM7x54%2Cyfk0OfK_8Hw%2CYVU3Kvrlg5Y%2CAlgFZj5Umq4%2CzIWaFvgnJMo%2CVKbjsUMz6UI%2C0EVIO-qTqaE%2CGZvqOSe6i0M%2Cu-xMi5TouKA%2CmH3ABbZn6dQ&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-02-24 11:05:02,290 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-02-24 11:05:02,301 - youtube - INFO - Procesamiento finalizado. Se encontraron 24 resultados formateados.
+2026-02-24 11:05:02,353 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'amistades peligrosas'
+2026-02-24 11:05:02,376 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'amistades peligrosas' (Karaoke Mode: False)
+2026-02-24 11:05:04,218 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-02-24 11:05:04,219 - youtube - INFO - Búsqueda por texto: 'amistades peligrosas'
+2026-02-24 11:05:04,220 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-02-24 11:05:04,788 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=amistades+peligrosas&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-02-24 11:05:04,799 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-02-24 11:05:04,800 - youtube - INFO - IDs de video encontrados: ['95JHOXoXR6M', 'bWQul83KtqI', 'e48oXY7QMm8', '2OFTs7ix9w0', 'u6c45acypTQ', 'k6c7UUhScPw', 'GBH9Nll5nFA', 'gqeRv44OGCk', 'DAYG6nlF-to', 'UsrIyimnViM']
+2026-02-24 11:05:04,801 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-02-24 11:05:04,979 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=95JHOXoXR6M%2CbWQul83KtqI%2Ce48oXY7QMm8%2C2OFTs7ix9w0%2Cu6c45acypTQ%2Ck6c7UUhScPw%2CGBH9Nll5nFA%2CgqeRv44OGCk%2CDAYG6nlF-to%2CUsrIyimnViM&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-02-24 11:05:04,991 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-02-24 11:05:04,993 - youtube - INFO - Procesamiento finalizado. Se encontraron 10 resultados formateados.
+2026-02-24 11:12:24,112 - song_credits_background - INFO - Credits background task started
+2026-02-24 11:12:24,124 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-24 11:12:24,125 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-24 11:12:54,423 - song_credits_background - INFO - Credits background task started
+2026-02-24 11:12:54,442 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-24 11:12:54,446 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-24 11:22:13,155 - song_credits_background - INFO - Credits background task started
+2026-02-24 11:22:35,551 - song_credits_background - INFO - Credits background task started
+2026-02-24 11:22:46,939 - song_credits_background - INFO - Credits background task started
+2026-02-24 11:25:31,187 - song_credits_background - INFO - Credits background task started
+2026-02-24 11:26:13,733 - song_credits_background - INFO - Credits background task started
+2026-02-24 11:27:11,354 - song_credits_background - INFO - Credits background task started
+2026-02-24 11:29:13,469 - song_credits_background - INFO - Credits background task started
+2026-02-24 11:31:10,626 - song_credits_background - INFO - Credits background task started
+2026-02-24 11:34:15,831 - song_credits_background - INFO - Credits background task started
+2026-02-24 11:39:06,121 - song_credits_background - INFO - Credits background task started
+2026-02-24 11:40:36,886 - song_credits_background - INFO - Credits background task started
+2026-02-24 11:41:54,262 - song_credits_background - INFO - Credits background task started
+2026-02-24 11:47:12,654 - song_credits_background - INFO - Credits background task started
+2026-02-24 11:49:35,755 - song_credits_background - INFO - Credits background task started
+2026-02-24 15:18:00,790 - song_credits_background - INFO - Credits background task started
+2026-02-24 15:19:24,598 - song_credits_background - INFO - Credits background task started
+2026-02-24 15:19:39,533 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-24 15:19:39,534 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-24 15:19:44,440 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-24 15:19:44,442 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-24 15:19:44,444 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-24 15:19:44,452 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-24 15:19:44,504 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-24 15:24:15,806 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-24 15:24:15,813 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-24 15:25:23,507 - song_credits_background - INFO - Credits background task started
+2026-02-24 15:25:23,554 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-24 15:25:23,576 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-24 15:40:31,759 - song_credits_background - INFO - Credits background task started
+2026-02-24 15:40:38,424 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-24 15:40:38,432 - queue_manager - INFO - Cache refrescado desde JSON

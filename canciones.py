@@ -179,14 +179,17 @@ async def admin_anadir_cancion(cancion: schemas.CancionCreate, db: Session = Dep
     dj_user = crud.get_or_create_dj_user(db)
     db_cancion = crud.create_cancion_para_usuario(db=db, cancion=cancion, usuario_id=dj_user.id)
     
+    # db_cancion es un dict (viene del cache JSON)
+    cancion_id = db_cancion['id']
+    
     # LAZY APPROVAL: Solo aprobar si no hay nada en la cola
     canciones_activas = (cache_manager.get_songs_by_estado("reproduciendo") or []) + (cache_manager.get_songs_by_estado("aprobado") or [])
     hay_cancion_activa = len(canciones_activas) > 0
     
     if hay_cancion_activa:
-        cancion_final = crud.update_cancion_estado(db, cancion_id=db_cancion.id, nuevo_estado="pendiente_lazy")
+        cancion_final = crud.update_cancion_estado(db, cancion_id=cancion_id, nuevo_estado="pendiente_lazy")
     else:
-        cancion_final = crud.update_cancion_estado(db, cancion_id=db_cancion.id, nuevo_estado="aprobado")
+        cancion_final = crud.update_cancion_estado(db, cancion_id=cancion_id, nuevo_estado="aprobado")
         await crud.start_next_song_if_autoplay_and_idle(db)
     
     queue_manager.refresh_queue(db)

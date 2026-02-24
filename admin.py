@@ -1336,10 +1336,15 @@ def get_all_tables_status(db: Session = Depends(get_db)):
     
     report = []
     for mesa, num_usuarios, consumo_total in mesas_data:
+        # mesa es un dict si viene del cache
+        mesa_id = mesa.get('id') if isinstance(mesa, dict) else mesa.id
+        mesa_nombre = mesa.get('nombre') if isinstance(mesa, dict) else mesa.nombre
+        mesa_qr = mesa.get('qr_code') if isinstance(mesa, dict) else mesa.qr_code
+        
         report.append(schemas.MesaEstado(
-            id=mesa.id,
-            nombre=mesa.nombre,
-            qr_code=mesa.qr_code,
+            id=mesa_id,
+            nombre=mesa_nombre,
+            qr_code=mesa_qr,
             estado="Ocupada" if num_usuarios > 0 else "Vacía",
             numero_usuarios=num_usuarios,
             consumo_total=consumo_total
@@ -1393,7 +1398,9 @@ async def admin_add_song_to_mesa(
     db_cancion = crud.create_cancion_para_usuario(db=db, cancion=cancion, usuario_id=db_usuario.id)
     
     # Aprobar automáticamente la canción
-    cancion_aprobada = crud.update_cancion_estado(db, cancion_id=db_cancion.id, nuevo_estado="aprobado")
+    # db_cancion es un dict
+    cancion_id = db_cancion['id']
+    cancion_aprobada = crud.update_cancion_estado(db, cancion_id=cancion_id, nuevo_estado="aprobado")
     
     # Si autoplay está activo, intentar iniciar la reproducción si estaba vacío
     import asyncio
