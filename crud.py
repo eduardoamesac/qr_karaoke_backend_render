@@ -362,6 +362,29 @@ def get_cola_completa_con_lazy(db: Session):
         "pending": [lista de canciones pendientes]
     }
     """
+    def enriquecer_cancion(song: dict):
+        """Enriquece una canción del cache con info del usuario desde BD."""
+        usuario_id = song.get("usuario_id")
+        if not usuario_id:
+            return song
+        
+        usuario = get_usuario_by_id(db, usuario_id)
+        if not usuario:
+            return song
+        
+        # Crear copia enriquecida
+        cancion_enriquecida = dict(song)
+        cancion_enriquecida["usuario"] = {
+            "id": usuario.id,
+            "nick": usuario.nick,
+            "puntos": usuario.puntos,
+            "nivel": usuario.nivel,
+            "song_credits": usuario.song_credits or 1,
+            "is_silenced": usuario.is_silenced,
+            "mesa": None  # Simplificado por ahora
+        }
+        return cancion_enriquecida
+    
     all_songs = cache.get_all_songs()
     
     now_playing = None
@@ -371,15 +394,16 @@ def get_cola_completa_con_lazy(db: Session):
     
     for song in all_songs:
         estado = song.get("estado", "pendiente")
+        cancion_enriquecida = enriquecer_cancion(song)
         
         if estado == "reproduciendo":
-            now_playing = song
+            now_playing = cancion_enriquecida
         elif estado == "aprobado":
-            upcoming.append(song)
+            upcoming.append(cancion_enriquecida)
         elif estado == "pendiente_lazy":
-            lazy_queue.append(song)
+            lazy_queue.append(cancion_enriquecida)
         elif estado == "pendiente":
-            pending.append(song)
+            pending.append(cancion_enriquecida)
     
     return {
         "now_playing": now_playing,
@@ -434,8 +458,7 @@ def create_cancion_para_usuario(db: Session, cancion: schemas.CancionCreate, usu
         "id": song_id,
         "youtube_id": cancion.youtube_id,
         "titulo": cancion.titulo,
-        "artista": cancion.artista,
-        "duracion": cancion.duracion,
+        "duracion": cancion.duracion_seconds,
         "usuario_id": usuario_id,
         "estado": "pendiente",
         "created_at": now_bogota().isoformat(),

@@ -15484,3 +15484,140 @@ AttributeError: 'dict' object has no attribute 'estado'
 2026-02-24 10:35:45,020 - song_credits_background - INFO - Credits background task started
 2026-02-24 10:37:23,693 - queue_manager - INFO - Cache refrescado desde JSON
 2026-02-24 10:37:23,715 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-24 10:43:37,648 - song_credits_background - INFO - Credits background task started
+2026-02-24 10:43:47,639 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-24 10:43:47,674 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-24 10:44:01,093 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-24 10:44:01,215 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-24 10:44:22,882 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'amistades peligrosas'
+2026-02-24 10:44:22,887 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'amistades peligrosas' (Karaoke Mode: False)
+2026-02-24 10:44:26,440 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-02-24 10:44:26,444 - youtube - INFO - Búsqueda por texto: 'amistades peligrosas'
+2026-02-24 10:44:26,483 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-02-24 10:44:27,289 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=amistades+peligrosas&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-02-24 10:44:27,320 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-02-24 10:44:27,345 - youtube - INFO - IDs de video encontrados: ['95JHOXoXR6M', 'bWQul83KtqI', 'e48oXY7QMm8', '2OFTs7ix9w0', 'u6c45acypTQ', 'k6c7UUhScPw', 'GBH9Nll5nFA', 'gqeRv44OGCk', 'DAYG6nlF-to', 'UsrIyimnViM']
+2026-02-24 10:44:27,364 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-02-24 10:44:27,526 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=95JHOXoXR6M%2CbWQul83KtqI%2Ce48oXY7QMm8%2C2OFTs7ix9w0%2Cu6c45acypTQ%2Ck6c7UUhScPw%2CGBH9Nll5nFA%2CgqeRv44OGCk%2CDAYG6nlF-to%2CUsrIyimnViM&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-02-24 10:44:27,537 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-02-24 10:44:27,544 - youtube - INFO - Procesamiento finalizado. Se encontraron 10 resultados formateados.
+2026-02-24 10:44:27,745 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'amistades peligrosas'
+2026-02-24 10:44:27,804 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'amistades peligrosas' (Karaoke Mode: False)
+2026-02-24 10:44:32,188 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-02-24 10:44:32,210 - youtube - INFO - Búsqueda por texto: 'amistades peligrosas'
+2026-02-24 10:44:32,220 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-02-24 10:44:32,892 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=amistades+peligrosas&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-02-24 10:44:32,980 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-02-24 10:44:32,990 - youtube - INFO - IDs de video encontrados: ['95JHOXoXR6M', 'bWQul83KtqI', 'e48oXY7QMm8', '2OFTs7ix9w0', 'u6c45acypTQ', 'k6c7UUhScPw', 'GBH9Nll5nFA', 'gqeRv44OGCk', 'DAYG6nlF-to', 'UsrIyimnViM']
+2026-02-24 10:44:33,178 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-02-24 10:44:33,407 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=95JHOXoXR6M%2CbWQul83KtqI%2Ce48oXY7QMm8%2C2OFTs7ix9w0%2Cu6c45acypTQ%2Ck6c7UUhScPw%2CGBH9Nll5nFA%2CgqeRv44OGCk%2CDAYG6nlF-to%2CUsrIyimnViM&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-02-24 10:44:33,412 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-02-24 10:44:33,414 - youtube - INFO - Procesamiento finalizado. Se encontraron 10 resultados formateados.
+2026-02-24 10:44:38,783 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'amistades peligrosas'
+2026-02-24 10:44:38,803 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'amistades peligrosas' (Karaoke Mode: False)
+2026-02-24 10:44:42,224 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-02-24 10:44:42,226 - youtube - INFO - Búsqueda por texto: 'amistades peligrosas'
+2026-02-24 10:44:42,227 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-02-24 10:44:42,805 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=amistades+peligrosas&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-02-24 10:44:42,818 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-02-24 10:44:42,819 - youtube - INFO - IDs de video encontrados: ['95JHOXoXR6M', 'bWQul83KtqI', 'e48oXY7QMm8', '2OFTs7ix9w0', 'u6c45acypTQ', 'k6c7UUhScPw', 'GBH9Nll5nFA', 'gqeRv44OGCk', 'DAYG6nlF-to', 'UsrIyimnViM', 'Tsj8e9x9S_s', '2wUsAA7J3ko', 'hsi2mXZpOac', 'lz0JNw_Livg', 'S2fzpT0pb6w', 'Z-8kzNM7x54', 'yfk0OfK_8Hw', 'YVU3Kvrlg5Y', 'AlgFZj5Umq4', 'zIWaFvgnJMo', 'VKbjsUMz6UI', '0EVIO-qTqaE', 'GZvqOSe6i0M', 'u-xMi5TouKA', 'mH3ABbZn6dQ']
+2026-02-24 10:44:42,828 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-02-24 10:44:43,095 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=95JHOXoXR6M%2CbWQul83KtqI%2Ce48oXY7QMm8%2C2OFTs7ix9w0%2Cu6c45acypTQ%2Ck6c7UUhScPw%2CGBH9Nll5nFA%2CgqeRv44OGCk%2CDAYG6nlF-to%2CUsrIyimnViM%2CTsj8e9x9S_s%2C2wUsAA7J3ko%2Chsi2mXZpOac%2Clz0JNw_Livg%2CS2fzpT0pb6w%2CZ-8kzNM7x54%2Cyfk0OfK_8Hw%2CYVU3Kvrlg5Y%2CAlgFZj5Umq4%2CzIWaFvgnJMo%2CVKbjsUMz6UI%2C0EVIO-qTqaE%2CGZvqOSe6i0M%2Cu-xMi5TouKA%2CmH3ABbZn6dQ&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-02-24 10:44:43,122 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-02-24 10:44:43,130 - youtube - INFO - Procesamiento finalizado. Se encontraron 24 resultados formateados.
+2026-02-24 10:44:43,198 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'amistades peligrosas'
+2026-02-24 10:44:43,261 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'amistades peligrosas' (Karaoke Mode: False)
+2026-02-24 10:44:45,602 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-02-24 10:44:45,605 - youtube - INFO - Búsqueda por texto: 'amistades peligrosas'
+2026-02-24 10:44:45,607 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-02-24 10:44:46,250 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=amistades+peligrosas&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-02-24 10:44:46,271 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-02-24 10:44:46,273 - youtube - INFO - IDs de video encontrados: ['95JHOXoXR6M', 'bWQul83KtqI', '2OFTs7ix9w0', 'e48oXY7QMm8', 'u6c45acypTQ', 'k6c7UUhScPw', 'DAYG6nlF-to', 'GBH9Nll5nFA', 'UsrIyimnViM', 'gqeRv44OGCk']
+2026-02-24 10:44:46,278 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-02-24 10:44:46,446 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=95JHOXoXR6M%2CbWQul83KtqI%2C2OFTs7ix9w0%2Ce48oXY7QMm8%2Cu6c45acypTQ%2Ck6c7UUhScPw%2CDAYG6nlF-to%2CGBH9Nll5nFA%2CUsrIyimnViM%2CgqeRv44OGCk&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-02-24 10:44:46,491 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-02-24 10:44:46,505 - youtube - INFO - Procesamiento finalizado. Se encontraron 10 resultados formateados.
+2026-02-24 10:45:13,773 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'amistades peligrosas'
+2026-02-24 10:45:13,833 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'amistades peligrosas' (Karaoke Mode: False)
+2026-02-24 10:45:17,789 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-02-24 10:45:18,051 - youtube - INFO - Búsqueda por texto: 'amistades peligrosas'
+2026-02-24 10:45:18,235 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-02-24 10:45:18,930 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=amistades+peligrosas&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-02-24 10:45:18,963 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-02-24 10:45:19,049 - youtube - INFO - IDs de video encontrados: ['95JHOXoXR6M', 'bWQul83KtqI', 'e48oXY7QMm8', '2OFTs7ix9w0', 'u6c45acypTQ', 'GBH9Nll5nFA', 'k6c7UUhScPw', 'gqeRv44OGCk', 'DAYG6nlF-to', 'UsrIyimnViM']
+2026-02-24 10:45:19,092 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-02-24 10:45:19,289 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=95JHOXoXR6M%2CbWQul83KtqI%2Ce48oXY7QMm8%2C2OFTs7ix9w0%2Cu6c45acypTQ%2CGBH9Nll5nFA%2Ck6c7UUhScPw%2CgqeRv44OGCk%2CDAYG6nlF-to%2CUsrIyimnViM&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-02-24 10:45:19,372 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-02-24 10:45:19,444 - youtube - INFO - Procesamiento finalizado. Se encontraron 10 resultados formateados.
+2026-02-24 10:45:19,647 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'amistades peligrosas'
+2026-02-24 10:45:19,674 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'amistades peligrosas' (Karaoke Mode: False)
+2026-02-24 10:45:22,819 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-02-24 10:45:22,916 - youtube - INFO - Búsqueda por texto: 'amistades peligrosas'
+2026-02-24 10:45:23,009 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-02-24 10:45:23,914 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=amistades+peligrosas&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-02-24 10:45:23,939 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-02-24 10:45:23,958 - youtube - INFO - IDs de video encontrados: ['95JHOXoXR6M', 'bWQul83KtqI', 'e48oXY7QMm8', '2OFTs7ix9w0', 'u6c45acypTQ', 'GBH9Nll5nFA', 'k6c7UUhScPw', 'gqeRv44OGCk', 'DAYG6nlF-to', 'UsrIyimnViM']
+2026-02-24 10:45:24,040 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-02-24 10:45:24,203 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=95JHOXoXR6M%2CbWQul83KtqI%2Ce48oXY7QMm8%2C2OFTs7ix9w0%2Cu6c45acypTQ%2CGBH9Nll5nFA%2Ck6c7UUhScPw%2CgqeRv44OGCk%2CDAYG6nlF-to%2CUsrIyimnViM&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-02-24 10:45:24,229 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-02-24 10:45:24,303 - youtube - INFO - Procesamiento finalizado. Se encontraron 10 resultados formateados.
+2026-02-24 10:45:26,260 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'amistades peligrosas'
+2026-02-24 10:45:26,267 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'amistades peligrosas' (Karaoke Mode: False)
+2026-02-24 10:45:29,485 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-02-24 10:45:29,489 - youtube - INFO - Búsqueda por texto: 'amistades peligrosas'
+2026-02-24 10:45:29,538 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-02-24 10:45:30,200 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=amistades+peligrosas&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-02-24 10:45:30,220 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-02-24 10:45:30,223 - youtube - INFO - IDs de video encontrados: ['95JHOXoXR6M', 'bWQul83KtqI', '2OFTs7ix9w0', 'e48oXY7QMm8', 'u6c45acypTQ', 'DAYG6nlF-to', 'k6c7UUhScPw', 'UsrIyimnViM', 'GBH9Nll5nFA', 'gqeRv44OGCk', 'hsi2mXZpOac', 'Tsj8e9x9S_s', '2wUsAA7J3ko', 'S2fzpT0pb6w', 'yfk0OfK_8Hw', 'Z-8kzNM7x54', 'YVU3Kvrlg5Y', 'lz0JNw_Livg', 'u-xMi5TouKA', 'zIWaFvgnJMo', '0EVIO-qTqaE', 'AlgFZj5Umq4', 'VKbjsUMz6UI', 'GZvqOSe6i0M', 'FBcaxKo6wNs']
+2026-02-24 10:45:30,251 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-02-24 10:45:30,488 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=95JHOXoXR6M%2CbWQul83KtqI%2C2OFTs7ix9w0%2Ce48oXY7QMm8%2Cu6c45acypTQ%2CDAYG6nlF-to%2Ck6c7UUhScPw%2CUsrIyimnViM%2CGBH9Nll5nFA%2CgqeRv44OGCk%2Chsi2mXZpOac%2CTsj8e9x9S_s%2C2wUsAA7J3ko%2CS2fzpT0pb6w%2Cyfk0OfK_8Hw%2CZ-8kzNM7x54%2CYVU3Kvrlg5Y%2Clz0JNw_Livg%2Cu-xMi5TouKA%2CzIWaFvgnJMo%2C0EVIO-qTqaE%2CAlgFZj5Umq4%2CVKbjsUMz6UI%2CGZvqOSe6i0M%2CFBcaxKo6wNs&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-02-24 10:45:30,528 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-02-24 10:45:30,547 - youtube - INFO - Procesamiento finalizado. Se encontraron 24 resultados formateados.
+2026-02-24 10:45:30,610 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'amistades peligrosas'
+2026-02-24 10:45:30,657 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'amistades peligrosas' (Karaoke Mode: False)
+2026-02-24 10:45:35,598 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-02-24 10:45:35,600 - youtube - INFO - Búsqueda por texto: 'amistades peligrosas'
+2026-02-24 10:45:35,600 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-02-24 10:45:36,244 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=amistades+peligrosas&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-02-24 10:45:36,249 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-02-24 10:45:36,250 - youtube - INFO - IDs de video encontrados: ['95JHOXoXR6M', 'bWQul83KtqI', 'e48oXY7QMm8', '2OFTs7ix9w0', 'u6c45acypTQ', 'k6c7UUhScPw', 'GBH9Nll5nFA', 'gqeRv44OGCk', 'DAYG6nlF-to', 'UsrIyimnViM']
+2026-02-24 10:45:36,256 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-02-24 10:45:36,426 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=95JHOXoXR6M%2CbWQul83KtqI%2Ce48oXY7QMm8%2C2OFTs7ix9w0%2Cu6c45acypTQ%2Ck6c7UUhScPw%2CGBH9Nll5nFA%2CgqeRv44OGCk%2CDAYG6nlF-to%2CUsrIyimnViM&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-02-24 10:45:36,435 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-02-24 10:45:36,439 - youtube - INFO - Procesamiento finalizado. Se encontraron 10 resultados formateados.
+2026-02-24 10:50:03,909 - song_credits_background - INFO - Credits background task started
+2026-02-24 10:50:04,385 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-24 10:50:04,387 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-24 10:50:19,667 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-24 10:50:19,676 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-24 10:50:34,262 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'amistades peligrosas'
+2026-02-24 10:50:34,263 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'amistades peligrosas' (Karaoke Mode: False)
+2026-02-24 10:50:36,197 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-02-24 10:50:36,197 - youtube - INFO - Búsqueda por texto: 'amistades peligrosas'
+2026-02-24 10:50:36,199 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-02-24 10:50:36,892 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=amistades+peligrosas&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-02-24 10:50:36,908 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-02-24 10:50:36,911 - youtube - INFO - IDs de video encontrados: ['95JHOXoXR6M', 'bWQul83KtqI', 'e48oXY7QMm8', '2OFTs7ix9w0', 'u6c45acypTQ', 'k6c7UUhScPw', 'GBH9Nll5nFA', 'gqeRv44OGCk', 'DAYG6nlF-to', 'UsrIyimnViM']
+2026-02-24 10:50:36,914 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-02-24 10:50:37,111 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=95JHOXoXR6M%2CbWQul83KtqI%2Ce48oXY7QMm8%2C2OFTs7ix9w0%2Cu6c45acypTQ%2Ck6c7UUhScPw%2CGBH9Nll5nFA%2CgqeRv44OGCk%2CDAYG6nlF-to%2CUsrIyimnViM&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-02-24 10:50:37,138 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-02-24 10:50:37,146 - youtube - INFO - Procesamiento finalizado. Se encontraron 10 resultados formateados.
+2026-02-24 10:50:37,183 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'amistades peligrosas'
+2026-02-24 10:50:37,192 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'amistades peligrosas' (Karaoke Mode: False)
+2026-02-24 10:50:38,754 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-02-24 10:50:38,755 - youtube - INFO - Búsqueda por texto: 'amistades peligrosas'
+2026-02-24 10:50:38,756 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-02-24 10:50:39,360 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=amistades+peligrosas&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-02-24 10:50:39,376 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-02-24 10:50:39,377 - youtube - INFO - IDs de video encontrados: ['95JHOXoXR6M', 'bWQul83KtqI', 'e48oXY7QMm8', '2OFTs7ix9w0', 'u6c45acypTQ', 'k6c7UUhScPw', 'GBH9Nll5nFA', 'gqeRv44OGCk', 'DAYG6nlF-to', 'UsrIyimnViM']
+2026-02-24 10:50:39,378 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-02-24 10:50:39,561 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=95JHOXoXR6M%2CbWQul83KtqI%2Ce48oXY7QMm8%2C2OFTs7ix9w0%2Cu6c45acypTQ%2Ck6c7UUhScPw%2CGBH9Nll5nFA%2CgqeRv44OGCk%2CDAYG6nlF-to%2CUsrIyimnViM&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-02-24 10:50:39,573 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-02-24 10:50:39,615 - youtube - INFO - Procesamiento finalizado. Se encontraron 10 resultados formateados.
+2026-02-24 10:51:18,755 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-24 10:51:18,757 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-24 10:51:54,927 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-24 10:51:54,929 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-24 10:55:12,601 - song_credits_background - INFO - Credits background task started
+2026-02-24 10:55:21,608 - song_credits_background - INFO - Credits background task started
+2026-02-24 10:56:27,116 - song_credits_background - INFO - Credits background task started
