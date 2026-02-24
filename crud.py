@@ -4,6 +4,8 @@ Las tablas eliminadas (Mesa, Cancion, Consumo, BannedNick, AdminLog) se manejan 
 """
 
 from sqlalchemy.orm import Session
+import logging
+from fastapi import HTTPException
 from sqlalchemy import func
 import secrets
 from typing import List, Optional
@@ -11,6 +13,7 @@ import datetime
 import models, schemas
 from decimal import Decimal
 from cache_manager import CacheManager
+from queue_manager import queue_manager
 
 # Instancia global del cache manager
 cache = CacheManager(cache_dir="cache")
@@ -605,9 +608,55 @@ def check_and_approve_next_lazy_song(db: Session):
     pass
 
 async def avanzar_cola_automaticamente(db: Session):
-    """Avanza la cola automáticamente (siguiente canción)."""
-    # Este es un stub simplificado - la lógica real está en queue_manager
-    return None
+    """Avanza la cola automáticamente (siguiente canción).
+
+    - Marca la canción actual como 'cantada' si existe
+    - Pop la siguiente aprobada y la marca como 'reproduciendo'
+    - Refresca la cola y emite los broadcasts necesarios
+    Retorna la canción que pasa a reproducirse o None si no hay siguiente.
+    """
+    import traceback
+    logger = logging.getLogger(__name__)
+    try:
+        from timezone_utils import now_bogota
+        import websocket_manager
+
+        # 1) Marcar la canción actual como 'cantada' si existe
+        canciones_reproduciendo = cache.get_songs_by_estado('reproduciendo') or []
+        cancion_actual = canciones_reproduciendo[0] if canciones_reproduciendo else None
+        if cancion_actual:
+            cache.update_song(cancion_actual['id'], {
+                'estado': 'cantada',
+                'finished_at': now_bogota().isoformat()
+            })
+
+        # 2) Pop / iniciar la siguiente canción aprobada
+        siguiente = queue_manager.pop_next_song(db)
+
+        # 3) Refrescar y notificar via websocket
+        queue_manager.refresh_queue(db)
+        try:
+            await websocket_manager.manager.broadcast_queue_update()
+        except Exception:
+            logger.exception('Error broadcasting queue_update after advancing cola')
+
+        # 4) Si hay siguiente, emitir play_song
+        if siguiente:
+            try:
+                await websocket_manager.manager.broadcast_play_song(
+                    youtube_id=siguiente.get('youtube_id'),
+                    duration_seconds=int(siguiente.get('duracion_seconds', 0) or 0)
+                )
+            except Exception:
+                logger.exception('Error broadcasting play_song after advancing cola')
+
+        return siguiente
+    except Exception as e:
+        # Log completo con traceback y levantar HTTPException para que FastAPI retorne JSON
+        tb = traceback.format_exc()
+        logger = logging.getLogger(__name__)
+        logger.error('avanzar_cola_automaticamente failed: %s\n%s', str(e), tb)
+        raise HTTPException(status_code=500, detail=f"Error advancing queue: {str(e)}")
 
 def get_canciones_pendientes(db: Session):
     """Obtiene todas las canciones pendientes de aprobación."""
