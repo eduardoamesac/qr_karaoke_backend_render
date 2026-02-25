@@ -1,87 +1,20 @@
 {
   "canciones": {
     "1": {
-      "titulo": "S1",
-      "youtube_id": "Y1",
-      "duracion_seconds": 120,
-      "usuario_id": 1,
-      "estado": "cantada",
+      "titulo": "Song 1",
+      "youtube_id": "yt1",
+      "estado": "pendiente_lazy",
       "id": 1,
-      "created_at": "2026-02-24T16:22:11.555951-05:00",
-      "finished_at": "2026-02-24T16:29:19.760321-05:00"
+      "created_at": "2026-02-25T10:01:59.351290-05:00",
+      "orden_manual": 1002
     },
     "2": {
-      "titulo": "S2",
-      "youtube_id": "Y2",
-      "duracion_seconds": 150,
-      "usuario_id": 2,
-      "estado": "cantada",
+      "titulo": "Song 2",
+      "youtube_id": "yt2",
+      "estado": "pendiente_lazy",
       "id": 2,
-      "created_at": "2026-02-24T16:22:11.561529-05:00",
-      "started_at": "2026-02-24T16:22:11.575515-05:00",
-      "finished_at": "2026-02-24T16:29:23.659084-05:00"
-    },
-    "3": {
-      "titulo": "S3",
-      "youtube_id": "Y3",
-      "duracion_seconds": 180,
-      "usuario_id": 3,
-      "estado": "reproduciendo",
-      "id": 3,
-      "created_at": "2026-02-24T16:22:11.566289-05:00",
-      "started_at": "2026-02-24T16:39:54.467030-05:00"
-    },
-    "1771968551166": {
-      "id": 1771968551166,
-      "youtube_id": "Tsj8e9x9S_s",
-      "titulo": "Me Quedare Solo",
-      "duracion_seconds": 262,
-      "usuario_id": 1,
-      "estado": "aprobado",
-      "created_at": "2026-02-24T16:29:11.165709-05:00",
-      "approved_at": "2026-02-24T16:42:20.813174",
-      "rejected_at": null,
-      "started_at": null,
-      "finished_at": null
-    },
-    "1771968607373": {
-      "id": 1771968607373,
-      "youtube_id": "Tsj8e9x9S_s",
-      "titulo": "Me Quedare Solo",
-      "duracion_seconds": 262,
-      "usuario_id": 1,
-      "estado": "aprobado",
-      "created_at": "2026-02-24T16:30:07.372288-05:00",
-      "approved_at": "2026-02-24T16:42:46.235295",
-      "rejected_at": null,
-      "started_at": null,
-      "finished_at": null
-    },
-    "1771968666471": {
-      "id": 1771968666471,
-      "youtube_id": "u6c45acypTQ",
-      "titulo": "Amistades Peligrosas - Sacrifícate",
-      "duracion_seconds": 262,
-      "usuario_id": 1,
-      "estado": "aprobado",
-      "created_at": "2026-02-24T16:31:06.470608-05:00",
-      "approved_at": "2026-02-24T16:44:36.599363",
-      "rejected_at": null,
-      "started_at": null,
-      "finished_at": null
-    },
-    "1771968667415": {
-      "id": 1771968667415,
-      "youtube_id": "k6c7UUhScPw",
-      "titulo": "Amistades Peligrosas - Muy Peligroso",
-      "duracion_seconds": 228,
-      "usuario_id": 1,
-      "estado": "aprobado",
-      "created_at": "2026-02-24T16:31:07.414387-05:00",
-      "approved_at": "2026-02-24T16:44:53.717719",
-      "rejected_at": null,
-      "started_at": null,
-      "finished_at": null
+      "created_at": "2026-02-25T10:01:59.351290-05:00",
+      "orden_manual": 1000
     }
   },
   "next_id": 4

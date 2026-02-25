@@ -49,8 +49,13 @@ class QueueManager:
         self._now_playing = self._now_playing_list[0] if self._now_playing_list else None
         
         self._approved_queue = cache.get_songs_by_estado("aprobado") or []
+        self._approved_queue.sort(key=lambda s: (s.get("orden_manual", 0) or 0, s.get("created_at", "")))
+
         self._lazy_queue = cache.get_songs_by_estado("pendiente_lazy") or []
+        self._lazy_queue.sort(key=lambda s: (s.get("orden_manual", 0) or 0, s.get("created_at", "")))
+
         self._pending_queue = cache.get_songs_by_estado("pendiente") or []
+        self._pending_queue.sort(key=lambda s: s.get("created_at", ""))
         
         self._user_songs = {}
         logger.info("Cache refrescado desde JSON")

@@ -12,11 +12,8 @@ from typing import List, Optional
 import datetime
 import models, schemas
 from decimal import Decimal
-from cache_manager import CacheManager
+from cache_manager import cache_manager as cache
 from queue_manager import queue_manager
-
-# Instancia global del cache manager
-cache = CacheManager(cache_dir="cache")
 
 # ================================================================================
 # FUNCIONES PARA USUARIOS (En BD)
@@ -475,6 +472,11 @@ def get_cola_completa_con_lazy(db: Session):
         elif estado == "pendiente":
             pending.append(cancion_enriquecida)
     
+    # Sort lists to ensure UI consistency
+    upcoming.sort(key=lambda s: s.get("orden_manual", 0) or s.get("created_at", ""))
+    lazy_queue.sort(key=lambda s: s.get("orden_manual", 0) or s.get("created_at", ""))
+    pending.sort(key=lambda s: s.get("created_at", ""))
+
     return {
         "now_playing": now_playing,
         "upcoming": upcoming,
@@ -483,9 +485,12 @@ def get_cola_completa_con_lazy(db: Session):
     }
 
 def get_cola_lazy(db: Session):
-    """Obtiene solo la cola lazy (pendiente_lazy)."""
+    """Obtiene solo la cola lazy (pendiente_lazy) ordenada."""
     all_songs = cache.get_all_songs()
-    return [s for s in all_songs if s.get("estado") == "pendiente_lazy"]
+    lazy_songs = [s for s in all_songs if s.get("estado") == "pendiente_lazy"]
+    # Ordenar por orden_manual (de reordenamiento) o created_at
+    lazy_songs.sort(key=lambda s: (s.get("orden_manual", 0) or 0, s.get("created_at", "")))
+    return lazy_songs
 
 def aprobar_siguiente_cancion_lazy(db: Session):
     """Aprueba la siguiente canción en la cola lazy (pendiente_lazy -> aprobado)."""
