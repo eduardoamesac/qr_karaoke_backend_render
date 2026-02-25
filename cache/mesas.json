@@ -2,9 +2,9 @@
   "mesas": {
     "1": {
       "id": 1,
-      "nombre": "Mesa 01",
+      "nombre": "Toscana",
       "qr_code": "karaoke-mesa-01",
-      "is_active": true,
+      "is_active": false,
       "created_at": "2026-02-24T11:29:25.261801-05:00"
     }
   },

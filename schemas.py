@@ -18,6 +18,8 @@ class Cancion(CancionBase):
     id: int
     estado: str
     created_at: datetime # Añadimos este campo
+    started_at: Optional[datetime] = None
+    finished_at: Optional[datetime] = None
     puntuacion_ia: Optional[int] = None # Aseguramos que esté aquí también
     is_karaoke: Optional[bool] = True  # Aseguramos que esté aquí también
     model_config = ConfigDict(from_attributes=True)
