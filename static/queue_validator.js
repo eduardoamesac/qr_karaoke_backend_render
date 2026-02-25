@@ -90,8 +90,8 @@ class QueueValidator {
    */
   async refreshDebugReport() {
     try {
-      const response = await fetch('/admin/queue/debug');
-      const report = await response.json();
+      // Usar apiFetch global para incluir prefijo /api/v1 y X-API-Key
+      const report = await apiFetch('/admin/queue/debug');
       this.lastDebugReport = report;
       this.renderDebugReport(report);
     } catch (error) {
@@ -260,13 +260,11 @@ class QueueValidator {
     };
 
     try {
-      const response = await fetch('/admin/queue/compare-ui-vs-reality', {
+      const comparison = await apiFetch('/admin/queue/compare-ui-vs-reality', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(uiState)
       });
 
-      const comparison = await response.json();
       this.renderComparisonReport(comparison);
     } catch (error) {
       console.error('Error comparing UI vs reality:', error);
@@ -368,8 +366,7 @@ class QueueValidator {
    */
   async validateQueueConsistency() {
     try {
-      const response = await fetch('/admin/queue/debug');
-      const report = await response.json();
+      const report = await apiFetch('/admin/queue/debug');
 
       // Chequeos rápidos
       if (!report.integrity_checks.now_playing_not_in_approved) {
