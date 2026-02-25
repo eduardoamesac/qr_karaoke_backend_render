@@ -473,8 +473,9 @@ def get_cola_completa_con_lazy(db: Session):
             pending.append(cancion_enriquecida)
     
     # Sort lists to ensure UI consistency
-    upcoming.sort(key=lambda s: s.get("orden_manual", 0) or s.get("created_at", ""))
-    lazy_queue.sort(key=lambda s: s.get("orden_manual", 0) or s.get("created_at", ""))
+    # Usamos una tupla para evitar errores de tipo (TypeError) al mezclar int y str
+    upcoming.sort(key=lambda s: (s.get("orden_manual", 999999) or 999999, s.get("created_at", "")))
+    lazy_queue.sort(key=lambda s: (s.get("orden_manual", 999999) or 999999, s.get("created_at", "")))
     pending.sort(key=lambda s: s.get("created_at", ""))
 
     return {
@@ -629,38 +630,51 @@ async def avanzar_cola_automaticamente(db: Session):
         # 1) Marcar la canción actual como 'cantada' si existe
         canciones_reproduciendo = cache.get_songs_by_estado('reproduciendo') or []
         cancion_actual = canciones_reproduciendo[0] if canciones_reproduciendo else None
+        
         if cancion_actual:
+            logger.info(f"🏁 Finalizando canción actual: {cancion_actual.get('titulo')} (ID: {cancion_actual.get('id')})")
             cache.update_song(cancion_actual['id'], {
                 'estado': 'cantada',
                 'finished_at': now_bogota().isoformat()
             })
+        else:
+            logger.info("ℹ️ No hay canción reproduciéndose actualmente.")
 
-        # 2) Pop / iniciar la siguiente canción aprobada
+        # 2) Pop / iniciar la siguiente canción aprobada (esta función ahora promueve desde lazy si es necesario)
         siguiente = queue_manager.pop_next_song(db)
 
-        # 3) Refrescar y notificar via websocket
-        queue_manager.refresh_queue(db)
+        # 3) Refrescar estado global y notificar via websocket
+        # Forzamos un refresco total antes de notificar
+        queue_manager.refresh_all(db)
+        
         try:
+            # Notificar actualización de cola a todos (Admin y Usuarios)
             await websocket_manager.manager.broadcast_queue_update()
         except Exception:
-            logger.exception('Error broadcasting queue_update after advancing cola')
+            logger.exception('❌ Error broadcasting queue_update after advancing cola')
 
-        # 4) Si hay siguiente, emitir play_song
+        # 4) Si hay siguiente, emitir orden de reproducción al player
         if siguiente:
+            # Enriquecer la canción con datos del usuario antes de retornar
+            # Esto es vital para que el schema PlayNextResponse/CancionAdminView no falle
+            siguiente = enriquecer_cancion(db, siguiente)
+            
+            logger.info(f"🎵 Iniciando siguiente canción: {siguiente.get('titulo')} (ID: {siguiente.get('id')})")
             try:
                 await websocket_manager.manager.broadcast_play_song(
                     youtube_id=siguiente.get('youtube_id'),
                     duration_seconds=int(siguiente.get('duracion_seconds', 0) or 0)
                 )
             except Exception:
-                logger.exception('Error broadcasting play_song after advancing cola')
+                logger.exception('❌ Error broadcasting play_song after advancing cola')
+        else:
+            logger.info("📭 No hay más canciones en cola.")
 
         return siguiente
     except Exception as e:
         # Log completo con traceback y levantar HTTPException para que FastAPI retorne JSON
         tb = traceback.format_exc()
-        logger = logging.getLogger(__name__)
-        logger.error('avanzar_cola_automaticamente failed: %s\n%s', str(e), tb)
+        logger.error('❌ avanzar_cola_automaticamente failed: %s\n%s', str(e), tb)
         raise HTTPException(status_code=500, detail=f"Error advancing queue: {str(e)}")
 
 def get_canciones_pendientes(db: Session):

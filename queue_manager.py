@@ -87,9 +87,23 @@ class QueueManager:
         return self._user_songs[usuario_id]
 
     def pop_next_song(self, db: Session) -> Optional[Dict[str, Any]]:
-        """Transición de estado: Siguiente en Approved -> Reproduciendo."""
+        """Transición de estado: Siguiente en Approved -> Reproduciendo.
+        Si no hay aprobadas, intenta promover una de la cola lazy automatically.
+        """
         self.refresh_all(db)
         
+        # 1. Si no hay aprobadas, intentar promover la primera de la cola lazy
+        if not self._approved_queue and self._lazy_queue:
+            first_lazy = self._lazy_queue[0]
+            logger.info(f"🚀 No hay canciones aprobadas. Promoviendo '{first_lazy.get('titulo')}' desde cola lazy.")
+            
+            # Promover a aprobado
+            cache.update_song(first_lazy["id"], {"estado": "aprobado"})
+            
+            # Refrescar para que aparezca en _approved_queue
+            self.refresh_all(db)
+
+        # 2. Proceder con el pop normal si hay algo en la cola aprobada
         if not self._approved_queue:
             return None
         
@@ -101,7 +115,7 @@ class QueueManager:
             next_song["started_at"] = now_bogota().isoformat()
             cache.update_song(next_song["id"], next_song)
             
-            # Refrescar estado
+            # Refrescar estado global
             self.refresh_all(db)
             return next_song
         

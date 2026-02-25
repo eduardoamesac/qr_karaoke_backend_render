@@ -442,7 +442,248 @@
             console.log('✅ Reproductor de YouTube creado con API para video:', videoId, 'comenzando en:', startSeconds);
         }
 
-        // Pre-carga totalmente eliminada: no existe handleFiftyPercentPreLoad
+        // Evento cuando el reproductor está listo
+        function onPlayerReady(event) {
+            console.log('✅ Reproductor listo, iniciando reproducción');
+            // Iniciamos por defecto
+            event.target.playVideo();
+
+            // Aplicar acciones encoladas por admin si las hubiera
+            try {
+                if (pendingPause) {
+                    if (typeof event.target.pauseVideo === 'function') {
+                        event.target.pauseVideo();
+                        console.log('⏸️ Aplicando pausa encolada por admin');
+                    }
+                    pendingPause = false;
+                } else if (pendingResume) {
+                    if (typeof event.target.playVideo === 'function') {
+                        event.target.playVideo();
+                        console.log('▶️ Aplicando reanudar encolado por admin');
+                    }
+                    pendingResume = false;
+                }
+            } catch (e) {
+                console.warn('⚠️ Error aplicando acción encolada:', e);
+                pendingPause = false;
+                pendingResume = false;
+            }
+        }
+
+        // Evento cuando cambia el estado del reproductor
+        function onPlayerStateChange(event) {
+            // YT.PlayerState.PLAYING = 1
+            // YT.PlayerState.PAUSED = 2
+            // YT.PlayerState.BUFFERING = 3
+            // YT.PlayerState.CUED = 5
+            // YT.PlayerState.ENDED = 0
+
+            if (event.data === YT.PlayerState.PLAYING) {
+                console.log('▶️ Video reproduciéndose');
+                isPlayerPlaying = true;
+                currentSongEnded = false;
+
+                // Cancelar cualquier timer de transición si estaba corriendo
+                if (autoplayTimer) {
+                    clearTimeout(autoplayTimer);
+                    autoplayTimer = null;
+                    console.log('🔄 Timer de transición cancelado (video comenzó a reproducirse)');
+                }
+            } else if (event.data === YT.PlayerState.PAUSED) {
+                console.log('⏸️ Video pausado');
+                isPlayerPlaying = false;
+            } else if (event.data === YT.PlayerState.ENDED) {
+                console.log('🎬 Video terminado, solicitando avance de cola...');
+                isPlayerPlaying = false;
+                currentSongEnded = true;
+
+                // Cancelar timer de fallback si estaba corriendo
+                if (autoplayTimer) {
+                    clearTimeout(autoplayTimer);
+                    autoplayTimer = null;
+                }
+
+                // Llamar a advanceToNextSong inmediatamente
+                // Esto hará que el backend envíe song_finished con el puntaje
+                if (!transitionInProgress) {
+                    advanceToNextSong();
+                }
+            }
+        }
+
+        // Mostrar pantalla de transición entre canciones
+        function showTransitionScreen() {
+            if (transitionInProgress) {
+                console.log('⚠️ Transición ya en progreso, ignorando nueva solicitud');
+                return;
+            }
+
+            transitionInProgress = true;
+            pendingTransition = false; // Ya no está pendiente
+            console.log('🔄 Iniciando transición a siguiente canción');
+            console.log('📊 Datos de puntaje disponibles:', lastSongScore);
+
+            // Limpiar el reproductor
+            const container = document.getElementById('player-container');
+            if (container) {
+                container.innerHTML = '';
+            }
+
+            // Mostrar pantalla de espera con fondo
+            startCarousel();
+
+            // Construir el HTML de la pantalla de transición
+            const standbyParagraph = standbyScreen.querySelector('p');
+
+            let transitionHTML = '';
+
+            // 1. Mostrar puntaje si fue una canción karaoke
+            if (lastSongScore) {
+                transitionHTML += `
+                    <div style="margin-bottom: 20px; text-align: center;">
+                        <div style="font-size: 5rem; margin-bottom: 15px;">🐸 LA CANTA QUE RANA 🐸</div>
+                        <div style="font-size: 4.5rem; margin-bottom: 10px; animation: pulse 1s infinite;">🎤</div>
+                `;
+
+                if (lastSongScore.is_karaoke) {
+                    // Mostrar puntaje para karaoke
+                    if (lastSongScore.puntuacion_ia > 0) {
+                        transitionHTML += `
+                            <p style="font-size: 1.1em; color: #FFD700; margin: 10px 0;">
+                                ¡Felicitaciones, <strong>${lastSongScore.usuario_nick}</strong>!
+                            </p>
+                            <p style="font-size: 2.8em; color: #4CAF50; margin: 5px 0; font-weight: bold;">
+                                ✨ ${lastSongScore.puntuacion_ia} PUNTOS ✨
+                            </p>
+                            <p style="font-size: 1.1em; color: #FFD700; margin: 5px 0;">
+                                ¡Sigue así! 🎉
+                            </p>
+                        `;
+                    } else {
+                        transitionHTML += `
+                            <p style="font-size: 1.2em; color: #888; margin: 10px 0;">
+                                Nadie cantó la última canción.
+                            </p>
+                            <p style="font-size: 2em; color: #666; margin: 5px 0;">
+                                Puntaje: 0
+                            </p>
+                        `;
+                    }
+                } else {
+                    // Modo escuchar
+                    transitionHTML += `
+                        <p style="font-size: 1.2em; color: #b0b0b0; margin: 10px 0;">
+                            Gracias por escuchar:
+                        </p>
+                        <p style="font-size: 1.5em; color: #fff; font-weight: bold; margin: 5px 0;">
+                            ${lastSongScore.titulo}
+                        </p>
+                    `;
+                }
+
+                transitionHTML += `</div>`;
+            }
+
+            // 2. Mostrar información de la siguiente canción
+            if (nextSongInfo) {
+                transitionHTML += `
+                    <div style="margin-top: 20px; padding: 15px; background: rgba(0,0,0,0.4); border-radius: 10px;">
+                        <strong style="color: #4CAF50; font-size: 1.1em;">Próxima canción:</strong><br><br>
+                        <span style="font-size: 1.8em; color: #fff;">${nextSongInfo.titulo}</span><br>
+                        <span style="font-size: 1.1em; color: #b0b0b0;">Por: ${nextSongInfo.cantante}</span><br><br>
+                        <span style="font-size: 1em; color: #4CAF50; animation: pulse 1s infinite;">
+                            ⏱️ Comenzando en 5 segundos...
+                        </span>
+                    </div>
+                `;
+            } else {
+                transitionHTML += `
+                    <div style="font-size: 1.2em; color: #888;">
+                        Cargando siguiente canción...
+                    </div>
+                `;
+            }
+
+            standbyParagraph.innerHTML = transitionHTML;
+
+            // NO llamamos a advanceToNextSong aquí porque ya fue llamado antes
+            // La siguiente canción comenzará automáticamente cuando llegue el evento play_song
+        }
+
+        // Función para avanzar automáticamente a la siguiente canción
+        async function advanceToNextSong() {
+            console.log('⏭️ Avanzando automáticamente a la siguiente canción...');
+
+            // Marcar que estamos esperando la transición
+            pendingTransition = true;
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/canciones/siguiente`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+
+                if (response.status === 204) {
+                    console.log('✅ No hay más canciones en la cola (204 No Content)');
+                    const container = document.getElementById('player-container');
+                    if (container) container.innerHTML = '';
+                    startCarousel();
+                    transitionInProgress = false;
+                    pendingTransition = false;
+
+                    // Limpiar cualquier timer restante
+                    if (autoplayTimer) {
+                        clearTimeout(autoplayTimer);
+                        autoplayTimer = null;
+                    }
+                    return;
+                }
+
+                if (response.ok) {
+                    console.log('✅ Solicitud de avance exitosa, esperando eventos WebSocket...');
+
+                    // Esperar a que llegue el evento song_finished con el puntaje
+                    // Si no llega en 2 segundos, mostrar transición de todas formas
+                    if (!scoreReadyForTransition) {
+                        console.log('⏳ Esperando evento song_finished con puntaje...');
+                        transitionTimeout = setTimeout(() => {
+                            console.log('⚠️ Timeout: Mostrando transición sin puntaje');
+                            if (pendingTransition && !transitionInProgress) {
+                                showTransitionScreen();
+                            }
+                        }, 2000);
+                    } else {
+                        // El puntaje ya está listo, mostrar transición
+                        console.log('✅ Puntaje ya disponible, mostrando transición');
+                        showTransitionScreen();
+                    }
+
+                    // La siguiente canción comenzará automáticamente cuando llegue play_song
+                } else {
+                    console.error('❌ Error al avanzar:', response.status, response.statusText);
+                    transitionInProgress = false;
+                    pendingTransition = false;
+
+                    // Intentar recuperarse mostrando la cola nuevamente
+                    setTimeout(() => {
+                        fetchAndUpdateQueue();
+                    }, 2000);
+                }
+            } catch (error) {
+                console.error('❌ Error en advanceToNextSong:', error);
+                transitionInProgress = false;
+                pendingTransition = false;
+
+                // Intenta recuperarse
+                setTimeout(() => {
+                    try {
+                        fetchAndUpdateQueue();
+                    } catch (e) {
+                        console.error('❌ Error recuperándose en advanceToNextSong:', e);
+                    }
+                }, 2000);
+            }
+        }
 
         // Función para obtener y actualizar la cola inicial
         async function fetchAndUpdateQueue() {
