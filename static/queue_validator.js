@@ -360,10 +360,7 @@ class QueueValidator {
    * Monitorea cambios en la cola
    */
   startMonitoring() {
-    console.log('🟢 Queue Validator Monitoring Started');
-    setInterval(() => {
-      this.validateQueueConsistency();
-    }, 5000); // Cada 5 segundos
+    return; // Desactivado porque la cola fue eliminada
   }
 
   /**

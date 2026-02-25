@@ -16681,3 +16681,23 @@ NameError: name 'queue_manager' is not defined
 2026-02-25 11:01:54,698 - queue_manager - INFO - Cache refrescado desde JSON
 2026-02-25 11:01:54,782 - crud - INFO - 🎵 Iniciando siguiente canción: Tierra Mala (ID: 1772033647735)
 2026-02-25 11:01:54,845 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=6e_XDSvvYho, duration_seconds=274
+2026-02-25 11:06:32,593 - crud - INFO - 🏁 Finalizando canción actual: Tierra Mala (ID: 1772033647735)
+2026-02-25 11:06:32,601 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-25 11:06:32,602 - queue_manager - INFO - 🚀 No hay canciones aprobadas. Promoviendo 'Quiero Que Seas Mi Estrella, Binomio De Oro De América - Video Oficial' desde cola lazy.
+2026-02-25 11:06:32,609 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-25 11:06:32,615 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-25 11:06:32,616 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-25 11:06:32,617 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-25 11:06:32,618 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-25 11:06:32,639 - crud - INFO - 🎵 Iniciando siguiente canción: Quiero Que Seas Mi Estrella, Binomio De Oro De América - Video Oficial (ID: 1772033650500)
+2026-02-25 11:06:32,645 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=7yRnzBjMyn4, duration_seconds=297
+2026-02-25 11:11:30,623 - crud - INFO - 🏁 Finalizando canción actual: Quiero Que Seas Mi Estrella, Binomio De Oro De América - Video Oficial (ID: 1772033650500)
+2026-02-25 11:11:30,642 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-25 11:11:30,643 - queue_manager - INFO - 🚀 No hay canciones aprobadas. Promoviendo 'Cancion 1 - Test' desde cola lazy.
+2026-02-25 11:11:30,664 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-25 11:11:30,676 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-25 11:11:30,678 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-25 11:11:30,679 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-25 11:11:30,681 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-25 11:11:30,694 - crud - INFO - 🎵 Iniciando siguiente canción: Cancion 1 - Test (ID: 1772034752380)
+2026-02-25 11:11:30,698 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=dQw4w9WgXcQ, duration_seconds=60
