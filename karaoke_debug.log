@@ -16664,3 +16664,20 @@ NameError: name 'queue_manager' is not defined
 2026-02-25 10:57:37,254 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=Tsj8e9x9S_s, duration_seconds=262
 2026-02-25 10:58:08,965 - song_credits_background - INFO - Credits background task started
 2026-02-25 10:58:37,943 - song_credits_background - INFO - Credits background task started
+2026-02-25 10:58:48,626 - song_credits_background - INFO - Credits background task started
+2026-02-25 11:00:09,149 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-25 11:00:09,149 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-25 11:00:44,899 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-25 11:00:45,002 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-25 11:01:26,685 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-25 11:01:26,692 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-25 11:01:54,169 - crud - INFO - 🏁 Finalizando canción actual: Me Quedare Solo (ID: 1772033619747)
+2026-02-25 11:01:54,204 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-25 11:01:54,216 - queue_manager - INFO - 🚀 No hay canciones aprobadas. Promoviendo 'Tierra Mala' desde cola lazy.
+2026-02-25 11:01:54,471 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-25 11:01:54,601 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-25 11:01:54,643 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-25 11:01:54,678 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-25 11:01:54,698 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-25 11:01:54,782 - crud - INFO - 🎵 Iniciando siguiente canción: Tierra Mala (ID: 1772033647735)
+2026-02-25 11:01:54,845 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=6e_XDSvvYho, duration_seconds=274

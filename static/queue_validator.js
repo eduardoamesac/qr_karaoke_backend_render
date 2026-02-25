@@ -214,7 +214,7 @@ class QueueValidator {
       cursor: pointer;
       margin-bottom: 4px;
     ">🔄 REFRESCAR</button>`;
-    
+
     html += `<button onclick="queueValidator.compareUIVsReality()" style="
       width: 100%;
       padding: 6px;
@@ -225,7 +225,7 @@ class QueueValidator {
       cursor: pointer;
       margin-bottom: 4px;
     ">🔎 COMPARAR UI vs REALIDAD</button>`;
-    
+
     html += `<button onclick="console.log(queueValidator.lastDebugReport)" style="
       width: 100%;
       padding: 6px;
@@ -302,7 +302,11 @@ class QueueValidator {
     </div>`;
 
     if (comparison.discrepancies.length > 0) {
-      html += `<div style="border:1px solid #ff0000; padding:8px; margin-bottom:8px;">';
+      let html = `
+  <div style="border:1px solid #ff0000; padding:8px;">
+    ...
+  </div>
+`;
       html += `<span style="color:#ff0000;">⚠ ${summary.critical_issues} PROBLEMAS CRÍTICOS, ${summary.warnings} ADVERTENCIAS</span><br/>`;
 
       comparison.discrepancies.forEach((disc) => {

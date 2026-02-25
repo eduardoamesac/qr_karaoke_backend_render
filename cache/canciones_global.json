@@ -134,12 +134,12 @@
       "titulo": "Tierra Mala",
       "duracion_seconds": 274,
       "usuario_id": 1,
-      "estado": "reproduciendo",
+      "estado": "cantada",
       "created_at": "2026-02-25T10:34:07.734128-05:00",
       "approved_at": null,
       "rejected_at": null,
       "started_at": "2026-02-25T11:01:54.549844-05:00",
-      "finished_at": null
+      "finished_at": "2026-02-25T11:06:32.595496-05:00"
     },
     "1772033650500": {
       "id": 1772033650500,
@@ -147,12 +147,12 @@
       "titulo": "Quiero Que Seas Mi Estrella, Binomio De Oro De América - Video Oficial",
       "duracion_seconds": 297,
       "usuario_id": 1,
-      "estado": "pendiente_lazy",
+      "estado": "cantada",
       "created_at": "2026-02-25T10:34:10.499528-05:00",
       "approved_at": null,
       "rejected_at": null,
-      "started_at": null,
-      "finished_at": null
+      "started_at": "2026-02-25T11:06:32.610496-05:00",
+      "finished_at": "2026-02-25T11:11:30.623287-05:00"
     },
     "1772034672779": {
       "id": 1772034672779,
@@ -173,11 +173,11 @@
       "titulo": "Cancion 1 - Test",
       "duracion_seconds": 60,
       "usuario_id": 6,
-      "estado": "pendiente_lazy",
+      "estado": "reproduciendo",
       "created_at": "2026-02-25T10:52:32.374562-05:00",
       "approved_at": null,
       "rejected_at": null,
-      "started_at": null,
+      "started_at": "2026-02-25T11:11:30.666092-05:00",
       "finished_at": null
     },
     "1772034793814": {
