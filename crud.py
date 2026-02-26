@@ -298,7 +298,7 @@ def create_consumo_para_usuario(db: Session, consumo: schemas.ConsumoCreate, usu
         "created_at": datetime.datetime.now().isoformat()
     }
     
-    consumo_id = cache.add_consumo(consumo_obj)
+    consumo_id = cache.create_consumo_in_cache(consumo_obj)
     consumo_obj["id"] = consumo_id
     
     # Enriquecer objeto para retorno (compatibilidad con modelos)

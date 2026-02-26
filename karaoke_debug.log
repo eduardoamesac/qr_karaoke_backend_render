@@ -17469,3 +17469,79 @@ NameError: name 'queue_manager' is not defined
 2026-02-26 15:56:49,356 - song_credits_background - INFO - Credits background task started
 2026-02-26 15:58:51,828 - queue_manager - INFO - Cache refrescado desde JSON
 2026-02-26 15:58:51,831 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 16:21:31,568 - song_credits_background - INFO - Credits background task started
+2026-02-26 16:21:31,615 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 16:21:31,616 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 16:22:26,517 - song_credits_background - INFO - Credits background task started
+2026-02-26 16:22:26,808 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 16:22:26,812 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 16:23:24,391 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 16:23:24,391 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 16:23:37,541 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'heredero'
+2026-02-26 16:23:37,543 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'heredero' (Karaoke Mode: False)
+2026-02-26 16:23:39,962 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-02-26 16:23:39,963 - youtube - INFO - Búsqueda por texto: 'heredero'
+2026-02-26 16:23:39,964 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-02-26 16:23:40,753 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=heredero&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-02-26 16:23:40,762 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-02-26 16:23:40,762 - youtube - INFO - IDs de video encontrados: ['KI3pWvM19Pc', 'sU8FqZQOK3k', 'mspgrI-m06I', 'bZLojmRvRd8', 'NP3LASw8uWY', 'O_Jv-_nEqWk', 'tvUc8GEovac', '9o1ea3O_GTs', 'dLeN4bdCuiM']
+2026-02-26 16:23:40,780 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-02-26 16:23:40,953 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=KI3pWvM19Pc%2CsU8FqZQOK3k%2CmspgrI-m06I%2CbZLojmRvRd8%2CNP3LASw8uWY%2CO_Jv-_nEqWk%2CtvUc8GEovac%2C9o1ea3O_GTs%2CdLeN4bdCuiM&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-02-26 16:23:40,960 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-02-26 16:23:40,960 - youtube - INFO - Procesamiento finalizado. Se encontraron 9 resultados formateados.
+2026-02-26 16:23:40,997 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'heredero'
+2026-02-26 16:23:40,999 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'heredero' (Karaoke Mode: False)
+2026-02-26 16:23:42,822 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-02-26 16:23:42,824 - youtube - INFO - Búsqueda por texto: 'heredero'
+2026-02-26 16:23:42,825 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-02-26 16:23:43,454 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=heredero&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-02-26 16:23:43,462 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-02-26 16:23:43,463 - youtube - INFO - IDs de video encontrados: ['KI3pWvM19Pc', 'sU8FqZQOK3k', 'mspgrI-m06I', 'bZLojmRvRd8', 'NP3LASw8uWY', 'O_Jv-_nEqWk', '9o1ea3O_GTs', 'tvUc8GEovac', 'dLeN4bdCuiM']
+2026-02-26 16:23:43,466 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-02-26 16:23:43,677 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=KI3pWvM19Pc%2CsU8FqZQOK3k%2CmspgrI-m06I%2CbZLojmRvRd8%2CNP3LASw8uWY%2CO_Jv-_nEqWk%2C9o1ea3O_GTs%2CtvUc8GEovac%2CdLeN4bdCuiM&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-02-26 16:23:43,698 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-02-26 16:23:43,700 - youtube - INFO - Procesamiento finalizado. Se encontraron 9 resultados formateados.
+2026-02-26 16:23:44,453 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 16:23:44,453 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 16:23:44,460 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 16:23:45,747 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 16:23:45,749 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 16:23:45,750 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 16:23:48,295 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 16:23:48,295 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 16:23:48,295 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 16:23:51,094 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 16:23:51,096 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 16:23:51,096 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 16:23:53,327 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 16:23:53,327 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 16:23:53,327 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 16:23:55,731 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 16:23:55,731 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 16:23:55,731 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 16:24:03,899 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 16:24:03,903 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 16:24:03,903 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 16:24:15,193 - crud - INFO - ℹ️ No hay canción reproduciéndose actualmente.
+2026-02-26 16:24:15,195 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 16:24:15,209 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 16:24:15,210 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 16:24:15,211 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 16:24:15,214 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 16:24:15,244 - crud - INFO - 🎵 Iniciando siguiente canción: HEREDERO - Cosita (Video Oficial) (ID: 1772141024441)
+2026-02-26 16:24:15,247 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=sU8FqZQOK3k, duration_seconds=196
+2026-02-26 16:27:40,165 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 16:27:40,173 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 16:28:04,756 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 16:28:04,757 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 16:31:22,569 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 16:31:22,577 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 16:38:01,045 - song_credits_background - INFO - Credits background task started
+2026-02-26 16:38:01,091 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 16:38:01,096 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 16:38:28,243 - song_credits_background - INFO - Credits background task started
+2026-02-26 16:38:28,292 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 16:38:28,292 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 16:39:13,170 - song_credits_background - INFO - Credits background task started
+2026-02-26 16:39:13,208 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 16:39:13,213 - queue_manager - INFO - Cache refrescado desde JSON

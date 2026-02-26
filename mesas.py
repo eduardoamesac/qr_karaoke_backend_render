@@ -227,3 +227,34 @@ def get_mesa_payment_status(mesa_id: int, db: Session = Depends(get_db)):
     if not status:
         raise HTTPException(status_code=404, detail="Mesa no encontrada.")
     return status
+
+@router.get("/{qr_code}", response_model=schemas.Mesa, summary="Obtener información de una mesa por su QR")
+def get_mesa_info(qr_code: str, db: Session = Depends(get_db)):
+    """
+    Devuelve la información pública de una mesa basada en su código QR.
+    Soporta formato base ('karaoke-mesa-XX') y formato específico de usuario ('karaoke-mesa-XX-usuarioN').
+    Este endpoint resuelve el error 404 al intentar cargar el dashboard con un QR de usuario.
+    """
+    # Intentar extraer el número de mesa si viene con formato de usuario
+    match_nuevo = re.match(r'karaoke-mesa-(\d+)-usuario\d+', qr_code)
+    if match_nuevo:
+        mesa_numero = match_nuevo.group(1)
+        qr_code_mesa_base = f"karaoke-mesa-{mesa_numero}"
+    else:
+        match_antiguo = re.match(r'karaoke-mesa-(\d+)$', qr_code)
+        if match_antiguo:
+            mesa_numero = match_antiguo.group(1)
+            qr_code_mesa_base = f"karaoke-mesa-{mesa_numero}"
+        else:
+            # Si no hace match con nada, intentamos buscarlo tal cual por si acaso
+            qr_code_mesa_base = qr_code
+
+    db_mesa = crud.get_mesa_by_qr(db, qr_code=qr_code_mesa_base)
+    
+    if not db_mesa:
+        raise HTTPException(
+            status_code=404, 
+            detail=f"La mesa '{qr_code}' no existe. Por favor, verifica el código QR."
+        )
+        
+    return db_mesa

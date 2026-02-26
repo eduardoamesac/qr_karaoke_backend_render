@@ -34,11 +34,7 @@ async def registrar_consumo(
     if error_detail:
         raise HTTPException(status_code=400, detail=error_detail)
     
-    # NUEVO: Agregar al caché de la mesa
-    if db_consumo.usuario and db_consumo.usuario.mesa_id:
-        consumo_cache = jsonable_encoder(db_consumo)
-        cache_manager.add_consumo_to_mesa_cache(db_consumo.usuario.mesa_id, consumo_cache)
-    
+
     # Notificamos la actualización de la cola
     asyncio.create_task(websocket_manager.manager.broadcast_queue_update())
 
@@ -80,11 +76,7 @@ async def usuario_pide_producto(
     if error_detail:
         raise HTTPException(status_code=400, detail=error_detail)
     
-    # NUEVO: Agregar al caché de la mesa
-    if db_consumo.usuario and db_consumo.usuario.mesa_id:
-        consumo_cache = jsonable_encoder(db_consumo)
-        cache_manager.add_consumo_to_mesa_cache(db_consumo.usuario.mesa_id, consumo_cache)
-    
+
     # Notificamos a todos para que la cola se actualice (por si cambia la prioridad)
     asyncio.create_task(websocket_manager.manager.broadcast_queue_update())
 
@@ -127,14 +119,6 @@ async def usuario_pide_carrito(
 
     if error_detail:
         raise HTTPException(status_code=400, detail=error_detail)
-
-    # NUEVO: Agregar todos los consumos al caché de la mesa
-    if consumos_creados:
-        primer_consumo = consumos_creados[0]
-        if primer_consumo.usuario and primer_consumo.usuario.mesa_id:
-            for consumo in consumos_creados:
-                consumo_cache = jsonable_encoder(consumo)
-                cache_manager.add_consumo_to_mesa_cache(primer_consumo.usuario.mesa_id, consumo_cache)
 
     # Notificamos a todos para que la cola se actualice (por si cambia la prioridad)
     asyncio.create_task(websocket_manager.manager.broadcast_queue_update())
