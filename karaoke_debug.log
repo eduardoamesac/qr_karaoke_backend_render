@@ -17288,3 +17288,7 @@ NameError: name 'queue_manager' is not defined
 2026-02-26 11:43:59,093 - queue_manager - INFO - Cache refrescado desde JSON
 2026-02-26 11:44:42,147 - queue_manager - INFO - Cache refrescado desde JSON
 2026-02-26 11:44:42,149 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 11:46:07,213 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 11:46:07,219 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 11:47:23,554 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 11:47:23,559 - queue_manager - INFO - Cache refrescado desde JSON
