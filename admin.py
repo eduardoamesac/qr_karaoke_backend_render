@@ -1119,13 +1119,13 @@ async def admin_mark_consumo_despachado(consumo_id: int, db: Session = Depends(g
     **[Admin]** Marca un consumo como despachado.
     No elimina el consumo de la base de datos, solo lo marca como despachado para que no aparezca en "pedidos recientes".
     """
-    db_consumo = db.query(models.Consumo).filter(models.Consumo.id == consumo_id).first()
-    if not db_consumo:
+    from cache_manager import cache_manager as cache
+    consumo = cache.get_consumo_by_id(consumo_id)
+    if not consumo:
         raise HTTPException(status_code=404, detail='Consumo no encontrado')
 
-    # Mark as dispatched in DB
-    db_consumo.is_dispatched = True
-    db.commit()
+    # Mark as dispatched in cache
+    cache.update_consumo_in_cache(consumo_id, {"is_dispatched": True})
 
     # Notify clients that this consumption should be removed from recent lists
     try:

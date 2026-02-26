@@ -439,9 +439,12 @@ def get_recent_consumos(db: Session, limit: int = 10):
     consumos = cache.get_all_consumos()
     if not consumos:
         return []
+    # Filtrar los que ya fueron despachados
+    consumos_pendientes = [c for c in consumos if not c.get("is_dispatched", False)]
+    
     # Ordenar por created_at descendente y limitar
     sorted_consumos = sorted(
-        consumos, 
+        consumos_pendientes, 
         key=lambda x: x.get("created_at", ""), 
         reverse=True
     )
