@@ -435,7 +435,7 @@ def get_ranking_usuarios(db: Session):
     ]
 
 def get_recent_consumos(db: Session, limit: int = 10):
-    """Obtiene los consumos más recientes desde el cache."""
+    """Obtiene los consumos más recientes desde el cache e hidrata con nombres de BD."""
     consumos = cache.get_all_consumos()
     if not consumos:
         return []
@@ -445,7 +445,33 @@ def get_recent_consumos(db: Session, limit: int = 10):
         key=lambda x: x.get("created_at", ""), 
         reverse=True
     )
-    return sorted_consumos[:limit]
+    recent = sorted_consumos[:limit]
+    
+    if not recent:
+        return []
+        
+    # Enriquecer datos con DB
+    import models
+    user_ids = {c.get("usuario_id") for c in recent if c.get("usuario_id")}
+    prod_ids = {c.get("producto_id") for c in recent if c.get("producto_id")}
+    
+    usuarios = db.query(models.Usuario).filter(models.Usuario.id.in_(user_ids)).all() if user_ids else []
+    productos = db.query(models.Producto).filter(models.Producto.id.in_(prod_ids)).all() if prod_ids else []
+    
+    user_map = {u.id: u.nick for u in usuarios}
+    prod_map = {p.id: p.nombre for p in productos}
+    mesa_map = {m.get("id"): m.get("nombre") for m in cache.get_all_mesas()}
+    
+    enriched = []
+    for c in recent:
+        c_copy = dict(c)
+        c_copy["usuario_nick"] = user_map.get(c.get("usuario_id"), "Desconocido")
+        c_copy["producto_nombre"] = prod_map.get(c.get("producto_id"), "Desconocido")
+        if c.get("mesa_id"):
+            c_copy["mesa_nombre"] = mesa_map.get(c.get("mesa_id"))
+        enriched.append(c_copy)
+        
+    return enriched
 
 def get_resumen_noche(db: Session):
     """Obtiene un resumen de la noche desde datos en cache y BD."""
