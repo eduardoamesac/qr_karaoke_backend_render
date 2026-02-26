@@ -12,6 +12,7 @@ class QueueValidator {
   constructor() {
     this.debugVisible = false;
     this.lastDebugReport = null;
+    window.queueValidator = this; // Asegurar referencia global inmediata
     this.initDebugPanel();
   }
 
@@ -47,7 +48,7 @@ class QueueValidator {
         bottom: 20px;
         right: 20px;
         width: 400px;
-        max-height: 600px;
+        max-height: 85vh;
         background: #1a1a1a;
         border: 2px solid #00ff00;
         border-radius: 8px;
@@ -55,10 +56,10 @@ class QueueValidator {
         font-family: monospace;
         font-size: 11px;
         color: #00ff00;
-        z-index: 9999;
+        z-index: 10000;
         overflow-y: auto;
         display: none;
-        box-shadow: 0 0 10px rgba(0,255,0,0.3);
+        box-shadow: 0 0 20px rgba(0,255,0,0.4);
       `;
       document.body.appendChild(panel);
     }
@@ -88,8 +89,10 @@ class QueueValidator {
    * Obtiene y muestra el reporte completo de debug
    */
   async refreshDebugReport() {
+    const btn = document.getElementById('debug-btn-refresh');
+    if (btn) btn.textContent = '⏳ ACTUALIZANDO...';
+
     try {
-      // Usar apiFetch global para incluir prefijo /api/v1 y X-API-Key
       const report = await apiFetch('/admin/queue/debug');
       this.lastDebugReport = report;
       this.renderDebugReport(report);
@@ -107,16 +110,16 @@ class QueueValidator {
     let html = '';
 
     // ========== TÍTULO ==========
-    html += '<h3 style="color:#00ff00; margin-top:0;">🔍 QUEUE DEBUG REPORT</h3>';
+    html += '<h3 style="color:#00ff00; margin-top:0;">🔍 QUEUE DEBUG REPORT [v2.2]</h3>';
     html += `<div style="color:#ff6600; margin-bottom:10px;">⏱ ${new Date(report.timestamp).toLocaleTimeString()}</div>`;
 
     // ========== QUÉ VA A REPRODUCIR ==========
     const playing = report.what_will_play;
     html += '<div style="border-bottom:1px solid #00ff00; padding-bottom:8px; margin-bottom:8px;">';
-    html += '<h4 style="color:#ffff00;">🎵 QUÉ VA A REPRODUCIR:</h4>';
+    html += '<h4 style="color:#ffff00; margin: 4px 0;">🎵 QUÉ VA A REPRODUCIR:</h4>';
 
     if (playing.status === 'empty') {
-      html += '<span style="color:#ff0000;">❌ COLA VACÍA - NADA VA A REPRODUCIR</span>';
+      html += '<span style="color:#ff0000;">❌ COLA VACÍA</span>';
     } else if (playing.status === 'waiting_for_approval') {
       html += `<span style="color:#ffaa00;">⏳ ESPERANDO APROBACIÓN</span><br/>`;
       html += `First: <strong>${playing.first_lazy_waiting.titulo}</strong>`;
@@ -128,31 +131,19 @@ class QueueValidator {
       html += `<strong>${playing.now_playing.titulo}</strong><br/>`;
       html += `User: ${playing.now_playing.usuario}<br/>`;
       html += `Progress: ${playing.now_playing.progress_percent}%<br/>`;
-      html += `<br/>`;
-      html += `<span style="color:#ffff00;">↓ SIGUIENTE:</span><br/>`;
-      if (playing.next_after_current) {
-        html += `${playing.next_after_current.titulo}`;
-      } else {
-        html += `<span style="color:#ff0000;">NINGUNA</span>`;
-      }
+      html += `<br/><span style="color:#ffff00;">↓ SIGUIENTE:</span><br/>`;
+      html += playing.next_after_current ? playing.next_after_current.titulo : '<span style="color:#ff0000;">NINGUNA</span>';
     }
     html += '</div>';
 
-    // ========== NEXT 20 EN QUEUE ==========
+    // ========== NEXT 10 EN QUEUE ==========
     html += '<div style="border-bottom:1px solid #00ff00; padding-bottom:8px; margin-bottom:8px;">';
-    html += '<h4 style="color:#ffff00;">📋 PRÓXIMAS 20 EN LA COLA (orden real):</h4>';
+    html += '<h4 style="color:#ffff00; margin: 4px 0;">📋 PRÓXIMAS EN COLA (REAL):</h4>';
     if (playing.next_20_in_queue && playing.next_20_in_queue.length > 0) {
       html += '<table style="width:100%; font-size:10px;">';
       playing.next_20_in_queue.slice(0, 10).forEach((song, idx) => {
-        html += `<tr>`;
-        html += `<td style="color:#00ff00; width:30px;">#${idx + 1}</td>`;
-        html += `<td>${song.titulo.substring(0, 25)}</td>`;
-        html += `<td style="color:#aaa; width:50px;">${song.usuario}</td>`;
-        html += `</tr>`;
+        html += `<tr><td style="color:#00ff00; width:25px;">#${idx + 1}</td><td>${song.titulo.substring(0, 25)}</td><td style="color:#aaa; text-align:right;">${song.usuario}</td></tr>`;
       });
-      if (playing.next_20_in_queue.length > 10) {
-        html += `<tr><td colspan="3" style="color:#666;">... y ${playing.next_20_in_queue.length - 10} más</td></tr>`;
-      }
       html += '</table>';
     } else {
       html += '<span style="color:#ff0000;">NINGUNA</span>';
@@ -162,100 +153,54 @@ class QueueValidator {
     // ========== INTEGRIDAD ==========
     const checks = report.integrity_checks;
     html += '<div style="border-bottom:1px solid #00ff00; padding-bottom:8px; margin-bottom:8px;">';
-    html += '<h4 style="color:#ffff00;">✓ INTEGRIDAD:</h4>';
-    html += `<div style="color:${checks.now_playing_not_in_approved ? '#00ff00' : '#ff0000'};">
-      ${checks.now_playing_not_in_approved ? '✓' : '❌'} now_playing no en approved
-    </div>`;
-    html += `<div style="color:${checks.no_duplicates ? '#00ff00' : '#ff0000'};">
-      ${checks.no_duplicates ? '✓' : '❌'} Sin duplicados
-    </div>`;
-    html += `<div style="color:${checks.all_approved_have_correct_status ? '#00ff00' : '#ff0000'};">
-      ${checks.all_approved_have_correct_status ? '✓' : '❌'} States correctos (aprobado)
-    </div>`;
-    html += `<div style="color:${checks.all_lazy_have_correct_status ? '#00ff00' : '#ff0000'};">
-      ${checks.all_lazy_have_correct_status ? '✓' : '❌'} States correctos (lazy)
-    </div>`;
+    html += '<h4 style="color:#ffff00; margin: 4px 0;">✓ INTEGRIDAD:</h4>';
+    html += `<div style="color:${checks.now_playing_not_in_approved ? '#00ff00' : '#ff0000'};">${checks.now_playing_not_in_approved ? '✓' : '❌'} now_playing no en approved</div>`;
+    html += `<div style="color:${checks.no_duplicates ? '#00ff00' : '#ff0000'};">${checks.no_duplicates ? '✓' : '❌'} Sin duplicados</div>`;
+    html += `<div style="color:${checks.all_approved_have_correct_status ? '#00ff00' : '#ff0000'};">${checks.all_approved_have_correct_status ? '✓' : '❌'} States correctos</div>`;
     html += '</div>';
-
-    // ========== ISSUES ==========
-    if (report.issues && report.issues.length > 0) {
-      html += '<div style="border-bottom:1px solid #ff0000; padding-bottom:8px; margin-bottom:8px;">';
-      html += `<h4 style="color:#ff0000;">⚠ PROBLEMAS (${report.issues.length}):</h4>`;
-      report.issues.slice(0, 5).forEach((issue) => {
-        const color = issue.severity === 'CRITICAL' ? '#ff0000' : '#ffaa00';
-        html += `<div style="color:${color}; margin-bottom:4px;">`;
-        html += `[${issue.severity}] ${issue.issue}`;
-        if (issue.cancion_id) html += ` (ID: ${issue.cancion_id})`;
-        html += '</div>';
-      });
-      html += '</div>';
-    }
 
     // ========== ESTADÍSTICAS BD ==========
     const db = report.database_state;
     html += '<div style="border-bottom:1px solid #00ff00; padding-bottom:8px;">';
-    html += '<h4 style="color:#ffff00;">📊 ESTADO BD:</h4>';
-    html += `Reproduciendo: <strong>${db.reproduciendo_count}</strong><br/>`;
-    html += `Aprobadas: <strong style="color:#00ff00;">${db.aprobado_count}</strong><br/>`;
-    html += `Lazy: <strong>${db.pendiente_lazy_count}</strong><br/>`;
-    html += `Pendientes: <strong>${db.pendiente_count}</strong><br/>`;
+    html += '<h4 style="color:#ffff00; margin: 4px 0;">📊 ESTADO BD:</h4>';
+    html += `Reproduciendo: <strong>${db.reproduciendo_count}</strong> | Aprobadas: <strong style="color:#00ff00;">${db.aprobado_count}</strong> | Lazy: <strong>${db.pendiente_lazy_count}</strong>`;
     html += '</div>';
 
-    // ========== BOTONES DE ACCIÓN ==========
-    html += '<div style="margin-top:10px;">';
-    html += `<button onclick="window.queueValidator.refreshDebugReport()" style="
-      width: 100%;
-      padding: 6px;
-      background: #00ff00;
-      color: #000;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      margin-bottom: 4px;
-    ">🔄 REFRESCAR</button>`;
-
-    html += `<button onclick="window.queueValidator.compareUIVsReality()" style="
-      width: 100%;
-      padding: 6px;
-      background: #00aaff;
-      color: #000;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      margin-bottom: 4px;
-    ">🔎 COMPARAR UI vs REALIDAD</button>`;
-
-    html += `<button onclick="console.log(window.queueValidator.lastDebugReport)" style="
-      width: 100%;
-      padding: 6px;
-      background: #ffaa00;
-      color: #000;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    ">📋 VER JSON</button>`;
-    html += '</div>';
+    // ========== BOTONES ==========
+    html += `
+      <div style="margin-top:12px; display: flex; flex-direction: column; gap: 8px;">
+        <button id="debug-btn-refresh" style="padding:10px; background:#00ff00; color:#000; border:none; border-radius:4px; font-weight:bold; cursor:pointer;">🔄 REFRESCAR</button>
+        <button id="debug-btn-compare" style="padding:10px; background:#00aaff; color:#000; border:none; border-radius:4px; font-weight:bold; cursor:pointer;">🔎 COMPARAR UI vs REALIDAD</button>
+        <button id="debug-btn-json" style="padding:10px; background:#ffaa00; color:#000; border:none; border-radius:4px; font-weight:bold; cursor:pointer;">📋 VER JSON (CONSOLA)</button>
+        <button id="debug-btn-close" style="padding:6px; background:#444; color:#fff; border:none; border-radius:4px; cursor:pointer;">✖ CERRAR</button>
+      </div>`;
 
     panel.innerHTML = html;
+
+    // Asignar eventos programáticamente
+    setTimeout(() => {
+      document.getElementById('debug-btn-refresh')?.addEventListener('click', () => this.refreshDebugReport());
+      document.getElementById('debug-btn-compare')?.addEventListener('click', () => this.compareUIVsReality());
+      document.getElementById('debug-btn-json')?.addEventListener('click', () => console.log('DEBUG REPORT:', this.lastDebugReport));
+      document.getElementById('debug-btn-close')?.addEventListener('click', () => this.toggleDebugPanel());
+    }, 10);
   }
 
   /**
-   * Compara lo que muestra la UI vs la realidad en BD
+   * Compara UI vs Realidad
    */
   async compareUIVsReality() {
+    const btn = document.getElementById('debug-btn-compare');
+    if (btn) btn.textContent = '⏳ COMPARANDO...';
+
     const upcomingContainer = document.getElementById('upcoming-list');
     const nowPlayingContainer = document.getElementById('now-playing-container');
-
-    // Capturar estado visual actual
-    const uiCancionesList = Array.from(upcomingContainer.querySelectorAll('[data-cancion-id]'));
-    const uiNowPlayingId = nowPlayingContainer.querySelector('[data-cancion-id]')?.dataset.cancionId;
+    const uiCancionesList = Array.from(upcomingContainer?.querySelectorAll('[data-cancion-id]') || []);
+    const uiNowPlayingId = nowPlayingContainer?.querySelector('[data-cancion-id]')?.dataset.cancionId;
 
     const uiState = {
       now_playing: uiNowPlayingId ? { id: parseInt(uiNowPlayingId) } : null,
-      upcoming: uiCancionesList.map(el => ({
-        id: parseInt(el.dataset.cancionId),
-        titulo: el.textContent
-      }))
+      upcoming: uiCancionesList.map(el => ({ id: parseInt(el.dataset.cancionId), titulo: el.textContent }))
     };
 
     try {
@@ -263,136 +208,66 @@ class QueueValidator {
         method: 'POST',
         body: JSON.stringify(uiState)
       });
-
       this.renderComparisonReport(comparison);
     } catch (error) {
-      console.error('Error comparing UI vs reality:', error);
+      console.error('Error comparing:', error);
+      this.updatePanel(`❌ Error en comparación: ${error.message}`);
     }
   }
 
   /**
-   * Renderiza el reporte de comparación
+   * Renderiza reporte de comparación
    */
   renderComparisonReport(comparison) {
-    const debugContent = document.getElementById('queue-debug-panel');
-    let html = '';
+    const panel = document.getElementById('queue-debug-panel');
+    let html = '<h3 style="color:#00aaff; margin-top:0;">🔎 COMPARACIÓN UI vs BD</h3>';
 
-    html += '<h3 style="color:#ffff00;">🔎 UI vs REALIDAD - COMPARACIÓN</h3>';
-
-    // Estado actual
-    html += '<div style="border:1px solid #00aaff; padding:8px; margin-bottom:8px;">';
-    html += '<span style="color:#00aaff;">UI MUESTRA:</span><br/>';
-    html += `Now Playing ID: ${comparison.ui_state.now_playing_id || 'NINGUNA'}<br/>`;
-    html += `Upcoming: ${comparison.ui_state.upcoming_count} canciones<br/>`;
-    html += '</div>';
-
-    html += '<div style="border:1px solid #00ff00; padding:8px; margin-bottom:8px;">';
-    html += '<span style="color:#00ff00;">REALIDAD EN BD:</span><br/>';
-    html += `Now Playing ID: ${comparison.reality_state.now_playing_id || 'NINGUNA'}<br/>`;
-    html += `Upcoming: ${comparison.reality_state.upcoming_count} canciones<br/>`;
-    html += '</div>';
-
-    // Resumen
-    const summary = comparison.summary;
-    html += `<div style="color:${summary.is_synchronized ? '#00ff00' : '#ff0000'}; font-weight:bold; margin-bottom:8px;">
-      ${summary.is_synchronized ? '✓ SINCRONIZADO' : '❌ DESINCRONIZADO'}
+    // Sincronización
+    const isSync = comparison.summary.is_synchronized;
+    html += `<div style="padding:10px; background:${isSync ? 'rgba(0,255,0,0.1)' : 'rgba(255,0,0,0.1)'}; color:${isSync ? '#00ff00' : '#ff0000'}; border:1px solid; border-radius:4px; margin-bottom:12px; font-weight:bold; text-align:center;">
+      ${isSync ? '✓ TODO SINCRONIZADO' : '❌ DESINCRONIZADO'}
     </div>`;
 
+    // Detalles
+    html += `<div style="margin-bottom:12px;">`;
+    html += `<div style="color:#00aaff;">UI Muestra: ${comparison.ui_state.upcoming_count} temas</div>`;
+    html += `<div style="color:#00ff00;">BD Realidad: ${comparison.reality_state.upcoming_count} temas</div>`;
+    html += `</div>`;
+
+    // Discrepancias
     if (comparison.discrepancies.length > 0) {
-      html += '<div style="border:1px solid #ff0000; padding:8px; margin-bottom:8px;">';
-      html += `<span style="color:#ff0000;">⚠ ${summary.critical_issues} PROBLEMAS CRÍTICOS, ${summary.warnings} ADVERTENCIAS</span><br/>`;
-
-      comparison.discrepancies.forEach((disc) => {
-        const color = disc.severity === 'CRITICAL' ? '#ff0000' : '#ffaa00';
-        html += `<div style="color:${color}; margin-top:6px; padding: 4px; background:rgba(255,0,0,0.1);">`;
-        html += `<strong>[${disc.type.toUpperCase()}]</strong> ${disc.message}`;
-
-        if (disc.type === 'hidden_songs' && disc.hidden_songs_details) {
-          html += `<br/>🔴 CANCIONES ESCONDIDAS EN BD (${disc.hidden_songs_details.length}):`;
-          disc.hidden_songs_details.slice(0, 5).forEach((song) => {
-            html += `<br/>&nbsp;&nbsp;ID ${song.id}: <strong>${song.titulo}</strong> (${song.usuario})`;
-          });
+      html += '<div style="border:1px solid #ff0000; padding:8px; margin-bottom:12px;">';
+      html += `<h4 style="color:#ff0000; margin:0 0 8px 0;">⚠ DISCREPANCIAS (${comparison.discrepancies.length})</h4>`;
+      comparison.discrepancies.forEach(d => {
+        html += `<div style="margin-bottom:8px; border-left:2px solid; padding-left:6px; border-color:${d.severity === 'CRITICAL' ? '#ff0000' : '#ffaa00'};">`;
+        html += `<strong>[${d.type}]</strong> ${d.message}`;
+        if (d.type === 'hidden_songs' && d.hidden_songs_details) {
+          d.hidden_songs_details.slice(0, 3).forEach(s => html += `<div style="font-size:9px; color:#aaa;">▪ ID ${s.id}: ${s.titulo}</div>`);
         }
-
-        if (disc.type === 'phantom_songs') {
-          html += `<br/>👻 IDs en UI pero NO en BD: ${disc.phantom_song_ids.join(', ')}`;
-        }
-
-        html += '</div>';
+        html += `</div>`;
       });
-
       html += '</div>';
-    } else {
-      html += '<div style="color:#00ff00; padding:8px; background:rgba(0,255,0,0.1);">✓ TODO SINCRONIZADO</div>';
     }
 
-    html += '<div style="margin-top:10px;">';
-    html += `<button onclick="window.queueValidator.refreshDebugReport()" style="
-      width: 100%;
-      padding: 6px;
-      background: #00ff00;
-      color: #000;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    ">← VOLVER</button>`;
-    html += '</div>';
+    html += `<button id="debug-btn-back" style="width:100%; padding:10px; background:#444; color:#fff; border:none; border-radius:4px; cursor:pointer; font-weight:bold;">← VOLVER AL REPORTE</button>`;
 
-    debugContent.innerHTML = html;
+    panel.innerHTML = html;
+
+    setTimeout(() => {
+      document.getElementById('debug-btn-back')?.addEventListener('click', () => this.refreshDebugReport());
+    }, 10);
   }
 
-  /**
-   * Actualiza el panel con texto
-   */
   updatePanel(text) {
     const panel = document.getElementById('queue-debug-panel');
-    panel.innerHTML = `<pre style="margin:0;">${text}</pre>`;
+    panel.innerHTML = `<h3 style="color:#ff0000;">ERROR</h3><pre style="white-space:pre-wrap;">${text}</pre><button id="debug-btn-err-back" style="width:100%; padding:10px; background:#444; color:#fff; border:none; border-radius:4px; cursor:pointer;">← VOLVER</button>`;
+    setTimeout(() => {
+      document.getElementById('debug-btn-err-back')?.addEventListener('click', () => this.refreshDebugReport());
+    }, 10);
   }
 
-  /**
-   * Monitorea cambios en la cola
-   */
-  startMonitoring() {
-    return; // Desactivado porque la cola fue eliminada
-  }
-
-  /**
-   * Valida consistencia de la cola sin mostrar UI
-   */
-  async validateQueueConsistency() {
-    try {
-      const report = await apiFetch('/admin/queue/debug');
-
-      // Chequeos rápidos
-      if (!report.integrity_checks.now_playing_not_in_approved) {
-        console.error('❌ CRITICAL: now_playing en approved!');
-      }
-
-      if (report.integrity_checks.issues_detected) {
-        console.warn('⚠ Issues detectadas:', report.issues.length);
-      }
-
-      // Detectar canciones escondidas
-      const hidden = report.database_state.aprobado_count - this.visibleSongsCount;
-      if (hidden > 0) {
-        console.warn(`⚠ ${hidden} CANCIONES ESCONDIDAS en BD!`);
-      }
-    } catch (error) {
-      // Silent
-    }
-  }
-
-  get visibleSongsCount() {
-    return document.querySelectorAll('[data-cancion-id]').length;
-  }
+  startMonitoring() { return; }
 }
 
-// Instancia global
-const queueValidator = new QueueValidator();
-window.queueValidator = queueValidator;
-
-// Auto-iniciar monitoreo
-window.addEventListener('load', () => {
-  queueValidator.startMonitoring();
-  console.log('Queue Validator iniciado. Presiona Ctrl+Shift+Q para abrir debug panel.');
-});
+// Instanciar
+new QueueValidator();
