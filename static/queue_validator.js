@@ -35,6 +35,29 @@ class QueueValidator {
 
   /**
    * Inicializa el panel de debug
+   */
+  initDebugPanel() {
+    // Crear elemento si no existe
+    if (!document.getElementById('queue-debug-panel')) {
+      const panel = document.createElement('div');
+      panel.id = 'queue-debug-panel';
+
+      panel.style.cssText = `
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        width: 400px;
+        max-height: 600px;
+        background: #1a1a1a;
+        border: 2px solid #00ff00;
+        border-radius: 8px;
+        padding: 12px;
+        font-family: monospace;
+        font-size: 11px;
+        color: #00ff00;
+        z-index: 9999;
+        overflow-y: auto;
+        display: none;
         box-shadow: 0 0 10px rgba(0,255,0,0.3);
       `;
       document.body.appendChild(panel);
@@ -180,7 +203,7 @@ class QueueValidator {
 
     // ========== BOTONES DE ACCIÓN ==========
     html += '<div style="margin-top:10px;">';
-    html += `<button onclick="queueValidator.refreshDebugReport()" style="
+    html += `<button onclick="window.queueValidator.refreshDebugReport()" style="
       width: 100%;
       padding: 6px;
       background: #00ff00;
@@ -191,7 +214,7 @@ class QueueValidator {
       margin-bottom: 4px;
     ">🔄 REFRESCAR</button>`;
 
-    html += `<button onclick="queueValidator.compareUIVsReality()" style="
+    html += `<button onclick="window.queueValidator.compareUIVsReality()" style="
       width: 100%;
       padding: 6px;
       background: #00aaff;
@@ -202,7 +225,7 @@ class QueueValidator {
       margin-bottom: 4px;
     ">🔎 COMPARAR UI vs REALIDAD</button>`;
 
-    html += `<button onclick="console.log(queueValidator.lastDebugReport)" style="
+    html += `<button onclick="console.log(window.queueValidator.lastDebugReport)" style="
       width: 100%;
       padding: 6px;
       background: #ffaa00;
@@ -276,11 +299,7 @@ class QueueValidator {
     </div>`;
 
     if (comparison.discrepancies.length > 0) {
-      let html = `
-  <div style="border:1px solid #ff0000; padding:8px;">
-    ...
-  </div>
-`;
+      html += '<div style="border:1px solid #ff0000; padding:8px; margin-bottom:8px;">';
       html += `<span style="color:#ff0000;">⚠ ${summary.critical_issues} PROBLEMAS CRÍTICOS, ${summary.warnings} ADVERTENCIAS</span><br/>`;
 
       comparison.discrepancies.forEach((disc) => {
@@ -308,7 +327,7 @@ class QueueValidator {
     }
 
     html += '<div style="margin-top:10px;">';
-    html += `<button onclick="queueValidator.refreshDebugReport()" style="
+    html += `<button onclick="window.queueValidator.refreshDebugReport()" style="
       width: 100%;
       padding: 6px;
       background: #00ff00;

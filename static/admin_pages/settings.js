@@ -312,12 +312,8 @@ function renderSettings(settings, container) {
                 <p>Verificar estado real de la cola y sincronización</p>
             </div>
         </div>
+        <button class="bees-btn bees-btn-success" onclick="if(window.queueValidator) { window.queueValidator.toggleDebugPanel() } else { alert('Herramienta de debug no cargada') }" style="width: 100%; margin-top: 10px; padding: 12px;">🔍 DEBUG COLA</button>
     `;
-
-    // Inyectar botón de debug si existe la instancia global
-    if (window.queueValidator) {
-        window.queueValidator.createStaticDebugButton(debugCard);
-    }
     cardsContainer.appendChild(debugCard);
 
     // ============= TARJETA 8: ZONA PELIGROSA =============

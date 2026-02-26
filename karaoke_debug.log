@@ -17267,3 +17267,17 @@ NameError: name 'queue_manager' is not defined
 2026-02-26 10:49:14,130 - queue_manager - INFO - Cache refrescado desde JSON
 2026-02-26 10:49:14,146 - queue_manager - INFO - Cache refrescado desde JSON
 2026-02-26 10:49:14,157 - crud - INFO - 📭 No hay más canciones en cola.
+2026-02-26 10:57:13,512 - song_credits_background - INFO - Credits background task started
+2026-02-26 10:57:13,698 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 10:57:13,698 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 10:57:46,218 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 10:57:46,312 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 10:57:54,155 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 10:57:54,176 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 11:07:59,717 - song_credits_background - INFO - Credits background task started
+2026-02-26 11:08:01,919 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 11:08:01,936 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 11:08:16,972 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 11:08:17,033 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 11:14:36,935 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 11:14:36,954 - queue_manager - INFO - Cache refrescado desde JSON
