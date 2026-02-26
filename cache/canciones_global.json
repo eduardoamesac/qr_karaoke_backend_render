@@ -489,12 +489,12 @@
       "titulo": "Me Quedare Solo",
       "duracion_seconds": 262,
       "usuario_id": 1,
-      "estado": "reproduciendo",
+      "estado": "cantada",
       "created_at": "2026-02-26T11:54:12.873435-05:00",
       "approved_at": null,
       "rejected_at": null,
       "started_at": "2026-02-26T11:55:14.382700-05:00",
-      "finished_at": null
+      "finished_at": "2026-02-26T15:15:25.307972-05:00"
     },
     "1772124880249": {
       "id": 1772124880249,
@@ -502,12 +502,12 @@
       "titulo": "HEREDERO - Cosita (Video Oficial)",
       "duracion_seconds": 196,
       "usuario_id": 1,
-      "estado": "pendiente_lazy",
+      "estado": "cantada",
       "created_at": "2026-02-26T11:54:40.248891-05:00",
       "approved_at": null,
       "rejected_at": null,
-      "started_at": null,
-      "finished_at": null
+      "started_at": "2026-02-26T15:15:25.345388-05:00",
+      "finished_at": "2026-02-26T15:18:45.645601-05:00"
     },
     "1772124882716": {
       "id": 1772124882716,
@@ -515,7 +515,7 @@
       "titulo": "HEREDERO - Linda (Video Oficial)",
       "duracion_seconds": 181,
       "usuario_id": 1,
-      "estado": "pendiente_lazy",
+      "estado": "rechazada",
       "created_at": "2026-02-26T11:54:42.715905-05:00",
       "approved_at": null,
       "rejected_at": null,
@@ -528,12 +528,12 @@
       "titulo": "HEREDERO - Muero Llorando (Video Oficial)",
       "duracion_seconds": 247,
       "usuario_id": 1,
-      "estado": "pendiente_lazy",
+      "estado": "cantada",
       "created_at": "2026-02-26T11:54:48.337212-05:00",
       "approved_at": null,
       "rejected_at": null,
-      "started_at": null,
-      "finished_at": null
+      "started_at": "2026-02-26T15:18:45.665550-05:00",
+      "finished_at": "2026-02-26T15:22:54.384086-05:00"
     },
     "1772124892413": {
       "id": 1772124892413,
@@ -541,12 +541,12 @@
       "titulo": "HEREDERO - Linda (Video Oficial)",
       "duracion_seconds": 181,
       "usuario_id": 1,
-      "estado": "pendiente_lazy",
+      "estado": "cantada",
       "created_at": "2026-02-26T11:54:52.412962-05:00",
       "approved_at": null,
       "rejected_at": null,
-      "started_at": null,
-      "finished_at": null
+      "started_at": "2026-02-26T15:22:54.436453-05:00",
+      "finished_at": "2026-02-26T15:25:57.149189-05:00"
     },
     "1772124899506": {
       "id": 1772124899506,
@@ -554,12 +554,12 @@
       "titulo": "HEREDERO - La Ley (Audio Oficial)",
       "duracion_seconds": 196,
       "usuario_id": 1,
-      "estado": "pendiente_lazy",
+      "estado": "cantada",
       "created_at": "2026-02-26T11:54:59.505724-05:00",
       "approved_at": null,
       "rejected_at": null,
-      "started_at": null,
-      "finished_at": null
+      "started_at": "2026-02-26T15:25:57.174457-05:00",
+      "finished_at": "2026-02-26T15:29:14.333231-05:00"
     },
     "1772124902405": {
       "id": 1772124902405,
@@ -567,12 +567,12 @@
       "titulo": "HEREDERO - Hasta El Sol (Audio Oficial)",
       "duracion_seconds": 247,
       "usuario_id": 1,
-      "estado": "pendiente_lazy",
+      "estado": "cantada",
       "created_at": "2026-02-26T11:55:02.404247-05:00",
       "approved_at": null,
       "rejected_at": null,
-      "started_at": null,
-      "finished_at": null
+      "started_at": "2026-02-26T15:29:14.355144-05:00",
+      "finished_at": "2026-02-26T15:33:22.108945-05:00"
     }
   },
   "next_id": 4

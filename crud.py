@@ -117,18 +117,59 @@ def create_producto(db: Session, producto: schemas.ProductoCreate):
     db.refresh(db_producto)
     return db_producto
 
-def update_producto(db: Session, producto_id: int, producto_data: dict):
+def update_producto(db: Session, producto_id: int, producto_update: schemas.ProductoCreate):
     """Actualiza un producto."""
     db_producto = db.query(models.Producto).filter(models.Producto.id == producto_id).first()
     if not db_producto:
         return None
     
+    producto_data = producto_update.dict(exclude_unset=True)
     for key, value in producto_data.items():
         if hasattr(db_producto, key) and value is not None:
             setattr(db_producto, key, value)
     
     db.commit()
     db.refresh(db_producto)
+    return db_producto
+
+def delete_producto(db: Session, producto_id: int):
+    """Elimina un producto de la base de datos por su ID."""
+    db_producto = db.query(models.Producto).filter(models.Producto.id == producto_id).first()
+    if not db_producto:
+        return None, "Producto no encontrado."
+
+    # Verificar si el producto tiene consumos asociados en el CACHE
+    consumos_globales = cache.get_all_consumos()
+    tiene_consumos = any(c.get("producto_id") == producto_id for c in consumos_globales)
+
+    if tiene_consumos:
+        # Si tiene consumos, solo lo desactivamos para no romper el historial
+        db_producto.is_active = False
+        db.commit()
+        db.refresh(db_producto)
+        return db_producto, "El producto tiene consumos asociados y ha sido desactivado."
+    else:
+        # Si no hay consumos, se puede borrar de forma segura.
+        db.delete(db_producto)
+        db.commit()
+        return None, "Producto eliminado permanentemente."
+
+def update_producto_valor(db: Session, producto_id: int, nuevo_valor: Decimal):
+    """Actualiza el precio de un producto."""
+    db_producto = db.query(models.Producto).filter(models.Producto.id == producto_id).first()
+    if db_producto:
+        db_producto.valor = nuevo_valor
+        db.commit()
+        db.refresh(db_producto)
+    return db_producto
+
+def update_producto_active_status(db: Session, producto_id: int, is_active: bool):
+    """Actualiza el estado de activación de un producto."""
+    db_producto = db.query(models.Producto).filter(models.Producto.id == producto_id).first()
+    if db_producto:
+        db_producto.is_active = is_active
+        db.commit()
+        db.refresh(db_producto)
     return db_producto
 
 # ================================================================================

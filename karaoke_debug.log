@@ -17292,3 +17292,160 @@ NameError: name 'queue_manager' is not defined
 2026-02-26 11:46:07,219 - queue_manager - INFO - Cache refrescado desde JSON
 2026-02-26 11:47:23,554 - queue_manager - INFO - Cache refrescado desde JSON
 2026-02-26 11:47:23,559 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 11:53:34,642 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 11:53:34,649 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 11:54:01,881 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'amistades peligrosas'
+2026-02-26 11:54:01,893 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'amistades peligrosas' (Karaoke Mode: False)
+2026-02-26 11:54:05,074 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-02-26 11:54:05,074 - youtube - INFO - Búsqueda por texto: 'amistades peligrosas'
+2026-02-26 11:54:05,074 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-02-26 11:54:05,804 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=amistades+peligrosas&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-02-26 11:54:05,812 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-02-26 11:54:05,814 - youtube - INFO - IDs de video encontrados: ['95JHOXoXR6M', 'bWQul83KtqI', 'u6c45acypTQ', 'e48oXY7QMm8', '2OFTs7ix9w0', 'k6c7UUhScPw', 'GBH9Nll5nFA', 'Tsj8e9x9S_s', '2wUsAA7J3ko', 'Z-8kzNM7x54']
+2026-02-26 11:54:05,817 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-02-26 11:54:06,031 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=95JHOXoXR6M%2CbWQul83KtqI%2Cu6c45acypTQ%2Ce48oXY7QMm8%2C2OFTs7ix9w0%2Ck6c7UUhScPw%2CGBH9Nll5nFA%2CTsj8e9x9S_s%2C2wUsAA7J3ko%2CZ-8kzNM7x54&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-02-26 11:54:06,037 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-02-26 11:54:06,041 - youtube - INFO - Procesamiento finalizado. Se encontraron 10 resultados formateados.
+2026-02-26 11:54:06,067 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'amistades peligrosas'
+2026-02-26 11:54:06,076 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'amistades peligrosas' (Karaoke Mode: False)
+2026-02-26 11:54:08,190 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-02-26 11:54:08,191 - youtube - INFO - Búsqueda por texto: 'amistades peligrosas'
+2026-02-26 11:54:08,192 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-02-26 11:54:08,824 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=amistades+peligrosas&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-02-26 11:54:08,841 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-02-26 11:54:08,845 - youtube - INFO - IDs de video encontrados: ['95JHOXoXR6M', 'bWQul83KtqI', 'u6c45acypTQ', '2OFTs7ix9w0', 'e48oXY7QMm8', 'k6c7UUhScPw', 'GBH9Nll5nFA', 'Tsj8e9x9S_s', '2wUsAA7J3ko', 'gqeRv44OGCk']
+2026-02-26 11:54:08,855 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-02-26 11:54:09,051 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=95JHOXoXR6M%2CbWQul83KtqI%2Cu6c45acypTQ%2C2OFTs7ix9w0%2Ce48oXY7QMm8%2Ck6c7UUhScPw%2CGBH9Nll5nFA%2CTsj8e9x9S_s%2C2wUsAA7J3ko%2CgqeRv44OGCk&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-02-26 11:54:09,059 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-02-26 11:54:09,059 - youtube - INFO - Procesamiento finalizado. Se encontraron 10 resultados formateados.
+2026-02-26 11:54:12,903 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 11:54:12,904 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 11:54:12,905 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 11:54:24,464 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'heredero'
+2026-02-26 11:54:24,464 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'heredero' (Karaoke Mode: False)
+2026-02-26 11:54:26,120 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-02-26 11:54:26,121 - youtube - INFO - Búsqueda por texto: 'heredero'
+2026-02-26 11:54:26,124 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-02-26 11:54:26,775 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=heredero&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-02-26 11:54:26,775 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-02-26 11:54:26,792 - youtube - INFO - IDs de video encontrados: ['KI3pWvM19Pc', 'sU8FqZQOK3k', 'mspgrI-m06I', 'bZLojmRvRd8', 'NP3LASw8uWY', 'O_Jv-_nEqWk', '9o1ea3O_GTs', 'tvUc8GEovac', 'dLeN4bdCuiM', 'KTT2QhqY23g', 'Zk9q-g3DsAo', 'IfoPQ7mGIT0', '76aba24n66U', '7DQp2ZO-m5g', 'SAe4DxIadxM', '3JKeF3E_lLU', 'N51Iw0B6mYY', 'ibhzpdh6WDg', 'nynPa8zqRdc', 'bu5WOIoGAIU', 'h9kFWlvox_g', 'tgP8IWUXY_s', 'bwq4MCxBOPY', 'uswZszIYTj0']
+2026-02-26 11:54:26,792 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-02-26 11:54:27,033 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=KI3pWvM19Pc%2CsU8FqZQOK3k%2CmspgrI-m06I%2CbZLojmRvRd8%2CNP3LASw8uWY%2CO_Jv-_nEqWk%2C9o1ea3O_GTs%2CtvUc8GEovac%2CdLeN4bdCuiM%2CKTT2QhqY23g%2CZk9q-g3DsAo%2CIfoPQ7mGIT0%2C76aba24n66U%2C7DQp2ZO-m5g%2CSAe4DxIadxM%2C3JKeF3E_lLU%2CN51Iw0B6mYY%2Cibhzpdh6WDg%2CnynPa8zqRdc%2Cbu5WOIoGAIU%2Ch9kFWlvox_g%2CtgP8IWUXY_s%2Cbwq4MCxBOPY%2CuswZszIYTj0&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-02-26 11:54:27,082 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-02-26 11:54:27,163 - youtube - INFO - Procesamiento finalizado. Se encontraron 23 resultados formateados.
+2026-02-26 11:54:27,552 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'heredero'
+2026-02-26 11:54:27,592 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'heredero' (Karaoke Mode: False)
+2026-02-26 11:54:29,273 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-02-26 11:54:29,273 - youtube - INFO - Búsqueda por texto: 'heredero'
+2026-02-26 11:54:29,273 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-02-26 11:54:29,890 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=heredero&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-02-26 11:54:29,890 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-02-26 11:54:29,890 - youtube - INFO - IDs de video encontrados: ['KI3pWvM19Pc', 'mspgrI-m06I', 'sU8FqZQOK3k', 'bZLojmRvRd8', 'NP3LASw8uWY', 'O_Jv-_nEqWk', 'tvUc8GEovac', '9o1ea3O_GTs', 'dLeN4bdCuiM', 'KTT2QhqY23g', 'Zk9q-g3DsAo', '76aba24n66U', 'IfoPQ7mGIT0', '7DQp2ZO-m5g', '3JKeF3E_lLU', 'SAe4DxIadxM', 'h9kFWlvox_g', 'nynPa8zqRdc', 'N51Iw0B6mYY', 'bu5WOIoGAIU', 'ibhzpdh6WDg', 'tgP8IWUXY_s', 'K9TfdDj_sSI', 'uswZszIYTj0']
+2026-02-26 11:54:29,890 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-02-26 11:54:30,074 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=KI3pWvM19Pc%2CmspgrI-m06I%2CsU8FqZQOK3k%2CbZLojmRvRd8%2CNP3LASw8uWY%2CO_Jv-_nEqWk%2CtvUc8GEovac%2C9o1ea3O_GTs%2CdLeN4bdCuiM%2CKTT2QhqY23g%2CZk9q-g3DsAo%2C76aba24n66U%2CIfoPQ7mGIT0%2C7DQp2ZO-m5g%2C3JKeF3E_lLU%2CSAe4DxIadxM%2Ch9kFWlvox_g%2CnynPa8zqRdc%2CN51Iw0B6mYY%2Cbu5WOIoGAIU%2Cibhzpdh6WDg%2CtgP8IWUXY_s%2CK9TfdDj_sSI%2CuswZszIYTj0&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-02-26 11:54:30,091 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-02-26 11:54:30,098 - youtube - INFO - Procesamiento finalizado. Se encontraron 23 resultados formateados.
+2026-02-26 11:54:40,265 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 11:54:40,269 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 11:54:40,269 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 11:54:42,736 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 11:54:42,736 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 11:54:42,736 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 11:54:48,388 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 11:54:48,400 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 11:54:48,416 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 11:54:52,432 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 11:54:52,432 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 11:54:52,432 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 11:54:59,524 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 11:54:59,524 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 11:54:59,532 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 11:55:02,423 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 11:55:02,423 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 11:55:02,423 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 11:55:13,828 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 11:55:13,830 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 11:55:14,378 - crud - INFO - ℹ️ No hay canción reproduciéndose actualmente.
+2026-02-26 11:55:14,381 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 11:55:14,397 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 11:55:14,399 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 11:55:14,400 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 11:55:14,402 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 11:55:14,420 - crud - INFO - 🎵 Iniciando siguiente canción: Me Quedare Solo (ID: 1772124852874)
+2026-02-26 11:55:14,434 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=Tsj8e9x9S_s, duration_seconds=262
+2026-02-26 15:14:38,402 - song_credits_background - INFO - Credits background task started
+2026-02-26 15:14:58,639 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 15:14:58,640 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 15:15:24,782 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 15:15:24,787 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 15:15:25,295 - crud - INFO - 🏁 Finalizando canción actual: Me Quedare Solo (ID: 1772124852874)
+2026-02-26 15:15:25,316 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 15:15:25,324 - queue_manager - INFO - 🚀 No hay canciones aprobadas. Promoviendo 'HEREDERO - Cosita (Video Oficial)' desde cola lazy.
+2026-02-26 15:15:25,343 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 15:15:25,358 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 15:15:25,360 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 15:15:25,365 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 15:15:25,367 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 15:15:25,387 - crud - INFO - 🎵 Iniciando siguiente canción: HEREDERO - Cosita (Video Oficial) (ID: 1772124880249)
+2026-02-26 15:15:25,388 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=sU8FqZQOK3k, duration_seconds=196
+2026-02-26 15:18:16,476 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 15:18:16,476 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 15:18:16,561 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 15:18:45,644 - crud - INFO - 🏁 Finalizando canción actual: HEREDERO - Cosita (Video Oficial) (ID: 1772124880249)
+2026-02-26 15:18:45,653 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 15:18:45,654 - queue_manager - INFO - 🚀 No hay canciones aprobadas. Promoviendo 'HEREDERO - Muero Llorando (Video Oficial)' desde cola lazy.
+2026-02-26 15:18:45,663 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 15:18:45,684 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 15:18:45,686 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 15:18:45,687 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 15:18:45,688 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 15:18:45,703 - crud - INFO - 🎵 Iniciando siguiente canción: HEREDERO - Muero Llorando (Video Oficial) (ID: 1772124888338)
+2026-02-26 15:18:45,711 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=bu5WOIoGAIU, duration_seconds=247
+2026-02-26 15:22:54,383 - crud - INFO - 🏁 Finalizando canción actual: HEREDERO - Muero Llorando (Video Oficial) (ID: 1772124888338)
+2026-02-26 15:22:54,392 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 15:22:54,392 - queue_manager - INFO - 🚀 No hay canciones aprobadas. Promoviendo 'HEREDERO - Linda (Video Oficial)' desde cola lazy.
+2026-02-26 15:22:54,435 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 15:22:54,448 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 15:22:54,449 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 15:22:54,451 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 15:22:54,452 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 15:22:54,464 - crud - INFO - 🎵 Iniciando siguiente canción: HEREDERO - Linda (Video Oficial) (ID: 1772124892413)
+2026-02-26 15:22:54,466 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=tvUc8GEovac, duration_seconds=181
+2026-02-26 15:25:57,148 - crud - INFO - 🏁 Finalizando canción actual: HEREDERO - Linda (Video Oficial) (ID: 1772124892413)
+2026-02-26 15:25:57,161 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 15:25:57,161 - queue_manager - INFO - 🚀 No hay canciones aprobadas. Promoviendo 'HEREDERO - La Ley (Audio Oficial)' desde cola lazy.
+2026-02-26 15:25:57,172 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 15:25:57,182 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 15:25:57,183 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 15:25:57,189 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 15:25:57,190 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 15:25:57,202 - crud - INFO - 🎵 Iniciando siguiente canción: HEREDERO - La Ley (Audio Oficial) (ID: 1772124899506)
+2026-02-26 15:25:57,212 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=3JKeF3E_lLU, duration_seconds=196
+2026-02-26 15:27:07,590 - song_credits_background - INFO - Credits background task started
+2026-02-26 15:27:07,629 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 15:27:07,630 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 15:27:24,458 - song_credits_background - INFO - Credits background task started
+2026-02-26 15:27:24,504 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 15:27:24,505 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 15:29:14,330 - crud - INFO - 🏁 Finalizando canción actual: HEREDERO - La Ley (Audio Oficial) (ID: 1772124899506)
+2026-02-26 15:29:14,341 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 15:29:14,345 - queue_manager - INFO - 🚀 No hay canciones aprobadas. Promoviendo 'HEREDERO - Hasta El Sol (Audio Oficial)' desde cola lazy.
+2026-02-26 15:29:14,355 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 15:29:14,366 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 15:29:14,367 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 15:29:14,369 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 15:29:14,370 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 15:29:14,385 - crud - INFO - 🎵 Iniciando siguiente canción: HEREDERO - Hasta El Sol (Audio Oficial) (ID: 1772124902405)
+2026-02-26 15:29:14,387 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=K9TfdDj_sSI, duration_seconds=247
+2026-02-26 15:33:22,107 - crud - INFO - 🏁 Finalizando canción actual: HEREDERO - Hasta El Sol (Audio Oficial) (ID: 1772124902405)
+2026-02-26 15:33:22,115 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 15:33:22,117 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 15:33:22,119 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 15:33:22,121 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 15:33:22,123 - crud - INFO - 📭 No hay más canciones en cola.
+2026-02-26 15:39:50,410 - song_credits_background - INFO - Credits background task started
+2026-02-26 15:41:33,777 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 15:41:33,777 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 15:42:50,131 - song_credits_background - INFO - Credits background task started
+2026-02-26 15:42:50,165 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 15:42:50,165 - queue_manager - INFO - Cache refrescado desde JSON
