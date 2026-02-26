@@ -295,11 +295,26 @@ def create_consumo_para_usuario(db: Session, consumo: schemas.ConsumoCreate, usu
         "mesa_id": usuario.mesa_id,
         "usuario_id": usuario_id,
         "producto_id": consumo.producto_id,
-        "created_at": datetime.datetime.now().isoformat()
+        "created_at": datetime.datetime.now().isoformat(),
+        # Default initialization for missing fields
+        "is_dispatched": False,
+        "is_cancelled": False 
     }
     
     consumo_id = cache.create_consumo_in_cache(consumo_obj)
     consumo_obj["id"] = consumo_id
+
+    # Otorgar créditos por el consumo según la configuración de Cola Lazy
+    from settings_storage import load_settings
+    settings = load_settings()
+    credit_multiplier = settings.get("lazy_queue_credit_multiplier", 1.0)
+    
+    creditos_ganados = int(valor_total * credit_multiplier)
+    if creditos_ganados > 0:
+        usuario.song_credits = (usuario.song_credits or 0) + creditos_ganados
+        db.add(usuario)
+        db.commit()
+        db.refresh(usuario)
     
     # Enriquecer objeto para retorno (compatibilidad con modelos)
     # En este sistema simplificado, devolvemos un objeto que parezca un modelo

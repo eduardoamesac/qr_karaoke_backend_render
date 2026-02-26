@@ -67,13 +67,31 @@ async def anadir_cancion(
     if db_usuario.is_silenced:
         raise HTTPException(status_code=403, detail="No tienes permiso para añadir más canciones.")
 
-    available_credits = crud.get_available_song_credits(db, usuario_id)
-    if available_credits <= 0:
-        credits_detail = crud.get_user_credits_detail(db, usuario_id)
+    # Cargar configuraciones de la cola lazy
+    from settings_storage import load_settings
+    settings = load_settings()
+    allow_unrestricted = settings.get("lazy_queue_allow_unrestricted", False)
+    max_concurrent_songs = settings.get("lazy_queue_max_concurrent_songs", 10)
+
+    # Validar límite de canciones concurrentes
+    canciones_usuario = [c for c in cache_manager.get_songs_by_user(usuario_id) 
+                         if c.get("estado") in ["pendiente", "pendiente_lazy", "aprobado"]]
+    if len(canciones_usuario) >= max_concurrent_songs:
         raise HTTPException(
-            status_code=402,
-            detail=f"No tienes créditos disponibles para agregar canciones. Debes hacer un pedido para restablecer tus derechos. Minutos hasta alcanzar 0: {credits_detail.get('minutes_to_zero', 0):.1f}"
+            status_code=403,
+            detail=f"Has alcanzado el límite máximo de {max_concurrent_songs} canciones en espera."
         )
+
+    # Validar créditos (sólo si no está en modo sin restricciones)
+    if not allow_unrestricted:
+        available_credits = crud.get_available_song_credits(db, usuario_id)
+        if available_credits <= 0:
+            credits_detail = crud.get_user_credits_detail(db, usuario_id)
+            raise HTTPException(
+                status_code=402,
+                detail=f"No tienes créditos disponibles para agregar canciones. Debes hacer un pedido para restablecer tus derechos. Minutos hasta alcanzar 0: {credits_detail.get('minutes_to_zero', 0):.1f}"
+            )
+
 
     hora_cierre_str = config.settings.KARAOKE_CIERRE
     try:

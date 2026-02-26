@@ -4,8 +4,8 @@
     "app_name": "QR Karaoke",
     "theme": "light",
     "enable_notifications": true,
-    "lazy_queue_credit_multiplier": 1.0,
-    "lazy_queue_decay_rate": 100,
-    "lazy_queue_allow_unrestricted": true,
-    "lazy_queue_max_concurrent_songs": 10
+    "lazy_queue_credit_multiplier": 2.0,
+    "lazy_queue_decay_rate": 50,
+    "lazy_queue_allow_unrestricted": false,
+    "lazy_queue_max_concurrent_songs": 5
 }

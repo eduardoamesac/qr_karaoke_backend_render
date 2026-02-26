@@ -17587,3 +17587,55 @@ NameError: name 'queue_manager' is not defined
 2026-02-26 16:51:21,808 - queue_manager - INFO - Cache refrescado desde JSON
 2026-02-26 16:51:28,634 - queue_manager - INFO - Cache refrescado desde JSON
 2026-02-26 16:51:28,636 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 16:55:29,455 - song_credits_background - INFO - Credits background task started
+2026-02-26 16:55:29,488 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 16:55:29,489 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 16:55:29,495 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 16:55:29,497 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 16:57:21,714 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 16:57:21,714 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 16:57:33,346 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 16:57:33,353 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 16:57:56,014 - youtube - INFO - Búsqueda [Pública] en YouTube con el término: 'bachata' (Karaoke Mode: True)
+2026-02-26 16:57:56,015 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'bachata' (Karaoke Mode: True)
+2026-02-26 16:57:58,794 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-02-26 16:57:58,794 - youtube - INFO - Búsqueda por texto: 'bachata karaoke'
+2026-02-26 16:57:58,799 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-02-26 16:57:59,582 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=bachata+karaoke&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-02-26 16:57:59,611 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-02-26 16:57:59,614 - youtube - INFO - IDs de video encontrados: ['RvYAN4b91CE', 'cSjmOuUpeEE', 'fLDzTeRHl_s', 's1G_7FCDtQQ', 'F-PMXvT_8uc', '_XJu5Os-9pw', '58QinH9Ytl4', 'kGYb0fR2w8Q', 'eupJ1SCfd30', 'A6Y3fX6bmrU']
+2026-02-26 16:57:59,623 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-02-26 16:57:59,799 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=RvYAN4b91CE%2CcSjmOuUpeEE%2CfLDzTeRHl_s%2Cs1G_7FCDtQQ%2CF-PMXvT_8uc%2C_XJu5Os-9pw%2C58QinH9Ytl4%2CkGYb0fR2w8Q%2CeupJ1SCfd30%2CA6Y3fX6bmrU&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-02-26 16:57:59,822 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-02-26 16:57:59,827 - youtube - INFO - Procesamiento finalizado. Se encontraron 10 resultados formateados.
+2026-02-26 16:58:03,860 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 16:58:03,860 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 16:58:03,860 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 16:58:49,138 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 16:58:49,146 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 16:59:07,660 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 16:59:07,661 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 16:59:07,661 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 16:59:12,888 - youtube - INFO - Búsqueda [Pública] en YouTube con el término: 'bachata' (Karaoke Mode: True)
+2026-02-26 16:59:12,889 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'bachata' (Karaoke Mode: True)
+2026-02-26 16:59:14,328 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-02-26 16:59:14,329 - youtube - INFO - Búsqueda por texto: 'bachata karaoke'
+2026-02-26 16:59:14,330 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-02-26 16:59:15,038 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=bachata+karaoke&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-02-26 16:59:15,070 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-02-26 16:59:15,099 - youtube - INFO - IDs de video encontrados: ['RvYAN4b91CE', 'cSjmOuUpeEE', 'fLDzTeRHl_s', 's1G_7FCDtQQ', 'F-PMXvT_8uc', '_XJu5Os-9pw', 'QNZkxrcwQAE', 'vbbAcEhSrxE', 'eupJ1SCfd30', 'ZnzJBQuoJ1c']
+2026-02-26 16:59:15,118 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-02-26 16:59:15,312 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=RvYAN4b91CE%2CcSjmOuUpeEE%2CfLDzTeRHl_s%2Cs1G_7FCDtQQ%2CF-PMXvT_8uc%2C_XJu5Os-9pw%2CQNZkxrcwQAE%2CvbbAcEhSrxE%2CeupJ1SCfd30%2CZnzJBQuoJ1c&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-02-26 16:59:15,329 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-02-26 16:59:15,332 - youtube - INFO - Procesamiento finalizado. Se encontraron 10 resultados formateados.
+2026-02-26 17:07:16,830 - song_credits_background - INFO - Credits background task started
+2026-02-26 17:07:16,867 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 17:07:16,868 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 17:07:16,872 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 17:07:16,873 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 17:13:28,534 - song_credits_background - INFO - Credits background task started
+2026-02-26 17:13:28,572 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 17:13:28,574 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 17:13:55,686 - song_credits_background - INFO - Credits background task started
+2026-02-26 17:13:55,737 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 17:13:55,740 - queue_manager - INFO - Cache refrescado desde JSON
