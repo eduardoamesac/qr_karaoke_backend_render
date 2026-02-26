@@ -17206,3 +17206,64 @@ NameError: name 'queue_manager' is not defined
 2026-02-26 10:16:37,994 - queue_manager - INFO - Cache refrescado desde JSON
 2026-02-26 10:16:38,004 - crud - INFO - 🎵 Iniciando siguiente canción: Me Quedare Solo (ID: 1772117487120)
 2026-02-26 10:16:38,034 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=Tsj8e9x9S_s, duration_seconds=262
+2026-02-26 10:23:30,643 - song_credits_background - INFO - Credits background task started
+2026-02-26 10:25:11,083 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 10:25:11,085 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 10:28:14,050 - song_credits_background - INFO - Credits background task started
+2026-02-26 10:28:56,213 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 10:28:56,213 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 10:29:01,491 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 10:29:01,637 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 10:29:04,149 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 10:29:04,234 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 10:29:04,515 - crud - INFO - 🏁 Finalizando canción actual: Me Quedare Solo (ID: 1772117487120)
+2026-02-26 10:29:04,583 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 10:29:04,619 - queue_manager - INFO - 🚀 No hay canciones aprobadas. Promoviendo 'HEREDERO - Cosita (Video Oficial)' desde cola lazy.
+2026-02-26 10:29:04,764 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 10:29:04,783 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 10:29:04,788 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 10:29:04,795 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 10:29:04,816 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 10:29:04,849 - crud - INFO - 🎵 Iniciando siguiente canción: HEREDERO - Cosita (Video Oficial) (ID: 1772117518382)
+2026-02-26 10:29:04,870 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=sU8FqZQOK3k, duration_seconds=196
+2026-02-26 10:40:40,885 - song_credits_background - INFO - Credits background task started
+2026-02-26 10:40:41,904 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 10:40:41,920 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 10:41:01,454 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 10:41:01,457 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 10:42:46,375 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 10:42:46,402 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 10:42:47,186 - crud - INFO - 🏁 Finalizando canción actual: HEREDERO - Cosita (Video Oficial) (ID: 1772117518382)
+2026-02-26 10:42:47,349 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 10:42:47,368 - queue_manager - INFO - 🚀 No hay canciones aprobadas. Promoviendo 'HEREDERO - Linda (Video Oficial)' desde cola lazy.
+2026-02-26 10:42:47,456 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 10:42:47,535 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 10:42:47,535 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 10:42:47,550 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 10:42:47,550 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 10:42:47,558 - crud - INFO - 🎵 Iniciando siguiente canción: HEREDERO - Linda (Video Oficial) (ID: 1772117520665)
+2026-02-26 10:42:47,569 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=tvUc8GEovac, duration_seconds=181
+2026-02-26 10:44:10,184 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 10:44:10,198 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 10:44:18,720 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 10:44:18,723 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 10:44:28,791 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 10:44:28,801 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 10:45:04,155 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 10:45:04,156 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 10:45:54,443 - crud - INFO - 🏁 Finalizando canción actual: HEREDERO - Linda (Video Oficial) (ID: 1772117520665)
+2026-02-26 10:45:54,458 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 10:45:54,460 - queue_manager - INFO - 🚀 No hay canciones aprobadas. Promoviendo 'HEREDERO - Cosita (Video Oficial)' desde cola lazy.
+2026-02-26 10:45:54,478 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 10:45:54,500 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 10:45:54,501 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 10:45:54,512 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 10:45:54,516 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 10:45:54,527 - crud - INFO - 🎵 Iniciando siguiente canción: HEREDERO - Cosita (Video Oficial) (ID: 1772117527856)
+2026-02-26 10:45:54,533 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=sU8FqZQOK3k, duration_seconds=196
+2026-02-26 10:49:14,111 - crud - INFO - 🏁 Finalizando canción actual: HEREDERO - Cosita (Video Oficial) (ID: 1772117527856)
+2026-02-26 10:49:14,119 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 10:49:14,128 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 10:49:14,130 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 10:49:14,146 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 10:49:14,157 - crud - INFO - 📭 No hay más canciones en cola.

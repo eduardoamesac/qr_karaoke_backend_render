@@ -16,52 +16,28 @@ class QueueValidator {
   }
 
   /**
-   * Inicializa el panel de debug
+   * Crea un botón de debug estático y lo inyecta en un contenedor
    */
-  initDebugPanel() {
-    // Crear elemento si no existe
-    if (!document.getElementById('queue-debug-panel')) {
-      const panel = document.createElement('div');
-      panel.id = 'queue-debug-panel';
-      panel.style.cssText = `
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        width: 400px;
-        max-height: 600px;
-        background: #1a1a1a;
-        border: 2px solid #00ff00;
-        border-radius: 8px;
-        padding: 12px;
-        font-family: monospace;
-        font-size: 11px;
-        color: #00ff00;
-        z-index: 9999;
-        overflow-y: auto;
-        display: none;
+  createStaticDebugButton(container) {
+    if (!container) return;
+
+    const toggleBtn = document.createElement('button');
+    toggleBtn.id = 'queue-debug-toggle';
+    toggleBtn.textContent = '🔍 DEBUG COLA';
+    toggleBtn.className = 'bees-btn bees-btn-success'; // Usar clases de BEES
+    toggleBtn.style.width = '100%';
+    toggleBtn.style.marginTop = '10px';
+    toggleBtn.style.padding = '12px';
+
+    toggleBtn.onclick = () => this.toggleDebugPanel();
+    container.appendChild(toggleBtn);
+  }
+
+  /**
+   * Inicializa el panel de debug
         box-shadow: 0 0 10px rgba(0,255,0,0.3);
       `;
       document.body.appendChild(panel);
-
-      // Botón para abrirlo
-      const toggleBtn = document.createElement('button');
-      toggleBtn.id = 'queue-debug-toggle';
-      toggleBtn.textContent = '🔍 DEBUG COLA';
-      toggleBtn.style.cssText = `
-        position: fixed;
-        bottom: 20px;
-        right: 440px;
-        padding: 8px 12px;
-        background: #00ff00;
-        color: #000;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        font-weight: bold;
-        z-index: 9998;
-      `;
-      toggleBtn.onclick = () => this.toggleDebugPanel();
-      document.body.appendChild(toggleBtn);
     }
 
     // Atajo de teclado: Ctrl+Shift+Q
@@ -394,6 +370,7 @@ class QueueValidator {
 
 // Instancia global
 const queueValidator = new QueueValidator();
+window.queueValidator = queueValidator;
 
 // Auto-iniciar monitoreo
 window.addEventListener('load', () => {

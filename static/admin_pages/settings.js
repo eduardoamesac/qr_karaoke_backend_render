@@ -301,7 +301,26 @@ function renderSettings(settings, container) {
     `;
     cardsContainer.appendChild(apiKeysCard);
 
-    // ============= TARJETA 7: ZONA PELIGROSA =============
+    // ============= TARJETA 7: HERRAMIENTAS DE DIAGNÓSTICO =============
+    const debugCard = document.createElement('div');
+    debugCard.className = 'settings-card';
+    debugCard.innerHTML = `
+        <div class="settings-card-header">
+            <div class="settings-card-icon">🔍</div>
+            <div class="settings-card-header-content">
+                <h3>Herramientas de Diagnóstico</h3>
+                <p>Verificar estado real de la cola y sincronización</p>
+            </div>
+        </div>
+    `;
+
+    // Inyectar botón de debug si existe la instancia global
+    if (window.queueValidator) {
+        window.queueValidator.createStaticDebugButton(debugCard);
+    }
+    cardsContainer.appendChild(debugCard);
+
+    // ============= TARJETA 8: ZONA PELIGROSA =============
     const dangerCard = document.createElement('div');
     dangerCard.className = 'settings-card';
     dangerCard.style.borderLeft = '4px solid var(--bees-red)';
@@ -560,29 +579,29 @@ async function handleGeneralSettingsUpdate(event, form) {
 async function loadLazyQueueConfig() {
     try {
         const config = await apiFetch('/admin/settings/lazy-queue');
-        
+
         // Cargar valores en el formulario
         const creditMultiplierInput = document.getElementById('credit-multiplier');
         const decayRateInput = document.getElementById('decay-rate');
         const unrestricted = document.getElementById('allow-unrestricted');
         const maxConcurrentInput = document.getElementById('max-concurrent');
-        
+
         if (creditMultiplierInput) {
             creditMultiplierInput.value = (config.credit_multiplier || 1.0).toFixed(1);
             const display = document.getElementById('credit-multiplier-display');
             if (display) display.textContent = (config.credit_multiplier || 1.0).toFixed(1) + 'x';
         }
-        
+
         if (decayRateInput) {
             decayRateInput.value = config.decay_rate || 100;
             const display = document.getElementById('decay-rate-display');
             if (display) display.textContent = (config.decay_rate || 100) + '/min';
         }
-        
+
         if (unrestricted) {
             unrestricted.checked = config.allow_unrestricted || false;
         }
-        
+
         if (maxConcurrentInput) {
             maxConcurrentInput.value = config.max_concurrent_songs || 10;
         }
@@ -680,12 +699,12 @@ function setupSettingsListeners() {
     const lazyQueueForm = document.getElementById('lazy-queue-form');
     if (lazyQueueForm && !lazyQueueForm.dataset.listenerAttached) {
         lazyQueueForm.addEventListener('submit', (e) => handleLazyQueueUpdate(e, e.target));
-        
+
         // Listeners para actualización en tiempo real de los displays
         const creditMultiplierInput = document.getElementById('credit-multiplier');
         const decayRateInput = document.getElementById('decay-rate');
         const unrestricted = document.getElementById('allow-unrestricted');
-        
+
         if (creditMultiplierInput) {
             creditMultiplierInput.addEventListener('input', (e) => {
                 const display = document.getElementById('credit-multiplier-display');
@@ -694,7 +713,7 @@ function setupSettingsListeners() {
                 }
             });
         }
-        
+
         if (decayRateInput) {
             decayRateInput.addEventListener('input', (e) => {
                 const display = document.getElementById('decay-rate-display');
@@ -703,7 +722,7 @@ function setupSettingsListeners() {
                 }
             });
         }
-        
+
         lazyQueueForm.dataset.listenerAttached = '1';
     }
 

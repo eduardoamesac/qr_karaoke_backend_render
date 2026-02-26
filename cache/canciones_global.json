@@ -437,12 +437,12 @@
       "titulo": "Me Quedare Solo",
       "duracion_seconds": 262,
       "usuario_id": 1,
-      "estado": "reproduciendo",
+      "estado": "cantada",
       "created_at": "2026-02-26T09:51:27.119996-05:00",
       "approved_at": null,
       "rejected_at": null,
       "started_at": "2026-02-26T10:16:37.553490-05:00",
-      "finished_at": null
+      "finished_at": "2026-02-26T10:29:04.553132-05:00"
     },
     "1772117518382": {
       "id": 1772117518382,
@@ -450,12 +450,12 @@
       "titulo": "HEREDERO - Cosita (Video Oficial)",
       "duracion_seconds": 196,
       "usuario_id": 1,
-      "estado": "pendiente_lazy",
+      "estado": "cantada",
       "created_at": "2026-02-26T09:51:58.381034-05:00",
       "approved_at": null,
       "rejected_at": null,
-      "started_at": null,
-      "finished_at": null
+      "started_at": "2026-02-26T10:29:04.767954-05:00",
+      "finished_at": "2026-02-26T10:42:47.240259-05:00"
     },
     "1772117520665": {
       "id": 1772117520665,
@@ -463,12 +463,12 @@
       "titulo": "HEREDERO - Linda (Video Oficial)",
       "duracion_seconds": 181,
       "usuario_id": 1,
-      "estado": "pendiente_lazy",
+      "estado": "cantada",
       "created_at": "2026-02-26T09:52:00.664202-05:00",
       "approved_at": null,
       "rejected_at": null,
-      "started_at": null,
-      "finished_at": null
+      "started_at": "2026-02-26T10:42:47.487240-05:00",
+      "finished_at": "2026-02-26T10:45:54.447112-05:00"
     },
     "1772117527856": {
       "id": 1772117527856,
@@ -476,12 +476,12 @@
       "titulo": "HEREDERO - Cosita (Video Oficial)",
       "duracion_seconds": 196,
       "usuario_id": 1,
-      "estado": "pendiente_lazy",
+      "estado": "cantada",
       "created_at": "2026-02-26T09:52:07.855446-05:00",
       "approved_at": null,
       "rejected_at": null,
-      "started_at": null,
-      "finished_at": null
+      "started_at": "2026-02-26T10:45:54.489138-05:00",
+      "finished_at": "2026-02-26T10:49:14.114263-05:00"
     }
   },
   "next_id": 4
