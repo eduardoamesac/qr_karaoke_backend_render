@@ -17078,3 +17078,114 @@ NameError: name 'queue_manager' is not defined
 2026-02-25 16:12:19,639 - queue_manager - INFO - Cache refrescado desde JSON
 2026-02-25 16:12:19,714 - crud - INFO - 🎵 Iniciando siguiente canción: El Intenso - Jhonny Rivera (Video Oficial) (ID: 1772053859728)
 2026-02-25 16:12:19,720 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=69NZ0WUo0dM, duration_seconds=222
+2026-02-25 16:17:45,308 - song_credits_background - INFO - Credits background task started
+2026-02-25 16:17:45,551 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-25 16:17:45,551 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-25 16:54:47,532 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-25 16:54:47,549 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-25 16:54:48,630 - crud - INFO - 🏁 Finalizando canción actual: El Intenso - Jhonny Rivera (Video Oficial) (ID: 1772053859728)
+2026-02-25 16:54:48,648 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-25 16:54:48,650 - queue_manager - INFO - 🚀 No hay canciones aprobadas. Promoviendo 'Jhonny Rivera - Comprendí que Te perdí (Video Oficial)' desde cola lazy.
+2026-02-25 16:54:48,666 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-25 16:54:48,673 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-25 16:54:48,678 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-25 16:54:48,683 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-25 16:54:48,683 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-25 16:54:48,708 - crud - INFO - 🎵 Iniciando siguiente canción: Jhonny Rivera - Comprendí que Te perdí (Video Oficial) (ID: 1772053862622)
+2026-02-25 16:54:48,720 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=U9GFert9tkU, duration_seconds=201
+2026-02-26 09:39:51,500 - song_credits_background - INFO - Credits background task started
+2026-02-26 09:40:19,399 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 09:40:19,461 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 09:42:17,858 - song_credits_background - INFO - Credits background task started
+2026-02-26 09:42:21,224 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 09:42:21,224 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 09:42:27,727 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 09:42:27,731 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 09:50:25,372 - song_credits_background - INFO - Credits background task started
+2026-02-26 09:50:39,337 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 09:50:39,498 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 09:50:49,905 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 09:50:49,992 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 09:50:51,100 - crud - INFO - 🏁 Finalizando canción actual: Jhonny Rivera - Comprendí que Te perdí (Video Oficial) (ID: 1772053862622)
+2026-02-26 09:50:51,282 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 09:50:51,501 - queue_manager - INFO - 🚀 No hay canciones aprobadas. Promoviendo 'Jhonny Rivera, Sebastián Ayala, Andy Rivera - Mi Decisión (Remix)' desde cola lazy.
+2026-02-26 09:50:51,715 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 09:50:51,756 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 09:50:51,771 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 09:50:51,776 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 09:50:51,779 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 09:50:51,792 - crud - INFO - 🎵 Iniciando siguiente canción: Jhonny Rivera, Sebastián Ayala, Andy Rivera - Mi Decisión (Remix) (ID: 1772053878935)
+2026-02-26 09:50:51,793 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=6kyJCaBg0Ys, duration_seconds=202
+2026-02-26 09:51:08,919 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'amistades peligrosas'
+2026-02-26 09:51:08,938 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'amistades peligrosas' (Karaoke Mode: False)
+2026-02-26 09:51:15,868 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-02-26 09:51:15,884 - youtube - INFO - Búsqueda por texto: 'amistades peligrosas'
+2026-02-26 09:51:15,950 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-02-26 09:51:16,918 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=amistades+peligrosas&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-02-26 09:51:16,973 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-02-26 09:51:17,106 - youtube - INFO - IDs de video encontrados: ['95JHOXoXR6M', 'bWQul83KtqI', 'u6c45acypTQ', 'e48oXY7QMm8', '2OFTs7ix9w0', 'k6c7UUhScPw', 'GBH9Nll5nFA', 'Tsj8e9x9S_s', '2wUsAA7J3ko', 'Z-8kzNM7x54', 'gqeRv44OGCk', 'lz0JNw_Livg', 'hsi2mXZpOac', 'vQ1grGlbj2A', 'AlgFZj5Umq4', 'UsrIyimnViM', 'S2fzpT0pb6w', 'VKbjsUMz6UI', 'GZvqOSe6i0M', '0EVIO-qTqaE', 'yfk0OfK_8Hw', 'zIWaFvgnJMo', 'FBcaxKo6wNs', '5zt66TMkurM', '8_Jc8tGo1xA']
+2026-02-26 09:51:17,236 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-02-26 09:51:17,580 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=95JHOXoXR6M%2CbWQul83KtqI%2Cu6c45acypTQ%2Ce48oXY7QMm8%2C2OFTs7ix9w0%2Ck6c7UUhScPw%2CGBH9Nll5nFA%2CTsj8e9x9S_s%2C2wUsAA7J3ko%2CZ-8kzNM7x54%2CgqeRv44OGCk%2Clz0JNw_Livg%2Chsi2mXZpOac%2CvQ1grGlbj2A%2CAlgFZj5Umq4%2CUsrIyimnViM%2CS2fzpT0pb6w%2CVKbjsUMz6UI%2CGZvqOSe6i0M%2C0EVIO-qTqaE%2Cyfk0OfK_8Hw%2CzIWaFvgnJMo%2CFBcaxKo6wNs%2C5zt66TMkurM%2C8_Jc8tGo1xA&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-02-26 09:51:17,672 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-02-26 09:51:17,826 - youtube - INFO - Procesamiento finalizado. Se encontraron 25 resultados formateados.
+2026-02-26 09:51:18,285 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'amistades peligrosas'
+2026-02-26 09:51:18,339 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'amistades peligrosas' (Karaoke Mode: False)
+2026-02-26 09:51:22,922 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-02-26 09:51:22,969 - youtube - INFO - Búsqueda por texto: 'amistades peligrosas'
+2026-02-26 09:51:23,044 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-02-26 09:51:23,705 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=amistades+peligrosas&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-02-26 09:51:23,742 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-02-26 09:51:23,817 - youtube - INFO - IDs de video encontrados: ['95JHOXoXR6M', 'bWQul83KtqI', '2OFTs7ix9w0', 'e48oXY7QMm8', 'u6c45acypTQ', 'k6c7UUhScPw', 'GBH9Nll5nFA', 'Tsj8e9x9S_s', '2wUsAA7J3ko', 'gqeRv44OGCk']
+2026-02-26 09:51:23,856 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-02-26 09:51:24,060 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=95JHOXoXR6M%2CbWQul83KtqI%2C2OFTs7ix9w0%2Ce48oXY7QMm8%2Cu6c45acypTQ%2Ck6c7UUhScPw%2CGBH9Nll5nFA%2CTsj8e9x9S_s%2C2wUsAA7J3ko%2CgqeRv44OGCk&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-02-26 09:51:24,090 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-02-26 09:51:24,105 - youtube - INFO - Procesamiento finalizado. Se encontraron 10 resultados formateados.
+2026-02-26 09:51:25,206 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 09:51:25,216 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 09:51:25,217 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 09:51:27,171 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 09:51:27,187 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 09:51:27,190 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 09:51:44,661 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'el heredero'
+2026-02-26 09:51:44,739 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'el heredero' (Karaoke Mode: False)
+2026-02-26 09:51:49,338 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-02-26 09:51:49,444 - youtube - INFO - Búsqueda por texto: 'el heredero'
+2026-02-26 09:51:49,575 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-02-26 09:51:50,233 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=el+heredero&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-02-26 09:51:50,264 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-02-26 09:51:50,344 - youtube - INFO - IDs de video encontrados: ['KI3pWvM19Pc', 'tvUc8GEovac', 'bZLojmRvRd8', '9o1ea3O_GTs', 'sU8FqZQOK3k', 'KTT2QhqY23g', 'NP3LASw8uWY', 'O_Jv-_nEqWk', 'IfoPQ7mGIT0']
+2026-02-26 09:51:50,405 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-02-26 09:51:50,637 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=KI3pWvM19Pc%2CtvUc8GEovac%2CbZLojmRvRd8%2C9o1ea3O_GTs%2CsU8FqZQOK3k%2CKTT2QhqY23g%2CNP3LASw8uWY%2CO_Jv-_nEqWk%2CIfoPQ7mGIT0&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-02-26 09:51:50,652 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-02-26 09:51:50,681 - youtube - INFO - Procesamiento finalizado. Se encontraron 9 resultados formateados.
+2026-02-26 09:51:50,825 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'el heredero'
+2026-02-26 09:51:50,849 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'el heredero' (Karaoke Mode: False)
+2026-02-26 09:51:54,102 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-02-26 09:51:54,197 - youtube - INFO - Búsqueda por texto: 'el heredero'
+2026-02-26 09:51:54,284 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-02-26 09:51:54,854 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=el+heredero&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-02-26 09:51:54,879 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-02-26 09:51:54,900 - youtube - INFO - IDs de video encontrados: ['KI3pWvM19Pc', 'tvUc8GEovac', 'bZLojmRvRd8', 'sU8FqZQOK3k', '9o1ea3O_GTs', 'O_Jv-_nEqWk', 'NP3LASw8uWY', 'KTT2QhqY23g', 'IfoPQ7mGIT0']
+2026-02-26 09:51:54,917 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-02-26 09:51:55,077 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=KI3pWvM19Pc%2CtvUc8GEovac%2CbZLojmRvRd8%2CsU8FqZQOK3k%2C9o1ea3O_GTs%2CO_Jv-_nEqWk%2CNP3LASw8uWY%2CKTT2QhqY23g%2CIfoPQ7mGIT0&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-02-26 09:51:55,158 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-02-26 09:51:55,309 - youtube - INFO - Procesamiento finalizado. Se encontraron 9 resultados formateados.
+2026-02-26 09:51:58,567 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 09:51:58,620 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 09:51:58,717 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 09:52:00,721 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 09:52:00,734 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 09:52:00,734 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 09:52:07,872 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 09:52:07,912 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 09:52:07,914 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 09:56:18,019 - crud - INFO - 🏁 Finalizando canción actual: Jhonny Rivera, Sebastián Ayala, Andy Rivera - Mi Decisión (Remix) (ID: 1772053878935)
+2026-02-26 09:56:18,087 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 09:56:18,092 - queue_manager - INFO - 🚀 No hay canciones aprobadas. Promoviendo 'Me Quedare Solo' desde cola lazy.
+2026-02-26 09:56:18,124 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 09:56:18,144 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 09:56:18,147 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 09:56:18,149 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 09:56:18,153 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-26 09:56:18,180 - crud - INFO - 🎵 Iniciando siguiente canción: Me Quedare Solo (ID: 1772117485146)
+2026-02-26 09:56:18,181 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=Tsj8e9x9S_s, duration_seconds=262

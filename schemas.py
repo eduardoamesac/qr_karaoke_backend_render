@@ -399,6 +399,7 @@ class MesaEstadoPago(BaseModel):
     cuenta_id: Optional[int] = None # Added field
     mesa_nombre: str
     qr_code: Optional[str] = None # Added field for table number extraction
+    is_active: bool = True
     total_consumido: Decimal
     total_pagado: Decimal
     saldo_pendiente: Decimal

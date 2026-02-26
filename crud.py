@@ -189,6 +189,10 @@ def set_mesa_active_status(db: Session, mesa_id: int, is_active: bool):
         cache.update_mesa(mesa_id, mesa)
     return mesa
 
+def delete_mesa(db: Session, mesa_id: int):
+    """Elimina una mesa (CACHE)."""
+    return cache.delete_mesa_from_cache(mesa_id)
+
 # ================================================================================
 # FUNCIONES PARA CANCIONES (En CACHE JSON)
 # ================================================================================
@@ -312,6 +316,7 @@ def get_table_payment_status(db: Session, mesa_id: int) -> Optional[dict]:
     return {
         "mesa_id": mesa_id,
         "mesa_nombre": mesa.get("nombre"),
+        "is_active": mesa.get("is_active", True),
         "total_consumido": total_consumido,
         "total_pagado": total_pagado,
         "saldo_pendiente": saldo_pendiente,
@@ -320,10 +325,14 @@ def get_table_payment_status(db: Session, mesa_id: int) -> Optional[dict]:
     }
 
 def get_all_tables_payment_status(db: Session):
-    """Devuelve el estado de cuenta para todas las mesas (lista de dicts)."""
+    """Devuelve el estado de cuenta para todas las mesas activas (lista de dicts)."""
     mesas = cache.get_all_mesas() or []
     result = []
     for m in mesas:
+        # Filtrar mesas inactivas
+        if not m.get("is_active", True):
+            continue
+            
         mesa_id = m.get("id")
         if mesa_id is None:
             continue
