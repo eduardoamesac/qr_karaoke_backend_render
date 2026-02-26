@@ -8,8 +8,9 @@ import logging
 from fastapi import HTTPException
 from sqlalchemy import func
 import secrets
-from typing import List, Optional
+from typing import List, Optional, Dict, Any
 import datetime
+from collections import Counter
 import models, schemas
 from decimal import Decimal
 from cache_manager import cache_manager as cache
@@ -788,3 +789,219 @@ def get_cola_completa(db: Session):
         "now_playing": now_playing,
         "upcoming": upcoming[:1]
     }
+# ================================================================================
+    # REPORTES Y ESTADÍSTICAS (Usando Cache y BD)
+    # ================================================================================
+
+def get_canciones_mas_cantadas(db: Session, limit: int = 10):
+    """Reporte de canciones más cantadas."""
+    all_songs = cache.get_all_songs()
+    cantadas = [s for s in all_songs if s.get("estado") == "cantada"]
+    
+    counts = Counter((s.get("titulo"), s.get("youtube_id")) for s in cantadas)
+    items = sorted(counts.items(), key=lambda x: x[1], reverse=True)[:limit]
+    
+    return [(titulo, y_id, count) for (titulo, y_id), count in items]
+
+def get_productos_mas_consumidos(db: Session, limit: int = 10):
+    """Reporte de productos más consumidos."""
+    consumos = cache.get_all_consumos()
+    product_counts = Counter()
+    for c in consumos:
+        product_counts[c.get("producto_id")] += c.get("cantidad", 0)
+    
+    # Obtener nombres de productos de la BD
+    product_ids = [p_id for p_id, _ in product_counts.most_common(limit)]
+    productos = db.query(models.Producto).filter(models.Producto.id.in_(product_ids)).all()
+    prod_map = {p.id: p.nombre for p in productos}
+    
+    return [
+        (prod_map.get(p_id, f"Producto #{p_id}"), count) 
+        for p_id, count in product_counts.most_common(limit)
+    ]
+
+def get_usuarios_sin_consumo(db: Session):
+    """Usuarios que no han realizado consumos."""
+    consumos = cache.get_all_consumos()
+    usuarios_con_consumo = {c.get("usuario_id") for c in consumos}
+    return db.query(models.Usuario).filter(~models.Usuario.id.in_(usuarios_con_consumo)).all()
+
+def get_canciones_cantadas_por_usuario(db: Session):
+    """Reporte de canciones cantadas por cada usuario."""
+    all_songs = cache.get_all_songs()
+    cantadas = [s for s in all_songs if s.get("estado") == "cantada"]
+    
+    user_counts = Counter(s.get("usuario_id") for s in cantadas)
+    
+    # Enriquecer con nicks de la BD
+    user_ids = list(user_counts.keys())
+    usuarios = db.query(models.Usuario).filter(models.Usuario.id.in_(user_ids)).all()
+    user_map = {u.id: u.nick for u in usuarios}
+    
+    results = [
+        (user_map.get(u_id, f"Usuario #{u_id}"), count) 
+        for u_id, count in user_counts.items()
+    ]
+    return sorted(results, key=lambda x: x[1], reverse=True)
+
+def get_ingresos_promedio_por_usuario(db: Session):
+    """Ingresos promedio por cada usuario que ha consumido."""
+    consumos = cache.get_all_consumos()
+    if not consumos:
+        return 0
+    
+    total_ingresos = sum(float(c.get("valor_total", 0)) for c in consumos)
+    num_usuarios = len({c.get("usuario_id") for c in consumos})
+    
+    return total_ingresos / num_usuarios if num_usuarios > 0 else 0
+
+def get_usuarios_una_cancion(db: Session):
+    """Usuarios que han cantado exactamente una canción."""
+    all_songs = cache.get_all_songs()
+    cantadas = [s for s in all_songs if s.get("estado") == "cantada"]
+    user_counts = Counter(s.get("usuario_id") for s in cantadas)
+    
+    one_hit_ids = [u_id for u_id, count in user_counts.items() if count == 1]
+    return db.query(models.Usuario).filter(models.Usuario.id.in_(one_hit_ids)).all()
+
+def get_mesas_vacias(db: Session):
+    """Mesas sin usuarios conectados."""
+    mesas = cache.get_all_mesas()
+    # Los usuarios están en BD
+    usuarios = db.query(models.Usuario).all()
+    mesas_con_usuarios = {u.mesa_id for u in usuarios if u.mesa_id}
+    return [m for m in mesas if m.get("id") not in mesas_con_usuarios]
+
+def get_ingresos_promedio_por_usuario_por_mesa(db: Session):
+    """Reporte de ingresos promedio por usuario en cada mesa."""
+    mesas = cache.get_all_mesas()
+    consumos = cache.get_all_consumos()
+    
+    mesa_income = Counter()
+    mesa_users = {m.get("id"): set() for m in mesas}
+    
+    # Mapear usuario -> mesa desde la BD
+    usuarios = db.query(models.Usuario).all()
+    user_to_mesa = {u.id: u.mesa_id for u in usuarios if u.mesa_id}
+    
+    for c in consumos:
+        u_id = c.get("usuario_id")
+        m_id = user_to_mesa.get(u_id)
+        if m_id:
+            mesa_income[m_id] += float(c.get("valor_total", 0))
+            mesa_users[m_id].add(u_id)
+    
+    report = []
+    for m in mesas:
+        m_id = m.get("id")
+        m_name = m.get("nombre", f"Mesa {m_id}")
+        # Contamos usuarios que están físicamente en esa mesa según la BD
+        num_users = len([u for u in usuarios if u.mesa_id == m_id])
+        total = mesa_income[m_id]
+        promedio = total / num_users if num_users > 0 else 0
+        report.append((m_name, promedio))
+    
+    return sorted(report, key=lambda x: x[1], reverse=True)
+
+def get_tiempo_promedio_espera(db: Session):
+    """Tiempo promedio de espera (created_at hasta finished_at)."""
+    all_songs = cache.get_all_songs()
+    cantadas = [s for s in all_songs if s.get("estado") == "cantada" and s.get("finished_at") and s.get("created_at")]
+    
+    if not cantadas:
+        return 0
+    
+    total_seconds = 0
+    for s in cantadas:
+        try:
+            start = datetime.datetime.fromisoformat(s.get("created_at"))
+            end = datetime.datetime.fromisoformat(s.get("finished_at"))
+            total_seconds += (end - start).total_seconds()
+        except:
+            continue
+            
+    return total_seconds / len(cantadas)
+
+def get_actividad_por_hora(db: Session):
+    """Reporte de canciones cantadas por hora."""
+    all_songs = cache.get_all_songs()
+    cantadas = [s for s in all_songs if s.get("estado") == "cantada" and s.get("started_at")]
+    
+    hora_counts = Counter()
+    for s in cantadas:
+        try:
+            dt = datetime.datetime.fromisoformat(s.get("started_at"))
+            hora_counts[dt.hour] += 1
+        except:
+            continue
+            
+    return sorted(hora_counts.items(), key=lambda x: x[1], reverse=True)
+
+def get_canciones_cantadas_por_mesa(db: Session):
+    """Cantidad de canciones cantadas por mesa."""
+    all_songs = cache.get_all_songs()
+    cantadas = [s for s in all_songs if s.get("estado") == "cantada"]
+    
+    # Mapear usuario -> mesa desde la BD
+    usuarios = db.query(models.Usuario).all()
+    user_to_mesa = {u.id: u.mesa_id for u in usuarios if u.mesa_id}
+    
+    mesa_counts = Counter()
+    
+    for s in cantadas:
+        m_id = user_to_mesa.get(s.get("usuario_id"))
+        if m_id:
+            mesa_counts[m_id] += 1
+            
+    # Nombres de mesas del cache
+    mesas = {m.get("id"): m.get("nombre") for m in cache.get_all_mesas()}
+    
+    results = [
+        (mesas.get(m_id, f"Mesa #{m_id}"), count) 
+        for m_id, count in mesa_counts.items()
+    ]
+    return sorted(results, key=lambda x: x[1], reverse=True)
+
+def get_canciones_mas_rechazadas(db: Session, limit: int = 10):
+    """Reporte de canciones más rechazadas."""
+    all_songs = cache.get_all_songs()
+    rechazadas = [s for s in all_songs if s.get("estado") == "rechazada"]
+    
+    counts = Counter((s.get("titulo"), s.get("youtube_id")) for s in rechazadas)
+    items = sorted(counts.items(), key=lambda x: x[1], reverse=True)[:limit]
+    
+    return [(titulo, y_id, count) for (titulo, y_id), count in items]
+
+def get_usuarios_mas_rechazados(db: Session, limit: int = 10):
+    """Usuarios con más canciones rechazadas."""
+    all_songs = cache.get_all_songs()
+    rechazadas = [s for s in all_songs if s.get("estado") == "rechazada"]
+    
+    user_counts = Counter(s.get("usuario_id") for s in rechazadas)
+    user_ids = [u_id for u_id, _ in user_counts.most_common(limit)]
+    
+    usuarios = db.query(models.Usuario).filter(models.Usuario.id.in_(user_ids)).all()
+    user_map = {u.id: u.nick for u in usuarios}
+    
+    return [
+        (user_map.get(u_id, f"Usuario #{u_id}"), count) 
+        for u_id, count in user_counts.most_common(limit)
+    ]
+
+def get_ingresos_por_categoria(db: Session):
+    """Ingresos por categoría de producto."""
+    consumos = cache.get_all_consumos()
+    if not consumos:
+        return []
+    
+    # Necesitamos categorías de los productos en BD
+    product_ids = {c.get("producto_id") for c in consumos}
+    productos = db.query(models.Producto).filter(models.Producto.id.in_(product_ids)).all()
+    prod_cat_map = {p.id: p.categoria for p in productos}
+    
+    cat_income = Counter()
+    for c in consumos:
+        cat = prod_cat_map.get(c.get("producto_id"), "Sin Categoría")
+        cat_income[cat] += float(c.get("valor_total", 0))
+        
+    return sorted(cat_income.items(), key=lambda x: x[1], reverse=True)
