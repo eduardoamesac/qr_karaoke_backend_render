@@ -20,6 +20,13 @@
       "qr_code": "karaoke-mesa-04",
       "is_active": false,
       "created_at": "2026-02-27T09:34:42.927990-05:00"
+    },
+    "3": {
+      "id": 3,
+      "nombre": "Montaña",
+      "qr_code": "karaoke-mesa-03",
+      "is_active": true,
+      "created_at": "2026-02-27T11:24:41.660327-05:00"
     }
   },
   "next_id": 5

@@ -1049,3 +1049,175 @@ def get_ingresos_por_categoria(db: Session):
         cat_income[cat] += float(c.get("valor_total", 0))
         
     return sorted(cat_income.items(), key=lambda x: x[1], reverse=True)
+
+
+# ========================================================================
+# REPORT FUNCTIONS PREVIOUSLY DELETED DURING CACHE MIGRATION
+# RESTORED TO FIX ADMIN DASHBOARD /REPORTS
+# ========================================================================
+
+def get_total_ingresos(db: Session):
+    consumos = cache.get_all_consumos()
+    return sum(float(c.get("valor_total", 0)) for c in consumos)
+
+def get_ingresos_por_mesa(db: Session):
+    consumos = cache.get_all_consumos()
+    mesas_list = cache.get_all_mesas()
+    mesas = {m["id"]: m.get("nombre", f"Mesa {m.get('id')}") for m in mesas_list}
+    ingresos = {}
+    for c in consumos:
+        mesa_id = c.get("mesa_id")
+        if not mesa_id: continue
+        val = float(c.get("valor_total", 0))
+        ingresos[mesa_id] = ingresos.get(mesa_id, 0) + val
+    result = []
+    for mid, total in ingresos.items():
+        if mid in mesas:
+            result.append((mesas[mid], total))
+    result.sort(key=lambda x: x[1], reverse=True)
+    return result
+
+def get_productos_menos_consumidos(db: Session, limit: int = 5):
+    consumos = cache.get_all_consumos()
+    productos = db.query(models.Producto).all()
+    cantidades = {p.id: 0 for p in productos}
+    for c in consumos:
+        pid = c.get("producto_id")
+        if pid in cantidades:
+            cantidades[pid] += c.get("cantidad", 1)
+    
+    prod_map = {p.id: p.nombre for p in productos}
+    result = [(prod_map[pid], cant) for pid, cant in cantidades.items()]
+    result.sort(key=lambda x: x[1])
+    return result[:limit]
+
+def get_top_consumers_one_song(db: Session, limit: int = 10):
+    canciones = cache.get_all_songs()
+    consumos = cache.get_all_consumos()
+    usuarios = db.query(models.Usuario).all()
+    user_map = {u.id: u.nick for u in usuarios}
+    
+    canciones_por_user = {}
+    for c in canciones:
+        uid = c.get("usuario_id")
+        if uid: canciones_por_user[uid] = canciones_por_user.get(uid, 0) + 1
+        
+    users_one_song = {uid for uid, count in canciones_por_user.items() if count == 1}
+    
+    gastos = {}
+    for c in consumos:
+        uid = c.get("usuario_id")
+        if uid in users_one_song:
+            gastos[uid] = gastos.get(uid, 0) + float(c.get("valor_total", 0))
+            
+    result = [(user_map.get(uid, f"User {uid}"), total) for uid, total in gastos.items()]
+    result.sort(key=lambda x: x[1], reverse=True)
+    return result[:limit]
+
+def get_categorias_mas_consumidas_por_mesa(db: Session, mesa_id: int, limit: int = 5):
+    consumos = [c for c in cache.get_all_consumos() if c.get("mesa_id") == mesa_id]
+    productos = db.query(models.Producto).all()
+    prod_cat_map = {p.id: p.categoria for p in productos}
+    
+    cat_counts = {}
+    for c in consumos:
+        pid = c.get("producto_id")
+        cat = prod_cat_map.get(pid, "Desconocida")
+        cat_counts[cat] = cat_counts.get(cat, 0) + c.get("cantidad", 1)
+        
+    result = list(cat_counts.items())
+    result.sort(key=lambda x: x[1], reverse=True)
+    return result[:limit]
+
+def get_canciones_mas_pedidas_por_mesa(db: Session, mesa_id: int, limit: int = 5):
+    usuarios_mesa = [u.id for u in db.query(models.Usuario).filter(models.Usuario.mesa_id == mesa_id).all()]
+    canciones = [c for c in cache.get_all_songs() if c.get("usuario_id") in usuarios_mesa]
+    
+    counts = {}
+    for c in canciones:
+        key = (c.get("titulo", "Desconocido"), c.get("youtube_id", ""))
+        counts[key] = counts.get(key, 0) + 1
+        
+    result = [(titulo, yid, count) for (titulo, yid), count in counts.items()]
+    result.sort(key=lambda x: x[2], reverse=True)
+    return result[:limit]
+
+def get_productos_mas_consumidos_por_mesa(db: Session, mesa_id: int, limit: int = 5):
+    consumos = [c for c in cache.get_all_consumos() if c.get("mesa_id") == mesa_id]
+    productos = db.query(models.Producto).all()
+    prod_map = {p.id: p.nombre for p in productos}
+    
+    counts = {}
+    for c in consumos:
+        pid = c.get("producto_id")
+        counts[pid] = counts.get(pid, 0) + c.get("cantidad", 1)
+        
+    result = [(prod_map.get(pid, "Desconocido"), count) for pid, count in counts.items()]
+    result.sort(key=lambda x: x[1], reverse=True)
+    return result[:limit]
+
+def get_productos_no_consumidos(db: Session):
+    consumos = cache.get_all_consumos()
+    productos = db.query(models.Producto).all()
+    
+    consumidos_ids = {c.get("producto_id") for c in consumos}
+    no_consumidos = [p for p in productos if p.id not in consumidos_ids]
+    return no_consumidos
+
+def get_usuarios_inactivos_consumo(db: Session, horas: int = 2):
+    consumos = cache.get_all_consumos()
+    usuarios = db.query(models.Usuario).all()
+    
+    last_consumo = {}
+    from datetime import datetime, timedelta
+    
+    for c in consumos:
+        uid = c.get("usuario_id")
+        created = c.get("created_at")
+        if uid and created:
+            try:
+                # Reemplazamos la Z que isoformat de Typescript o cache podría emitir
+                created = created.replace("Z", "+00:00")
+                dt = datetime.fromisoformat(created)
+                if uid not in last_consumo or dt > last_consumo[uid]:
+                    last_consumo[uid] = dt
+            except ValueError:
+                pass
+                
+    from security import now_bogota
+    now = now_bogota()
+    
+    for uid in last_consumo:
+        if last_consumo[uid].tzinfo is None:
+            last_consumo[uid] = last_consumo[uid].replace(tzinfo=now.tzinfo)
+            
+    inactivos = []
+    for u in usuarios:
+        if u.id not in last_consumo:
+            inactivos.append(u)
+        else:
+            diff = now - last_consumo[u.id]
+            if diff > timedelta(hours=horas):
+                inactivos.append(u)
+                
+    return inactivos
+
+def get_usuarios_consumen_pero_no_cantan(db: Session, umbral_consumo: float = 100.0):
+    canciones = cache.get_all_songs()
+    consumos = cache.get_all_consumos()
+    usuarios = db.query(models.Usuario).all()
+    
+    cantores = {c.get("usuario_id") for c in canciones if c.get("usuario_id")}
+    
+    gastos = {}
+    for c in consumos:
+        uid = c.get("usuario_id")
+        if uid: 
+            gastos[uid] = gastos.get(uid, 0) + float(c.get("valor_total", 0))
+            
+    result = []
+    for u in usuarios:
+        if u.id not in cantores and gastos.get(u.id, 0) > umbral_consumo:
+            result.append(u)
+            
+    return result
