@@ -17845,3 +17845,27 @@ NameError: name 'queue_manager' is not defined
 2026-02-27 10:58:51,638 - queue_manager - INFO - Cache refrescado desde JSON
 2026-02-27 10:58:51,645 - queue_manager - INFO - Cache refrescado desde JSON
 2026-02-27 10:58:51,649 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-27 11:01:12,610 - song_credits_background - INFO - Credits background task started
+2026-02-27 11:01:12,627 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-27 11:01:12,628 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-27 11:01:12,636 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-27 11:01:12,637 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-27 11:03:37,903 - song_credits_background - INFO - Credits background task started
+2026-02-27 11:03:42,410 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-27 11:03:42,412 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-27 11:03:50,673 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-27 11:03:50,673 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-27 11:04:02,633 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-27 11:04:02,644 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-27 11:04:05,680 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-27 11:04:05,682 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-27 11:04:05,808 - crud - INFO - 🏁 Finalizando canción actual: Bailando Bachata Chayanne Karaoke (ID: 1772206752613)
+2026-02-27 11:04:05,847 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-27 11:04:05,876 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-27 11:04:05,896 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-27 11:04:05,898 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-27 11:04:05,899 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-27 11:04:05,925 - crud - INFO - 🎵 Iniciando siguiente canción: KARAOKE La Bachata Manuel Turizo (ID: 1772206756349)
+2026-02-27 11:04:05,926 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=QNZkxrcwQAE, duration_seconds=168
+2026-02-27 11:04:41,672 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-27 11:04:41,675 - queue_manager - INFO - Cache refrescado desde JSON

@@ -6,7 +6,7 @@ import re # Importar para el filtro de groserías
 import datetime
 from database import SessionLocal
 from security import api_key_auth
-
+from cache_manager import cache_manager as cache
 router = APIRouter()
 
 # Lista de palabras inapropiadas (puedes expandirla según sea necesario)

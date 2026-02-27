@@ -658,12 +658,12 @@
       "titulo": "Bailando Bachata Chayanne Karaoke",
       "duracion_seconds": 177,
       "usuario_id": 12,
-      "estado": "reproduciendo",
+      "estado": "cantada",
       "created_at": "2026-02-27T10:39:12.601893-05:00",
       "approved_at": null,
       "rejected_at": null,
       "started_at": "2026-02-27T10:42:09.155308-05:00",
-      "finished_at": null
+      "finished_at": "2026-02-27T11:04:05.811870-05:00"
     },
     "1772206756349": {
       "id": 1772206756349,
@@ -671,11 +671,11 @@
       "titulo": "KARAOKE La Bachata Manuel Turizo",
       "duracion_seconds": 168,
       "usuario_id": 12,
-      "estado": "aprobado",
+      "estado": "reproduciendo",
       "created_at": "2026-02-27T10:39:16.337185-05:00",
       "approved_at": "2026-02-27T10:39:40.695510",
       "rejected_at": null,
-      "started_at": null,
+      "started_at": "2026-02-27T11:04:05.859890-05:00",
       "finished_at": null
     },
     "1772206762363": {
