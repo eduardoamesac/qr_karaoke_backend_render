@@ -516,14 +516,24 @@ def get_resumen_noche(db: Session):
     }
 
 def get_ganancias_totales(db: Session):
-    """Obtiene las ganancias totales (saldo = consumido - pagado)."""
+    """Obtiene las ganancias reales (valor total de ventas - costo de productos vendidos)."""
     consumos = cache.get_all_consumos()
-    pagos = db.query(models.Pago).all()
+    productos = db.query(models.Producto).all()
     
-    total_consumido = sum(float(c.get("valor_total", 0)) for c in consumos)
-    total_pagado = sum(float(p.monto) for p in pagos)
+    costo_map = {p.id: float(p.costo or 0) for p in productos}
     
-    return float(total_consumido - total_pagado)
+    ganancia_real = 0.0
+    for c in consumos:
+        prod_id = c.get("producto_id")
+        cantidad = int(c.get("cantidad", 1))
+        venta_total = float(c.get("valor_total", 0))
+        
+        costo_unitario = costo_map.get(prod_id, 0.0)
+        costo_total = costo_unitario * cantidad
+        
+        ganancia_real += (venta_total - costo_total)
+        
+    return ganancia_real
 
 def limpiar_datos_prueba(db: Session):
     """Limpia todos los datos (solo para desarrollo/pruebas)."""
