@@ -453,8 +453,29 @@ class CacheManager:
     def create_mesa_in_cache(self, nombre: str, qr_code: str) -> int:
         """Crea una mesa en caché y retorna el mesa_id"""
         with self.lock:
-            mesa_id = self.next_mesa_id
-            self.next_mesa_id += 1
+            import re
+            
+            # Intentar extraer el ID lógico de la mesa desde el qr_code o el nombre
+            mesa_id = None
+            match_qr = re.search(r'karaoke-mesa-(\d+)', qr_code, re.IGNORECASE)
+            if match_qr:
+                mesa_id = int(match_qr.group(1))
+            else:
+                match_name = re.search(r'Mesa\s+(\d+)', nombre, re.IGNORECASE)
+                if match_name:
+                    mesa_id = int(match_name.group(1))
+            
+            # Si no pudimos extraer el ID o si ese ID ya está en uso de forma excepcional
+            if mesa_id is None or mesa_id in self.mesas_data:
+                # Asegurar de no chocar con ningún ID existente al usar el next_mesa_id
+                while self.next_mesa_id in self.mesas_data:
+                    self.next_mesa_id += 1
+                mesa_id = self.next_mesa_id
+                self.next_mesa_id += 1
+            
+            # Actualizar el next_mesa_id global si nuestro ID actual es más alto
+            if mesa_id >= self.next_mesa_id:
+                self.next_mesa_id = mesa_id + 1
             
             self.mesas_data[mesa_id] = {
                 "id": mesa_id,
