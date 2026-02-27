@@ -17920,3 +17920,15 @@ NameError: name 'queue_manager' is not defined
 2026-02-27 11:43:35,465 - queue_manager - INFO - Cache refrescado desde JSON
 2026-02-27 11:47:02,103 - queue_manager - INFO - Cache refrescado desde JSON
 2026-02-27 11:47:02,105 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-27 11:52:19,932 - song_credits_background - INFO - Credits background task started
+2026-02-27 11:52:19,974 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-27 11:52:19,975 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-27 11:52:19,981 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-27 11:52:19,984 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-27 11:57:56,933 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-27 11:57:56,939 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-27 12:04:08,559 - song_credits_background - INFO - Credits background task started
+2026-02-27 12:04:08,607 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-27 12:04:08,609 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-27 12:04:08,614 - queue_manager - INFO - Cache refrescado desde JSON
+2026-02-27 12:04:08,618 - queue_manager - INFO - Cache refrescado desde JSON

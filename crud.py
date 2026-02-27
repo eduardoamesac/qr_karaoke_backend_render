@@ -495,7 +495,11 @@ def get_resumen_noche(db: Session):
     """Obtiene un resumen de la noche desde datos en cache y BD."""
     consumos = cache.get_all_consumos()
     pagos = db.query(models.Pago).all()
-    usuarios = db.query(models.Usuario).all()
+    # Solo contar como activos a los usuarios conectados (is_active es True) y que estén en alguna mesa.
+    usuarios_activos_db = db.query(models.Usuario).filter(
+        models.Usuario.is_active == True,
+        models.Usuario.mesa_id.isnot(None)
+    ).all()
     
     total_consumido = sum(float(c.get("valor_total", 0)) for c in consumos)
     total_pagado = sum(float(p.monto) for p in pagos)
@@ -507,12 +511,12 @@ def get_resumen_noche(db: Session):
         "saldo": float(saldo),
         "num_consumos": len(consumos),
         "num_pagos": len(pagos),
-        "num_usuarios": len(usuarios),
+        "num_usuarios": len(usuarios_activos_db),
         "num_canciones": len(cache.get_all_songs()),
         "mesas_activas": len(cache.get_all_mesas()),
         "ingresos_totales": float(total_consumido),
         "canciones_cantadas": len(cache.get_all_songs()),
-        "usuarios_activos": len(usuarios)
+        "usuarios_activos": len(usuarios_activos_db)
     }
 
 def get_ganancias_totales(db: Session):
