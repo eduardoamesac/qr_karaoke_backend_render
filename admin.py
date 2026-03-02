@@ -10,6 +10,8 @@ import websocket_manager
 from security import api_key_auth, MASTER_API_KEY
 from queue_manager import queue_manager
 from fastapi.encoders import jsonable_encoder
+from datetime import datetime
+from cache_manager import cache_manager as cache
 
 router = APIRouter(dependencies=[Depends(api_key_auth)])
 
@@ -1254,17 +1256,27 @@ def get_single_table_payment_status(mesa_id: int, db: Session = Depends(get_db))
     if not status:
         raise HTTPException(status_code=404, detail="Mesa no encontrada.")
     return status
+
 @router.post("/pagos", response_model=schemas.PagoView, summary="Registrar un nuevo pago para una mesa", tags=["Cuentas"])
 async def create_pago_endpoint(pago: schemas.PagoCreate, db: Session = Depends(get_db)):
     """
     **[Admin]** Registra un nuevo pago para una mesa específica.
     """
-    db_pago = crud.create_pago_for_mesa(db, pago=pago)
-    if not db_pago:
-        raise HTTPException(status_code=404, detail="La mesa especificada no fue encontrada.")
-    
-    # Podríamos emitir un evento por WebSocket si quisiéramos actualizar la vista en tiempo real
-    # await websocket_manager.manager.broadcast_payment_update(pago.mesa_id)
+
+    # 1️⃣ Guardar en BD (FUENTE OFICIAL)
+    db_pago = crud.create_pago(db, pago)
+
+    # 2️⃣ Recalcular estado dinámicamente
+    estado = crud.get_table_payment_status(db, pago.mesa_id)
+
+    # 3️⃣ Si ya pagó todo → cerrar mesa en cache
+    if estado and estado.get("saldo_pendiente", 0) <= 0:
+        mesa = cache.get_mesa_by_id(pago.mesa_id)
+        if mesa:
+            mesa["is_active"] = False
+            mesa["closed_at"] = datetime.now().isoformat()
+            cache.update_mesa(pago.mesa_id, mesa)
+
     return db_pago
 
 @router.get("/tables/{mesa_id}/summary", response_model=schemas.ResumenMesa, summary="Obtener resumen de una mesa específica")
