@@ -431,6 +431,19 @@ def deactivate_admin_api_key(db: Session, key_id: int):
         db.refresh(db_key)
     return db_key
 
+def delete_admin_api_key(db: Session, key_id: int):
+    db_key = db.query(models.AdminApiKey).filter(
+        models.AdminApiKey.id == key_id
+    ).first()
+
+    if not db_key:
+        return None
+
+    db.delete(db_key)
+    db.commit()
+
+    return db_key
+
 # ================================================================================
 # FUNCIONES AUXILIARES
 # ================================================================================
