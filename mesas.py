@@ -5,7 +5,7 @@ import crud, schemas, models
 import re # Importar para el filtro de groserías
 import datetime
 from database import SessionLocal
-from security import api_key_auth
+from auth import verify_token, log_admin_action
 from cache_manager import cache_manager as cache
 router = APIRouter()
 
@@ -31,7 +31,7 @@ def get_db():
     finally:
         db.close()
 
-@router.get("/", response_model=List[schemas.Mesa], summary="Listar todas las mesas", dependencies=[Depends(api_key_auth)])
+@router.get("/", response_model=List[schemas.Mesa], summary="Listar todas las mesas", dependencies=[Depends(verify_token)])
 def get_mesas(db: Session = Depends(get_db)):
     """
     **[Admin]** Devuelve una lista de todas las mesas creadas en el sistema.
@@ -39,15 +39,17 @@ def get_mesas(db: Session = Depends(get_db)):
     mesas = crud.get_mesas(db)
     return mesas
 
-@router.post("/", response_model=schemas.Mesa, status_code=201, summary="Crear una nueva mesa", dependencies=[Depends(api_key_auth)])
+@router.post("/", response_model=schemas.Mesa, status_code=201, summary="Crear una nueva mesa")
 def create_mesa_endpoint(
     mesa: schemas.MesaCreate, 
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    admin: dict = Depends(verify_token)
 ):
     """
     Crea una nueva mesa en el sistema con un nombre y un código QR único.
     El código QR debe ser único en todo el sistema.
     """
+    log_admin_action(admin.get("sub"), "create_mesa", f"Mesa: {mesa.nombre}, QR: {mesa.qr_code}")
     db_mesa = crud.get_mesa_by_qr(db, qr_code=mesa.qr_code)
     if db_mesa:
         # db_mesa es un dict si viene del cache

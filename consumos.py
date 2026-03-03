@@ -4,8 +4,8 @@ from typing import List
 
 import crud, schemas
 from database import SessionLocal
+from auth import verify_token, log_admin_action
 import websocket_manager
-from security import api_key_auth
 import asyncio
 import datetime
 from cache_manager import cache_manager  # NUEVO: Importar cache manager
@@ -21,10 +21,11 @@ def get_db():
     finally:
         db.close()
 
-@router.post("/{usuario_id}", response_model=schemas.Consumo, summary="Registrar un consumo para un usuario")
-async def registrar_consumo(
-    usuario_id: int, consumo: schemas.ConsumoCreate, db: Session = Depends(get_db), api_key: str = Depends(api_key_auth)
+@router.post("/{usuario_id}", response_model=schemas.Consumo, status_code=201, summary="Registrar un consumo para un usuario")
+def registrar_consumo_endpoint(
+    usuario_id: int, consumo: schemas.ConsumoCreate, db: Session = Depends(get_db), admin: dict = Depends(verify_token)
 ):
+    log_admin_action(admin.get("sub"), "registrar_consumo", f"Usuario: {usuario_id}, Producto ID: {consumo.producto_id}")
     """
     **[Admin/Staff]** Añade un producto al registro de consumo de un usuario.
     Esto afectará directamente la prioridad del usuario en la cola de canciones.

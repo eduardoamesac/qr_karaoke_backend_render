@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
-from security import api_key_auth # Importamos la seguridad
+from auth import verify_token, log_admin_action # New import
 
 import crud, schemas
 from database import SessionLocal
@@ -16,8 +16,9 @@ def get_db():
     finally:
         db.close()
 
-@router.get("/by-nick/{nick}", response_model=schemas.UsuarioPublico, summary="Buscar un usuario por su nick")
-def get_user_by_nick(nick: str, db: Session = Depends(get_db), api_key: str = Depends(api_key_auth)):
+@router.get("/{nick}", response_model=schemas.Usuario, summary="Obtener un usuario por su nick")
+def get_user_by_nick(nick: str, db: Session = Depends(get_db), admin: dict = Depends(verify_token)):
+    log_admin_action(admin.get("sub"), "get_user_by_nick", f"Nick: {nick}")
     """
     **[Admin]** Busca y devuelve un usuario específico por su nick.
     Es útil para encontrar usuarios del sistema como 'DJ'.

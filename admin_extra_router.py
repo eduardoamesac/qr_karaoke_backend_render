@@ -1,7 +1,8 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from settings_storage import load_settings, save_settings
+from auth import verify_token
 
-router = APIRouter(prefix="/api/v1/admin", tags=["Admin Extra"])
+router = APIRouter(prefix="/api/v1/admin", tags=["Admin Extra"], dependencies=[Depends(verify_token)])
 
 
 @router.post("/set-closing-time")

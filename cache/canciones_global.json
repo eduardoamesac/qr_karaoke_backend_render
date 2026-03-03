@@ -684,12 +684,12 @@
       "titulo": "ROMEO SANTOS - ERES MIA KARAOKE",
       "duracion_seconds": 268,
       "usuario_id": 12,
-      "estado": "reproduciendo",
+      "estado": "cantada",
       "created_at": "2026-02-27T10:39:22.351017-05:00",
       "approved_at": null,
       "rejected_at": null,
       "started_at": "2026-03-03T10:12:08.820059-05:00",
-      "finished_at": null,
+      "finished_at": "2026-03-03T16:15:18.349328-05:00",
       "orden_manual": 1001
     },
     "1772206816932": {
@@ -731,6 +731,58 @@
       "rejected_at": null,
       "started_at": "2026-03-03T10:11:47.538064-05:00",
       "finished_at": "2026-03-03T10:12:04.309143-05:00"
+    },
+    "1772572707157": {
+      "id": 1772572707157,
+      "youtube_id": "sU8FqZQOK3k",
+      "titulo": "HEREDERO - Cosita (Video Oficial)",
+      "duracion_seconds": 196,
+      "usuario_id": 1,
+      "estado": "aprobado",
+      "created_at": "2026-03-03T16:18:27.156171-05:00",
+      "approved_at": null,
+      "rejected_at": null,
+      "started_at": null,
+      "finished_at": null
+    },
+    "1772572709660": {
+      "id": 1772572709660,
+      "youtube_id": "tvUc8GEovac",
+      "titulo": "HEREDERO - Linda (Video Oficial)",
+      "duracion_seconds": 181,
+      "usuario_id": 1,
+      "estado": "pendiente_lazy",
+      "created_at": "2026-03-03T16:18:29.659990-05:00",
+      "approved_at": null,
+      "rejected_at": null,
+      "started_at": null,
+      "finished_at": null
+    },
+    "1772572712239": {
+      "id": 1772572712239,
+      "youtube_id": "ZGz08NpMd6E",
+      "titulo": "HEREDERO - Cartagena (Video Oficial)",
+      "duracion_seconds": 257,
+      "usuario_id": 1,
+      "estado": "pendiente_lazy",
+      "created_at": "2026-03-03T16:18:32.238788-05:00",
+      "approved_at": null,
+      "rejected_at": null,
+      "started_at": null,
+      "finished_at": null
+    },
+    "1772572715619": {
+      "id": 1772572715619,
+      "youtube_id": "sU8FqZQOK3k",
+      "titulo": "HEREDERO - Cosita (Video Oficial)",
+      "duracion_seconds": 196,
+      "usuario_id": 1,
+      "estado": "pendiente_lazy",
+      "created_at": "2026-03-03T16:18:35.618764-05:00",
+      "approved_at": null,
+      "rejected_at": null,
+      "started_at": null,
+      "finished_at": null
     }
   },
   "next_id": 10

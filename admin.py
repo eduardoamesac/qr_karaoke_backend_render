@@ -7,14 +7,14 @@ import crud, schemas
 import config
 from database import SessionLocal
 import websocket_manager
-from security import api_key_auth, MASTER_API_KEY
+from auth import create_access_token, create_refresh_token, verify_token, verify_refresh_token, log_admin_action
 from queue_manager import queue_manager
 from fastapi.encoders import jsonable_encoder
 from datetime import datetime
 from cache_manager import cache_manager as cache
 from timezone_utils import now_bogota
 
-router = APIRouter(dependencies=[Depends(api_key_auth)])
+router = APIRouter(dependencies=[Depends(verify_token)])
 
 # Creamos un nuevo router para las rutas públicas que no necesitan clave de API
 public_router = APIRouter()
@@ -42,13 +42,23 @@ def get_db():
 @public_router.post("/auth/login", response_model=schemas.AdminLoginResponse, summary="Iniciar sesión como administrador")
 def admin_login(login_data: schemas.AdminLoginRequest, db: Session = Depends(get_db)):
     """
-    Verifica la clave de API y registra el inicio de sesión.
+    Verifica la clave de API y genera tokens JWT.
     """
+    from security import MASTER_API_KEY
     key = login_data.api_key.strip()
     
     # 1. Verificar Clave Maestra
     if key == MASTER_API_KEY:
-        return {"success": True, "description": "Super Admin", "token": key}
+        access_token = create_access_token(data={"sub": "master", "role": "admin"})
+        refresh_token = create_refresh_token(data={"sub": "master", "role": "admin"})
+        log_admin_action("master", "login", "Acceso con clave maestra")
+        return {
+            "success": True, 
+            "description": "Super Admin", 
+            "access_token": access_token,
+            "refresh_token": refresh_token,
+            "token_type": "bearer"
+        }
 
     # 2. Verificar Clave de Base de Datos
     db_key = crud.get_admin_api_key(db, key=key)
@@ -56,13 +66,50 @@ def admin_login(login_data: schemas.AdminLoginRequest, db: Session = Depends(get
     if db_key:
         db_key.last_used = now_bogota()
         db.commit()
+
+        access_token = create_access_token(
+            data={
+                "sub": str(db_key.id),
+                "role": "admin"
+            }
+        )
+        refresh_token = create_refresh_token(
+            data={
+                "sub": str(db_key.id),
+                "role": "admin"
+            }
+        )
+        
+        log_admin_action(str(db_key.id), "login", db_key.description)
+
         return {
             "success": True,
             "description": db_key.description,
-            "token": key
+            "access_token": access_token,
+            "refresh_token": refresh_token,
+            "token_type": "bearer"
         }
   
     raise HTTPException(status_code=403, detail="Clave de API inválida.")
+
+@public_router.post("/auth/refresh", response_model=schemas.AdminLoginResponse, summary="Refrescar el token de acceso")
+def refresh_admin_token(refresh_token: str = Body(..., embed=True)):
+    """
+    **[Admin]** Genera un nuevo token de acceso a partir de un refresh token válido.
+    """
+    payload = verify_refresh_token(refresh_token)
+    admin_id = payload.get("sub")
+    role = payload.get("role")
+    
+    new_access_token = create_access_token(data={"sub": admin_id, "role": role})
+    
+    return {
+        "success": True,
+        "access_token": new_access_token,
+        "token_type": "bearer",
+        "refresh_token": refresh_token,
+        "description": "Token refrescado"
+    }
 
 # --- Rutas Públicas (para usuarios en mesas) ---
 
@@ -703,14 +750,15 @@ async def resume_playback(db: Session = Depends(get_db)):
     return {"mensaje": "Reproducción reanudada."}
 
 @router.get("/canciones/pending", response_model=List[schemas.CancionAdminView], summary="Obtener canciones pendientes por aprobar")
-def get_pending_songs(db: Session = Depends(get_db), api_key: str = Depends(api_key_auth)):
+def get_pending_songs(db: Session = Depends(get_db)):
     """
     **[Admin]** Obtiene la lista de canciones pendientes por aprobar.
     """
     return crud.get_canciones_pendientes_por_aprobar(db)
 
 @router.post("/canciones/{cancion_id}/approve", response_model=schemas.Cancion, summary="Aprobar una canción pendiente")
-async def approve_pending_song(cancion_id: int, db: Session = Depends(get_db), api_key: str = Depends(api_key_auth)):
+async def approve_pending_song(cancion_id: int, db: Session = Depends(get_db), admin: dict = Depends(verify_token)):
+    log_admin_action(admin.get("sub"), "approve_pending_song", f"ID: {cancion_id}")
     """
     **[Admin]** Aprueba una canción que está en estado 'pendiente'.
     """
@@ -723,7 +771,8 @@ async def approve_pending_song(cancion_id: int, db: Session = Depends(get_db), a
     return db_cancion
 
 @router.post("/canciones/pending/{cancion_id}/move-up", status_code=200, summary="Mover canción pendiente hacia arriba")
-async def move_pending_song_up(cancion_id: int, db: Session = Depends(get_db), api_key: str = Depends(api_key_auth)):
+async def move_pending_song_up(cancion_id: int, db: Session = Depends(get_db), admin: dict = Depends(verify_token)):
+    log_admin_action(admin.get("sub"), "move_pending_song_up", f"ID: {cancion_id}")
     """
     **[Admin]** Mueve una canción pendiente una posición hacia arriba en la cola.
     """
@@ -748,7 +797,8 @@ async def move_pending_song_up(cancion_id: int, db: Session = Depends(get_db), a
 
 
 @router.post("/canciones/pending/{cancion_id}/move-down", status_code=200, summary="Mover canción pendiente hacia abajo")
-async def move_pending_song_down(cancion_id: int, db: Session = Depends(get_db), api_key: str = Depends(api_key_auth)):
+async def move_pending_song_down(cancion_id: int, db: Session = Depends(get_db), admin: dict = Depends(verify_token)):
+    log_admin_action(admin.get("sub"), "move_pending_song_down", f"ID: {cancion_id}")
     """
     **[Admin]** Mueve una canción pendiente una posición hacia abajo en la cola.
     """
@@ -774,7 +824,8 @@ async def move_pending_song_down(cancion_id: int, db: Session = Depends(get_db),
 # ===================== LAZY QUEUE MOVEMENT ENDPOINTS =====================
 
 @router.post("/canciones/lazy/{cancion_id}/move-up", status_code=200, summary="Mover canción lazy hacia arriba")
-async def move_lazy_song_up(cancion_id: int, db: Session = Depends(get_db), api_key: str = Depends(api_key_auth)):
+async def move_lazy_song_up(cancion_id: int, db: Session = Depends(get_db), admin: dict = Depends(verify_token)):
+    log_admin_action(admin.get("sub"), "move_lazy_song_up", f"ID: {cancion_id}")
     """
     **[Admin]** Mueve una canción en la cola lazy una posición hacia arriba.
     
@@ -791,7 +842,7 @@ async def move_lazy_song_up(cancion_id: int, db: Session = Depends(get_db), api_
         db,
         cancion_id=cancion_id,
         direction="up",
-        audit_user=f"api_key_{api_key[:8]}..."
+        audit_user=f"admin_{admin.get('sub')}"
     )
     
     if not result["success"]:
@@ -806,7 +857,8 @@ async def move_lazy_song_up(cancion_id: int, db: Session = Depends(get_db), api_
     }
 
 @router.post("/canciones/lazy/{cancion_id}/move-down", status_code=200, summary="Mover canción lazy hacia abajo")
-async def move_lazy_song_down(cancion_id: int, db: Session = Depends(get_db), api_key: str = Depends(api_key_auth)):
+async def move_lazy_song_down(cancion_id: int, db: Session = Depends(get_db), admin: dict = Depends(verify_token)):
+    log_admin_action(admin.get("sub"), "move_lazy_song_down", f"ID: {cancion_id}")
     """
     **[Admin]** Mueve una canción en la cola lazy una posición hacia abajo.
     
@@ -823,7 +875,7 @@ async def move_lazy_song_down(cancion_id: int, db: Session = Depends(get_db), ap
         db,
         cancion_id=cancion_id,
         direction="down",
-        audit_user=f"api_key_{api_key[:8]}..."
+        audit_user=f"admin_{admin.get('sub')}"
     )
     
     if not result["success"]:
@@ -839,7 +891,8 @@ async def move_lazy_song_down(cancion_id: int, db: Session = Depends(get_db), ap
 
 
 @router.post("/canciones/lazy/approve-next", status_code=200, summary="Aprobar siguiente canción lazy")
-async def approve_next_lazy_song(db: Session = Depends(get_db), api_key: str = Depends(api_key_auth)):
+async def approve_next_lazy_song(db: Session = Depends(get_db), admin: dict = Depends(verify_token)):
+    log_admin_action(admin.get("sub"), "approve_next_lazy_song")
     """
     **[Admin]** Aprueba la siguiente canción en la cola lazy (pendiente_lazy).
     
@@ -877,7 +930,8 @@ async def approve_next_lazy_song(db: Session = Depends(get_db), api_key: str = D
 
 
 @router.post("/canciones/{cancion_id}/revert-approve", status_code=200, summary="Revertir aprobación de canción")
-async def revert_approved_song(cancion_id: int, db: Session = Depends(get_db), api_key: str = Depends(api_key_auth)):
+async def revert_approved_song(cancion_id: int, db: Session = Depends(get_db), admin: dict = Depends(verify_token)):
+    log_admin_action(admin.get("sub"), "revert_approved_song", f"ID: {cancion_id}")
     """
     **[Admin]** Revertir una aprobación previa: devuelve la canción al estado `pendiente_lazy`.
     
@@ -1386,12 +1440,13 @@ async def admin_add_song_to_mesa(
     mesa_id: int,
     cancion: schemas.CancionCreate,
     db: Session = Depends(get_db),
-    api_key: str = Depends(api_key_auth)
+    admin: dict = Depends(verify_token)
 ):
     """
     **[Admin]** Permite al administrador añadir una canción directamente a la cola
     de una mesa específica. La canción se aprueba automáticamente.
     """
+    log_admin_action(admin.get("sub"), "admin_add_song_to_mesa", f"Mesa: {mesa_id}, Titulo: {cancion.titulo}")
     # Verificar que la mesa existe
     db_mesa = crud.get_mesa_by_id(db, mesa_id=mesa_id)
     if not db_mesa:

@@ -9,8 +9,8 @@ from typing import List
 
 import crud, schemas, models, config
 from database import SessionLocal
+from auth import verify_token, log_admin_action
 import websocket_manager
-from security import api_key_auth
 from cache_manager import cache_manager
 from queue_manager import queue_manager
 
@@ -155,11 +155,14 @@ def ver_lista_de_canciones(usuario_id: int, db: Session = Depends(get_db)):
     return queue_manager.get_user_songs(db, usuario_id)
 
 @router.get("/pendientes", response_model=List[schemas.CancionAdminView], summary="Ver todas las canciones pendientes")
-def ver_canciones_pendientes(db: Session = Depends(get_db), api_key: str = Depends(api_key_auth)):
+@router.get("/pendientes", response_model=List[schemas.CancionAdminView], summary="Ver canciones pendientes de moderación")
+def ver_canciones_pendientes(db: Session = Depends(get_db), admin: dict = Depends(verify_token)):
     return crud.get_canciones_pendientes(db=db)
 
 @router.post("/{cancion_id}/aprobar", response_model=schemas.Cancion, summary="Aprobar una canción")
-async def aprobar_cancion(cancion_id: int, db: Session = Depends(get_db), api_key: str = Depends(api_key_auth)):
+@router.post("/{cancion_id}/aprobar", response_model=schemas.Cancion, summary="Aprobar una canción (Admin)")
+async def aprobar_cancion(cancion_id: int, db: Session = Depends(get_db), admin: dict = Depends(verify_token)):
+    log_admin_action(admin.get("sub"), "aprobar_cancion", f"ID: {cancion_id}")
     db_cancion = crud.update_cancion_estado(db, cancion_id=cancion_id, nuevo_estado="aprobado")
     if not db_cancion:
         raise HTTPException(status_code=404, detail="Canción no encontrada")
@@ -169,7 +172,9 @@ async def aprobar_cancion(cancion_id: int, db: Session = Depends(get_db), api_ke
     return db_cancion
 
 @router.post("/{cancion_id}/rechazar", response_model=schemas.Cancion, summary="Rechazar una canción")
-async def rechazar_cancion(cancion_id: int, db: Session = Depends(get_db), api_key: str = Depends(api_key_auth)):
+@router.post("/{cancion_id}/rechazar", response_model=schemas.Cancion, summary="Rechazar una canción (Admin)")
+async def rechazar_cancion(cancion_id: int, db: Session = Depends(get_db), admin: dict = Depends(verify_token)):
+    log_admin_action(admin.get("sub"), "rechazar_cancion", f"ID: {cancion_id}")
     db_cancion = cache_manager.get_song_by_id(cancion_id)
     
     if not db_cancion:
@@ -193,7 +198,9 @@ async def rechazar_cancion(cancion_id: int, db: Session = Depends(get_db), api_k
     return db_cancion
 
 @router.post("/admin/add", response_model=schemas.Cancion, summary="[Admin] Añadir una canción como DJ")
-async def admin_anadir_cancion(cancion: schemas.CancionCreate, db: Session = Depends(get_db), api_key: str = Depends(api_key_auth)):
+@router.post("/admin-anadir", response_model=schemas.Cancion, summary="Añadir una canción como admin")
+async def admin_anadir_cancion(cancion: schemas.CancionCreate, db: Session = Depends(get_db), admin: dict = Depends(verify_token)):
+    log_admin_action(admin.get("sub"), "admin_anadir_cancion", f"Titulo: {cancion.titulo}")
     dj_user = crud.get_or_create_dj_user(db)
     db_cancion = crud.create_cancion_para_usuario(db=db, cancion=cancion, usuario_id=dj_user.id)
     
@@ -246,7 +253,9 @@ def calcular_tiempo_espera(cancion_id: int, db: Session = Depends(get_db)):
     return {"tiempo_espera_segundos": tiempo_segundos}
 
 @router.post("/{cancion_id}/play", status_code=200, summary="Reproducir una canción en el player")
-async def play_song_now(cancion_id: int, db: Session = Depends(get_db), api_key: str = Depends(api_key_auth)):
+@router.post("/{cancion_id}/play-now", summary="Reproducir esta canción inmediatamente")
+async def play_song_now(cancion_id: int, db: Session = Depends(get_db), admin: dict = Depends(verify_token)):
+    log_admin_action(admin.get("sub"), "play_song_now", f"ID: {cancion_id}")
     """
     **[Admin]** Envía la orden de reproducir una canción específica en el player.
     """

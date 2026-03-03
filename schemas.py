@@ -414,8 +414,10 @@ class AdminLoginRequest(BaseModel):
 
 class AdminLoginResponse(BaseModel):
     success: bool
-    description: str
-    token: str # Retornamos el token mismo (o uno nuevo si implementáramos JWT)
+    access_token: str
+    token_type: str = "bearer"
+    refresh_token: Optional[str] = None
+    description: Optional[str] = None
 
 # --- Schemas para Claves de API de Admin ---
 class AdminApiKeyCreate(BaseModel):

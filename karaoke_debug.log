@@ -18106,3 +18106,77 @@ NameError: name 'queue_manager' is not defined
 2026-03-03 15:55:13,054 - queue_manager - INFO - Cache refrescado desde JSON
 2026-03-03 15:55:23,188 - queue_manager - INFO - Cache refrescado desde JSON
 2026-03-03 15:55:23,189 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-03 16:15:17,456 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-03 16:15:17,505 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-03 16:15:18,332 - crud - INFO - 🏁 Finalizando canción actual: ROMEO SANTOS - ERES MIA KARAOKE (ID: 1772206762363)
+2026-03-03 16:15:18,430 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-03 16:15:18,433 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-03 16:15:18,434 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-03 16:15:18,435 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-03 16:15:18,443 - crud - INFO - 📭 No hay más canciones en cola.
+2026-03-03 16:17:41,862 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'amistades peligrosas'
+2026-03-03 16:17:41,866 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'amistades peligrosas' (Karaoke Mode: False)
+2026-03-03 16:17:44,112 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-03-03 16:17:44,113 - youtube - INFO - Búsqueda por texto: 'amistades peligrosas'
+2026-03-03 16:17:44,114 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-03-03 16:17:44,786 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=amistades+peligrosas&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-03-03 16:17:44,798 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-03-03 16:17:44,799 - youtube - INFO - IDs de video encontrados: ['95JHOXoXR6M', 'bWQul83KtqI', '2OFTs7ix9w0', 'UsrIyimnViM', 'hsi2mXZpOac', '5NqzXsjLncQ', 'yfk0OfK_8Hw', 'S2fzpT0pb6w', 'fUNTtR55g5o', 'sK4EdMeeQl8']
+2026-03-03 16:17:44,801 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-03-03 16:17:44,973 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=95JHOXoXR6M%2CbWQul83KtqI%2C2OFTs7ix9w0%2CUsrIyimnViM%2Chsi2mXZpOac%2C5NqzXsjLncQ%2Cyfk0OfK_8Hw%2CS2fzpT0pb6w%2CfUNTtR55g5o%2CsK4EdMeeQl8&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-03-03 16:17:44,982 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-03-03 16:17:44,986 - youtube - INFO - Procesamiento finalizado. Se encontraron 8 resultados formateados.
+2026-03-03 16:17:45,007 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'amistades peligrosas'
+2026-03-03 16:17:45,008 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'amistades peligrosas' (Karaoke Mode: False)
+2026-03-03 16:17:46,911 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-03-03 16:17:46,912 - youtube - INFO - Búsqueda por texto: 'amistades peligrosas'
+2026-03-03 16:17:46,913 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-03-03 16:17:47,574 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=amistades+peligrosas&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-03-03 16:17:47,578 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-03-03 16:17:47,579 - youtube - INFO - IDs de video encontrados: ['95JHOXoXR6M', 'bWQul83KtqI', '2OFTs7ix9w0', 'UsrIyimnViM', 'hsi2mXZpOac', '5NqzXsjLncQ', 'yfk0OfK_8Hw', 'S2fzpT0pb6w', 'fUNTtR55g5o', 'sK4EdMeeQl8']
+2026-03-03 16:17:47,582 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-03-03 16:17:47,810 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=95JHOXoXR6M%2CbWQul83KtqI%2C2OFTs7ix9w0%2CUsrIyimnViM%2Chsi2mXZpOac%2C5NqzXsjLncQ%2Cyfk0OfK_8Hw%2CS2fzpT0pb6w%2CfUNTtR55g5o%2CsK4EdMeeQl8&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-03-03 16:17:47,817 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-03-03 16:17:47,819 - youtube - INFO - Procesamiento finalizado. Se encontraron 8 resultados formateados.
+2026-03-03 16:18:05,249 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'heredero'
+2026-03-03 16:18:05,250 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'heredero' (Karaoke Mode: False)
+2026-03-03 16:18:06,670 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-03-03 16:18:06,672 - youtube - INFO - Búsqueda por texto: 'heredero'
+2026-03-03 16:18:06,672 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-03-03 16:18:07,305 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=heredero&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-03-03 16:18:07,310 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-03-03 16:18:07,312 - youtube - INFO - IDs de video encontrados: ['KI3pWvM19Pc', 'sU8FqZQOK3k', 'bZLojmRvRd8', 'uswZszIYTj0', 'tvUc8GEovac', 'mspgrI-m06I', 'ZGz08NpMd6E', 'dLeN4bdCuiM', 'Zk9q-g3DsAo']
+2026-03-03 16:18:07,316 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-03-03 16:18:07,532 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=KI3pWvM19Pc%2CsU8FqZQOK3k%2CbZLojmRvRd8%2CuswZszIYTj0%2CtvUc8GEovac%2CmspgrI-m06I%2CZGz08NpMd6E%2CdLeN4bdCuiM%2CZk9q-g3DsAo&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-03-03 16:18:07,548 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-03-03 16:18:07,551 - youtube - INFO - Procesamiento finalizado. Se encontraron 9 resultados formateados.
+2026-03-03 16:18:07,572 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'heredero'
+2026-03-03 16:18:07,574 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'heredero' (Karaoke Mode: False)
+2026-03-03 16:18:09,123 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-03-03 16:18:09,124 - youtube - INFO - Búsqueda por texto: 'heredero'
+2026-03-03 16:18:09,126 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-03-03 16:18:09,770 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=heredero&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-03-03 16:18:09,773 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-03-03 16:18:09,774 - youtube - INFO - IDs de video encontrados: ['KI3pWvM19Pc', 'sU8FqZQOK3k', 'bZLojmRvRd8', 'uswZszIYTj0', 'tvUc8GEovac', 'mspgrI-m06I', 'ZGz08NpMd6E', 'dLeN4bdCuiM', 'Zk9q-g3DsAo']
+2026-03-03 16:18:09,775 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-03-03 16:18:09,989 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=KI3pWvM19Pc%2CsU8FqZQOK3k%2CbZLojmRvRd8%2CuswZszIYTj0%2CtvUc8GEovac%2CmspgrI-m06I%2CZGz08NpMd6E%2CdLeN4bdCuiM%2CZk9q-g3DsAo&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-03-03 16:18:10,010 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-03-03 16:18:10,013 - youtube - INFO - Procesamiento finalizado. Se encontraron 9 resultados formateados.
+2026-03-03 16:18:27,177 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-03 16:18:27,179 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-03 16:18:27,180 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-03 16:18:29,682 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-03 16:18:29,683 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-03 16:18:29,684 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-03 16:18:32,261 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-03 16:18:32,261 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-03 16:18:32,262 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-03 16:18:35,642 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-03 16:18:35,643 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-03 16:18:35,643 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-03 16:42:54,835 - song_credits_background - INFO - Credits background task started
+2026-03-03 16:43:20,556 - song_credits_background - INFO - Credits background task started
+2026-03-03 16:44:41,924 - song_credits_background - INFO - Credits background task started
+2026-03-03 17:01:41,574 - song_credits_background - INFO - Credits background task started
+2026-03-03 17:02:14,686 - song_credits_background - INFO - Credits background task started
+2026-03-03 17:04:18,998 - song_credits_background - INFO - Credits background task started

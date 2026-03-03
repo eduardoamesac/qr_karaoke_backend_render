@@ -5,9 +5,10 @@ from typing import List, Dict, Any
 from fastapi import Depends # Importar Depends
 import re
 from urllib.parse import urlparse, parse_qs
+import requests
+from auth import verify_token, log_admin_action
 import logging
 
-from security import api_key_auth # Importar la función de autenticación
 logger = logging.getLogger(__name__)
 
 router = APIRouter()
@@ -197,8 +198,10 @@ async def _perform_youtube_search(q: str, karaoke_mode: bool = False) -> List[Di
 
     return formatted_results
 
-@router.get("/search", summary="[Admin] Buscar videos en YouTube")
-async def search_youtube(q: str, api_key: str = Depends(api_key_auth, use_cache=False)) -> List[Dict[str, Any]]:
+@router.get("/buscar", response_model=List[Dict[str, Any]], summary="Buscar canciones en YouTube")
+async def search_youtube(q: str, admin: dict = Depends(verify_token)) -> List[Dict[str, Any]]:
+    # Log de búsqueda (opcional, pero útil para auditoría)
+    log_admin_action(admin.get("sub"), "search_youtube", f"Query: {q}")
     """
     Realiza una búsqueda de videos en YouTube utilizando la API oficial.
     Este endpoint actúa como un proxy para no exponer la API Key en el cliente.
