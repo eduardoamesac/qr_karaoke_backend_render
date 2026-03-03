@@ -12,6 +12,7 @@ from queue_manager import queue_manager
 from fastapi.encoders import jsonable_encoder
 from datetime import datetime
 from cache_manager import cache_manager as cache
+from timezone_utils import now_bogota
 
 router = APIRouter(dependencies=[Depends(api_key_auth)])
 
@@ -51,18 +52,17 @@ def admin_login(login_data: schemas.AdminLoginRequest, db: Session = Depends(get
 
     # 2. Verificar Clave de Base de Datos
     db_key = crud.get_admin_api_key(db, key=key)
-    if db_key:
-        # Opcional: actualizar last_used
-        db_key.last_used = crud.now_bogota()
-        db.commit()
-        return {"success": True, "description": db_key.description, "token": key}
-    
-    create_admin_log_error(db, "LOGIN_FAILED", "Intento de login fallido con clave incorrecta.")
-    raise HTTPException(status_code=403, detail="Clave de API inválida.")
 
-def create_admin_log_error(db: Session, action: str, details: str):
-    """Helper local para loguear errores sin exponer crud si no es necesario"""
-    pass
+    if db_key:
+        db_key.last_used = now_bogota()
+        db.commit()
+        return {
+            "success": True,
+            "description": db_key.description,
+            "token": key
+        }
+  
+    raise HTTPException(status_code=403, detail="Clave de API inválida.")
 
 # --- Rutas Públicas (para usuarios en mesas) ---
 

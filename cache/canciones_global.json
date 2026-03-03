@@ -671,12 +671,12 @@
       "titulo": "KARAOKE La Bachata Manuel Turizo",
       "duracion_seconds": 168,
       "usuario_id": 12,
-      "estado": "reproduciendo",
+      "estado": "cantada",
       "created_at": "2026-02-27T10:39:16.337185-05:00",
       "approved_at": "2026-02-27T10:39:40.695510",
       "rejected_at": null,
       "started_at": "2026-02-27T11:04:05.859890-05:00",
-      "finished_at": null
+      "finished_at": "2026-03-03T10:09:38.952615-05:00"
     },
     "1772206762363": {
       "id": 1772206762363,
@@ -684,11 +684,11 @@
       "titulo": "ROMEO SANTOS - ERES MIA KARAOKE",
       "duracion_seconds": 268,
       "usuario_id": 12,
-      "estado": "pendiente_lazy",
+      "estado": "reproduciendo",
       "created_at": "2026-02-27T10:39:22.351017-05:00",
       "approved_at": null,
       "rejected_at": null,
-      "started_at": null,
+      "started_at": "2026-03-03T10:12:08.820059-05:00",
       "finished_at": null,
       "orden_manual": 1001
     },
@@ -698,12 +698,12 @@
       "titulo": "Me Quedare Solo",
       "duracion_seconds": 262,
       "usuario_id": 1,
-      "estado": "pendiente_lazy",
+      "estado": "cantada",
       "created_at": "2026-02-27T10:40:16.931483-05:00",
       "approved_at": null,
       "rejected_at": null,
-      "started_at": null,
-      "finished_at": null,
+      "started_at": "2026-03-03T10:12:04.339176-05:00",
+      "finished_at": "2026-03-03T10:12:08.716301-05:00",
       "orden_manual": 1000
     },
     "1772206844633": {
@@ -712,12 +712,12 @@
       "titulo": "HEREDERO - Linda (Video Oficial)",
       "duracion_seconds": 181,
       "usuario_id": 1,
-      "estado": "pendiente_lazy",
+      "estado": "cantada",
       "created_at": "2026-02-27T10:40:44.632104-05:00",
       "approved_at": null,
       "rejected_at": null,
-      "started_at": null,
-      "finished_at": null
+      "started_at": "2026-03-03T10:09:38.980115-05:00",
+      "finished_at": "2026-03-03T10:11:47.479181-05:00"
     },
     "1772206847458": {
       "id": 1772206847458,
@@ -725,12 +725,12 @@
       "titulo": "HEREDERO - Linda (Video Oficial)",
       "duracion_seconds": 181,
       "usuario_id": 1,
-      "estado": "pendiente_lazy",
+      "estado": "cantada",
       "created_at": "2026-02-27T10:40:47.457139-05:00",
       "approved_at": null,
       "rejected_at": null,
-      "started_at": null,
-      "finished_at": null
+      "started_at": "2026-03-03T10:11:47.538064-05:00",
+      "finished_at": "2026-03-03T10:12:04.309143-05:00"
     }
   },
   "next_id": 10

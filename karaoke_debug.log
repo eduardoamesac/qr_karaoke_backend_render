@@ -17975,3 +17975,103 @@ NameError: name 'queue_manager' is not defined
 2026-03-02 11:35:06,540 - song_credits_background - INFO - Credits background task started
 2026-03-02 11:36:17,400 - song_credits_background - INFO - Credits background task started
 2026-03-02 11:36:42,333 - song_credits_background - INFO - Credits background task started
+2026-03-02 11:40:28,568 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-02 11:40:28,576 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-02 11:55:02,871 - song_credits_background - INFO - Credits background task started
+2026-03-03 09:31:24,901 - song_credits_background - INFO - Credits background task started
+2026-03-03 09:31:55,736 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-03 09:31:55,745 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-03 09:46:03,515 - song_credits_background - INFO - Credits background task started
+2026-03-03 09:46:16,274 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-03 09:46:16,276 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-03 10:05:30,124 - song_credits_background - INFO - Credits background task started
+2026-03-03 10:05:31,034 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-03 10:05:31,035 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-03 10:09:38,541 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-03 10:09:38,543 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-03 10:09:38,951 - crud - INFO - 🏁 Finalizando canción actual: KARAOKE La Bachata Manuel Turizo (ID: 1772206756349)
+2026-03-03 10:09:38,964 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-03 10:09:38,967 - queue_manager - INFO - 🚀 No hay canciones aprobadas. Promoviendo 'HEREDERO - Linda (Video Oficial)' desde cola lazy.
+2026-03-03 10:09:38,978 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-03 10:09:38,989 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-03 10:09:38,990 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-03 10:09:38,991 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-03 10:09:38,994 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-03 10:09:39,003 - crud - INFO - 🎵 Iniciando siguiente canción: HEREDERO - Linda (Video Oficial) (ID: 1772206844633)
+2026-03-03 10:09:39,004 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=tvUc8GEovac, duration_seconds=181
+2026-03-03 10:11:47,476 - crud - INFO - 🏁 Finalizando canción actual: HEREDERO - Linda (Video Oficial) (ID: 1772206844633)
+2026-03-03 10:11:47,498 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-03 10:11:47,499 - queue_manager - INFO - 🚀 No hay canciones aprobadas. Promoviendo 'HEREDERO - Linda (Video Oficial)' desde cola lazy.
+2026-03-03 10:11:47,515 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-03 10:11:47,656 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-03 10:11:47,680 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-03 10:11:47,699 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-03 10:11:47,704 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-03 10:11:47,728 - crud - INFO - 🎵 Iniciando siguiente canción: HEREDERO - Linda (Video Oficial) (ID: 1772206847458)
+2026-03-03 10:11:47,737 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=tvUc8GEovac, duration_seconds=181
+2026-03-03 10:12:04,307 - crud - INFO - 🏁 Finalizando canción actual: HEREDERO - Linda (Video Oficial) (ID: 1772206847458)
+2026-03-03 10:12:04,319 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-03 10:12:04,320 - queue_manager - INFO - 🚀 No hay canciones aprobadas. Promoviendo 'Me Quedare Solo' desde cola lazy.
+2026-03-03 10:12:04,336 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-03 10:12:04,453 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-03 10:12:04,664 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-03 10:12:04,716 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-03 10:12:04,720 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-03 10:12:04,816 - crud - INFO - 🎵 Iniciando siguiente canción: Me Quedare Solo (ID: 1772206816932)
+2026-03-03 10:12:04,841 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=Tsj8e9x9S_s, duration_seconds=262
+2026-03-03 10:12:08,713 - crud - INFO - 🏁 Finalizando canción actual: Me Quedare Solo (ID: 1772206816932)
+2026-03-03 10:12:08,728 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-03 10:12:08,729 - queue_manager - INFO - 🚀 No hay canciones aprobadas. Promoviendo 'ROMEO SANTOS - ERES MIA KARAOKE' desde cola lazy.
+2026-03-03 10:12:08,795 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-03 10:12:09,109 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-03 10:12:09,118 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-03 10:12:09,131 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-03 10:12:09,251 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-03 10:12:09,335 - crud - INFO - 🎵 Iniciando siguiente canción: ROMEO SANTOS - ERES MIA KARAOKE (ID: 1772206762363)
+2026-03-03 10:12:09,350 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=eupJ1SCfd30, duration_seconds=268
+2026-03-03 10:17:21,187 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-03 10:17:21,188 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-03 10:34:40,225 - song_credits_background - INFO - Credits background task started
+2026-03-03 10:34:40,371 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-03 10:34:40,380 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-03 10:37:48,362 - song_credits_background - INFO - Credits background task started
+2026-03-03 10:37:48,383 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-03 10:37:48,384 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-03 10:40:04,659 - song_credits_background - INFO - Credits background task started
+2026-03-03 10:40:05,053 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-03 10:40:05,142 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-03 10:45:25,785 - song_credits_background - INFO - Credits background task started
+2026-03-03 10:45:25,891 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-03 10:45:25,903 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-03 10:47:08,382 - song_credits_background - INFO - Credits background task started
+2026-03-03 10:47:08,405 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-03 10:47:08,410 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-03 10:47:37,289 - song_credits_background - INFO - Credits background task started
+2026-03-03 10:47:37,308 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-03 10:47:37,310 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-03 10:48:11,606 - song_credits_background - INFO - Credits background task started
+2026-03-03 10:53:39,521 - song_credits_background - INFO - Credits background task started
+2026-03-03 10:53:39,576 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-03 10:53:39,577 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-03 11:03:10,266 - song_credits_background - INFO - Credits background task started
+2026-03-03 11:03:28,262 - song_credits_background - INFO - Credits background task started
+2026-03-03 11:05:01,332 - song_credits_background - INFO - Credits background task started
+2026-03-03 11:05:14,242 - song_credits_background - INFO - Credits background task started
+2026-03-03 11:07:48,317 - song_credits_background - INFO - Credits background task started
+2026-03-03 11:12:52,843 - song_credits_background - INFO - Credits background task started
+2026-03-03 11:13:08,642 - song_credits_background - INFO - Credits background task started
+2026-03-03 11:17:11,034 - song_credits_background - INFO - Credits background task started
+2026-03-03 11:17:25,469 - song_credits_background - INFO - Credits background task started
+2026-03-03 11:17:34,771 - song_credits_background - INFO - Credits background task started
+2026-03-03 11:18:32,483 - song_credits_background - INFO - Credits background task started
+2026-03-03 11:18:52,325 - song_credits_background - INFO - Credits background task started
+2026-03-03 11:19:06,160 - song_credits_background - INFO - Credits background task started
+2026-03-03 11:20:18,624 - song_credits_background - INFO - Credits background task started
+2026-03-03 11:23:50,440 - song_credits_background - INFO - Credits background task started
+2026-03-03 11:30:41,702 - song_credits_background - INFO - Credits background task started
+2026-03-03 11:49:12,077 - song_credits_background - INFO - Credits background task started
+2026-03-03 11:54:02,441 - song_credits_background - INFO - Credits background task started
+2026-03-03 11:54:39,835 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-03 11:54:39,845 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-03 11:55:34,793 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-03 11:55:34,906 - queue_manager - INFO - Cache refrescado desde JSON
