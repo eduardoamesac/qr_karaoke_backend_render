@@ -624,6 +624,28 @@ def get_resumen_noche(db: Session):
         "usuarios_activos": len(usuarios_activos_db)
     }
 
+def reset_database_for_new_night(db: Session):
+    """
+    Reinicia el sistema para una nueva noche.
+    1. Limpia todo el caché JSON (canciones, consumos, balances).
+    2. Resetea créditos y puntos de usuarios en la DB.
+    3. Desconecta a todos los usuarios de sus mesas.
+    """
+    # 1. Limpiar Caché
+    cache.clear_all()
+    
+    # 2. Resetear Usuarios en DB
+    db.query(models.Usuario).update({
+        "song_credits": 0,
+        "puntos": 0,
+        "nivel": "bronce",
+        "mesa_id": None,
+        "is_active": False
+    })
+    
+    db.commit()
+    return True
+
 def get_ganancias_totales(db: Session):
     """Obtiene las ganancias reales (valor total de ventas - costo de productos vendidos)."""
     consumos = cache.get_all_consumos()

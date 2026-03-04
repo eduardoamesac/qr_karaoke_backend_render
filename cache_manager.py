@@ -755,11 +755,19 @@ class CacheManager: # Define la clase central encargada de gestionar los datos e
         return None # Falló
     
     def clear_all(self) -> None: # Limpia TODO el sistema de caché (Uso extremo)
-        """Limpia todos los caché""" # Docstring explicativo
-        self.clear_all_songs() # Borra todas las canciones (conecta con clear_all_songs)
-        # Limpiar mesas
-        for mesa_id in list(self.mesas_data.keys()): # Itera mesas configuradas
-            self.clear_mesa_cache(mesa_id) # Borra sus balances financieros (conecta con clear_mesa_cache)
+        """Limpia todos los caché"""
+        self.clear_all_songs() 
+        # Limpiar mesas y sus cuentas
+        for mesa_id in list(self.mesas_data.keys()):
+            self.clear_mesa_cache(mesa_id)
+        
+        # Limpiar consumos globales
+        with self.lock:
+            self.consumos_data = {}
+            self._save_consumos_data()
+            
+            # Resetear revisión de cola
+            self.set_queue_revision(1)
 
 # Instancia global del cache manager para ser usada en todo el proyecto
 cache_manager = CacheManager() # Se importa en outros archivos como: from cache_manager import cache_manager
