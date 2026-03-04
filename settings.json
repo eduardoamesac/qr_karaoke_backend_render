@@ -3,7 +3,7 @@
     "closing_minute": 0,
     "app_name": "QR Karaoke",
     "theme": "light",
-    "enable_notifications": false,
+    "enable_notifications": true,
     "lazy_queue_credit_multiplier": 2.0,
     "lazy_queue_decay_rate": 50,
     "lazy_queue_allow_unrestricted": false,
