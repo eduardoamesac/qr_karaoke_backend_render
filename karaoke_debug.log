@@ -18644,3 +18644,70 @@ NameError: name 'queue_manager' is not defined
 2026-03-04 11:00:42,707 - queue_manager - INFO - Cache refrescado desde JSON
 2026-03-04 11:00:42,713 - queue_manager - INFO - Cache refrescado desde JSON
 2026-03-04 11:00:42,716 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 11:02:33,433 - song_credits_background - INFO - Credits background task started
+2026-03-04 11:02:33,477 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 11:02:33,490 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 11:02:33,508 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 11:02:33,510 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 11:06:38,917 - song_credits_background - INFO - Credits background task started
+2026-03-04 11:06:40,646 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 11:06:40,646 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 11:06:48,275 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 11:06:48,278 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 11:06:49,997 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 11:06:50,054 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 11:10:28,686 - admin_audit - INFO - [2026-03-04T11:10:28.686523] ADMIN:master | ACTION:registrar_consumo | DETAILS:Usuario: 2, Producto ID: 1
+2026-03-04 11:10:28,767 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 11:10:28,785 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 11:10:28,848 - admin_audit - INFO - [2026-03-04T11:10:28.848418] ADMIN:master | ACTION:registrar_consumo | DETAILS:Usuario: 2, Producto ID: 2
+2026-03-04 11:10:28,927 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 11:10:28,928 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 11:11:10,104 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 11:11:10,104 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 11:19:44,970 - admin_audit - INFO - [2026-03-04T11:19:44.970277] ADMIN:master | ACTION:login | DETAILS:Acceso con clave maestra
+2026-03-04 11:19:46,780 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 11:19:46,802 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 11:38:22,283 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 11:38:22,290 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 11:38:38,030 - youtube - INFO - Búsqueda [Pública] en YouTube con el término: 'bachata' (Karaoke Mode: True)
+2026-03-04 11:38:38,037 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'bachata' (Karaoke Mode: True)
+2026-03-04 11:38:40,785 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-03-04 11:38:40,785 - youtube - INFO - Búsqueda por texto: 'bachata karaoke'
+2026-03-04 11:38:40,785 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-03-04 11:38:41,556 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=bachata+karaoke&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-03-04 11:38:41,561 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-03-04 11:38:41,561 - youtube - INFO - IDs de video encontrados: ['fLDzTeRHl_s', 'RvYAN4b91CE', 'JaibW4e9dXI', 'cSjmOuUpeEE', 'QNZkxrcwQAE', 'VTqxknZpJes', 'XNlVHDmfeyU', 's1G_7FCDtQQ', 'o8RsE__qIMI', 'ZnzJBQuoJ1c']
+2026-03-04 11:38:41,570 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-03-04 11:38:41,805 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=fLDzTeRHl_s%2CRvYAN4b91CE%2CJaibW4e9dXI%2CcSjmOuUpeEE%2CQNZkxrcwQAE%2CVTqxknZpJes%2CXNlVHDmfeyU%2Cs1G_7FCDtQQ%2Co8RsE__qIMI%2CZnzJBQuoJ1c&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-03-04 11:38:41,813 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-03-04 11:38:41,825 - youtube - INFO - Procesamiento finalizado. Se encontraron 10 resultados formateados.
+2026-03-04 11:38:44,730 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 11:38:44,732 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 11:38:44,734 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 11:39:01,969 - admin_audit - INFO - [2026-03-04T11:39:01.969321] ADMIN:master | ACTION:login | DETAILS:Acceso con clave maestra
+2026-03-04 11:39:03,257 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 11:39:03,272 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 11:39:38,115 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 11:39:38,121 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 11:39:38,122 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 11:40:02,110 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 11:40:02,111 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 11:40:02,112 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 11:40:15,401 - youtube - INFO - Búsqueda [Pública] en YouTube con el término: 'heredero' (Karaoke Mode: True)
+2026-03-04 11:40:15,401 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'heredero' (Karaoke Mode: True)
+2026-03-04 11:40:16,764 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-03-04 11:40:16,765 - youtube - INFO - Búsqueda por texto: 'heredero karaoke'
+2026-03-04 11:40:16,765 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-03-04 11:40:17,388 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=heredero+karaoke&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-03-04 11:40:17,393 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-03-04 11:40:17,393 - youtube - INFO - IDs de video encontrados: ['4RU2bhSzTOA', 'H2noUnLd3Bs', 'bZLojmRvRd8', 'Iy6SOOLetyk', 'uswZszIYTj0', 'jdB2z8yi0aM', 'tvUc8GEovac', 'j-5sAS-ScEo', 'ICQjZTtdb2A', 'dPwy7ctQ2-g']
+2026-03-04 11:40:17,393 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-03-04 11:40:17,548 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=4RU2bhSzTOA%2CH2noUnLd3Bs%2CbZLojmRvRd8%2CIy6SOOLetyk%2CuswZszIYTj0%2CjdB2z8yi0aM%2CtvUc8GEovac%2Cj-5sAS-ScEo%2CICQjZTtdb2A%2CdPwy7ctQ2-g&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-03-04 11:40:17,565 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-03-04 11:40:17,565 - youtube - INFO - Procesamiento finalizado. Se encontraron 10 resultados formateados.
+2026-03-04 11:40:22,587 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 11:40:22,587 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 11:40:22,593 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 11:40:24,021 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 11:40:24,022 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 11:40:24,023 - queue_manager - INFO - Cache refrescado desde JSON

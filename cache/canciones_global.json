@@ -954,6 +954,71 @@
       "rejected_at": null,
       "started_at": null,
       "finished_at": null
+    },
+    "1772642324544": {
+      "id": 1772642324544,
+      "youtube_id": "fLDzTeRHl_s",
+      "titulo": "Bailando Bachata Chayanne Karaoke",
+      "duracion_seconds": 177,
+      "usuario_id": 2,
+      "estado": "pendiente_lazy",
+      "created_at": "2026-03-04T11:38:44.542120-05:00",
+      "approved_at": null,
+      "rejected_at": null,
+      "started_at": null,
+      "finished_at": null
+    },
+    "1772642378070": {
+      "id": 1772642378070,
+      "youtube_id": "JaibW4e9dXI",
+      "titulo": "La Bachata - MTZ Manuel Turizo | Karaoke",
+      "duracion_seconds": 162,
+      "usuario_id": 2,
+      "estado": "pendiente_lazy",
+      "created_at": "2026-03-04T11:39:38.068133-05:00",
+      "approved_at": null,
+      "rejected_at": null,
+      "started_at": null,
+      "finished_at": null
+    },
+    "1772642402063": {
+      "id": 1772642402063,
+      "youtube_id": "QNZkxrcwQAE",
+      "titulo": "KARAOKE La Bachata Manuel Turizo",
+      "duracion_seconds": 168,
+      "usuario_id": 2,
+      "estado": "pendiente_lazy",
+      "created_at": "2026-03-04T11:40:02.061149-05:00",
+      "approved_at": null,
+      "rejected_at": null,
+      "started_at": null,
+      "finished_at": null
+    },
+    "1772642422542": {
+      "id": 1772642422542,
+      "youtube_id": "Iy6SOOLetyk",
+      "titulo": "Heredero x Jessi Uribe - Coqueta (Remix) - KARAOKE - INSTRUMENTAL",
+      "duracion_seconds": 232,
+      "usuario_id": 2,
+      "estado": "pendiente_lazy",
+      "created_at": "2026-03-04T11:40:22.540897-05:00",
+      "approved_at": null,
+      "rejected_at": null,
+      "started_at": null,
+      "finished_at": null
+    },
+    "1772642423964": {
+      "id": 1772642423964,
+      "youtube_id": "H2noUnLd3Bs",
+      "titulo": "Heredero - Sabor a Derrota (KARAOKE - INSTRUMENTAL)",
+      "duracion_seconds": 198,
+      "usuario_id": 2,
+      "estado": "pendiente_lazy",
+      "created_at": "2026-03-04T11:40:23.962252-05:00",
+      "approved_at": null,
+      "rejected_at": null,
+      "started_at": null,
+      "finished_at": null
     }
   },
   "next_id": 10

@@ -804,6 +804,51 @@ def get_canciones_pendientes(db: Session):
     all_songs = cache.get_all_songs()
     return [s for s in all_songs if s.get("estado") == "pendiente"]
 
+def get_cola_lazy(db: Session):
+    """Obtiene la cola de canciones pendiente_lazy (CACHE)."""
+    all_songs = cache.get_all_songs()
+    lazy = [s for s in all_songs if s.get("estado") == "pendiente_lazy"]
+    # Ordenar por orden_manual y luego por fecha
+    lazy.sort(key=lambda s: (s.get("orden_manual", 999999) or 999999, s.get("created_at", "")))
+    return lazy
+
+def move_lazy_song_up(db: Session, cancion_id: int, usuario_id: int):
+    """Mueve una canción lazy hacia arriba, verificando pertenencia."""
+    from queue_synchronizer import QueueSynchronizer
+    
+    # Verificar pertenencia antes de operar
+    cancion = cache.get_song_by_id(cancion_id)
+    if not cancion or cancion.get("usuario_id") != usuario_id:
+        return None
+    
+    result = QueueSynchronizer.reorder_lazy_queue_safely(
+        db, cancion_id, "up", audit_user=f"user_{usuario_id}"
+    )
+    
+    if result["success"]:
+        # Devolver el objeto canción actualizado o enriquecido
+        updated_song = cache.get_song_by_id(cancion_id)
+        return enriquecer_cancion(db, updated_song)
+    return None
+
+def move_lazy_song_down(db: Session, cancion_id: int, usuario_id: int):
+    """Mueve una canción lazy hacia abajo, verificando pertenencia."""
+    from queue_synchronizer import QueueSynchronizer
+    
+    # Verificar pertenencia antes de operar
+    cancion = cache.get_song_by_id(cancion_id)
+    if not cancion or cancion.get("usuario_id") != usuario_id:
+        return None
+    
+    result = QueueSynchronizer.reorder_lazy_queue_safely(
+        db, cancion_id, "down", audit_user=f"user_{usuario_id}"
+    )
+    
+    if result["success"]:
+        updated_song = cache.get_song_by_id(cancion_id)
+        return enriquecer_cancion(db, updated_song)
+    return None
+
 def enriquecer_cancion(db: Session, song: dict):
     """Enriquece una canción del cache con info del usuario desde BD.
     
