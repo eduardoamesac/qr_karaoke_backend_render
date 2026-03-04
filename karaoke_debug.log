@@ -18820,3 +18820,176 @@ NameError: name 'queue_manager' is not defined
 2026-03-04 15:40:42,055 - queue_manager - INFO - Cache refrescado desde JSON
 2026-03-04 15:40:42,056 - queue_manager - INFO - Cache refrescado desde JSON
 2026-03-04 15:41:45,101 - httpx - INFO - HTTP Request: GET http://testserver/api/v1/usuarios/3 "HTTP/1.1 200 OK"
+2026-03-04 15:42:56,052 - song_credits_background - INFO - Credits background task started
+2026-03-04 15:42:56,087 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:42:56,087 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:43:04,054 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:43:04,054 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:44:49,959 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:44:49,974 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:45:58,937 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:45:58,937 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:46:17,465 - queue_synchronizer - INFO - REORDER_LAZY_SAFE: Song 1772642422542 move-down by user_2
+2026-03-04 15:46:17,547 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:46:17,548 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:46:17,552 - queue_synchronizer - INFO - REORDER_LAZY_SUCCESS: Song 1772642422542 moved down. Revision: 46
+2026-03-04 15:46:17,558 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:46:17,566 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:46:19,416 - queue_synchronizer - INFO - REORDER_LAZY_SAFE: Song 1772642422542 move-down by user_2
+2026-03-04 15:46:19,515 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:46:19,519 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:46:19,519 - queue_synchronizer - INFO - REORDER_LAZY_SUCCESS: Song 1772642422542 moved down. Revision: 47
+2026-03-04 15:46:19,537 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:46:19,538 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:47:00,865 - crud - INFO - 🏁 Finalizando canción actual: ME QUEDARÉ SOLO (Karaoke) - Amistades peligrosas (ID: 1772638096470)
+2026-03-04 15:47:00,882 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:47:00,882 - queue_manager - INFO - 🚀 No hay canciones aprobadas. Promoviendo 'La Bachata - MTZ Manuel Turizo | Karaoke' desde cola lazy.
+2026-03-04 15:47:00,902 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:47:01,102 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:47:01,215 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:47:01,309 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:47:01,351 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:47:01,422 - crud - INFO - 🎵 Iniciando siguiente canción: La Bachata - MTZ Manuel Turizo | Karaoke (ID: 1772642378070)
+2026-03-04 15:47:01,432 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=JaibW4e9dXI, duration_seconds=162
+2026-03-04 15:47:04,830 - crud - INFO - 🏁 Finalizando canción actual: La Bachata - MTZ Manuel Turizo | Karaoke (ID: 1772642378070)
+2026-03-04 15:47:04,848 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:47:04,865 - queue_manager - INFO - 🚀 No hay canciones aprobadas. Promoviendo 'Bailando Bachata Chayanne Karaoke' desde cola lazy.
+2026-03-04 15:47:04,882 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:47:05,081 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:47:05,118 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:47:05,146 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:47:05,166 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:47:05,229 - crud - INFO - 🎵 Iniciando siguiente canción: Bailando Bachata Chayanne Karaoke (ID: 1772642324544)
+2026-03-04 15:47:05,231 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=fLDzTeRHl_s, duration_seconds=177
+2026-03-04 15:47:08,397 - crud - INFO - 🏁 Finalizando canción actual: Bailando Bachata Chayanne Karaoke (ID: 1772642324544)
+2026-03-04 15:47:08,515 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:47:08,761 - queue_manager - INFO - 🚀 No hay canciones aprobadas. Promoviendo 'KARAOKE La Bachata Manuel Turizo' desde cola lazy.
+2026-03-04 15:47:08,852 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:47:08,871 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:47:08,872 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:47:08,873 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:47:08,875 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:47:08,902 - crud - INFO - 🎵 Iniciando siguiente canción: KARAOKE La Bachata Manuel Turizo (ID: 1772642402063)
+2026-03-04 15:47:08,922 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=QNZkxrcwQAE, duration_seconds=168
+2026-03-04 15:47:39,621 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:47:39,631 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:48:45,721 - admin_audit - INFO - [2026-03-04T15:48:45.721156] ADMIN:master | ACTION:search_youtube | DETAILS:Query: vallenatos de oro, Karaoke Mode: True
+2026-03-04 15:48:45,724 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'vallenatos de oro' (Karaoke Mode: True)
+2026-03-04 15:48:45,725 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'vallenatos de oro' (Karaoke Mode: True)
+2026-03-04 15:48:48,910 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-03-04 15:48:48,912 - youtube - INFO - Búsqueda por texto: 'vallenatos de oro karaoke'
+2026-03-04 15:48:48,913 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-03-04 15:48:49,554 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=vallenatos+de+oro+karaoke&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-03-04 15:48:49,563 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-03-04 15:48:49,564 - youtube - INFO - IDs de video encontrados: ['6o-9Nu4SeB8', 'jS_tnyWXbS0', '5N4GgziPZkw', 'jWrAF6dANK4', 'UrcZe-db97g', 'tDkwsj-JriE', 'oYobLFYuTXs', 'TiP_BoUjNec', '4Ck2TmD4aHI', 'BwOTM1-Vmeo']
+2026-03-04 15:48:49,566 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-03-04 15:48:49,747 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=6o-9Nu4SeB8%2CjS_tnyWXbS0%2C5N4GgziPZkw%2CjWrAF6dANK4%2CUrcZe-db97g%2CtDkwsj-JriE%2CoYobLFYuTXs%2CTiP_BoUjNec%2C4Ck2TmD4aHI%2CBwOTM1-Vmeo&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-03-04 15:48:49,769 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-03-04 15:48:49,773 - youtube - INFO - Procesamiento finalizado. Se encontraron 9 resultados formateados.
+2026-03-04 15:48:49,797 - admin_audit - INFO - [2026-03-04T15:48:49.797033] ADMIN:master | ACTION:search_youtube | DETAILS:Query: vallenatos de oro, Karaoke Mode: True
+2026-03-04 15:48:49,817 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'vallenatos de oro' (Karaoke Mode: True)
+2026-03-04 15:48:49,819 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'vallenatos de oro' (Karaoke Mode: True)
+2026-03-04 15:48:51,538 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-03-04 15:48:51,539 - youtube - INFO - Búsqueda por texto: 'vallenatos de oro karaoke'
+2026-03-04 15:48:51,540 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-03-04 15:48:52,044 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=vallenatos+de+oro+karaoke&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-03-04 15:48:52,050 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-03-04 15:48:52,051 - youtube - INFO - IDs de video encontrados: ['6o-9Nu4SeB8', 'jS_tnyWXbS0', '5N4GgziPZkw', 'jWrAF6dANK4', 'UrcZe-db97g', 'tDkwsj-JriE', 'oYobLFYuTXs', 'TiP_BoUjNec', '4Ck2TmD4aHI', 'BwOTM1-Vmeo']
+2026-03-04 15:48:52,053 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-03-04 15:48:52,226 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=6o-9Nu4SeB8%2CjS_tnyWXbS0%2C5N4GgziPZkw%2CjWrAF6dANK4%2CUrcZe-db97g%2CtDkwsj-JriE%2CoYobLFYuTXs%2CTiP_BoUjNec%2C4Ck2TmD4aHI%2CBwOTM1-Vmeo&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-03-04 15:48:52,240 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-03-04 15:48:52,250 - youtube - INFO - Procesamiento finalizado. Se encontraron 9 resultados formateados.
+2026-03-04 15:48:55,436 - admin_audit - INFO - [2026-03-04T15:48:55.436426] ADMIN:master | ACTION:admin_anadir_cancion | DETAILS:Titulo: Tarde Lo Conocí - Patricia Teherán | Karaoke Vallenato 🎶🎤 Versión Exclusiva de Karaoke Latino
+2026-03-04 15:48:55,494 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:48:55,496 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:48:55,497 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:49:01,297 - admin_audit - INFO - [2026-03-04T15:49:01.297726] ADMIN:master | ACTION:move_lazy_song_up | DETAILS:ID: 1772657335460
+2026-03-04 15:49:01,300 - queue_synchronizer - INFO - REORDER_LAZY_SAFE: Song 1772657335460 move-up by admin_master
+2026-03-04 15:49:01,345 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:49:01,348 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:49:01,354 - queue_synchronizer - INFO - REORDER_LAZY_SUCCESS: Song 1772657335460 moved up. Revision: 48
+2026-03-04 15:49:01,356 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:49:01,357 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:49:18,605 - admin_audit - INFO - [2026-03-04T15:49:18.605670] ADMIN:master | ACTION:search_youtube | DETAILS:Query: jhony rivera y sebastian ayala, Karaoke Mode: True
+2026-03-04 15:49:18,610 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'jhony rivera y sebastian ayala' (Karaoke Mode: True)
+2026-03-04 15:49:18,611 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'jhony rivera y sebastian ayala' (Karaoke Mode: True)
+2026-03-04 15:49:20,145 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-03-04 15:49:20,146 - youtube - INFO - Búsqueda por texto: 'jhony rivera y sebastian ayala karaoke'
+2026-03-04 15:49:20,147 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-03-04 15:49:20,767 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=jhony+rivera+y+sebastian+ayala+karaoke&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-03-04 15:49:20,771 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-03-04 15:49:20,772 - youtube - INFO - IDs de video encontrados: ['6kyJCaBg0Ys', 'hcC--DHH2BI', '3ox-uilNPco', 'd0hEF1Zs6Ec', 'bY61n7lwzrY', 'hb5t-D5QVBI', '5yLGjXTF6MY', 'yzZKapAPQeg', 'Yh0uZiFZRIg', 'vrXL78wbFQg']
+2026-03-04 15:49:20,773 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-03-04 15:49:20,988 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=6kyJCaBg0Ys%2ChcC--DHH2BI%2C3ox-uilNPco%2Cd0hEF1Zs6Ec%2CbY61n7lwzrY%2Chb5t-D5QVBI%2C5yLGjXTF6MY%2CyzZKapAPQeg%2CYh0uZiFZRIg%2CvrXL78wbFQg&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-03-04 15:49:21,002 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-03-04 15:49:21,004 - youtube - INFO - Procesamiento finalizado. Se encontraron 10 resultados formateados.
+2026-03-04 15:49:21,022 - admin_audit - INFO - [2026-03-04T15:49:21.022095] ADMIN:master | ACTION:search_youtube | DETAILS:Query: jhony rivera y sebastian ayala, Karaoke Mode: True
+2026-03-04 15:49:21,024 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'jhony rivera y sebastian ayala' (Karaoke Mode: True)
+2026-03-04 15:49:21,043 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'jhony rivera y sebastian ayala' (Karaoke Mode: True)
+2026-03-04 15:49:22,776 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-03-04 15:49:22,777 - youtube - INFO - Búsqueda por texto: 'jhony rivera y sebastian ayala karaoke'
+2026-03-04 15:49:22,778 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-03-04 15:49:23,297 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=jhony+rivera+y+sebastian+ayala+karaoke&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-03-04 15:49:23,311 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-03-04 15:49:23,313 - youtube - INFO - IDs de video encontrados: ['6kyJCaBg0Ys', 'hcC--DHH2BI', '3ox-uilNPco', 'd0hEF1Zs6Ec', 'bY61n7lwzrY', 'hb5t-D5QVBI', '5yLGjXTF6MY', 'yzZKapAPQeg', 'Yh0uZiFZRIg', 'vrXL78wbFQg']
+2026-03-04 15:49:23,318 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-03-04 15:49:23,501 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=6kyJCaBg0Ys%2ChcC--DHH2BI%2C3ox-uilNPco%2Cd0hEF1Zs6Ec%2CbY61n7lwzrY%2Chb5t-D5QVBI%2C5yLGjXTF6MY%2CyzZKapAPQeg%2CYh0uZiFZRIg%2CvrXL78wbFQg&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-03-04 15:49:23,521 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-03-04 15:49:23,524 - youtube - INFO - Procesamiento finalizado. Se encontraron 10 resultados formateados.
+2026-03-04 15:49:25,796 - admin_audit - INFO - [2026-03-04T15:49:25.796961] ADMIN:master | ACTION:admin_anadir_cancion | DETAILS:Titulo: Jhonny Rivera, Sebastián Ayala, Andy Rivera - Mi Decisión (Remix)
+2026-03-04 15:49:25,850 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:49:25,851 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:49:25,852 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:49:29,821 - admin_audit - INFO - [2026-03-04T15:49:29.821634] ADMIN:master | ACTION:admin_anadir_cancion | DETAILS:Titulo: Mi Decisión KARAOKE Sebastián Ayala
+2026-03-04 15:49:29,858 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:49:29,861 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:49:29,862 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:49:33,840 - admin_audit - INFO - [2026-03-04T15:49:33.836696] ADMIN:master | ACTION:admin_anadir_cancion | DETAILS:Titulo: Te extraño - Jhonny Rivera (Karaoke)
+2026-03-04 15:49:33,881 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:49:33,882 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:49:33,883 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:49:38,976 - admin_audit - INFO - [2026-03-04T15:49:38.976763] ADMIN:master | ACTION:move_lazy_song_up | DETAILS:ID: 1772657365820
+2026-03-04 15:49:38,979 - queue_synchronizer - INFO - REORDER_LAZY_SAFE: Song 1772657365820 move-up by admin_master
+2026-03-04 15:49:39,092 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:49:39,093 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:49:39,097 - queue_synchronizer - INFO - REORDER_LAZY_SUCCESS: Song 1772657365820 moved up. Revision: 49
+2026-03-04 15:49:39,098 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:49:39,104 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:50:01,990 - crud - INFO - 🏁 Finalizando canción actual: KARAOKE La Bachata Manuel Turizo (ID: 1772642402063)
+2026-03-04 15:50:02,002 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:50:02,002 - queue_manager - INFO - 🚀 No hay canciones aprobadas. Promoviendo 'Heredero x Jessi Uribe - Coqueta (Remix) - KARAOKE - INSTRUMENTAL' desde cola lazy.
+2026-03-04 15:50:02,019 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:50:02,033 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:50:02,034 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:50:02,035 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:50:02,037 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:50:02,049 - crud - INFO - 🎵 Iniciando siguiente canción: Heredero x Jessi Uribe - Coqueta (Remix) - KARAOKE - INSTRUMENTAL (ID: 1772642422542)
+2026-03-04 15:50:02,054 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=Iy6SOOLetyk, duration_seconds=232
+2026-03-04 15:50:51,890 - admin_audit - INFO - [2026-03-04T15:50:51.890938] ADMIN:master | ACTION:create_product | DETAILS:Producto: DeTodito
+2026-03-04 15:51:24,927 - admin_audit - INFO - [2026-03-04T15:51:24.927201] ADMIN:master | ACTION:create_mesa | DETAILS:Mesa: Hills, QR: karaoke-mesa-04
+2026-03-04 15:52:47,823 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:52:47,825 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:53:27,734 - admin_audit - INFO - [2026-03-04T15:53:27.734050] ADMIN:master | ACTION:upload_product_image | DETAILS:ID: 3, URL: /static/images/productos/producto_3.webp
+2026-03-04 15:53:56,078 - crud - INFO - 🏁 Finalizando canción actual: Heredero x Jessi Uribe - Coqueta (Remix) - KARAOKE - INSTRUMENTAL (ID: 1772642422542)
+2026-03-04 15:53:56,092 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:53:56,094 - queue_manager - INFO - 🚀 No hay canciones aprobadas. Promoviendo 'Tarde Lo Conocí - Patricia Teherán | Karaoke Vallenato 🎶🎤 Versión Exclusiva de Karaoke Latino' desde cola lazy.
+2026-03-04 15:53:56,118 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:53:56,134 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:53:56,136 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:53:56,136 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:53:56,141 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:53:56,157 - crud - INFO - 🎵 Iniciando siguiente canción: Tarde Lo Conocí - Patricia Teherán | Karaoke Vallenato 🎶🎤 Versión Exclusiva de Karaoke Latino (ID: 1772657335460)
+2026-03-04 15:53:56,164 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=TiP_BoUjNec, duration_seconds=280
+2026-03-04 15:54:05,179 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:54:05,179 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:55:11,263 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:55:11,266 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 16:04:13,563 - song_credits_background - INFO - Credits background task started
+2026-03-04 16:04:13,597 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 16:04:13,598 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 16:04:26,022 - song_credits_background - INFO - Credits background task started
+2026-03-04 16:04:26,055 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 16:04:26,055 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 16:04:44,319 - song_credits_background - INFO - Credits background task started
+2026-03-04 16:04:44,348 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 16:04:44,350 - queue_manager - INFO - Cache refrescado desde JSON

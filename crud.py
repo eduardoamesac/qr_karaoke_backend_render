@@ -286,6 +286,9 @@ def create_consumo_para_usuario(db: Session, consumo: schemas.ConsumoCreate, usu
     if not db_producto:
         return None, "Producto no encontrado."
 
+    if db_producto.stock < consumo.cantidad:
+        return None, f"Stock insuficiente. Disponible: {db_producto.stock}"
+
     # Calcular valor total
     valor_total = float(db_producto.valor * consumo.cantidad)
 
@@ -313,8 +316,13 @@ def create_consumo_para_usuario(db: Session, consumo: schemas.ConsumoCreate, usu
     if creditos_ganados > 0:
         usuario.song_credits = (usuario.song_credits or 0) + creditos_ganados
         db.add(usuario)
-        db.commit()
-        db.refresh(usuario)
+    
+    # Descontar stock
+    db_producto.stock -= consumo.cantidad
+    db.add(db_producto)
+    
+    db.commit()
+    db.refresh(usuario)
     
     # Enriquecer objeto para retorno (compatibilidad con modelos)
     # En este sistema simplificado, devolvemos un objeto que parezca un modelo
@@ -503,6 +511,36 @@ def get_recent_consumos(db: Session, limit: int = 10):
         enriched.append(c_copy)
         
     return enriched
+
+def delete_consumo(db: Session, consumo_id: int):
+    """
+    Elimina un consumo del caché, restaura el stock del producto y recalcula créditos.
+    """
+    consumo = cache.get_consumo_by_id(consumo_id)
+    if not consumo:
+        return False
+        
+    # Restaurar stock del producto
+    db_producto = get_producto_by_id(db, consumo["producto_id"])
+    if db_producto:
+        db_producto.stock += consumo["cantidad"]
+        db.add(db_producto)
+    
+    # Restar créditos al usuario
+    usuario = get_usuario_by_id(db, consumo["usuario_id"])
+    if usuario:
+        from settings_storage import load_settings
+        settings = load_settings()
+        credit_multiplier = settings.get("lazy_queue_credit_multiplier", 1.0)
+        creditos_a_restar = int(consumo["valor_total"] * credit_multiplier)
+        if creditos_a_restar > 0:
+            usuario.song_credits = max(0, (usuario.song_credits or 0) - creditos_a_restar)
+            db.add(usuario)
+            
+    db.commit()
+    
+    # Eliminar del cache
+    return cache.delete_consumo_from_cache(consumo_id)
 
 def get_resumen_noche(db: Session):
     """Obtiene un resumen de la noche desde datos en cache y BD."""
