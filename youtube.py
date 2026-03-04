@@ -198,16 +198,16 @@ async def _perform_youtube_search(q: str, karaoke_mode: bool = False) -> List[Di
 
     return formatted_results
 
-@router.get("/buscar", response_model=List[Dict[str, Any]], summary="Buscar canciones en YouTube")
-async def search_youtube(q: str, admin: dict = Depends(verify_token)) -> List[Dict[str, Any]]:
+@router.get("/search", response_model=List[Dict[str, Any]], summary="Buscar canciones en YouTube")
+async def search_youtube(q: str, karaoke_mode: bool = False, admin: dict = Depends(verify_token)) -> List[Dict[str, Any]]:
     # Log de búsqueda (opcional, pero útil para auditoría)
-    log_admin_action(admin.get("sub"), "search_youtube", f"Query: {q}")
+    log_admin_action(admin.get("sub"), "search_youtube", f"Query: {q}, Karaoke Mode: {karaoke_mode}")
     """
     Realiza una búsqueda de videos en YouTube utilizando la API oficial.
     Este endpoint actúa como un proxy para no exponer la API Key en el cliente.
     """
-    logger.info(f"Búsqueda [Admin] en YouTube con el término: '{q}'")
-    return await _perform_youtube_search(q)
+    logger.info(f"Búsqueda [Admin] en YouTube con el término: '{q}' (Karaoke Mode: {karaoke_mode})")
+    return await _perform_youtube_search(q, karaoke_mode=karaoke_mode)
 
 @router.get("/public-search", summary="[Público] Buscar videos en YouTube para usuarios")
 async def public_search_youtube(q: str, karaoke_mode: bool = False) -> List[Dict[str, Any]]:

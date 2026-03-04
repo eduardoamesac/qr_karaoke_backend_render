@@ -22,7 +22,7 @@ def get_db():
         db.close()
 
 @router.post("/{usuario_id}", response_model=schemas.Consumo, status_code=201, summary="Registrar un consumo para un usuario")
-def registrar_consumo_endpoint(
+async def registrar_consumo_endpoint(
     usuario_id: int, consumo: schemas.ConsumoCreate, db: Session = Depends(get_db), admin: dict = Depends(verify_token)
 ):
     log_admin_action(admin.get("sub"), "registrar_consumo", f"Usuario: {usuario_id}, Producto ID: {consumo.producto_id}")
@@ -41,24 +41,30 @@ def registrar_consumo_endpoint(
 
     # También programamos una notificación específica de "consumo creado" en background.
     try:
-        mesa_nombre = None
-        if db_consumo.usuario and db_consumo.usuario.mesa:
-            mesa_nombre = db_consumo.usuario.mesa.nombre
+        # db_consumo es un SimpleNamespace que envuelve un dict del cache
+        # Pero enriquecido con .usuario y .producto (objetos BD)
+        mesa_id = getattr(db_consumo, 'mesa_id', None)
+        mesa_nombre = "Mesa"
+        if mesa_id:
+            mesa_data = cache_manager.get_mesa_by_id(mesa_id)
+            if mesa_data:
+                mesa_nombre = mesa_data.get("nombre", f"Mesa {mesa_id}")
 
         consumo_payload = { # This is for single consumptions
             'type': 'single_consumo',
-            'id': db_consumo.id,
-            'cantidad': db_consumo.cantidad,
-            'valor_total': float(db_consumo.valor_total),
-            'producto_nombre': db_consumo.producto.nombre if db_consumo.producto else None,
-            'usuario_nick': db_consumo.usuario.nick if db_consumo.usuario else None,
+            'id': getattr(db_consumo, 'id', None),
+            'cantidad': getattr(db_consumo, 'cantidad', 1),
+            'valor_total': float(getattr(db_consumo, 'valor_total', 0)),
+            'producto_nombre': db_consumo.producto.nombre if hasattr(db_consumo, 'producto') and db_consumo.producto else "Producto",
+            'usuario_nick': db_consumo.usuario.nick if hasattr(db_consumo, 'usuario') and db_consumo.usuario else "Usuario",
             'mesa_nombre': mesa_nombre,
-            'created_at': db_consumo.created_at.isoformat()
-            # 'is_single_item': True is implied by 'type': 'single_consumo'
+            'created_at': getattr(db_consumo, 'created_at', datetime.datetime.now()).isoformat() if hasattr(getattr(db_consumo, 'created_at', None), 'isoformat') else str(getattr(db_consumo, 'created_at', ''))
         } 
         # Fire-and-forget the notification to avoid affecting the HTTP response
         asyncio.create_task(websocket_manager.manager.broadcast_consumo_created(consumo_payload))
-    except Exception:
+    except Exception as e:
+        import logging
+        logging.error(f"Error enviando notificación de consumo: {e}", exc_info=True)
         # Nunca permitir que la notificación rompa la respuesta principal
         pass
     return db_consumo
@@ -83,21 +89,23 @@ async def usuario_pide_producto(
 
     # Notificamos en background que se creó un consumo (para la UI del admin)
     try:
-        mesa_nombre = None
-        if db_consumo.usuario and db_consumo.usuario.mesa:
-            mesa_nombre = db_consumo.usuario.mesa.nombre
+        mesa_id = getattr(db_consumo, 'mesa_id', None)
+        mesa_nombre = "Mesa"
+        if mesa_id:
+            mesa_data = cache_manager.get_mesa_by_id(mesa_id)
+            if mesa_data:
+                mesa_nombre = mesa_data.get("nombre", f"Mesa {mesa_id}")
 
-            consumo_payload = { # This is for single consumptions from public endpoint
-                'type': 'single_consumo',
-            'id': db_consumo.id,
-            'cantidad': db_consumo.cantidad,
-            'valor_total': float(db_consumo.valor_total),
-            'producto_nombre': db_consumo.producto.nombre if db_consumo.producto else None,
-            'usuario_nick': db_consumo.usuario.nick if db_consumo.usuario else None,
+        consumo_payload = { # This is for single consumptions from public endpoint
+            'type': 'single_consumo',
+            'id': getattr(db_consumo, 'id', None),
+            'cantidad': getattr(db_consumo, 'cantidad', 1),
+            'valor_total': float(getattr(db_consumo, 'valor_total', 0)),
+            'producto_nombre': db_consumo.producto.nombre if hasattr(db_consumo, 'producto') and db_consumo.producto else "Producto",
+            'usuario_nick': db_consumo.usuario.nick if hasattr(db_consumo, 'usuario') and db_consumo.usuario else "Usuario",
             'mesa_nombre': mesa_nombre,
-            'created_at': db_consumo.created_at.isoformat()
-                # 'is_single_item': True is implied by 'type': 'single_consumo'
-            } 
+            'created_at': getattr(db_consumo, 'created_at', datetime.datetime.now()).isoformat() if hasattr(getattr(db_consumo, 'created_at', None), 'isoformat') else str(getattr(db_consumo, 'created_at', ''))
+        } 
         asyncio.create_task(websocket_manager.manager.broadcast_consumo_created(consumo_payload))
     except Exception:
         pass
@@ -128,22 +136,29 @@ async def usuario_pide_carrito(
     try:
         if consumos_creados:
             primer_consumo = consumos_creados[0]
-            mesa_nombre = primer_consumo.usuario.mesa.nombre if primer_consumo.usuario and primer_consumo.usuario.mesa else None
+            # primer_consumo es un SimpleNamespace
+            mesa_id = getattr(primer_consumo, 'mesa_id', None)
+            mesa_nombre = "Mesa"
+            if mesa_id:
+                mesa_data = cache_manager.get_mesa_by_id(mesa_id)
+                if mesa_data:
+                    mesa_nombre = mesa_data.get("nombre", f"Mesa {mesa_id}")
             
             pedido_payload = {
-                'type': 'consolidated_pedido', # Add type
-                'id': f"pedido-{primer_consumo.created_at.timestamp()}-{primer_consumo.usuario.id}", # Unique ID for the consolidated order
-                'consumo_ids': [c.id for c in consumos_creados], # IDs para acciones
-                'usuario_nick': primer_consumo.usuario.nick if primer_consumo.usuario else 'Desconocido',
+                'type': 'consolidated_pedido',
+                'id': f"pedido-{datetime.datetime.now().timestamp()}-{usuario_id}", 
+                'consumo_ids': [getattr(c, 'id', None) for c in consumos_creados],
+                'usuario_nick': primer_consumo.usuario.nick if hasattr(primer_consumo, 'usuario') and primer_consumo.usuario else 'Desconocido',
                 'mesa_nombre': mesa_nombre,
-                'created_at': primer_consumo.created_at.isoformat(),
+                'created_at': getattr(primer_consumo, 'created_at', datetime.datetime.now()).isoformat() if hasattr(getattr(primer_consumo, 'created_at', None), 'isoformat') else str(getattr(primer_consumo, 'created_at', '')),
                 'items': [
-                    {'producto_nombre': c.producto.nombre, 'cantidad': c.cantidad} for c in consumos_creados
+                    {'producto_nombre': c.producto.nombre if hasattr(c, 'producto') and c.producto else "Producto", 'cantidad': getattr(c, 'cantidad', 1)} for c in consumos_creados
                 ]
-                # 'is_single_item': False is implied by 'type': 'consolidated_pedido'
             } 
             asyncio.create_task(websocket_manager.manager.broadcast_pedido_created(pedido_payload))
-    except Exception:
+    except Exception as e:
+        import logging
+        logging.error(f"Error en broadcast_pedido_created: {e}", exc_info=True)
         pass # No dejar que la notificación rompa la respuesta
 
     return consumos_creados

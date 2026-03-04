@@ -933,11 +933,12 @@ function updateDetailsCartUI() {
 }
 
 async function handleDetailsOrderSubmit(mesaId) {
+    const confirmBtn = document.getElementById('btn-details-confirm-order');
     const userSelect = document.getElementById('details-user-select');
     const usuarioId = userSelect ? userSelect.value : null;
 
     if (!usuarioId) {
-        showNotification("Selecciona un usuario.", "error");
+        showNotification("Selecciona un usuario válido.", "error");
         return;
     }
 
@@ -948,20 +949,24 @@ async function handleDetailsOrderSubmit(mesaId) {
     }
 
     // Get user nickname for display
-    const userNick = userSelect.options[userSelect.selectedIndex].text;
+    let userNick = "Usuario";
+    if (userSelect && userSelect.selectedIndex !== -1) {
+        userNick = userSelect.options[userSelect.selectedIndex].text;
+    }
 
     // Calculate total
-    const total = items.reduce((sum, item) => sum + (item.valor * item.quantity), 0);
+    const total = items.reduce((sum, item) => sum + (parseFloat(item.valor) * item.quantity), 0);
 
     // Construct confirmation message
     let msg = `¿Confirmar pedido para ${userNick}?\n\n`;
     items.forEach(item => {
-        msg += `${item.quantity}x ${item.nombre} - $${(item.valor * item.quantity).toFixed(2)}\n`;
+        msg += `${item.quantity}x ${item.nombre} - $${(parseFloat(item.valor) * item.quantity).toFixed(2)}\n`;
     });
     msg += `\nTotal: $${total.toFixed(2)}`;
 
     // Simple native confirmation to avoid UI freezing issues
     if (confirm(msg)) {
+        if (confirmBtn) confirmBtn.disabled = true;
         await processDetailsOrder(mesaId, usuarioId, items);
     }
 }

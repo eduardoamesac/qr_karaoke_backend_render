@@ -18214,3 +18214,433 @@ NameError: name 'queue_manager' is not defined
 2026-03-04 10:06:41,108 - song_credits_background - INFO - Credits background task started
 2026-03-04 10:07:23,655 - song_credits_background - INFO - Credits background task started
 2026-03-04 10:07:48,289 - song_credits_background - INFO - Credits background task started
+2026-03-04 10:08:17,963 - song_credits_background - INFO - Credits background task started
+2026-03-04 10:11:52,349 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:11:52,350 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:12:06,540 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:12:06,544 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:12:07,008 - crud - INFO - ℹ️ No hay canción reproduciéndose actualmente.
+2026-03-04 10:12:07,010 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:12:07,032 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:12:07,033 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:12:07,037 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:12:07,037 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:12:07,056 - crud - INFO - 🎵 Iniciando siguiente canción: HEREDERO - Cosita (Video Oficial) (ID: 1772572707157)
+2026-03-04 10:12:07,060 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=sU8FqZQOK3k, duration_seconds=196
+2026-03-04 10:15:27,959 - crud - INFO - 🏁 Finalizando canción actual: HEREDERO - Cosita (Video Oficial) (ID: 1772572707157)
+2026-03-04 10:15:27,970 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:15:27,981 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:15:27,982 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:15:27,985 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:15:27,991 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:15:28,001 - crud - INFO - 🎵 Iniciando siguiente canción: HEREDERO - Linda (Video Oficial) (ID: 1772572709660)
+2026-03-04 10:15:28,002 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=tvUc8GEovac, duration_seconds=181
+2026-03-04 10:18:29,569 - crud - INFO - 🏁 Finalizando canción actual: HEREDERO - Linda (Video Oficial) (ID: 1772572709660)
+2026-03-04 10:18:29,582 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:18:29,584 - queue_manager - INFO - 🚀 No hay canciones aprobadas. Promoviendo 'HEREDERO - Cartagena (Video Oficial)' desde cola lazy.
+2026-03-04 10:18:29,594 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:18:29,605 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:18:29,607 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:18:29,611 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:18:29,612 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:18:29,626 - crud - INFO - 🎵 Iniciando siguiente canción: HEREDERO - Cartagena (Video Oficial) (ID: 1772572712239)
+2026-03-04 10:18:29,627 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=ZGz08NpMd6E, duration_seconds=257
+2026-03-04 10:22:30,429 - song_credits_background - INFO - Credits background task started
+2026-03-04 10:22:30,496 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:22:30,508 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:22:47,831 - crud - INFO - 🏁 Finalizando canción actual: HEREDERO - Cartagena (Video Oficial) (ID: 1772572712239)
+2026-03-04 10:22:47,841 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:22:47,846 - queue_manager - INFO - 🚀 No hay canciones aprobadas. Promoviendo 'HEREDERO - Cosita (Video Oficial)' desde cola lazy.
+2026-03-04 10:22:47,864 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:22:47,877 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:22:47,881 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:22:47,882 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:22:47,885 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:22:47,898 - crud - INFO - 🎵 Iniciando siguiente canción: HEREDERO - Cosita (Video Oficial) (ID: 1772572715619)
+2026-03-04 10:22:47,902 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=sU8FqZQOK3k, duration_seconds=196
+2026-03-04 10:25:14,246 - song_credits_background - INFO - Credits background task started
+2026-03-04 10:25:16,457 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:25:16,458 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:25:44,121 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:25:44,158 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:25:58,452 - admin_audit - INFO - [2026-03-04T10:25:58.452490] ADMIN:master | ACTION:search_youtube | DETAILS:Query: amistades peligrosas, Karaoke Mode: True
+2026-03-04 10:25:58,455 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'amistades peligrosas' (Karaoke Mode: True)
+2026-03-04 10:25:58,456 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'amistades peligrosas' (Karaoke Mode: True)
+2026-03-04 10:26:01,122 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-03-04 10:26:01,122 - youtube - INFO - Búsqueda por texto: 'amistades peligrosas karaoke'
+2026-03-04 10:26:01,122 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-03-04 10:26:01,634 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=amistades+peligrosas+karaoke&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-03-04 10:26:01,639 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-03-04 10:26:01,640 - youtube - INFO - IDs de video encontrados: ['FTDU1PvMys0', 'JX8wcPviXm8', '95JHOXoXR6M', 'KbVDIxkRhd8', 'fotFzXGyXTw', 'vU8V4T7lkvI', '8QS0a4cy2vw', '2OFTs7ix9w0', 'dAZtbWgHcy0', 'L85o6BMzOF0']
+2026-03-04 10:26:01,642 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-03-04 10:26:02,175 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=FTDU1PvMys0%2CJX8wcPviXm8%2C95JHOXoXR6M%2CKbVDIxkRhd8%2CfotFzXGyXTw%2CvU8V4T7lkvI%2C8QS0a4cy2vw%2C2OFTs7ix9w0%2CdAZtbWgHcy0%2CL85o6BMzOF0&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-03-04 10:26:02,195 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-03-04 10:26:02,200 - youtube - INFO - Procesamiento finalizado. Se encontraron 10 resultados formateados.
+2026-03-04 10:26:02,226 - admin_audit - INFO - [2026-03-04T10:26:02.226067] ADMIN:master | ACTION:search_youtube | DETAILS:Query: amistades peligrosas, Karaoke Mode: True
+2026-03-04 10:26:02,263 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'amistades peligrosas' (Karaoke Mode: True)
+2026-03-04 10:26:02,270 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'amistades peligrosas' (Karaoke Mode: True)
+2026-03-04 10:26:04,392 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-03-04 10:26:04,392 - youtube - INFO - Búsqueda por texto: 'amistades peligrosas karaoke'
+2026-03-04 10:26:04,394 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-03-04 10:26:05,008 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=amistades+peligrosas+karaoke&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-03-04 10:26:05,015 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-03-04 10:26:05,015 - youtube - INFO - IDs de video encontrados: ['FTDU1PvMys0', 'JX8wcPviXm8', '95JHOXoXR6M', 'KbVDIxkRhd8', 'fotFzXGyXTw', 'vU8V4T7lkvI', '8QS0a4cy2vw', '2OFTs7ix9w0', 'dAZtbWgHcy0', 'L85o6BMzOF0']
+2026-03-04 10:26:05,016 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-03-04 10:26:05,238 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=FTDU1PvMys0%2CJX8wcPviXm8%2C95JHOXoXR6M%2CKbVDIxkRhd8%2CfotFzXGyXTw%2CvU8V4T7lkvI%2C8QS0a4cy2vw%2C2OFTs7ix9w0%2CdAZtbWgHcy0%2CL85o6BMzOF0&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-03-04 10:26:05,244 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-03-04 10:26:05,244 - youtube - INFO - Procesamiento finalizado. Se encontraron 10 resultados formateados.
+2026-03-04 10:26:05,723 - crud - INFO - 🏁 Finalizando canción actual: HEREDERO - Cosita (Video Oficial) (ID: 1772572715619)
+2026-03-04 10:26:05,737 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:26:05,737 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:26:05,737 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:26:05,742 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:26:05,746 - crud - INFO - 📭 No hay más canciones en cola.
+2026-03-04 10:26:14,489 - admin_audit - INFO - [2026-03-04T10:26:14.489354] ADMIN:master | ACTION:admin_anadir_cancion | DETAILS:Titulo: KARAOKE AMISTADES PELIGROSAS 
+2026-03-04 10:26:14,529 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:26:14,533 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:26:14,534 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:26:36,853 - admin_audit - INFO - [2026-03-04T10:26:36.853591] ADMIN:master | ACTION:play_song_now | DETAILS:ID: 1772637974494
+2026-03-04 10:26:36,870 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:26:36,871 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:26:36,872 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:26:36,875 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=L85o6BMzOF0, duration_seconds=221
+2026-03-04 10:27:38,365 - admin_audit - INFO - [2026-03-04T10:27:38.365391] ADMIN:master | ACTION:admin_anadir_cancion | DETAILS:Titulo: Amistades Peligrosas - Me quedaré solo KARAOKE (tono original)
+2026-03-04 10:27:38,403 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:27:38,405 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:27:38,406 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:27:50,819 - admin_audit - INFO - [2026-03-04T10:27:50.819416] ADMIN:master | ACTION:admin_anadir_cancion | DETAILS:Titulo: Amistades Peligrosas - Me haces tanto bien (Karaoke) | CantoYo
+2026-03-04 10:27:50,854 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:27:50,859 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:27:50,860 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:27:58,995 - admin_audit - INFO - [2026-03-04T10:27:58.995359] ADMIN:master | ACTION:admin_anadir_cancion | DETAILS:Titulo: Me Quedaré Solo -  Amistades Peligrosas -  karaoke   Tony Ginzo
+2026-03-04 10:27:59,029 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:27:59,030 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:27:59,033 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:28:16,462 - admin_audit - INFO - [2026-03-04T10:28:16.462686] ADMIN:master | ACTION:admin_anadir_cancion | DETAILS:Titulo: ME QUEDARÉ SOLO (Karaoke) - Amistades peligrosas
+2026-03-04 10:28:16,499 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:28:16,500 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:28:16,502 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:30:22,702 - crud - INFO - 🏁 Finalizando canción actual: KARAOKE AMISTADES PELIGROSAS  (ID: 1772637974494)
+2026-03-04 10:30:22,717 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:30:22,718 - queue_manager - INFO - 🚀 No hay canciones aprobadas. Promoviendo 'Amistades Peligrosas - Me quedaré solo KARAOKE (tono original)' desde cola lazy.
+2026-03-04 10:30:22,737 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:30:22,751 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:30:22,752 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:30:22,754 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:30:22,756 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:30:22,772 - crud - INFO - 🎵 Iniciando siguiente canción: Amistades Peligrosas - Me quedaré solo KARAOKE (tono original) (ID: 1772638058375)
+2026-03-04 10:30:22,774 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=8QS0a4cy2vw, duration_seconds=329
+2026-03-04 10:30:51,995 - crud - INFO - 🏁 Finalizando canción actual: Amistades Peligrosas - Me quedaré solo KARAOKE (tono original) (ID: 1772638058375)
+2026-03-04 10:30:52,011 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:30:52,014 - queue_manager - INFO - 🚀 No hay canciones aprobadas. Promoviendo 'Amistades Peligrosas - Me haces tanto bien (Karaoke) | CantoYo' desde cola lazy.
+2026-03-04 10:30:52,032 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:30:52,289 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:30:52,312 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:30:52,342 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:30:52,347 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:30:52,377 - crud - INFO - 🎵 Iniciando siguiente canción: Amistades Peligrosas - Me haces tanto bien (Karaoke) | CantoYo (ID: 1772638070829)
+2026-03-04 10:30:52,384 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=KbVDIxkRhd8, duration_seconds=236
+2026-03-04 10:30:58,922 - crud - INFO - 🏁 Finalizando canción actual: Amistades Peligrosas - Me haces tanto bien (Karaoke) | CantoYo (ID: 1772638070829)
+2026-03-04 10:30:58,971 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:30:59,094 - queue_manager - INFO - 🚀 No hay canciones aprobadas. Promoviendo 'Me Quedaré Solo -  Amistades Peligrosas -  karaoke   Tony Ginzo' desde cola lazy.
+2026-03-04 10:30:59,294 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:30:59,342 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:30:59,355 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:30:59,358 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:30:59,359 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:30:59,379 - crud - INFO - 🎵 Iniciando siguiente canción: Me Quedaré Solo -  Amistades Peligrosas -  karaoke   Tony Ginzo (ID: 1772638079005)
+2026-03-04 10:30:59,394 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=vU8V4T7lkvI, duration_seconds=258
+2026-03-04 10:31:17,540 - admin_audit - INFO - [2026-03-04T10:31:17.540337] ADMIN:master | ACTION:admin_anadir_cancion | DETAILS:Titulo: KARAOKE AMISTADES PELIGROSAS 
+2026-03-04 10:31:17,578 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:31:17,579 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:31:17,585 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:31:31,953 - admin_audit - INFO - [2026-03-04T10:31:31.953228] ADMIN:master | ACTION:move_lazy_song_up | DETAILS:ID: 1772638277553
+2026-03-04 10:31:31,955 - queue_synchronizer - INFO - REORDER_LAZY_SAFE: Song 1772638277553 move-up by admin_master
+2026-03-04 10:31:31,992 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:31:31,992 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:31:31,995 - queue_synchronizer - INFO - REORDER_LAZY_SUCCESS: Song 1772638277553 moved up. Revision: 34
+2026-03-04 10:31:31,997 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:31:31,998 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:31:43,829 - admin_audit - INFO - [2026-03-04T10:31:43.829954] ADMIN:master | ACTION:admin_anadir_cancion | DETAILS:Titulo: Me Quedaré Solo -  Amistades Peligrosas -  karaoke   Tony Ginzo
+2026-03-04 10:31:43,863 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:31:43,864 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:31:43,867 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:31:53,470 - admin_audit - INFO - [2026-03-04T10:31:53.470492] ADMIN:master | ACTION:search_youtube | DETAILS:Query: amistades peligrosas, Karaoke Mode: False
+2026-03-04 10:31:53,473 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'amistades peligrosas' (Karaoke Mode: False)
+2026-03-04 10:31:53,474 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'amistades peligrosas' (Karaoke Mode: False)
+2026-03-04 10:31:55,052 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-03-04 10:31:55,053 - youtube - INFO - Búsqueda por texto: 'amistades peligrosas'
+2026-03-04 10:31:55,054 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-03-04 10:31:55,724 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=amistades+peligrosas&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-03-04 10:31:55,740 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-03-04 10:31:55,743 - youtube - INFO - IDs de video encontrados: ['95JHOXoXR6M', 'bWQul83KtqI', '2OFTs7ix9w0', 'UsrIyimnViM', 'hsi2mXZpOac', 'yfk0OfK_8Hw', '5NqzXsjLncQ', 'S2fzpT0pb6w', 'fUNTtR55g5o', 'sK4EdMeeQl8']
+2026-03-04 10:31:55,749 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-03-04 10:31:55,936 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=95JHOXoXR6M%2CbWQul83KtqI%2C2OFTs7ix9w0%2CUsrIyimnViM%2Chsi2mXZpOac%2Cyfk0OfK_8Hw%2C5NqzXsjLncQ%2CS2fzpT0pb6w%2CfUNTtR55g5o%2CsK4EdMeeQl8&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-03-04 10:31:55,945 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-03-04 10:31:55,947 - youtube - INFO - Procesamiento finalizado. Se encontraron 8 resultados formateados.
+2026-03-04 10:31:55,958 - admin_audit - INFO - [2026-03-04T10:31:55.958338] ADMIN:master | ACTION:search_youtube | DETAILS:Query: amistades peligrosas, Karaoke Mode: False
+2026-03-04 10:31:55,985 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'amistades peligrosas' (Karaoke Mode: False)
+2026-03-04 10:31:55,988 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'amistades peligrosas' (Karaoke Mode: False)
+2026-03-04 10:31:57,531 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-03-04 10:31:57,532 - youtube - INFO - Búsqueda por texto: 'amistades peligrosas'
+2026-03-04 10:31:57,533 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-03-04 10:31:57,969 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=amistades+peligrosas&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-03-04 10:31:57,974 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-03-04 10:31:57,975 - youtube - INFO - IDs de video encontrados: ['95JHOXoXR6M', 'bWQul83KtqI', '2OFTs7ix9w0', 'UsrIyimnViM', 'hsi2mXZpOac', 'yfk0OfK_8Hw', '5NqzXsjLncQ', 'S2fzpT0pb6w', 'fUNTtR55g5o', 'sK4EdMeeQl8']
+2026-03-04 10:31:57,976 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-03-04 10:31:58,157 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=95JHOXoXR6M%2CbWQul83KtqI%2C2OFTs7ix9w0%2CUsrIyimnViM%2Chsi2mXZpOac%2Cyfk0OfK_8Hw%2C5NqzXsjLncQ%2CS2fzpT0pb6w%2CfUNTtR55g5o%2CsK4EdMeeQl8&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-03-04 10:31:58,165 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-03-04 10:31:58,166 - youtube - INFO - Procesamiento finalizado. Se encontraron 8 resultados formateados.
+2026-03-04 10:32:15,527 - admin_audit - INFO - [2026-03-04T10:32:15.527306] ADMIN:master | ACTION:search_youtube | DETAILS:Query: amistades peligrosas, Karaoke Mode: True
+2026-03-04 10:32:15,531 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'amistades peligrosas' (Karaoke Mode: True)
+2026-03-04 10:32:15,533 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'amistades peligrosas' (Karaoke Mode: True)
+2026-03-04 10:32:16,926 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-03-04 10:32:16,927 - youtube - INFO - Búsqueda por texto: 'amistades peligrosas karaoke'
+2026-03-04 10:32:16,928 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-03-04 10:32:17,514 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=amistades+peligrosas+karaoke&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-03-04 10:32:17,523 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-03-04 10:32:17,528 - youtube - INFO - IDs de video encontrados: ['FTDU1PvMys0', 'JX8wcPviXm8', '95JHOXoXR6M', 'KbVDIxkRhd8', 'fotFzXGyXTw', 'vU8V4T7lkvI', '8QS0a4cy2vw', '2OFTs7ix9w0', 'dAZtbWgHcy0', 'L85o6BMzOF0']
+2026-03-04 10:32:17,531 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-03-04 10:32:17,694 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=FTDU1PvMys0%2CJX8wcPviXm8%2C95JHOXoXR6M%2CKbVDIxkRhd8%2CfotFzXGyXTw%2CvU8V4T7lkvI%2C8QS0a4cy2vw%2C2OFTs7ix9w0%2CdAZtbWgHcy0%2CL85o6BMzOF0&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-03-04 10:32:17,701 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-03-04 10:32:17,703 - youtube - INFO - Procesamiento finalizado. Se encontraron 10 resultados formateados.
+2026-03-04 10:32:17,717 - admin_audit - INFO - [2026-03-04T10:32:17.717543] ADMIN:master | ACTION:search_youtube | DETAILS:Query: amistades peligrosas, Karaoke Mode: True
+2026-03-04 10:32:17,721 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'amistades peligrosas' (Karaoke Mode: True)
+2026-03-04 10:32:17,732 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'amistades peligrosas' (Karaoke Mode: True)
+2026-03-04 10:32:19,388 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-03-04 10:32:19,388 - youtube - INFO - Búsqueda por texto: 'amistades peligrosas karaoke'
+2026-03-04 10:32:19,390 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-03-04 10:32:20,026 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=amistades+peligrosas+karaoke&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-03-04 10:32:20,036 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-03-04 10:32:20,055 - youtube - INFO - IDs de video encontrados: ['FTDU1PvMys0', 'JX8wcPviXm8', '95JHOXoXR6M', 'KbVDIxkRhd8', 'fotFzXGyXTw', 'vU8V4T7lkvI', '8QS0a4cy2vw', '2OFTs7ix9w0', 'dAZtbWgHcy0', 'L85o6BMzOF0', '4pY_PQGUzTM', '-hhLjI9LAdw', 'bWQul83KtqI', 'UsrIyimnViM', 'cKfjW7BLk7U', 'Xu19PlVbnMs', 'LJ1CZDSyVUQ', '_uz5LZGZqDU', 'Z-8kzNM7x54', '-fbQX2rgYr0', 'VjdBqDBtSQI', 'kSRT0j99DaY', 'yfk0OfK_8Hw', 'rgbZbAkBb4k', 'FpnnsSFXJjc']
+2026-03-04 10:32:20,074 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-03-04 10:32:20,365 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=FTDU1PvMys0%2CJX8wcPviXm8%2C95JHOXoXR6M%2CKbVDIxkRhd8%2CfotFzXGyXTw%2CvU8V4T7lkvI%2C8QS0a4cy2vw%2C2OFTs7ix9w0%2CdAZtbWgHcy0%2CL85o6BMzOF0%2C4pY_PQGUzTM%2C-hhLjI9LAdw%2CbWQul83KtqI%2CUsrIyimnViM%2CcKfjW7BLk7U%2CXu19PlVbnMs%2CLJ1CZDSyVUQ%2C_uz5LZGZqDU%2CZ-8kzNM7x54%2C-fbQX2rgYr0%2CVjdBqDBtSQI%2CkSRT0j99DaY%2Cyfk0OfK_8Hw%2CrgbZbAkBb4k%2CFpnnsSFXJjc&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-03-04 10:32:20,381 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-03-04 10:32:20,384 - youtube - INFO - Procesamiento finalizado. Se encontraron 24 resultados formateados.
+2026-03-04 10:33:03,810 - admin_audit - INFO - [2026-03-04T10:33:03.810343] ADMIN:master | ACTION:search_youtube | DETAILS:Query: equimosis, Karaoke Mode: True
+2026-03-04 10:33:03,813 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'equimosis' (Karaoke Mode: True)
+2026-03-04 10:33:03,813 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'equimosis' (Karaoke Mode: True)
+2026-03-04 10:33:05,219 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-03-04 10:33:05,220 - youtube - INFO - Búsqueda por texto: 'equimosis karaoke'
+2026-03-04 10:33:05,221 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-03-04 10:33:05,890 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=equimosis+karaoke&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-03-04 10:33:05,893 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-03-04 10:33:05,894 - youtube - INFO - IDs de video encontrados: ['d8GxU3QsMYo', 'wbmpVLHMVZ4', 's-iogpG29bo', '2hmzAJZbEfI', 'JvZxclmCJj8', 'mugC9aiQ48g', 'KhqehgAeuXQ', '75_slEkywpY', 'GSovmK3pVOA', 'wKwo6RhkCKY']
+2026-03-04 10:33:05,895 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-03-04 10:33:06,075 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=d8GxU3QsMYo%2CwbmpVLHMVZ4%2Cs-iogpG29bo%2C2hmzAJZbEfI%2CJvZxclmCJj8%2CmugC9aiQ48g%2CKhqehgAeuXQ%2C75_slEkywpY%2CGSovmK3pVOA%2CwKwo6RhkCKY&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-03-04 10:33:06,087 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-03-04 10:33:06,089 - youtube - INFO - Procesamiento finalizado. Se encontraron 10 resultados formateados.
+2026-03-04 10:33:06,109 - admin_audit - INFO - [2026-03-04T10:33:06.109338] ADMIN:master | ACTION:search_youtube | DETAILS:Query: equimosis, Karaoke Mode: True
+2026-03-04 10:33:06,123 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'equimosis' (Karaoke Mode: True)
+2026-03-04 10:33:06,125 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'equimosis' (Karaoke Mode: True)
+2026-03-04 10:33:07,683 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-03-04 10:33:07,684 - youtube - INFO - Búsqueda por texto: 'equimosis karaoke'
+2026-03-04 10:33:07,685 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-03-04 10:33:08,299 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=equimosis+karaoke&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-03-04 10:33:08,308 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-03-04 10:33:08,309 - youtube - INFO - IDs de video encontrados: ['d8GxU3QsMYo', 'wbmpVLHMVZ4', 's-iogpG29bo', '2hmzAJZbEfI', 'wKwo6RhkCKY', 'KhqehgAeuXQ', 'mugC9aiQ48g', 'JvZxclmCJj8', 'TAbunlKahec', 'v5oVXgqZAI0']
+2026-03-04 10:33:08,312 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-03-04 10:33:08,533 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=d8GxU3QsMYo%2CwbmpVLHMVZ4%2Cs-iogpG29bo%2C2hmzAJZbEfI%2CwKwo6RhkCKY%2CKhqehgAeuXQ%2CmugC9aiQ48g%2CJvZxclmCJj8%2CTAbunlKahec%2Cv5oVXgqZAI0&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-03-04 10:33:08,540 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-03-04 10:33:08,541 - youtube - INFO - Procesamiento finalizado. Se encontraron 10 resultados formateados.
+2026-03-04 10:33:19,231 - admin_audit - INFO - [2026-03-04T10:33:19.231191] ADMIN:master | ACTION:admin_anadir_cancion | DETAILS:Titulo: Juanes - Para Tu Amor (Versión Karaoke)
+2026-03-04 10:33:19,262 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:33:19,263 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:33:19,265 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:33:21,827 - admin_audit - INFO - [2026-03-04T10:33:21.827077] ADMIN:master | ACTION:admin_anadir_cancion | DETAILS:Titulo: Ekhymosis - Solo (Versión Karaoke)
+2026-03-04 10:33:21,861 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:33:21,862 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:33:21,863 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:34:02,355 - admin_audit - INFO - [2026-03-04T10:34:02.355069] ADMIN:master | ACTION:search_youtube | DETAILS:Query: enanitos verdes, Karaoke Mode: True
+2026-03-04 10:34:02,359 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'enanitos verdes' (Karaoke Mode: True)
+2026-03-04 10:34:02,362 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'enanitos verdes' (Karaoke Mode: True)
+2026-03-04 10:34:03,841 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-03-04 10:34:03,842 - youtube - INFO - Búsqueda por texto: 'enanitos verdes karaoke'
+2026-03-04 10:34:03,843 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-03-04 10:34:04,499 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=enanitos+verdes+karaoke&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-03-04 10:34:04,506 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-03-04 10:34:04,507 - youtube - INFO - IDs de video encontrados: ['jy8qazh_TiI', 'rX3tNKj0SMg', 'KTuOD3aWxrc', 'thuddMp8sJ8', 'VkjhY4dTh8k', 'Hj1qwYeku2M', 'v8cTSt0Fs80', 'w6w8GrwJG_E', 'aWhyv4BSSuQ', 'qly7oZSd-Ng']
+2026-03-04 10:34:04,512 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-03-04 10:34:04,695 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=jy8qazh_TiI%2CrX3tNKj0SMg%2CKTuOD3aWxrc%2CthuddMp8sJ8%2CVkjhY4dTh8k%2CHj1qwYeku2M%2Cv8cTSt0Fs80%2Cw6w8GrwJG_E%2CaWhyv4BSSuQ%2Cqly7oZSd-Ng&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-03-04 10:34:04,711 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-03-04 10:34:04,714 - youtube - INFO - Procesamiento finalizado. Se encontraron 10 resultados formateados.
+2026-03-04 10:34:04,738 - admin_audit - INFO - [2026-03-04T10:34:04.738533] ADMIN:master | ACTION:search_youtube | DETAILS:Query: enanitos verdes, Karaoke Mode: True
+2026-03-04 10:34:04,766 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'enanitos verdes' (Karaoke Mode: True)
+2026-03-04 10:34:04,768 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'enanitos verdes' (Karaoke Mode: True)
+2026-03-04 10:34:06,270 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-03-04 10:34:06,271 - youtube - INFO - Búsqueda por texto: 'enanitos verdes karaoke'
+2026-03-04 10:34:06,271 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-03-04 10:34:06,773 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=enanitos+verdes+karaoke&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-03-04 10:34:06,779 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-03-04 10:34:06,781 - youtube - INFO - IDs de video encontrados: ['jy8qazh_TiI', 'rX3tNKj0SMg', 'KTuOD3aWxrc', 'thuddMp8sJ8', 'VkjhY4dTh8k', 'Hj1qwYeku2M', 'v8cTSt0Fs80', 'aWhyv4BSSuQ', 'qly7oZSd-Ng', 'xLdGLRtWLtk']
+2026-03-04 10:34:06,783 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-03-04 10:34:06,911 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=jy8qazh_TiI%2CrX3tNKj0SMg%2CKTuOD3aWxrc%2CthuddMp8sJ8%2CVkjhY4dTh8k%2CHj1qwYeku2M%2Cv8cTSt0Fs80%2CaWhyv4BSSuQ%2Cqly7oZSd-Ng%2CxLdGLRtWLtk&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-03-04 10:34:06,967 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-03-04 10:34:06,969 - youtube - INFO - Procesamiento finalizado. Se encontraron 10 resultados formateados.
+2026-03-04 10:34:11,113 - admin_audit - INFO - [2026-03-04T10:34:11.113198] ADMIN:master | ACTION:admin_anadir_cancion | DETAILS:Titulo: Enanitos Verdes - Lamento Boliviano (Versión Karaoke)
+2026-03-04 10:34:11,152 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:34:11,152 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:34:11,152 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:34:20,043 - admin_audit - INFO - [2026-03-04T10:34:20.043198] ADMIN:master | ACTION:admin_anadir_cancion | DETAILS:Titulo: Enanitos Verdes - Amores Lejanos (Versión Karaoke)
+2026-03-04 10:34:20,078 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:34:20,079 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:34:20,080 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:34:31,679 - admin_audit - INFO - [2026-03-04T10:34:31.679853] ADMIN:master | ACTION:search_youtube | DETAILS:Query: laura pausini, Karaoke Mode: True
+2026-03-04 10:34:31,681 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'laura pausini' (Karaoke Mode: True)
+2026-03-04 10:34:31,681 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'laura pausini' (Karaoke Mode: True)
+2026-03-04 10:34:33,133 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-03-04 10:34:33,134 - youtube - INFO - Búsqueda por texto: 'laura pausini karaoke'
+2026-03-04 10:34:33,134 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-03-04 10:34:33,851 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=laura+pausini+karaoke&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-03-04 10:34:33,861 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-03-04 10:34:33,863 - youtube - INFO - IDs de video encontrados: ['vAwcWMFqAc0', 'ToTM5JeWMsA', 'ASzZCnEZiMo', 'JUnNQJn4ZV4', 'HjSBoMPOl3M', 'SBK87kvp9yE', 'CXEEe_REQJg', 'O5qfwBHFTyk', 'q1kPdPbuJyw', 'yV57XKGWM-k']
+2026-03-04 10:34:33,865 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-03-04 10:34:34,083 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=vAwcWMFqAc0%2CToTM5JeWMsA%2CASzZCnEZiMo%2CJUnNQJn4ZV4%2CHjSBoMPOl3M%2CSBK87kvp9yE%2CCXEEe_REQJg%2CO5qfwBHFTyk%2Cq1kPdPbuJyw%2CyV57XKGWM-k&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-03-04 10:34:34,097 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-03-04 10:34:34,099 - youtube - INFO - Procesamiento finalizado. Se encontraron 10 resultados formateados.
+2026-03-04 10:34:34,121 - admin_audit - INFO - [2026-03-04T10:34:34.121792] ADMIN:master | ACTION:search_youtube | DETAILS:Query: laura pausini, Karaoke Mode: True
+2026-03-04 10:34:34,151 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'laura pausini' (Karaoke Mode: True)
+2026-03-04 10:34:34,155 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'laura pausini' (Karaoke Mode: True)
+2026-03-04 10:34:35,649 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-03-04 10:34:35,650 - youtube - INFO - Búsqueda por texto: 'laura pausini karaoke'
+2026-03-04 10:34:35,651 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-03-04 10:34:36,263 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=laura+pausini+karaoke&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-03-04 10:34:36,268 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-03-04 10:34:36,270 - youtube - INFO - IDs de video encontrados: ['vAwcWMFqAc0', 'ToTM5JeWMsA', 'ASzZCnEZiMo', 'JUnNQJn4ZV4', 'HjSBoMPOl3M', 'SBK87kvp9yE', 'CXEEe_REQJg', 'O5qfwBHFTyk', 'q1kPdPbuJyw', 'yV57XKGWM-k']
+2026-03-04 10:34:36,272 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-03-04 10:34:36,428 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=vAwcWMFqAc0%2CToTM5JeWMsA%2CASzZCnEZiMo%2CJUnNQJn4ZV4%2CHjSBoMPOl3M%2CSBK87kvp9yE%2CCXEEe_REQJg%2CO5qfwBHFTyk%2Cq1kPdPbuJyw%2CyV57XKGWM-k&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-03-04 10:34:36,436 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-03-04 10:34:36,437 - youtube - INFO - Procesamiento finalizado. Se encontraron 10 resultados formateados.
+2026-03-04 10:34:57,996 - admin_audit - INFO - [2026-03-04T10:34:57.996505] ADMIN:master | ACTION:admin_anadir_cancion | DETAILS:Titulo: Laura Pausini - La Soledad (KARAOKE) | Instrumental y letra
+2026-03-04 10:34:58,038 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:34:58,040 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:34:58,043 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:35:02,477 - admin_audit - INFO - [2026-03-04T10:35:02.477374] ADMIN:master | ACTION:admin_anadir_cancion | DETAILS:Titulo: Laura Pausini - Amores Extraños (Versión Karaoke)
+2026-03-04 10:35:02,517 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:35:02,518 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:35:02,519 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:35:18,774 - crud - INFO - 🏁 Finalizando canción actual: Me Quedaré Solo -  Amistades Peligrosas -  karaoke   Tony Ginzo (ID: 1772638079005)
+2026-03-04 10:35:18,790 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:35:18,792 - queue_manager - INFO - 🚀 No hay canciones aprobadas. Promoviendo 'Me Quedaré Solo -  Amistades Peligrosas -  karaoke   Tony Ginzo' desde cola lazy.
+2026-03-04 10:35:18,813 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:35:18,837 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:35:18,837 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:35:18,837 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:35:18,843 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:35:18,862 - crud - INFO - 🎵 Iniciando siguiente canción: Me Quedaré Solo -  Amistades Peligrosas -  karaoke   Tony Ginzo (ID: 1772638303838)
+2026-03-04 10:35:18,863 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=vU8V4T7lkvI, duration_seconds=258
+2026-03-04 10:36:23,564 - admin_audit - INFO - [2026-03-04T10:36:23.564327] ADMIN:master | ACTION:create_product | DETAILS:Producto: Aguila
+2026-03-04 10:36:33,590 - admin_audit - INFO - [2026-03-04T10:36:33.590577] ADMIN:master | ACTION:upload_product_image | DETAILS:ID: 2, URL: /static/images/productos/producto_2.jpg
+2026-03-04 10:39:21,675 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:39:21,676 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:39:35,191 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:39:35,192 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:39:37,618 - crud - INFO - 🏁 Finalizando canción actual: Me Quedaré Solo -  Amistades Peligrosas -  karaoke   Tony Ginzo (ID: 1772638303838)
+2026-03-04 10:39:37,635 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:39:37,636 - queue_manager - INFO - 🚀 No hay canciones aprobadas. Promoviendo 'Juanes - Para Tu Amor (Versión Karaoke)' desde cola lazy.
+2026-03-04 10:39:37,663 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:39:37,696 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:39:37,711 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:39:37,718 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:39:37,726 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:39:37,745 - crud - INFO - 🎵 Iniciando siguiente canción: Juanes - Para Tu Amor (Versión Karaoke) (ID: 1772638399239)
+2026-03-04 10:39:37,807 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=JvZxclmCJj8, duration_seconds=264
+2026-03-04 10:39:48,441 - crud - INFO - 🏁 Finalizando canción actual: Juanes - Para Tu Amor (Versión Karaoke) (ID: 1772638399239)
+2026-03-04 10:39:48,461 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:39:48,465 - queue_manager - INFO - 🚀 No hay canciones aprobadas. Promoviendo 'Ekhymosis - Solo (Versión Karaoke)' desde cola lazy.
+2026-03-04 10:39:48,484 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:39:48,592 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:39:48,602 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:39:48,779 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:39:48,804 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:39:48,852 - crud - INFO - 🎵 Iniciando siguiente canción: Ekhymosis - Solo (Versión Karaoke) (ID: 1772638401835)
+2026-03-04 10:39:48,863 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=d8GxU3QsMYo, duration_seconds=301
+2026-03-04 10:39:56,673 - crud - INFO - 🏁 Finalizando canción actual: Ekhymosis - Solo (Versión Karaoke) (ID: 1772638401835)
+2026-03-04 10:39:56,689 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:39:56,690 - queue_manager - INFO - 🚀 No hay canciones aprobadas. Promoviendo 'Enanitos Verdes - Lamento Boliviano (Versión Karaoke)' desde cola lazy.
+2026-03-04 10:39:56,741 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:39:56,905 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:39:56,925 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:39:56,930 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:39:56,987 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:39:57,051 - crud - INFO - 🎵 Iniciando siguiente canción: Enanitos Verdes - Lamento Boliviano (Versión Karaoke) (ID: 1772638451126)
+2026-03-04 10:39:57,053 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=jy8qazh_TiI, duration_seconds=244
+2026-03-04 10:40:05,979 - crud - INFO - 🏁 Finalizando canción actual: Enanitos Verdes - Lamento Boliviano (Versión Karaoke) (ID: 1772638451126)
+2026-03-04 10:40:06,000 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:40:06,002 - queue_manager - INFO - 🚀 No hay canciones aprobadas. Promoviendo 'Enanitos Verdes - Amores Lejanos (Versión Karaoke)' desde cola lazy.
+2026-03-04 10:40:06,136 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:40:06,534 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:40:06,586 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:40:06,685 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:40:06,742 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:40:06,804 - crud - INFO - 🎵 Iniciando siguiente canción: Enanitos Verdes - Amores Lejanos (Versión Karaoke) (ID: 1772638460053)
+2026-03-04 10:40:06,824 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=Hj1qwYeku2M, duration_seconds=301
+2026-03-04 10:40:13,725 - crud - INFO - 🏁 Finalizando canción actual: Enanitos Verdes - Amores Lejanos (Versión Karaoke) (ID: 1772638460053)
+2026-03-04 10:40:13,745 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:40:13,747 - queue_manager - INFO - 🚀 No hay canciones aprobadas. Promoviendo 'Laura Pausini - La Soledad (KARAOKE) | Instrumental y letra' desde cola lazy.
+2026-03-04 10:40:13,963 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:40:14,094 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:40:14,110 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:40:14,143 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:40:14,191 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:40:14,287 - crud - INFO - 🎵 Iniciando siguiente canción: Laura Pausini - La Soledad (KARAOKE) | Instrumental y letra (ID: 1772638498006)
+2026-03-04 10:40:14,296 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=O5qfwBHFTyk, duration_seconds=257
+2026-03-04 10:40:27,035 - admin_audit - INFO - [2026-03-04T10:40:27.035273] ADMIN:master | ACTION:rechazar_cancion | DETAILS:ID: 1772638502487
+2026-03-04 10:40:27,055 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:40:27,066 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:40:27,068 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:44:16,540 - admin_audit - INFO - [2026-03-04T10:44:16.540981] ADMIN:master | ACTION:registrar_consumo | DETAILS:Usuario: 2, Producto ID: 1
+2026-03-04 10:44:25,341 - admin_audit - INFO - [2026-03-04T10:44:25.341217] ADMIN:master | ACTION:registrar_consumo | DETAILS:Usuario: 2, Producto ID: 1
+2026-03-04 10:44:30,686 - admin_audit - INFO - [2026-03-04T10:44:30.686018] ADMIN:master | ACTION:registrar_consumo | DETAILS:Usuario: 2, Producto ID: 1
+2026-03-04 10:44:57,599 - crud - INFO - 🏁 Finalizando canción actual: Laura Pausini - La Soledad (KARAOKE) | Instrumental y letra (ID: 1772638498006)
+2026-03-04 10:44:57,681 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:44:57,684 - queue_manager - INFO - 🚀 No hay canciones aprobadas. Promoviendo 'KARAOKE AMISTADES PELIGROSAS ' desde cola lazy.
+2026-03-04 10:44:57,784 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:44:57,818 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:44:57,819 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:44:57,820 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:44:57,821 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:44:57,843 - crud - INFO - 🎵 Iniciando siguiente canción: KARAOKE AMISTADES PELIGROSAS  (ID: 1772638277553)
+2026-03-04 10:44:57,847 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=L85o6BMzOF0, duration_seconds=221
+2026-03-04 10:46:21,160 - admin_audit - INFO - [2026-03-04T10:46:21.159744] ADMIN:master | ACTION:registrar_consumo | DETAILS:Usuario: 2, Producto ID: 1
+2026-03-04 10:48:39,548 - crud - INFO - 🏁 Finalizando canción actual: KARAOKE AMISTADES PELIGROSAS  (ID: 1772638277553)
+2026-03-04 10:48:39,560 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:48:39,560 - queue_manager - INFO - 🚀 No hay canciones aprobadas. Promoviendo 'ME QUEDARÉ SOLO (Karaoke) - Amistades peligrosas' desde cola lazy.
+2026-03-04 10:48:39,579 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:48:39,594 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:48:39,595 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:48:39,597 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:48:39,597 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:48:39,606 - crud - INFO - 🎵 Iniciando siguiente canción: ME QUEDARÉ SOLO (Karaoke) - Amistades peligrosas (ID: 1772638096470)
+2026-03-04 10:48:39,611 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=fotFzXGyXTw, duration_seconds=275
+2026-03-04 10:52:12,396 - song_credits_background - INFO - Credits background task started
+2026-03-04 10:52:12,486 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:52:12,497 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:52:12,524 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:52:12,528 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:52:55,394 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:52:55,410 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:53:30,707 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:53:30,709 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:54:03,535 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:54:03,544 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:54:45,206 - admin_audit - INFO - [2026-03-04T10:54:45.206431] ADMIN:master | ACTION:login | DETAILS:Acceso con clave maestra
+2026-03-04 10:54:45,612 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:54:45,644 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:55:40,133 - song_credits_background - INFO - Credits background task started
+2026-03-04 10:55:42,591 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:55:42,592 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:55:42,604 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:55:42,605 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:55:54,750 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 10:55:54,756 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 11:00:31,653 - song_credits_background - INFO - Credits background task started
+2026-03-04 11:00:31,696 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 11:00:31,700 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 11:00:31,707 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 11:00:31,709 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 11:00:42,672 - song_credits_background - INFO - Credits background task started
+2026-03-04 11:00:42,706 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 11:00:42,707 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 11:00:42,713 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 11:00:42,716 - queue_manager - INFO - Cache refrescado desde JSON
