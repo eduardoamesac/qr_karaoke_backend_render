@@ -16,6 +16,26 @@ def get_db():
     finally:
         db.close()
 
+@router.get("/{usuario_id}", response_model=schemas.UsuarioPublico, summary="Ver el perfil público de un usuario")
+def ver_perfil_usuario(usuario_id: int, db: Session = Depends(get_db)):
+    """
+    Devuelve la información pública de un usuario, como su nivel y puntos.
+    No incluye información sensible como el consumo total.
+    """
+    from cache_manager import cache_manager as cache
+    db_usuario = crud.get_usuario_by_id(db, usuario_id=usuario_id)
+    if not db_usuario:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+    
+    # Enriquecer con información de la mesa desde el caché
+    if db_usuario.mesa_id:
+        mesa_data = cache.get_mesa_by_id(db_usuario.mesa_id)
+        if mesa_data:
+            # Adjuntar mesa al objeto para que el schema lo capture
+            db_usuario.mesa = mesa_data
+            
+    return db_usuario
+
 @router.get("/{nick}", response_model=schemas.Usuario, summary="Obtener un usuario por su nick")
 def get_user_by_nick(nick: str, db: Session = Depends(get_db), admin: dict = Depends(verify_token)):
     log_admin_action(admin.get("sub"), "get_user_by_nick", f"Nick: {nick}")
@@ -26,18 +46,6 @@ def get_user_by_nick(nick: str, db: Session = Depends(get_db), admin: dict = Dep
     db_usuario = crud.get_usuario_by_nick(db, nick=nick)
     if not db_usuario:
         raise HTTPException(status_code=404, detail=f"Usuario con nick '{nick}' no encontrado.")
-    
-    return db_usuario
-
-@router.get("/{usuario_id}", response_model=schemas.UsuarioPublico, summary="Ver el perfil público de un usuario")
-def ver_perfil_usuario(usuario_id: int, db: Session = Depends(get_db)):
-    """
-    Devuelve la información pública de un usuario, como su nivel y puntos.
-    No incluye información sensible como el consumo total.
-    """
-    db_usuario = crud.get_usuario_by_id(db, usuario_id=usuario_id)
-    if not db_usuario:
-        raise HTTPException(status_code=404, detail="Usuario no encontrado")
     
     return db_usuario
 

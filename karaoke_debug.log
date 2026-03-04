@@ -18788,3 +18788,35 @@ NameError: name 'queue_manager' is not defined
 2026-03-04 15:30:49,793 - queue_manager - INFO - Cache refrescado desde JSON
 2026-03-04 15:30:49,818 - queue_manager - INFO - Cache refrescado desde JSON
 2026-03-04 15:30:49,820 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:33:46,648 - song_credits_background - INFO - Credits background task started
+2026-03-04 15:33:46,677 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:33:46,677 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:33:53,982 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:33:53,984 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:34:36,759 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:34:36,770 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:34:41,909 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:34:41,910 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:34:48,908 - queue_synchronizer - INFO - REORDER_LAZY_SAFE: Song 1772642402063 move-down by user_2
+2026-03-04 15:34:48,991 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:34:49,002 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:34:49,007 - queue_synchronizer - INFO - REORDER_LAZY_SUCCESS: Song 1772642402063 moved down. Revision: 44
+2026-03-04 15:34:49,024 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:34:49,027 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:34:51,168 - queue_synchronizer - INFO - REORDER_LAZY_SAFE: Song 1772642402063 move-down by user_2
+2026-03-04 15:34:51,325 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:34:51,331 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:34:51,337 - queue_synchronizer - INFO - REORDER_LAZY_SUCCESS: Song 1772642402063 moved down. Revision: 45
+2026-03-04 15:34:51,363 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:34:51,366 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:40:27,770 - song_credits_background - INFO - Credits background task started
+2026-03-04 15:40:27,810 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:40:27,814 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:40:27,928 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:40:27,932 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:40:42,007 - song_credits_background - INFO - Credits background task started
+2026-03-04 15:40:42,041 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:40:42,046 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:40:42,055 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:40:42,056 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:41:45,101 - httpx - INFO - HTTP Request: GET http://testserver/api/v1/usuarios/3 "HTTP/1.1 200 OK"
