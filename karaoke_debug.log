@@ -18711,3 +18711,80 @@ NameError: name 'queue_manager' is not defined
 2026-03-04 11:40:24,021 - queue_manager - INFO - Cache refrescado desde JSON
 2026-03-04 11:40:24,022 - queue_manager - INFO - Cache refrescado desde JSON
 2026-03-04 11:40:24,023 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 11:50:08,476 - song_credits_background - INFO - Credits background task started
+2026-03-04 11:50:08,548 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 11:50:08,550 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 11:54:38,693 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 11:54:38,697 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 11:54:39,934 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 11:54:39,938 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 11:54:43,920 - queue_synchronizer - INFO - REORDER_LAZY_SAFE: Song 1772642378070 move-down by user_2
+2026-03-04 11:54:43,994 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 11:54:43,994 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 11:54:43,999 - queue_synchronizer - INFO - REORDER_LAZY_SUCCESS: Song 1772642378070 moved down. Revision: 35
+2026-03-04 11:54:44,049 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 11:54:44,052 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 11:54:46,702 - queue_synchronizer - INFO - REORDER_LAZY_SAFE: Song 1772642378070 move-down by user_2
+2026-03-04 11:54:46,800 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 11:54:46,800 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 11:54:46,811 - queue_synchronizer - INFO - REORDER_LAZY_SUCCESS: Song 1772642378070 moved down. Revision: 36
+2026-03-04 11:54:46,822 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 11:54:46,828 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 11:54:50,959 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 11:54:50,961 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 11:54:55,274 - queue_synchronizer - INFO - REORDER_LAZY_SAFE: Song 1772642402063 move-up by user_2
+2026-03-04 11:54:55,344 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 11:54:55,350 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 11:54:55,353 - queue_synchronizer - INFO - REORDER_LAZY_SUCCESS: Song 1772642402063 moved up. Revision: 37
+2026-03-04 11:54:55,359 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 11:54:55,360 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 11:54:59,153 - queue_synchronizer - INFO - REORDER_LAZY_SAFE: Song 1772642422542 move-up by user_2
+2026-03-04 11:54:59,229 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 11:54:59,229 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 11:54:59,229 - queue_synchronizer - INFO - REORDER_LAZY_SUCCESS: Song 1772642422542 moved up. Revision: 38
+2026-03-04 11:54:59,239 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 11:54:59,239 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:17:08,982 - song_credits_background - INFO - Credits background task started
+2026-03-04 15:17:51,823 - admin_audit - INFO - [2026-03-04T15:17:51.821900] ADMIN:master | ACTION:login | DETAILS:Acceso con clave maestra
+2026-03-04 15:17:52,978 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:17:52,981 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:18:15,174 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:18:15,175 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:18:26,061 - queue_synchronizer - INFO - REORDER_LAZY_SAFE: Song 1772642378070 move-down by user_2
+2026-03-04 15:18:26,149 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:18:26,153 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:18:26,162 - queue_synchronizer - INFO - REORDER_LAZY_SUCCESS: Song 1772642378070 moved down. Revision: 39
+2026-03-04 15:18:26,177 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:18:26,185 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:18:27,442 - queue_synchronizer - INFO - REORDER_LAZY_SAFE: Song 1772642378070 move-down by user_2
+2026-03-04 15:18:32,586 - queue_synchronizer - INFO - REORDER_LAZY_SAFE: Song 1772642402063 move-up by user_2
+2026-03-04 15:18:41,681 - queue_synchronizer - INFO - REORDER_LAZY_SAFE: Song 1772642378070 move-up by user_2
+2026-03-04 15:18:42,089 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:18:42,099 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:18:42,107 - queue_synchronizer - INFO - REORDER_LAZY_SUCCESS: Song 1772642378070 moved up. Revision: 40
+2026-03-04 15:18:42,115 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:18:42,124 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:19:19,375 - queue_synchronizer - INFO - REORDER_LAZY_SAFE: Song 1772642378070 move-up by user_2
+2026-03-04 15:19:19,455 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:19:19,458 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:19:19,461 - queue_synchronizer - INFO - REORDER_LAZY_SUCCESS: Song 1772642378070 moved up. Revision: 41
+2026-03-04 15:19:19,466 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:19:19,466 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:19:42,512 - queue_synchronizer - INFO - REORDER_LAZY_SAFE: Song 1772642378070 move-up by user_2
+2026-03-04 15:19:42,585 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:19:42,587 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:19:42,591 - queue_synchronizer - INFO - REORDER_LAZY_SUCCESS: Song 1772642378070 moved up. Revision: 42
+2026-03-04 15:19:42,599 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:19:42,600 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:20:04,286 - queue_synchronizer - INFO - REORDER_LAZY_SAFE: Song 1772642378070 move-up by user_2
+2026-03-04 15:20:04,479 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:20:04,520 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:20:04,613 - queue_synchronizer - INFO - REORDER_LAZY_SUCCESS: Song 1772642378070 moved up. Revision: 43
+2026-03-04 15:20:04,673 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:20:04,733 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:30:30,977 - song_credits_background - INFO - Credits background task started
+2026-03-04 15:30:49,713 - song_credits_background - INFO - Credits background task started
+2026-03-04 15:30:49,786 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:30:49,793 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:30:49,818 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 15:30:49,820 - queue_manager - INFO - Cache refrescado desde JSON

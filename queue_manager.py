@@ -83,7 +83,10 @@ class QueueManager:
     def get_user_songs(self, db: Session, usuario_id: int) -> List[Dict[str, Any]]:
         """Obtiene canciones de un usuario."""
         if usuario_id not in self._user_songs:
-            self._user_songs[usuario_id] = cache.get_songs_by_user(usuario_id) or []
+            songs = cache.get_songs_by_user(usuario_id) or []
+            # Ordenar por orden_manual y luego por fecha de creación
+            songs.sort(key=lambda s: (s.get("orden_manual", 0) or 0, s.get("created_at", "")))
+            self._user_songs[usuario_id] = songs
         return self._user_songs[usuario_id]
 
     def pop_next_song(self, db: Session) -> Optional[Dict[str, Any]]:
