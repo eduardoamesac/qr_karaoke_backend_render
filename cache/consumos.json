@@ -268,7 +268,62 @@
       "is_dispatched": true,
       "is_cancelled": false,
       "id": 27
+    },
+    "32": {
+      "cantidad": 1,
+      "valor_total": 8000.0,
+      "mesa_id": 4,
+      "usuario_id": 4,
+      "producto_id": 1,
+      "created_at": "2026-03-04T16:08:53.016575",
+      "is_dispatched": false,
+      "is_cancelled": false,
+      "id": 32
+    },
+    "33": {
+      "cantidad": 1,
+      "valor_total": 5000.0,
+      "mesa_id": 4,
+      "usuario_id": 4,
+      "producto_id": 2,
+      "created_at": "2026-03-04T16:08:53.057976",
+      "is_dispatched": false,
+      "is_cancelled": false,
+      "id": 33
+    },
+    "34": {
+      "cantidad": 1,
+      "valor_total": 9000.0,
+      "mesa_id": 4,
+      "usuario_id": 4,
+      "producto_id": 3,
+      "created_at": "2026-03-04T16:08:53.099885",
+      "is_dispatched": false,
+      "is_cancelled": false,
+      "id": 34
+    },
+    "35": {
+      "cantidad": 1,
+      "valor_total": 8000.0,
+      "mesa_id": 4,
+      "usuario_id": 4,
+      "producto_id": 1,
+      "created_at": "2026-03-04T16:09:48.246369",
+      "is_dispatched": false,
+      "is_cancelled": false,
+      "id": 35
+    },
+    "36": {
+      "cantidad": 1,
+      "valor_total": 5000.0,
+      "mesa_id": 4,
+      "usuario_id": 4,
+      "producto_id": 2,
+      "created_at": "2026-03-04T16:09:48.282236",
+      "is_dispatched": false,
+      "is_cancelled": false,
+      "id": 36
     }
   },
-  "next_id": 32
+  "next_id": 39
 }

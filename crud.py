@@ -542,6 +542,60 @@ def delete_consumo(db: Session, consumo_id: int):
     # Eliminar del cache
     return cache.delete_consumo_from_cache(consumo_id)
 
+def update_consumo_cantidad(db: Session, consumo_id: int, delta: int):
+    """
+    Incrementa o decrementa la cantidad de un consumo.
+    Actualiza stock y créditos del usuario.
+    """
+    consumo = cache.get_consumo_by_id(consumo_id)
+    if not consumo:
+        return None, "Consumo no encontrado"
+
+    nueva_cantidad = consumo["cantidad"] + delta
+    if nueva_cantidad < 1:
+        return None, "La cantidad mínima es 1. Para eliminar use el botón cancelar."
+
+    db_producto = get_producto_by_id(db, consumo["producto_id"])
+    if not db_producto:
+        return None, "Producto no encontrado"
+
+    # Validar stock si se incrementa
+    if delta > 0 and db_producto.stock < delta:
+        return None, f"Stock insuficiente. Disponible: {db_producto.stock}"
+
+    # Ajustar stock
+    db_producto.stock -= delta
+    db.add(db_producto)
+
+    # Calcular diferencia de valor para créditos
+    valor_unitario = float(db_producto.valor)
+    valor_delta = valor_unitario * delta
+    nuevo_valor_total = float(consumo["valor_total"]) + valor_delta
+
+    # Actualizar créditos al usuario
+    usuario = get_usuario_by_id(db, consumo["usuario_id"])
+    if usuario:
+        from settings_storage import load_settings
+        settings = load_settings()
+        credit_multiplier = settings.get("lazy_queue_credit_multiplier", 1.0)
+        creditos_delta = int(valor_delta * credit_multiplier)
+        if creditos_delta != 0:
+            usuario.song_credits = max(0, (usuario.song_credits or 0) + creditos_delta)
+            db.add(usuario)
+
+    db.commit()
+
+    # Actualizar cache
+    updates = {
+        "cantidad": nueva_cantidad,
+        "valor_total": nuevo_valor_total
+    }
+    cache.update_consumo_in_cache(consumo_id, updates)
+    
+    # Retornar objeto actualizado (enriquecido)
+    consumo.update(updates)
+    return consumo, None
+
 def get_resumen_noche(db: Session):
     """Obtiene un resumen de la noche desde datos en cache y BD."""
     consumos = cache.get_all_consumos()

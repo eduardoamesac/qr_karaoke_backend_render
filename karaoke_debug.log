@@ -18993,3 +18993,36 @@ NameError: name 'queue_manager' is not defined
 2026-03-04 16:04:44,319 - song_credits_background - INFO - Credits background task started
 2026-03-04 16:04:44,348 - queue_manager - INFO - Cache refrescado desde JSON
 2026-03-04 16:04:44,350 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 16:05:36,421 - song_credits_background - INFO - Credits background task started
+2026-03-04 16:05:36,454 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 16:05:36,456 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 16:05:50,258 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 16:05:50,260 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 16:06:33,444 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 16:06:33,445 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 16:08:09,066 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 16:08:09,070 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 16:08:09,273 - crud - INFO - 🏁 Finalizando canción actual: Tarde Lo Conocí - Patricia Teherán | Karaoke Vallenato 🎶🎤 Versión Exclusiva de Karaoke Latino (ID: 1772657335460)
+2026-03-04 16:08:09,292 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 16:08:09,318 - queue_manager - INFO - 🚀 No hay canciones aprobadas. Promoviendo 'Jhonny Rivera, Sebastián Ayala, Andy Rivera - Mi Decisión (Remix)' desde cola lazy.
+2026-03-04 16:08:09,356 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 16:08:09,396 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 16:08:09,403 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 16:08:09,407 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 16:08:09,409 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 16:08:09,470 - crud - INFO - 🎵 Iniciando siguiente canción: Jhonny Rivera, Sebastián Ayala, Andy Rivera - Mi Decisión (Remix) (ID: 1772657365820)
+2026-03-04 16:08:09,473 - websocket_manager - INFO - Emitiendo play_song -> youtube_id=6kyJCaBg0Ys, duration_seconds=202
+2026-03-04 16:08:53,140 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 16:08:53,140 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 16:09:48,352 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 16:09:48,355 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 16:21:10,288 - song_credits_background - INFO - Credits background task started
+2026-03-04 16:21:10,325 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 16:21:10,326 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 16:21:10,334 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 16:21:10,336 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 16:21:22,712 - song_credits_background - INFO - Credits background task started
+2026-03-04 16:21:22,749 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 16:21:22,752 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 16:21:22,760 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 16:21:22,760 - queue_manager - INFO - Cache refrescado desde JSON

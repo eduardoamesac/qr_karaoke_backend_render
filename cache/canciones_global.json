@@ -1031,12 +1031,12 @@
       "titulo": "Tarde Lo Conocí - Patricia Teherán | Karaoke Vallenato 🎶🎤 Versión Exclusiva de Karaoke Latino",
       "duracion_seconds": 280,
       "usuario_id": 1,
-      "estado": "reproduciendo",
+      "estado": "cantada",
       "created_at": "2026-03-04T15:48:55.459883-05:00",
       "approved_at": null,
       "rejected_at": null,
       "started_at": "2026-03-04T15:53:56.119820-05:00",
-      "finished_at": null,
+      "finished_at": "2026-03-04T16:08:09.275175-05:00",
       "orden_manual": 1001
     },
     "1772657365820": {
@@ -1045,11 +1045,11 @@
       "titulo": "Jhonny Rivera, Sebastián Ayala, Andy Rivera - Mi Decisión (Remix)",
       "duracion_seconds": 202,
       "usuario_id": 1,
-      "estado": "pendiente_lazy",
+      "estado": "reproduciendo",
       "created_at": "2026-03-04T15:49:25.819715-05:00",
       "approved_at": null,
       "rejected_at": null,
-      "started_at": null,
+      "started_at": "2026-03-04T16:08:09.366242-05:00",
       "finished_at": null,
       "orden_manual": 1002
     },
