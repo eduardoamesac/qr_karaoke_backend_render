@@ -195,10 +195,10 @@
             }
 
             async function apiFetch(endpoint, options = {}) {
-                const headers = { ...options.headers, 'X-API-Key': apiKey };
+                const headers = { ...options.headers, 'Authorization': `Bearer ${apiKey}` };
                 // Solo añadir Content-Type si hay un body. Evita errores 422 en POSTs vacíos.
                 // FIX: El content-type se debe añadir si el body no es FormData
-                if (options.body) {
+                if (options.body && !(options.body instanceof FormData)) {
                     headers['Content-Type'] = 'application/json';
                 }
                 options.headers = headers;

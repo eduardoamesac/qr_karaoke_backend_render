@@ -129,7 +129,7 @@
                 if (!response.ok) throw new Error('Error de autenticación en el servidor.');
 
                 // Si la clave es correcta, la guardamos
-                sessionStorage.setItem('adminApiKey', data.token);
+                sessionStorage.setItem('adminApiKey', data.access_token);
                 // Opcional: guardar descripción para mostrar "Bienvenido, DJ"
                 sessionStorage.setItem('adminDesc', data.description);
 

@@ -272,7 +272,7 @@ async function handleProductImageUpload(event) {
 
         const response = await fetch(`${API_BASE_URL}/productos/${productId}/upload-image`, {
             method: 'POST',
-            headers: { 'X-API-Key': apiKey },
+            headers: { 'Authorization': `Bearer ${apiKey}` },
             body: formData
         });
 

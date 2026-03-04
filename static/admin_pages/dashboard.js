@@ -458,7 +458,10 @@ async function handleSendReaction(event) {
     try {
         await fetch(`${API_BASE_URL}/broadcast/reaction`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`
+            },
             body: JSON.stringify({
                 reaction: reaction,
                 sender: "Admin"

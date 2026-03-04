@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-BASE_URL = "http://localhost:1001/api/v1"
+BASE_URL = "http://localhost:1000/api/v1"
 ADMIN_API_KEY = "zxc12345" # Clave maestra por defecto
 
 def test_jwt_flow():
