@@ -19283,3 +19283,29 @@ NameError: name 'queue_manager' is not defined
 2026-03-05 11:22:23,476 - song_credits_background - INFO - Credits background task started
 2026-03-05 11:22:23,502 - queue_manager - INFO - Cache refrescado desde JSON
 2026-03-05 11:22:23,504 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-05 11:23:24,766 - song_credits_background - INFO - Credits background task started
+2026-03-05 11:23:24,793 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-05 11:23:24,794 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-05 11:34:19,438 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-05 11:34:19,459 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-05 11:34:42,035 - song_credits_background - INFO - Credits background task started
+2026-03-05 11:34:44,969 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-05 11:34:44,980 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-05 11:34:57,552 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-05 11:34:57,556 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-05 11:35:23,197 - admin_audit - INFO - [2026-03-05T11:35:23.197440] ADMIN:master | ACTION:create_mesa | DETAILS:Mesa: Dos, QR: karaoke-mesa-02
+2026-03-05 11:42:43,472 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-05 11:42:43,477 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-05 11:42:43,478 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-05 11:42:53,194 - song_credits_background - INFO - Credits background task started
+2026-03-05 11:42:53,219 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-05 11:42:53,219 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-05 11:43:16,490 - admin_audit - INFO - [2026-03-05T11:43:16.490111] ADMIN:master | ACTION:create_mesa | DETAILS:Mesa: uno, QR: karaoke-mesa-01
+2026-03-05 11:43:26,967 - admin_audit - INFO - [2026-03-05T11:43:26.967732] ADMIN:master | ACTION:create_mesa | DETAILS:Mesa: Dos, QR: karaoke-mesa-02
+2026-03-05 11:43:36,018 - admin_audit - INFO - [2026-03-05T11:43:36.018618] ADMIN:master | ACTION:create_mesa | DETAILS:Mesa: Tres, QR: karaoke-mesa-03
+2026-03-05 11:45:28,080 - admin_audit - INFO - [2026-03-05T11:45:28.080669] ADMIN:4 | ACTION:login | DETAILS:pedro
+2026-03-05 11:45:28,798 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-05 11:45:28,804 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-05 11:45:55,106 - admin_audit - INFO - [2026-03-05T11:45:55.106355] ADMIN:master | ACTION:login | DETAILS:Acceso con clave maestra
+2026-03-05 11:45:55,647 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-05 11:45:55,651 - queue_manager - INFO - Cache refrescado desde JSON

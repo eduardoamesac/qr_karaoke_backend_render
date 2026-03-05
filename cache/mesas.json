@@ -2,24 +2,24 @@
   "mesas": {
     "1": {
       "id": 1,
-      "nombre": "Mesa 1",
-      "qr_code": "karaoke-mesa-1",
+      "nombre": "uno",
+      "qr_code": "karaoke-mesa-01",
       "is_active": true,
-      "created_at": "2026-03-05T11:22:45.063835-05:00"
+      "created_at": "2026-03-05T11:43:16.490342-05:00"
     },
     "2": {
       "id": 2,
-      "nombre": "Mesa 2",
-      "qr_code": "karaoke-mesa-2",
+      "nombre": "Dos",
+      "qr_code": "karaoke-mesa-02",
       "is_active": true,
-      "created_at": "2026-03-05T11:22:45.066763-05:00"
+      "created_at": "2026-03-05T11:43:26.976923-05:00"
     },
     "3": {
       "id": 3,
-      "nombre": "Mesa 3",
-      "qr_code": "karaoke-mesa-3",
+      "nombre": "Tres",
+      "qr_code": "karaoke-mesa-03",
       "is_active": true,
-      "created_at": "2026-03-05T11:22:45.069001-05:00"
+      "created_at": "2026-03-05T11:43:36.018618-05:00"
     }
   },
   "next_id": 4

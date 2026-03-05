@@ -181,7 +181,7 @@ class QueueValidator {
     setTimeout(() => {
       document.getElementById('debug-btn-refresh')?.addEventListener('click', () => this.refreshDebugReport());
       document.getElementById('debug-btn-compare')?.addEventListener('click', () => this.compareUIVsReality());
-      document.getElementById('debug-btn-json')?.addEventListener('click', () => console.log('DEBUG REPORT:', this.lastDebugReport));
+      document.getElementById('debug-btn-json')?.addEventListener('click', () => this.showJsonPanel());
       document.getElementById('debug-btn-close')?.addEventListener('click', () => this.toggleDebugPanel());
     }, 10);
   }
@@ -255,6 +255,65 @@ class QueueValidator {
 
     setTimeout(() => {
       document.getElementById('debug-btn-back')?.addEventListener('click', () => this.refreshDebugReport());
+    }, 10);
+  }
+
+  /**
+   * Muestra el JSON del reporte dentro del panel (visible para el usuario)
+   */
+  showJsonPanel() {
+    const panel = document.getElementById('queue-debug-panel');
+    if (!this.lastDebugReport) {
+      panel.innerHTML = `
+        <h3 style="color:#ff0000; margin-top:0;">⚠ Sin datos</h3>
+        <p>Primero presiona REFRESCAR para cargar el reporte.</p>
+        <button id="debug-btn-json-back" style="width:100%; padding:10px; background:#444; color:#fff; border:none; border-radius:4px; cursor:pointer;">← VOLVER</button>
+      `;
+      setTimeout(() => {
+        document.getElementById('debug-btn-json-back')?.addEventListener('click', () => this.refreshDebugReport());
+      }, 10);
+      return;
+    }
+
+    const jsonStr = JSON.stringify(this.lastDebugReport, null, 2);
+    panel.innerHTML = `
+      <h3 style="color:#ffaa00; margin-top:0;">📋 DEBUG JSON COMPLETO</h3>
+      <div style="display:flex; gap:6px; margin-bottom:8px;">
+        <button id="debug-btn-json-copy" style="flex:1; padding:8px; background:#ffaa00; color:#000; border:none; border-radius:4px; cursor:pointer; font-weight:bold;">📋 COPIAR</button>
+        <button id="debug-btn-json-back" style="flex:1; padding:8px; background:#444; color:#fff; border:none; border-radius:4px; cursor:pointer;">← VOLVER</button>
+      </div>
+      <pre style="
+        white-space: pre-wrap;
+        word-break: break-all;
+        font-size: 10px;
+        color: #00ff00;
+        background: #000;
+        padding: 10px;
+        border-radius: 4px;
+        border: 1px solid #333;
+        max-height: 60vh;
+        overflow-y: auto;
+        margin: 0;
+      ">${jsonStr}</pre>
+    `;
+    setTimeout(() => {
+      document.getElementById('debug-btn-json-back')?.addEventListener('click', () => this.refreshDebugReport());
+      document.getElementById('debug-btn-json-copy')?.addEventListener('click', () => {
+        navigator.clipboard.writeText(jsonStr).then(() => {
+          const btn = document.getElementById('debug-btn-json-copy');
+          if (btn) { btn.textContent = '✓ COPIADO!'; setTimeout(() => { if (btn) btn.textContent = '📋 COPIAR'; }, 2000); }
+        }).catch(() => {
+          // Fallback para navegadores sin clipboard API
+          const ta = document.createElement('textarea');
+          ta.value = jsonStr;
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+          const btn = document.getElementById('debug-btn-json-copy');
+          if (btn) { btn.textContent = '✓ COPIADO!'; setTimeout(() => { if (btn) btn.textContent = '📋 COPIAR'; }, 2000); }
+        });
+      });
     }, 10);
   }
 
