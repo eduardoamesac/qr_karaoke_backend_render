@@ -1083,10 +1083,10 @@ async function handleCreateMesaSubmit(event) {
     }
 
     try {
-        // Generar el código QR
+        // Generar el código QR (sin relleno de ceros para que coincida con el ID en cache)
         let qrCode;
         if (numeroMesa && numeroMesa.trim() !== '') {
-            qrCode = `karaoke-mesa-${numeroMesa.toString().padStart(2, '0')}`;
+            qrCode = `karaoke-mesa-${numeroMesa.toString()}`;
         } else {
             // Si solo hay nombre, generar QR basado en el nombre (sanitizado)
             const safeName = nombreMesa.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
