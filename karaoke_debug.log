@@ -19233,3 +19233,17 @@ NameError: name 'queue_manager' is not defined
 2026-03-05 10:02:47,661 - queue_manager - INFO - Cache refrescado desde JSON
 2026-03-05 10:02:47,673 - queue_manager - INFO - Cache refrescado desde JSON
 2026-03-05 10:02:47,692 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-05 10:02:57,562 - song_credits_background - INFO - Credits background task started
+2026-03-05 10:02:57,616 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-05 10:02:57,627 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-05 10:03:23,733 - admin_audit - INFO - [2026-03-05T10:03:23.733811] ADMIN:master | ACTION:create_mesa | DETAILS:Mesa: one, QR: karaoke-mesa-01
+2026-03-05 10:03:44,509 - admin_audit - INFO - [2026-03-05T10:03:44.508630] ADMIN:master | ACTION:create_mesa | DETAILS:Mesa: Dos, QR: karaoke-mesa-02
+2026-03-05 10:05:06,009 - song_credits_background - INFO - Credits background task started
+2026-03-05 10:05:07,212 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-05 10:05:07,213 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-05 10:05:41,987 - admin_audit - INFO - [2026-03-05T10:05:41.987870] ADMIN:master | ACTION:login | DETAILS:Acceso con clave maestra
+2026-03-05 10:05:42,448 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-05 10:05:42,505 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-05 10:05:58,152 - admin_audit - INFO - [2026-03-05T10:05:58.152417] ADMIN:master | ACTION:create_mesa | DETAILS:Mesa: dos, QR: karaoke-mesa-02
+2026-03-05 10:11:20,402 - song_credits_background - INFO - Credits background task started
+2026-03-05 10:11:30,220 - song_credits_background - INFO - Credits background task started

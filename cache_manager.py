@@ -477,6 +477,10 @@ class CacheManager: # Define la clase central encargada de gestionar los datos e
             if mesa_id >= self.next_mesa_id: # Si creamos una mesa con ID 20 pero el contador iba en 10
                 self.next_mesa_id = mesa_id + 1 # Salta el contador a 21 para evitar duplicados futuros
             
+            # PARCHE DE SEGURIDAD: Asegurar que la cuenta de la mesa empiece en 0 absoluto
+            # Esto borra cualquier archivo JSON residual si el ID fue usado anteriormente
+            self.clear_mesa_cache(mesa_id)
+            
             self.mesas_data[mesa_id] = { # Crea el objeto mesa en el catálogo de memoria
                 "id": mesa_id, # Su ID único
                 "nombre": nombre, # Nombre visual

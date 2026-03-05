@@ -9,11 +9,18 @@
     },
     "2": {
       "id": 2,
-      "nombre": "Dos",
+      "nombre": "dos",
       "qr_code": "karaoke-mesa-02",
-      "is_active": false,
+      "is_active": true,
       "created_at": "2026-03-05T10:03:44.513962-05:00"
+    },
+    "3": {
+      "id": 3,
+      "nombre": "Mesa 2",
+      "qr_code": "karaoke-mesa-2",
+      "is_active": true,
+      "created_at": "2026-03-05T10:11:54.314777-05:00"
     }
   },
-  "next_id": 3
+  "next_id": 4
 }
