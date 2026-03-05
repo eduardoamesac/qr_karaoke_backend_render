@@ -627,14 +627,21 @@ def get_resumen_noche(db: Session):
 def reset_database_for_new_night(db: Session):
     """
     Reinicia el sistema para una nueva noche.
-    1. Limpia todo el caché JSON (canciones, consumos, balances).
-    2. Resetea créditos y puntos de usuarios en la DB.
-    3. Desconecta a todos los usuarios de sus mesas.
+    1. Limpia todo el caché JSON (canciones, consumos, balances, mesas).
+    2. Elimina todos los pagos de la BD (son datos de la noche anterior).
+    3. Resetea créditos y puntos de usuarios en la DB.
+    4. Desconecta a todos los usuarios de sus mesas.
     """
-    # 1. Limpiar Caché
+    # 1. Limpiar Caché completo (mesas, consumos, canciones, saldos)
     cache.clear_all()
     
-    # 2. Resetear Usuarios en DB
+    # 2. CRÍTICO: Eliminar todos los pagos de la BD
+    # Los pagos están en la BD y corresponden solo a la noche anterior.
+    # Si no se borran, al crear una nueva mesa con el mismo ID,
+    # el sistema encontrará pagos antiguos y mostrará saldo negativo.
+    db.query(models.Pago).delete()
+    
+    # 3. Resetear Usuarios en DB
     db.query(models.Usuario).update({
         "song_credits": 0,
         "puntos": 0,

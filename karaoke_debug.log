@@ -19247,3 +19247,21 @@ NameError: name 'queue_manager' is not defined
 2026-03-05 10:05:58,152 - admin_audit - INFO - [2026-03-05T10:05:58.152417] ADMIN:master | ACTION:create_mesa | DETAILS:Mesa: dos, QR: karaoke-mesa-02
 2026-03-05 10:11:20,402 - song_credits_background - INFO - Credits background task started
 2026-03-05 10:11:30,220 - song_credits_background - INFO - Credits background task started
+2026-03-05 10:12:18,795 - song_credits_background - INFO - Credits background task started
+2026-03-05 10:14:26,393 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-05 10:14:26,393 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-05 10:14:29,587 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-05 10:14:29,587 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-05 10:14:48,217 - admin_audit - INFO - [2026-03-05T10:14:48.217743] ADMIN:master | ACTION:create_mesa | DETAILS:Mesa: dos, QR: karaoke-mesa-02
+2026-03-05 10:15:47,978 - song_credits_background - INFO - Credits background task started
+2026-03-05 10:15:49,989 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-05 10:15:49,989 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-05 10:16:38,632 - admin_audit - INFO - [2026-03-05T10:16:38.632845] ADMIN:master | ACTION:login | DETAILS:Acceso con clave maestra
+2026-03-05 10:16:39,273 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-05 10:16:39,274 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-05 10:16:53,483 - admin_audit - INFO - [2026-03-05T10:16:53.483110] ADMIN:master | ACTION:create_mesa | DETAILS:Mesa: Dos, QR: karaoke-mesa-02
+2026-03-05 10:51:22,916 - song_credits_background - INFO - Credits background task started
+2026-03-05 10:51:22,955 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-05 10:51:22,955 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-05 11:08:28,397 - song_credits_background - INFO - Credits background task started
+2026-03-05 11:08:47,583 - song_credits_background - INFO - Credits background task started
