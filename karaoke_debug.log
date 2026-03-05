@@ -19104,3 +19104,132 @@ NameError: name 'queue_manager' is not defined
 2026-03-04 16:56:01,549 - queue_manager - INFO - Cache refrescado desde JSON
 2026-03-04 16:56:01,553 - queue_manager - INFO - Cache refrescado desde JSON
 2026-03-04 16:56:01,553 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 16:56:12,511 - song_credits_background - INFO - Credits background task started
+2026-03-04 16:56:12,583 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 16:56:12,583 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 16:56:12,591 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-04 16:56:12,593 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-05 09:42:03,403 - song_credits_background - INFO - Credits background task started
+2026-03-05 09:42:39,849 - admin_audit - INFO - [2026-03-05T09:42:39.849133] ADMIN:master | ACTION:login | DETAILS:Acceso con clave maestra
+2026-03-05 09:42:42,409 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-05 09:42:42,433 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-05 09:43:30,731 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-05 09:43:30,734 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-05 09:43:56,674 - admin_audit - INFO - [2026-03-05T09:43:56.674119] ADMIN:master | ACTION:search_youtube | DETAILS:Query: amistades pelidrosas, Karaoke Mode: True
+2026-03-05 09:43:56,676 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'amistades pelidrosas' (Karaoke Mode: True)
+2026-03-05 09:43:56,678 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'amistades pelidrosas' (Karaoke Mode: True)
+2026-03-05 09:43:59,726 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-03-05 09:43:59,726 - youtube - INFO - Búsqueda por texto: 'amistades pelidrosas karaoke'
+2026-03-05 09:43:59,730 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-03-05 09:44:00,362 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=amistades+pelidrosas+karaoke&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-03-05 09:44:00,376 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-03-05 09:44:00,376 - youtube - INFO - IDs de video encontrados: ['JX8wcPviXm8', 'FTDU1PvMys0', 'KbVDIxkRhd8', 'kSRT0j99DaY', '95JHOXoXR6M', 'vU8V4T7lkvI', '4pY_PQGUzTM', 'VjdBqDBtSQI', '8QS0a4cy2vw', '2OFTs7ix9w0']
+2026-03-05 09:44:00,380 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-03-05 09:44:00,570 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=JX8wcPviXm8%2CFTDU1PvMys0%2CKbVDIxkRhd8%2CkSRT0j99DaY%2C95JHOXoXR6M%2CvU8V4T7lkvI%2C4pY_PQGUzTM%2CVjdBqDBtSQI%2C8QS0a4cy2vw%2C2OFTs7ix9w0&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-03-05 09:44:00,581 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-03-05 09:44:00,581 - youtube - INFO - Procesamiento finalizado. Se encontraron 9 resultados formateados.
+2026-03-05 09:44:00,602 - admin_audit - INFO - [2026-03-05T09:44:00.602211] ADMIN:master | ACTION:search_youtube | DETAILS:Query: amistades pelidrosas, Karaoke Mode: True
+2026-03-05 09:44:00,607 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'amistades pelidrosas' (Karaoke Mode: True)
+2026-03-05 09:44:00,637 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'amistades pelidrosas' (Karaoke Mode: True)
+2026-03-05 09:44:02,676 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-03-05 09:44:02,681 - youtube - INFO - Búsqueda por texto: 'amistades pelidrosas karaoke'
+2026-03-05 09:44:02,685 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-03-05 09:44:03,149 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=amistades+pelidrosas+karaoke&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-03-05 09:44:03,150 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-03-05 09:44:03,150 - youtube - INFO - IDs de video encontrados: ['JX8wcPviXm8', 'FTDU1PvMys0', 'KbVDIxkRhd8', 'kSRT0j99DaY', '95JHOXoXR6M', 'vU8V4T7lkvI', '4pY_PQGUzTM', 'VjdBqDBtSQI', '8QS0a4cy2vw', '2OFTs7ix9w0']
+2026-03-05 09:44:03,150 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-03-05 09:44:03,330 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=JX8wcPviXm8%2CFTDU1PvMys0%2CKbVDIxkRhd8%2CkSRT0j99DaY%2C95JHOXoXR6M%2CvU8V4T7lkvI%2C4pY_PQGUzTM%2CVjdBqDBtSQI%2C8QS0a4cy2vw%2C2OFTs7ix9w0&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-03-05 09:44:03,341 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-03-05 09:44:03,341 - youtube - INFO - Procesamiento finalizado. Se encontraron 9 resultados formateados.
+2026-03-05 09:44:10,963 - admin_audit - INFO - [2026-03-05T09:44:10.963384] ADMIN:master | ACTION:admin_anadir_cancion | DETAILS:Titulo: Me Quedaré Solo -  Amistades Peligrosas -  karaoke   Tony Ginzo
+2026-03-05 09:44:10,986 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-05 09:44:10,989 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-05 09:44:10,991 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-05 09:44:34,336 - admin_audit - INFO - [2026-03-05T09:44:34.336072] ADMIN:master | ACTION:search_youtube | DETAILS:Query: rock en español 80, Karaoke Mode: True
+2026-03-05 09:44:34,340 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'rock en español 80' (Karaoke Mode: True)
+2026-03-05 09:44:34,346 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'rock en español 80' (Karaoke Mode: True)
+2026-03-05 09:44:35,945 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-03-05 09:44:35,945 - youtube - INFO - Búsqueda por texto: 'rock en español 80 karaoke'
+2026-03-05 09:44:35,950 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-03-05 09:44:36,559 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=rock+en+espa%C3%B1ol+80+karaoke&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-03-05 09:44:36,563 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-03-05 09:44:36,563 - youtube - INFO - IDs de video encontrados: ['mjJ-ybMo4ZM', 'VHYw6RI-LEw', 'E1NC71sKVNI', '1t2Dk01D8xA', 'jy8qazh_TiI', 'LTnkmA32-uw', 'LsWYt2vDBJA', 'RFEMhXgELc8', 'tdzJ_IvjNbM', 'Xkxkm_GV6Cg']
+2026-03-05 09:44:36,563 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-03-05 09:44:36,777 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=mjJ-ybMo4ZM%2CVHYw6RI-LEw%2CE1NC71sKVNI%2C1t2Dk01D8xA%2Cjy8qazh_TiI%2CLTnkmA32-uw%2CLsWYt2vDBJA%2CRFEMhXgELc8%2CtdzJ_IvjNbM%2CXkxkm_GV6Cg&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-03-05 09:44:36,790 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-03-05 09:44:36,791 - youtube - INFO - Procesamiento finalizado. Se encontraron 10 resultados formateados.
+2026-03-05 09:44:36,807 - admin_audit - INFO - [2026-03-05T09:44:36.807452] ADMIN:master | ACTION:search_youtube | DETAILS:Query: rock en español 80, Karaoke Mode: True
+2026-03-05 09:44:36,810 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'rock en español 80' (Karaoke Mode: True)
+2026-03-05 09:44:36,851 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'rock en español 80' (Karaoke Mode: True)
+2026-03-05 09:44:38,736 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-03-05 09:44:38,736 - youtube - INFO - Búsqueda por texto: 'rock en español 80 karaoke'
+2026-03-05 09:44:38,736 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-03-05 09:44:39,402 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=rock+en+espa%C3%B1ol+80+karaoke&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-03-05 09:44:39,402 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-03-05 09:44:39,402 - youtube - INFO - IDs de video encontrados: ['mjJ-ybMo4ZM', 'VHYw6RI-LEw', 'E1NC71sKVNI', '1t2Dk01D8xA', 'jy8qazh_TiI', 'LTnkmA32-uw', 'LsWYt2vDBJA', 'RFEMhXgELc8', 'tdzJ_IvjNbM', 'Xkxkm_GV6Cg']
+2026-03-05 09:44:39,413 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-03-05 09:44:39,613 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=mjJ-ybMo4ZM%2CVHYw6RI-LEw%2CE1NC71sKVNI%2C1t2Dk01D8xA%2Cjy8qazh_TiI%2CLTnkmA32-uw%2CLsWYt2vDBJA%2CRFEMhXgELc8%2CtdzJ_IvjNbM%2CXkxkm_GV6Cg&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-03-05 09:44:39,636 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-03-05 09:44:39,647 - youtube - INFO - Procesamiento finalizado. Se encontraron 10 resultados formateados.
+2026-03-05 09:44:41,750 - admin_audit - INFO - [2026-03-05T09:44:41.750459] ADMIN:master | ACTION:admin_anadir_cancion | DETAILS:Titulo: La unión - Lobo hombre en Paris (Karaoke)
+2026-03-05 09:44:41,764 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-05 09:44:41,772 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-05 09:44:41,772 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-05 09:44:44,879 - admin_audit - INFO - [2026-03-05T09:44:44.879173] ADMIN:master | ACTION:admin_anadir_cancion | DETAILS:Titulo: Hombres G - Devuelveme A Mi Chica LETRA (INSTRUMENTAL KARAOKE) ISRC: ES54I0326565
+2026-03-05 09:44:44,911 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-05 09:44:44,912 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-05 09:44:44,914 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-05 09:44:48,181 - admin_audit - INFO - [2026-03-05T09:44:48.181411] ADMIN:master | ACTION:admin_anadir_cancion | DETAILS:Titulo: La Flaca - Jarabe De Palo - LETRA (INSTRUMENTAL KARAOKE)
+2026-03-05 09:44:48,205 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-05 09:44:48,207 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-05 09:44:48,208 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-05 09:45:06,860 - admin_audit - INFO - [2026-03-05T09:45:06.860934] ADMIN:master | ACTION:search_youtube | DETAILS:Query: jhony rivera y sebastian ayala, Karaoke Mode: True
+2026-03-05 09:45:06,862 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'jhony rivera y sebastian ayala' (Karaoke Mode: True)
+2026-03-05 09:45:06,862 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'jhony rivera y sebastian ayala' (Karaoke Mode: True)
+2026-03-05 09:45:08,451 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-03-05 09:45:08,453 - youtube - INFO - Búsqueda por texto: 'jhony rivera y sebastian ayala karaoke'
+2026-03-05 09:45:08,455 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-03-05 09:45:09,212 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=jhony+rivera+y+sebastian+ayala+karaoke&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-03-05 09:45:09,220 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-03-05 09:45:09,227 - youtube - INFO - IDs de video encontrados: ['6kyJCaBg0Ys', '3ox-uilNPco', 'd0hEF1Zs6Ec', 'bY61n7lwzrY', 'yzZKapAPQeg', 'hb5t-D5QVBI', '5yLGjXTF6MY', 'Yh0uZiFZRIg', '2y8e1Ca6GII', 'vrXL78wbFQg']
+2026-03-05 09:45:09,228 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-03-05 09:45:09,362 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=6kyJCaBg0Ys%2C3ox-uilNPco%2Cd0hEF1Zs6Ec%2CbY61n7lwzrY%2CyzZKapAPQeg%2Chb5t-D5QVBI%2C5yLGjXTF6MY%2CYh0uZiFZRIg%2C2y8e1Ca6GII%2CvrXL78wbFQg&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-03-05 09:45:09,370 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-03-05 09:45:09,370 - youtube - INFO - Procesamiento finalizado. Se encontraron 10 resultados formateados.
+2026-03-05 09:45:09,392 - admin_audit - INFO - [2026-03-05T09:45:09.392146] ADMIN:master | ACTION:search_youtube | DETAILS:Query: jhony rivera y sebastian ayala, Karaoke Mode: True
+2026-03-05 09:45:09,417 - youtube - INFO - Búsqueda [Admin] en YouTube con el término: 'jhony rivera y sebastian ayala' (Karaoke Mode: True)
+2026-03-05 09:45:09,422 - youtube - INFO - Iniciando búsqueda interna en YouTube con el término: 'jhony rivera y sebastian ayala' (Karaoke Mode: True)
+2026-03-05 09:45:11,112 - youtube - INFO - ¿Es una URL? ID extraído: None
+2026-03-05 09:45:11,112 - youtube - INFO - Búsqueda por texto: 'jhony rivera y sebastian ayala karaoke'
+2026-03-05 09:45:11,112 - youtube - INFO - Realizando primera llamada a la API de YouTube (search)...
+2026-03-05 09:45:11,885 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/search?part=id&q=jhony+rivera+y+sebastian+ayala+karaoke&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo&type=video&videoCategoryId=10&maxResults=10 "HTTP/1.1 200 OK"
+2026-03-05 09:45:11,893 - youtube - INFO - Respuesta de la API (search) recibida con éxito.
+2026-03-05 09:45:11,899 - youtube - INFO - IDs de video encontrados: ['6kyJCaBg0Ys', 'hcC--DHH2BI', '3ox-uilNPco', 'd0hEF1Zs6Ec', 'bY61n7lwzrY', 'hb5t-D5QVBI', '5yLGjXTF6MY', 'yzZKapAPQeg', 'vrXL78wbFQg', 'Yh0uZiFZRIg']
+2026-03-05 09:45:11,908 - youtube - INFO - Realizando segunda llamada a la API de YouTube (videos)...
+2026-03-05 09:45:12,132 - httpx - INFO - HTTP Request: GET https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet&id=6kyJCaBg0Ys%2ChcC--DHH2BI%2C3ox-uilNPco%2Cd0hEF1Zs6Ec%2CbY61n7lwzrY%2Chb5t-D5QVBI%2C5yLGjXTF6MY%2CyzZKapAPQeg%2CvrXL78wbFQg%2CYh0uZiFZRIg&key=AIzaSyDbm4QHUvhvPk-wI92pIPps7Zp1xH15EOo "HTTP/1.1 200 OK"
+2026-03-05 09:45:12,151 - youtube - INFO - Respuesta de la API (videos) recibida con éxito. Procesando resultados...
+2026-03-05 09:45:12,153 - youtube - INFO - Procesamiento finalizado. Se encontraron 10 resultados formateados.
+2026-03-05 09:45:15,664 - admin_audit - INFO - [2026-03-05T09:45:15.664592] ADMIN:master | ACTION:admin_anadir_cancion | DETAILS:Titulo: Jhonny Rivera, Sebastián Ayala, Andy Rivera - Mi Decisión (Remix)
+2026-03-05 09:45:15,695 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-05 09:45:15,696 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-05 09:45:15,699 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-05 09:46:09,212 - admin_audit - INFO - [2026-03-05T09:46:09.212624] ADMIN:master | ACTION:create_product | DETAILS:Producto: Papas Margarita
+2026-03-05 09:46:41,646 - admin_audit - INFO - [2026-03-05T09:46:41.646603] ADMIN:master | ACTION:upload_product_image | DETAILS:ID: 4, URL: /static/images/productos/producto_4.webp
+2026-03-05 09:46:56,814 - admin_audit - INFO - [2026-03-05T09:46:56.814967] ADMIN:master | ACTION:create_mesa | DETAILS:Mesa: Toscana, QR: karaoke-mesa-01
+2026-03-05 09:47:11,342 - admin_audit - INFO - [2026-03-05T09:47:11.342138] ADMIN:master | ACTION:create_mesa | DETAILS:Mesa: Toscana, QR: karaoke-mesa-01
+2026-03-05 09:47:24,570 - admin_audit - INFO - [2026-03-05T09:47:24.570717] ADMIN:master | ACTION:create_mesa | DETAILS:Mesa: Montaña, QR: karaoke-mesa-03
+2026-03-05 09:57:52,897 - song_credits_background - INFO - Credits background task started
+2026-03-05 09:58:07,087 - song_credits_background - INFO - Credits background task started
+2026-03-05 09:59:25,854 - song_credits_background - INFO - Credits background task started
+2026-03-05 09:59:33,456 - song_credits_background - INFO - Credits background task started
+2026-03-05 09:59:58,789 - song_credits_background - INFO - Credits background task started
+2026-03-05 10:00:50,964 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-05 10:00:50,964 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-05 10:01:03,893 - song_credits_background - INFO - Credits background task started
+2026-03-05 10:01:03,922 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-05 10:01:03,922 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-05 10:02:41,064 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-05 10:02:41,065 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-05 10:02:47,661 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-05 10:02:47,673 - queue_manager - INFO - Cache refrescado desde JSON
+2026-03-05 10:02:47,692 - queue_manager - INFO - Cache refrescado desde JSON

@@ -1,33 +1,19 @@
 {
   "mesas": {
-    "2": {
-      "id": 2,
-      "nombre": "Tostao",
-      "qr_code": "karaoke-mesa-02",
-      "is_active": true,
-      "created_at": "2026-02-26T09:56:25.145525-05:00"
-    },
     "1": {
       "id": 1,
-      "nombre": "Mesa 1",
-      "qr_code": "M1",
+      "nombre": "one",
+      "qr_code": "karaoke-mesa-01",
+      "is_active": true,
+      "created_at": "2026-03-05T10:03:23.739447-05:00"
+    },
+    "2": {
+      "id": 2,
+      "nombre": "Dos",
+      "qr_code": "karaoke-mesa-02",
       "is_active": false,
-      "created_at": "2026-02-26T15:55:31.723673-05:00"
-    },
-    "4": {
-      "id": 4,
-      "nombre": "Hills",
-      "qr_code": "karaoke-mesa-04",
-      "is_active": true,
-      "created_at": "2026-02-27T09:34:42.927990-05:00"
-    },
-    "3": {
-      "id": 3,
-      "nombre": "Montaña",
-      "qr_code": "karaoke-mesa-03",
-      "is_active": true,
-      "created_at": "2026-02-27T11:24:41.660327-05:00"
+      "created_at": "2026-03-05T10:03:44.513962-05:00"
     }
   },
-  "next_id": 6
+  "next_id": 3
 }

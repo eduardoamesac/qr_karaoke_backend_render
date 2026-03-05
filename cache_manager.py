@@ -754,20 +754,41 @@ class CacheManager: # Define la clase central encargada de gestionar los datos e
             return consumo_id # Retorna ID simulado
         return None # Falló
     
-    def clear_all(self) -> None: # Limpia TODO el sistema de caché (Uso extremo)
-        """Limpia todos los caché"""
-        self.clear_all_songs() 
-        # Limpiar mesas y sus cuentas
-        for mesa_id in list(self.mesas_data.keys()):
-            self.clear_mesa_cache(mesa_id)
-        
-        # Limpiar consumos globales
+    def clear_all(self) -> None:
+        """Limpia absolutamente todo el caché (Sistema completo)"""
         with self.lock:
-            self.consumos_data = {}
-            self._save_consumos_data()
+            # 1. Limpiar canciones
+            self.clear_all_songs()
             
-            # Resetear revisión de cola
+            # 2. Limpiar mesas
+            # Borrar archivos mesa_cuenta_*.json
+            for mesa_file in self.cache_dir.glob("mesa_cuenta_*.json"):
+                try:
+                    mesa_file.unlink()
+                except:
+                    pass
+            
+            self.mesas_data = {}
+            self.mesas_cache = {}
+            self.next_mesa_id = 1
+            self._save_mesas_data() # Guarda mesas.json vacío
+            
+            # 3. Limpiar consumos
+            self.consumos_data = {}
+            self.next_consumo_id = 1
+            self._save_consumos_data() # Guarda consumos.json vacío
+            
+            # 4. Limpiar créditos de canciones
+            self.song_credits_data = {}
+            for credits_file in self.cache_dir.glob("song_credits_*.json"):
+                try:
+                    credits_file.unlink()
+                except:
+                    pass
+            
+            # 5. Sincronización
             self.set_queue_revision(1)
+            print("CACHE REINICIADO COMPLETAMENTE.")
 
 # Instancia global del cache manager para ser usada en todo el proyecto
 cache_manager = CacheManager() # Se importa en outros archivos como: from cache_manager import cache_manager
