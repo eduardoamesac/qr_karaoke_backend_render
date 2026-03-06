@@ -128,6 +128,10 @@ def conectar_usuario_a_mesa(
         db_mesa_temp = crud.get_mesa_by_qr(db, qr_code=qr_code_mesa_base)
         
         if not db_mesa_temp:
+            qr_code_mesa_base_int = f"karaoke-mesa-{int(mesa_numero)}"
+            db_mesa_temp = crud.get_mesa_by_qr(db, qr_code=qr_code_mesa_base_int)
+            
+        if not db_mesa_temp:
             raise HTTPException(
                 status_code=404, 
                 detail=f"La mesa '{qr_code_mesa_base}' no existe. Por favor, contacta al personal."
@@ -160,6 +164,10 @@ def conectar_usuario_a_mesa(
     qr_code_mesa_base = f"karaoke-mesa-{mesa_numero}"
     db_mesa = crud.get_mesa_by_qr(db, qr_code=qr_code_mesa_base)
     
+    if not db_mesa:
+        qr_code_mesa_base_int = f"karaoke-mesa-{int(mesa_numero)}"
+        db_mesa = crud.get_mesa_by_qr(db, qr_code=qr_code_mesa_base_int)
+        
     if not db_mesa:
         raise HTTPException(
             status_code=404, 
@@ -253,6 +261,10 @@ def get_mesa_info(qr_code: str, db: Session = Depends(get_db)):
 
     db_mesa = crud.get_mesa_by_qr(db, qr_code=qr_code_mesa_base)
     
+    if not db_mesa and (match_nuevo or match_antiguo):
+        qr_code_mesa_base_int = f"karaoke-mesa-{int(mesa_numero)}"
+        db_mesa = crud.get_mesa_by_qr(db, qr_code=qr_code_mesa_base_int)
+        
     if not db_mesa:
         raise HTTPException(
             status_code=404, 
