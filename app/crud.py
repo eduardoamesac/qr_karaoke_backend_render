@@ -1377,7 +1377,7 @@ def get_usuarios_inactivos_consumo(db: Session, horas: int = 2):
             except ValueError:
                 pass
                 
-    from security import now_bogota
+    from app.timezone_utils import now_bogota
     now = now_bogota()
     
     for uid in last_consumo:

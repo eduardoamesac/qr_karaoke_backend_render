@@ -554,8 +554,6 @@ class CacheManager: # Define la clase central encargada de gestionar los datos e
         else: # Archivo no existe
             self.consumos_data = {} # Inicializa vacío
             self.next_consumo_id = 1 # Empieza en 1
-            self.consumos_data = {}
-            self.next_consumo_id = 1
     
     def _save_consumos_data(self) -> None: # Persiste el historial completo de consumos al disco
         """Guarda el índice de consumos a JSON""" # Docstring descriptivo

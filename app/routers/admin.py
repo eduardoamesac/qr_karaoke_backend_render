@@ -44,7 +44,7 @@ def admin_login(login_data: schemas.AdminLoginRequest, db: Session = Depends(get
     """
     Verifica la clave de API y genera tokens JWT.
     """
-    from security import MASTER_API_KEY
+    from app.security import MASTER_API_KEY
     key = login_data.api_key.strip()
     
     # 1. Verificar Clave Maestra
