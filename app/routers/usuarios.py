@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
-from auth import verify_token, log_admin_action # New import
+from app.auth import verify_token, log_admin_action # New import
 
-import crud, schemas
-from database import SessionLocal
+from app import crud, schemas
+from app.database import SessionLocal
 
 router = APIRouter()
 
@@ -22,7 +22,7 @@ def ver_perfil_usuario(usuario_id: int, db: Session = Depends(get_db)):
     Devuelve la información pública de un usuario, como su nivel y puntos.
     No incluye información sensible como el consumo total.
     """
-    from cache_manager import cache_manager as cache
+    from app.utils.cache_manager import cache_manager as cache
     db_usuario = crud.get_usuario_by_id(db, usuario_id=usuario_id)
     if not db_usuario:
         raise HTTPException(status_code=404, detail="Usuario no encontrado")

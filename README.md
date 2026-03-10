@@ -15,51 +15,61 @@ Sistema de gestión de karaoke que permite:
 ## 🏗️ Arquitectura
 
 ```
-qr_karaoke_backend/
-├── main.py                    # Punto de entrada FastAPI + lifespan
-├── models.py                  # Modelos SQLAlchemy
-├── schemas.py                 # Schemas Pydantic
-├── crud.py                    # Operaciones de base de datos
-├── database.py                # Configuración SQLAlchemy
-├── auth.py                    # Autenticación (API keys admin)
-├── security.py                # JWT y seguridad
-├── config.py                  # Variables de configuración
+qr_karaoke_backend_render/
+├── main.py                        # Punto de entrada FastAPI + lifespan
+├── requirements.txt               # Dependencias de producción
+├── requirements-dev.txt           # Dependencias de desarrollo
+├── runtime.txt                    # Versión de Python para Render
+├── alembic.ini                    # Configuración de Alembic
+├── .env.example                   # Ejemplo de variables de entorno
 │
-├── # Routers (módulos de endpoints)
-├── admin.py                   # Endpoints de administración
-├── admin_extra_router.py      # Endpoints extra de admin
-├── admin_settings_router.py   # Configuración del sistema
-├── mesas.py                   # Endpoints de mesas
-├── canciones.py               # Endpoints de canciones/cola
-├── consumos.py                # Endpoints de consumos
-├── usuarios.py                # Endpoints de usuarios
-├── youtube.py                 # Integración YouTube API
-├── productos.py               # Endpoints de productos
+├── app/                           # Código principal de la aplicación
+│   ├── __init__.py
+│   ├── database.py                # Configuración SQLAlchemy + pool
+│   ├── models.py                  # Modelos SQLAlchemy
+│   ├── schemas.py                 # Schemas Pydantic
+│   ├── crud.py                    # Operaciones de base de datos
+│   ├── auth.py                    # Autenticación JWT
+│   ├── security.py                # Seguridad API keys
+│   ├── config.py                  # Variables de configuración
+│   ├── timezone_utils.py          # Utilidades de timezone (Bogotá)
+│   │
+│   ├── routers/                   # Routers FastAPI
+│   │   ├── __init__.py
+│   │   ├── mesas.py               # Endpoints de mesas
+│   │   ├── canciones.py           # Endpoints de canciones/cola
+│   │   ├── usuarios.py            # Endpoints de usuarios
+│   │   ├── consumos.py            # Endpoints de consumos
+│   │   ├── productos.py           # Endpoints de productos
+│   │   ├── youtube.py             # Integración YouTube API
+│   │   ├── admin.py               # Endpoints de administración
+│   │   ├── admin_settings.py      # Configuración del sistema
+│   │   └── admin_extra.py         # Endpoints extra de admin
+│   │
+│   ├── services/                  # Lógica de negocio/servicios
+│   │   ├── __init__.py
+│   │   ├── broadcast.py           # Broadcast a clientes
+│   │   ├── websocket_manager.py   # Gestión WebSockets
+│   │   ├── queue_manager.py       # Gestor de cola
+│   │   ├── thumbnails.py          # Miniaturas de YouTube
+│   │   ├── random_scorer.py       # Puntuación de canciones
+│   │   ├── reports_pdf.py         # Generación de reportes PDF
+│   │   ├── settings_storage.py    # Almacenamiento de configuración
+│   │   └── song_credits_background.py  # Créditos en background
+│   │
+│   └── utils/
+│       ├── __init__.py
+│       └── cache_manager.py       # Gestor de caché centralizado
 │
-├── # Servicios
-├── websocket_manager.py       # Gestión WebSockets
-├── queue_manager.py           # Gestor de cola
-├── broadcast.py               # Broadcast a clientes
-├── thumbnails.py              # Miniaturas de YouTube
-├── timezone_utils.py          # Utilidades de timezone (Bogotá)
-├── random_scorer.py           # Puntuación de canciones (IA simulada)
-├── settings_storage.py        # Almacenamiento de configuración
-├── cache_manager.py           # Gestor de caché
-├── song_credits_background.py # Créditos de canciones en background
-├── reports_pdf.py             # Generación de reportes PDF
+├── alembic/                       # Migraciones de base de datos
+├── static/                        # Frontend (HTML, CSS, JS)
 │
-├── alembic/                   # Migraciones de base de datos
-├── static/                    # Frontend (HTML, CSS, JS)
-├── scripts/                   # Scripts de utilidad (no son parte del servidor)
-│   ├── crear_mesas.py         # Script inicial de creación de mesas
-│   ├── create_db.py           # Script de inicialización de DB
-│   ├── generate_qr_admin.py   # Generador QR para admin
-│   ├── generate_qr_mesas.py   # Generador QR para mesas
-│   └── cleanup_db.py          # Limpieza de datos de prueba
-│
-├── requirements.txt           # Dependencias de producción
-├── runtime.txt                # Versión de Python para Render
-└── .env.example               # Variables de entorno requeridas
+└── scripts/                       # Scripts de utilidad
+    ├── crear_mesas.py
+    ├── create_db.py
+    ├── generate_qr_admin.py
+    ├── generate_qr_mesas.py
+    └── cleanup_db.py
 ```
 
 ## 🚀 Despliegue en Render.com
@@ -67,7 +77,7 @@ qr_karaoke_backend/
 ### Variables de entorno requeridas
 Copiar `.env.example` y configurar:
 ```env
-DATABASE_URL=postgresql://...
+DATABASE_URL=mysql+mysqlconnector://user:password@host:port/dbname
 YOUTUBE_API_KEY=...
 SECRET_KEY=...
 ```
@@ -110,13 +120,13 @@ uvicorn main:app --reload
 | GET | `/admin` | Panel de administración |
 | GET | `/player` | Reproductor de canciones |
 | WS | `/ws/cola` | WebSocket cola de canciones |
-| POST | `/mesas/qr/{qr_code}/usuarios` | Registro de usuario en mesa |
-| POST | `/canciones/` | Agregar canción a la cola |
-| GET | `/canciones/cola` | Estado actual de la cola |
+| POST | `/api/v1/mesas/{qr_code}/usuarios` | Registro de usuario en mesa |
+| POST | `/api/v1/canciones/` | Agregar canción a la cola |
+| GET | `/api/v1/canciones/cola` | Estado actual de la cola |
 
 ## 🗃️ Base de datos
 
-El sistema usa **SQLAlchemy** con soporte para SQLite (desarrollo) y PostgreSQL (producción en Render).
+El sistema usa **SQLAlchemy** con **MySQL** (producción en Render/VPS).
 
 Las migraciones están gestionadas con **Alembic** en la carpeta `alembic/`.
 

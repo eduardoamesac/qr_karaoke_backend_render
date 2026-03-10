@@ -10,7 +10,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional, Any
 import threading
-from timezone_utils import now_bogota
+from app.timezone_utils import now_bogota
 
 class CacheManager: # Define la clase central encargada de gestionar los datos en memoria y archivos JSON
     """Gestor centralizado de caché para canciones, mesas, cuentas, consumos y song_credits""" # Docstring descriptivo de la clase
@@ -554,8 +554,6 @@ class CacheManager: # Define la clase central encargada de gestionar los datos e
         else: # Archivo no existe
             self.consumos_data = {} # Inicializa vacío
             self.next_consumo_id = 1 # Empieza en 1
-            self.consumos_data = {}
-            self.next_consumo_id = 1
     
     def _save_consumos_data(self) -> None: # Persiste el historial completo de consumos al disco
         """Guarda el índice de consumos a JSON""" # Docstring descriptivo

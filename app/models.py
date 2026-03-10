@@ -2,8 +2,8 @@ from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Numeric, B
 from sqlalchemy.orm import relationship
 import datetime
 
-from database import Base
-from timezone_utils import now_bogota
+from app.database import Base
+from app.timezone_utils import now_bogota
 
 class Usuario(Base):
     __tablename__ = "usuarios"

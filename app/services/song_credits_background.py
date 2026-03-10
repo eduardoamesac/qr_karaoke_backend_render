@@ -4,8 +4,8 @@ Los créditos decaen 100 puntos cada minuto hasta llegar a 0.
 """
 
 import asyncio
-from timezone_utils import now_bogota
-from cache_manager import cache_manager
+from app.timezone_utils import now_bogota
+from app.utils.cache_manager import cache_manager
 import logging
 
 logger = logging.getLogger(__name__)

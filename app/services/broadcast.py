@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
-import websocket_manager
+from app.services import websocket_manager
 import asyncio
 
 router = APIRouter()

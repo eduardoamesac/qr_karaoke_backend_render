@@ -99,7 +99,7 @@ def get_db():
     
     from fastapi import Depends
     from sqlalchemy.orm import Session
-    from database import get_db
+    from app.database import get_db
     
     @app.get("/usuarios")
     def listar_usuarios(db: Session = Depends(get_db)):

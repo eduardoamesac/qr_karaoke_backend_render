@@ -1,12 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
-import crud, schemas, models
+from app import crud, schemas, models
 import re # Importar para el filtro de groserías
 import datetime
-from database import SessionLocal
-from auth import verify_token, log_admin_action
-from cache_manager import cache_manager as cache
+from app.database import SessionLocal
+from app.auth import verify_token, log_admin_action
+from app.utils.cache_manager import cache_manager as cache
 router = APIRouter()
 
 # Lista de palabras inapropiadas (puedes expandirla según sea necesario)

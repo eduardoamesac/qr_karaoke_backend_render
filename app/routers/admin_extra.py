@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
-from settings_storage import load_settings, save_settings
-from auth import verify_token
+from app.services.settings_storage import load_settings, save_settings
+from app.auth import verify_token
 
 router = APIRouter(prefix="/api/v1/admin", tags=["Admin Extra"], dependencies=[Depends(verify_token)])
 

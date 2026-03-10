@@ -27,7 +27,7 @@ class PDFReportGenerator:
         # Date
         date_style = self.styles['Normal']
         date_style.alignment = 1 # Center
-        from timezone_utils import now_bogota
+        from app.timezone_utils import now_bogota
         self.elements.append(Paragraph(f"Fecha de Generación: {now_bogota().strftime('%Y-%m-%d %H:%M:%S')}", date_style))
         
         self.elements.append(Spacer(1, 0.5 * inch))

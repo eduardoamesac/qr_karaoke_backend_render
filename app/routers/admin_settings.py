@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
-from settings_storage import load_settings, save_settings
-from auth import verify_token
+from app.services.settings_storage import load_settings, save_settings
+from app.auth import verify_token
 
 router = APIRouter(prefix="/api/v1/admin/settings", tags=["Admin Settings"], dependencies=[Depends(verify_token)])
 

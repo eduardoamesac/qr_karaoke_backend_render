@@ -6,7 +6,7 @@ from fastapi import Depends # Importar Depends
 import re
 from urllib.parse import urlparse, parse_qs
 import requests
-from auth import verify_token, log_admin_action
+from app.auth import verify_token, log_admin_action
 import logging
 
 logger = logging.getLogger(__name__)
