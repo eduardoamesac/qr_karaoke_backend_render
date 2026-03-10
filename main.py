@@ -2,6 +2,7 @@ from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Request
 from fastapi.responses import Response, FileResponse
 from fastapi.staticfiles import StaticFiles
 import os
+import logging
 from dotenv import load_dotenv
 
 # ===============================
