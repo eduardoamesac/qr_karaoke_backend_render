@@ -1,13 +1,67 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+build/
+dist/
+*.egg-info/
+.eggs/
+
 # Entornos virtuales
 venv/
-*.venv
+.venv/
+env/
+ENV/
 
-# Archivos de configuración local
+# Variables de entorno
 .env
+.env.local
+.env.*.local
 
-# Archivos de caché de Python
-__pycache__/
-*.pyc
+# Logs (IMPORTANTE: eliminar los que ya están trackeados)
+*.log
+logs/
+karaoke_debug.log
+uvicorn_run.log
+product_errors.log
 
-# Archivos de base de datos SQLite
+# Backups manuales (usar git para esto)
+*.backup
+*.backup2
+*.backup_*
+
+# Archivos generados automáticamente
+openapi.json
+
+# QR codes generados
+qrcodes_mesas/
+admin_qr.png
+
+# Archivos de debug/traza
+*.zip
+trace_*.zip
+
+# Configuración local
+settings.json
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Base de datos local
 *.db
+*.sqlite3
+
+# Archivos temporales
+*.tmp
+*.temp
+append_lazy_functions.txt
+check_syntax.js
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db
