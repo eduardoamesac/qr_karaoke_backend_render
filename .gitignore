@@ -5,9 +5,37 @@ venv/
 # Archivos de configuración local
 .env
 
+# Logs
+*.log
+karaoke_debug.log
+uvicorn_run.log
+product_errors.log
+
+# Backups
+*.backup
+*.backup2
+*.backup_old
+*.backup_antes_cambio
+
+# Archivos temporales y zip de trazas
+*.zip
+trace_*.zip
+
 # Archivos de caché de Python
 __pycache__/
 *.pyc
+*.pyo
 
 # Archivos de base de datos SQLite
 *.db
+*.sqlite3
+
+# Cache
+cache/
+
+# QR codes generados
+qrcodes_mesas/
+
+# VSCode
+.vscode/
+settings.json
