@@ -1,6 +1,0 @@
-{
-  "python.defaultInterpreterPath": ".venv/Scripts/python.exe",
-  "webhint.enable": false,
-  "html.validate.styles": false,
-  "css.validate": false
-} 
