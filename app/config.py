@@ -1,13 +1,8 @@
-import os
-from dotenv import load_dotenv
+"""
+Compatibility shim — re-exports from app.core.config.
+Use `from app.core.config import ...` for new code.
+"""
 
-load_dotenv() # Carga las variables del archivo .env
+from app.core.config import AppSettings, settings  # noqa: F401
 
-class AppSettings:
-    """
-    Clase para almacenar configuraciones de la aplicación que pueden cambiar en tiempo de ejecución.
-    """
-    def __init__(self):
-        self.KARAOKE_CIERRE = os.getenv("KARAOKE_CIERRE", "02:00") # Leemos del .env, con un valor por defecto
-
-settings = AppSettings()
+__all__ = ["AppSettings", "settings"]

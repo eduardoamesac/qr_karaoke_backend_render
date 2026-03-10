@@ -1,0 +1,281 @@
+"""CRUD operations for Consumptions/Orders (in JSON cache + database)."""
+
+import datetime
+from decimal import Decimal
+from sqlalchemy.orm import Session
+from sqlalchemy import func
+
+from app.db.models import Pago
+from app.schemas import ConsumoCreate, CarritoCreate
+from app.utils.cache_manager import cache_manager as cache
+
+
+def get_total_consumido_por_usuario(db: Session, usuario_id: int):
+    """Calcula el total consumido por un usuario (CACHE)."""
+    consumos = cache.get_consumos_by_usuario(usuario_id)
+    if not consumos:
+        return Decimal('0.00')
+    return sum(Decimal(str(c.get("valor_total", 0))) for c in consumos)
+
+
+def get_consumos_mesa(db: Session, mesa_id: int):
+    """Obtiene todos los consumos de una mesa (CACHE)."""
+    return cache.get_consumos_by_mesa(mesa_id)
+
+
+def create_consumo_para_usuario(db: Session, consumo: ConsumoCreate, usuario_id: int):
+    """
+    Crea un nuevo consumo. El consumo se asigna a la MESA, no al usuario individual.
+    """
+    from app.db.crud.crud_usuarios import get_usuario_by_id
+    from app.db.crud.crud_productos import get_producto_by_id
+
+    usuario = get_usuario_by_id(db, usuario_id)
+    if not usuario:
+        return None, "Usuario no encontrado."
+
+    if not usuario.mesa_id:
+        return None, "El usuario no está asociado a ninguna mesa."
+
+    db_producto = get_producto_by_id(db, consumo.producto_id)
+    if not db_producto:
+        return None, "Producto no encontrado."
+
+    if db_producto.stock < consumo.cantidad:
+        return None, f"Stock insuficiente. Disponible: {db_producto.stock}"
+
+    valor_total = float(db_producto.valor * consumo.cantidad)
+
+    consumo_obj = {
+        "cantidad": consumo.cantidad,
+        "valor_total": valor_total,
+        "mesa_id": usuario.mesa_id,
+        "usuario_id": usuario_id,
+        "producto_id": consumo.producto_id,
+        "created_at": datetime.datetime.now().isoformat(),
+        "is_dispatched": False,
+        "is_cancelled": False
+    }
+
+    consumo_id = cache.create_consumo_in_cache(consumo_obj)
+    consumo_obj["id"] = consumo_id
+
+    from app.services.settings_storage import load_settings
+    settings = load_settings()
+    credit_multiplier = settings.get("lazy_queue_credit_multiplier", 1.0)
+
+    creditos_ganados = int(valor_total * credit_multiplier)
+    if creditos_ganados > 0:
+        usuario.song_credits = (usuario.song_credits or 0) + creditos_ganados
+        db.add(usuario)
+
+    db_producto.stock -= consumo.cantidad
+    db.add(db_producto)
+
+    db.commit()
+    db.refresh(usuario)
+
+    from types import SimpleNamespace
+    db_consumo = SimpleNamespace(**consumo_obj)
+    db_consumo.usuario = usuario
+    db_consumo.producto = db_producto
+    db_consumo.valor_total = Decimal(str(valor_total))
+    db_consumo.created_at = datetime.datetime.fromisoformat(consumo_obj["created_at"])
+
+    return db_consumo, None
+
+
+def create_pedido_from_carrito(db: Session, carrito: CarritoCreate, usuario_id: int):
+    """Crea múltiples consumos desde un carrito."""
+    from app.db.crud.crud_usuarios import get_usuario_by_id
+    usuario = get_usuario_by_id(db, usuario_id)
+    if not usuario or not usuario.mesa_id:
+        return None, "Usuario o mesa no encontrados."
+
+    consumos_creados = []
+    for item in carrito.items:
+        consumo_data = ConsumoCreate(producto_id=item.producto_id, cantidad=item.cantidad)
+        db_consumo, error = create_consumo_para_usuario(db, consumo_data, usuario_id)
+        if error:
+            return None, error
+        consumos_creados.append(db_consumo)
+
+    return consumos_creados, None
+
+
+def get_table_payment_status(db: Session, mesa_id: int):
+    """Obtiene el estado de cuenta detallado de una mesa (desde CACHE y BD)."""
+    from app.db.crud.crud_mesas import get_mesa_by_id
+    from app.db.crud.crud_productos import get_producto_by_id
+
+    mesa = get_mesa_by_id(db, mesa_id)
+    if not mesa:
+        return None
+
+    consumos_raw = cache.get_consumos_by_mesa(mesa_id)
+    total_consumido = sum(Decimal(str(c.get("valor_total", 0))) for c in consumos_raw)
+
+    from app.db.models import Pago as PagoModel
+    total_pagado = db.query(func.sum(PagoModel.monto)).filter(
+        PagoModel.mesa_id == mesa_id
+    ).scalar() or Decimal('0.00')
+
+    saldo_pendiente = total_consumido - total_pagado
+
+    consumos_items = []
+    for c in consumos_raw:
+        producto = get_producto_by_id(db, c.get("producto_id"))
+        consumos_items.append({
+            "producto_nombre": producto.nombre if producto else "Producto Eliminado",
+            "cantidad": c.get("cantidad"),
+            "valor_total": Decimal(str(c.get("valor_total"))),
+            "created_at": datetime.datetime.fromisoformat(c.get("created_at"))
+        })
+
+    pagos_detalle = db.query(PagoModel).filter(
+        PagoModel.mesa_id == mesa_id
+    ).order_by(PagoModel.created_at.asc()).all()
+
+    return {
+        "mesa_id": mesa_id,
+        "mesa_nombre": mesa.get("nombre"),
+        "is_active": mesa.get("is_active", True),
+        "total_consumido": total_consumido,
+        "total_pagado": total_pagado,
+        "saldo_pendiente": saldo_pendiente,
+        "consumos": consumos_items,
+        "pagos": pagos_detalle
+    }
+
+
+def get_all_tables_payment_status(db: Session):
+    """Devuelve el estado de cuenta para todas las mesas activas."""
+    mesas = cache.get_all_mesas() or []
+    result = []
+    for m in mesas:
+        if not m.get("is_active", True):
+            continue
+        mesa_id = m.get("id")
+        if mesa_id is None:
+            continue
+        status = get_table_payment_status(db, mesa_id)
+        if status:
+            result.append(status)
+    return result
+
+
+def get_recent_consumos(db: Session, limit: int = 10):
+    """Obtiene los consumos más recientes desde el cache e hidrata con nombres de BD."""
+    from app.db.models import Usuario, Producto
+    consumos = cache.get_all_consumos()
+    if not consumos:
+        return []
+
+    consumos_pendientes = [c for c in consumos if not c.get("is_dispatched", False)]
+    sorted_consumos = sorted(
+        consumos_pendientes,
+        key=lambda x: x.get("created_at", ""),
+        reverse=True
+    )
+    recent = sorted_consumos[:limit]
+
+    if not recent:
+        return []
+
+    user_ids = {c.get("usuario_id") for c in recent if c.get("usuario_id")}
+    prod_ids = {c.get("producto_id") for c in recent if c.get("producto_id")}
+
+    usuarios = db.query(Usuario).filter(Usuario.id.in_(user_ids)).all() if user_ids else []
+    productos = db.query(Producto).filter(Producto.id.in_(prod_ids)).all() if prod_ids else []
+
+    user_map = {u.id: u.nick for u in usuarios}
+    prod_map = {p.id: p.nombre for p in productos}
+    mesa_map = {m.get("id"): m.get("nombre") for m in cache.get_all_mesas()}
+
+    enriched = []
+    for c in recent:
+        c_copy = dict(c)
+        c_copy["usuario_nick"] = user_map.get(c.get("usuario_id"), "Desconocido")
+        c_copy["producto_nombre"] = prod_map.get(c.get("producto_id"), "Desconocido")
+        if c.get("mesa_id"):
+            c_copy["mesa_nombre"] = mesa_map.get(c.get("mesa_id"))
+        enriched.append(c_copy)
+
+    return enriched
+
+
+def delete_consumo(db: Session, consumo_id: int):
+    """Elimina un consumo del caché, restaura el stock del producto y recalcula créditos."""
+    from app.db.crud.crud_usuarios import get_usuario_by_id
+    from app.db.crud.crud_productos import get_producto_by_id
+
+    consumo = cache.get_consumo_by_id(consumo_id)
+    if not consumo:
+        return False
+
+    db_producto = get_producto_by_id(db, consumo["producto_id"])
+    if db_producto:
+        db_producto.stock += consumo["cantidad"]
+        db.add(db_producto)
+
+    usuario = get_usuario_by_id(db, consumo["usuario_id"])
+    if usuario:
+        from app.services.settings_storage import load_settings
+        settings = load_settings()
+        credit_multiplier = settings.get("lazy_queue_credit_multiplier", 1.0)
+        creditos_a_restar = int(consumo["valor_total"] * credit_multiplier)
+        if creditos_a_restar > 0:
+            usuario.song_credits = max(0, (usuario.song_credits or 0) - creditos_a_restar)
+            db.add(usuario)
+
+    db.commit()
+    return cache.delete_consumo_from_cache(consumo_id)
+
+
+def update_consumo_cantidad(db: Session, consumo_id: int, delta: int):
+    """Incrementa o decrementa la cantidad de un consumo."""
+    from app.db.crud.crud_usuarios import get_usuario_by_id
+    from app.db.crud.crud_productos import get_producto_by_id
+
+    consumo = cache.get_consumo_by_id(consumo_id)
+    if not consumo:
+        return None, "Consumo no encontrado"
+
+    nueva_cantidad = consumo["cantidad"] + delta
+    if nueva_cantidad < 1:
+        return None, "La cantidad mínima es 1. Para eliminar use el botón cancelar."
+
+    db_producto = get_producto_by_id(db, consumo["producto_id"])
+    if not db_producto:
+        return None, "Producto no encontrado"
+
+    if delta > 0 and db_producto.stock < delta:
+        return None, f"Stock insuficiente. Disponible: {db_producto.stock}"
+
+    db_producto.stock -= delta
+    db.add(db_producto)
+
+    valor_unitario = float(db_producto.valor)
+    valor_delta = valor_unitario * delta
+    nuevo_valor_total = float(consumo["valor_total"]) + valor_delta
+
+    usuario = get_usuario_by_id(db, consumo["usuario_id"])
+    if usuario:
+        from app.services.settings_storage import load_settings
+        settings = load_settings()
+        credit_multiplier = settings.get("lazy_queue_credit_multiplier", 1.0)
+        creditos_delta = int(valor_delta * credit_multiplier)
+        if creditos_delta != 0:
+            usuario.song_credits = max(0, (usuario.song_credits or 0) + creditos_delta)
+            db.add(usuario)
+
+    db.commit()
+
+    updates = {
+        "cantidad": nueva_cantidad,
+        "valor_total": nuevo_valor_total
+    }
+    cache.update_consumo_in_cache(consumo_id, updates)
+
+    consumo.update(updates)
+    return consumo, None

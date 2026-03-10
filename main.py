@@ -2,8 +2,8 @@ from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Request
 from fastapi.responses import Response, FileResponse
 from fastapi.staticfiles import StaticFiles
 import os
-from dotenv import load_dotenv
 import logging
+from dotenv import load_dotenv
 
 # ===============================
 # CARGA DE VARIABLES DE ENTORNO
@@ -13,34 +13,25 @@ load_dotenv()
 print("YOUTUBE_API_KEY cargada:", os.getenv("YOUTUBE_API_KEY"))
 
 # ===============================
+# LOGGING
+# ===============================
+from app.core.logging_config import setup_logging
+setup_logging()
+
+# ===============================
 # BASE DE DATOS
 # ===============================
-from app.database import engine, SessionLocal
-from app.models import Base  # importa TODOS los modelos
+from app.db.database import engine, SessionLocal
+from app.db.models import Base  # importa TODOS los modelos
 
 Base.metadata.create_all(bind=engine)
 
-from app import crud
+from app.db import crud
 from app.services import broadcast, thumbnails, websocket_manager
 from app.routers import mesas, canciones, youtube, consumos, usuarios, admin, productos
 from app.routers.admin_settings import router as settings_router
 from app.routers.admin_extra import router as admin_extra_router
 from app.services.song_credits_background import start_credits_background_task
-
-# ===============================
-# LOGGING
-# ===============================
-log_formatter = logging.Formatter(
-    '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
-
-console_handler = logging.StreamHandler()
-console_handler.setFormatter(log_formatter)
-
-logging.basicConfig(
-    level=logging.INFO,
-    handlers=[console_handler]
-)
 
 logger = logging.getLogger(__name__)
 
