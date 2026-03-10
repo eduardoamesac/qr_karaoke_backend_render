@@ -6,8 +6,8 @@ Sincroniza el estado de canciones desde el cache centralizado
 import logging
 from typing import List, Optional, Dict, Any
 from sqlalchemy.orm import Session
-from timezone_utils import now_bogota
-from cache_manager import cache_manager as cache
+from app.timezone_utils import now_bogota
+from app.utils.cache_manager import cache_manager as cache
 
 logger = logging.getLogger(__name__)
 

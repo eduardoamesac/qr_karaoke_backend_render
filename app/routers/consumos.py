@@ -2,13 +2,13 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
 
-import crud, schemas
-from database import SessionLocal
-from auth import verify_token, log_admin_action
-import websocket_manager
+from app import crud, schemas
+from app.database import SessionLocal
+from app.auth import verify_token, log_admin_action
+from app.services import websocket_manager
 import asyncio
 import datetime
-from cache_manager import cache_manager  # NUEVO: Importar cache manager
+from app.utils.cache_manager import cache_manager  # NUEVO: Importar cache manager
 from fastapi.encoders import jsonable_encoder  # Para serializar datos
 
 router = APIRouter()

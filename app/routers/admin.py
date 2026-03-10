@@ -2,17 +2,17 @@ from fastapi import APIRouter, Depends, Response, HTTPException, Body, Backgroun
 import os, time, logging
 from sqlalchemy.orm import Session
 from typing import List, Dict, Any
-import models 
-import crud, schemas
-import config
-from database import SessionLocal
-import websocket_manager
-from auth import create_access_token, create_refresh_token, verify_token, verify_refresh_token, log_admin_action
-from queue_manager import queue_manager
+from app import models
+from app import crud, schemas
+from app import config
+from app.database import SessionLocal
+from app.services import websocket_manager
+from app.auth import create_access_token, create_refresh_token, verify_token, verify_refresh_token, log_admin_action
+from app.services.queue_manager import queue_manager
 from fastapi.encoders import jsonable_encoder
 from datetime import datetime
-from cache_manager import cache_manager as cache
-from timezone_utils import now_bogota
+from app.utils.cache_manager import cache_manager as cache
+from app.timezone_utils import now_bogota
 
 router = APIRouter(dependencies=[Depends(verify_token)])
 
@@ -776,7 +776,7 @@ async def move_pending_song_up(cancion_id: int, db: Session = Depends(get_db), a
     """
     **[Admin]** Mueve una canción pendiente una posición hacia arriba en la cola.
     """
-    from cache_manager import cache_manager as cm
+    from app.utils.cache_manager import cache_manager as cm
     all_songs = cm.get_all_songs()
     pending = sorted(
         [s for s in all_songs if s.get('estado') == 'pendiente'],
@@ -802,7 +802,7 @@ async def move_pending_song_down(cancion_id: int, db: Session = Depends(get_db),
     """
     **[Admin]** Mueve una canción pendiente una posición hacia abajo en la cola.
     """
-    from cache_manager import cache_manager as cm
+    from app.utils.cache_manager import cache_manager as cm
     all_songs = cm.get_all_songs()
     pending = sorted(
         [s for s in all_songs if s.get('estado') == 'pendiente'],
@@ -954,7 +954,7 @@ async def revert_approved_song(cancion_id: int, db: Session = Depends(get_db), a
         raise HTTPException(status_code=400, detail="No se puede deshacer: la canción ya está en reproducción.")
 
     # Revertir en cache (no en BD)
-    from cache_manager import cache_manager as cm
+    from app.utils.cache_manager import cache_manager as cm
     cm.update_song_in_cache(cancion_id, {
         'estado': 'pendiente_lazy',
         'approved_at': None
@@ -1175,7 +1175,7 @@ async def admin_mark_consumo_despachado(consumo_id: int, db: Session = Depends(g
     **[Admin]** Marca un consumo como despachado.
     No elimina el consumo de la base de datos, solo lo marca como despachado para que no aparezca en "pedidos recientes".
     """
-    from cache_manager import cache_manager as cache
+    from app.utils.cache_manager import cache_manager as cache
     consumo = cache.get_consumo_by_id(consumo_id)
     if not consumo:
         raise HTTPException(status_code=404, detail='Consumo no encontrado')

@@ -15,16 +15,17 @@ print("YOUTUBE_API_KEY cargada:", os.getenv("YOUTUBE_API_KEY"))
 # ===============================
 # BASE DE DATOS
 # ===============================
-from database import engine, SessionLocal
-from models import Base  # importa TODOS los modelos
+from app.database import engine, SessionLocal
+from app.models import Base  # importa TODOS los modelos
 
 Base.metadata.create_all(bind=engine)
 
-import crud, schemas, broadcast, thumbnails
-import mesas, canciones, youtube, consumos, usuarios, admin, productos, websocket_manager
-from admin_settings_router import router as settings_router
-from admin_extra_router import router as admin_extra_router
-from song_credits_background import start_credits_background_task
+from app import crud
+from app.services import broadcast, thumbnails, websocket_manager
+from app.routers import mesas, canciones, youtube, consumos, usuarios, admin, productos
+from app.routers.admin_settings import router as settings_router
+from app.routers.admin_extra import router as admin_extra_router
+from app.services.song_credits_background import start_credits_background_task
 
 # ===============================
 # LOGGING
@@ -33,17 +34,12 @@ log_formatter = logging.Formatter(
     '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 
-file_handler = logging.FileHandler(
-    "karaoke_debug.log", mode='a', encoding='utf-8'
-)
-file_handler.setFormatter(log_formatter)
-
 console_handler = logging.StreamHandler()
 console_handler.setFormatter(log_formatter)
 
 logging.basicConfig(
     level=logging.INFO,
-    handlers=[file_handler, console_handler]
+    handlers=[console_handler]
 )
 
 logger = logging.getLogger(__name__)

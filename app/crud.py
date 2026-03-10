@@ -11,10 +11,10 @@ import secrets
 from typing import List, Optional, Dict, Any
 import datetime
 from collections import Counter
-import models, schemas
+from app import models, schemas
 from decimal import Decimal
-from cache_manager import cache_manager as cache
-from queue_manager import queue_manager
+from app.utils.cache_manager import cache_manager as cache
+from app.services.queue_manager import queue_manager
 
 # ================================================================================
 # FUNCIONES PARA USUARIOS (En BD)
@@ -308,7 +308,7 @@ def create_consumo_para_usuario(db: Session, consumo: schemas.ConsumoCreate, usu
     consumo_obj["id"] = consumo_id
 
     # Otorgar créditos por el consumo según la configuración de Cola Lazy
-    from settings_storage import load_settings
+    from app.services.settings_storage import load_settings
     settings = load_settings()
     credit_multiplier = settings.get("lazy_queue_credit_multiplier", 1.0)
     
@@ -490,7 +490,7 @@ def get_recent_consumos(db: Session, limit: int = 10):
         return []
         
     # Enriquecer datos con DB
-    import models
+    from app import models
     user_ids = {c.get("usuario_id") for c in recent if c.get("usuario_id")}
     prod_ids = {c.get("producto_id") for c in recent if c.get("producto_id")}
     
@@ -529,7 +529,7 @@ def delete_consumo(db: Session, consumo_id: int):
     # Restar créditos al usuario
     usuario = get_usuario_by_id(db, consumo["usuario_id"])
     if usuario:
-        from settings_storage import load_settings
+        from app.services.settings_storage import load_settings
         settings = load_settings()
         credit_multiplier = settings.get("lazy_queue_credit_multiplier", 1.0)
         creditos_a_restar = int(consumo["valor_total"] * credit_multiplier)
@@ -575,7 +575,7 @@ def update_consumo_cantidad(db: Session, consumo_id: int, delta: int):
     # Actualizar créditos al usuario
     usuario = get_usuario_by_id(db, consumo["usuario_id"])
     if usuario:
-        from settings_storage import load_settings
+        from app.services.settings_storage import load_settings
         settings = load_settings()
         credit_multiplier = settings.get("lazy_queue_credit_multiplier", 1.0)
         creditos_delta = int(valor_delta * credit_multiplier)
@@ -793,7 +793,7 @@ def check_if_song_in_user_list(db: Session, usuario_id: int, youtube_id: str) ->
 
 def create_cancion_para_usuario(db: Session, cancion: schemas.CancionCreate, usuario_id: int):
     """Crea una canción en cache para un usuario."""
-    from timezone_utils import now_bogota
+    from app.timezone_utils import now_bogota
     
     # Crear ID único para la canción combinando timestamp y usuario_id
     import time
@@ -867,8 +867,8 @@ async def avanzar_cola_automaticamente(db: Session):
     import traceback
     logger = logging.getLogger(__name__)
     try:
-        from timezone_utils import now_bogota
-        import websocket_manager
+        from app.timezone_utils import now_bogota
+        from app.services import websocket_manager
 
         # 1) Marcar la canción actual como 'cantada' si existe
         canciones_reproduciendo = cache.get_songs_by_estado('reproduciendo') or []

@@ -29,8 +29,8 @@ except Exception:
     pass
 
 # Import your model's MetaData object here
-from database import SQLALCHEMY_DATABASE_URL, Base
-import models
+from app.database import SQLALCHEMY_DATABASE_URL, Base
+from app import models
 
 # Prefer explicit environment variable DATABASE_URL or SQLALCHEMY_DATABASE_URL
 env_db_url = os.getenv('DATABASE_URL') or os.getenv('SQLALCHEMY_DATABASE_URL')

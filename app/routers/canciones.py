@@ -7,12 +7,12 @@ from fastapi.encoders import jsonable_encoder
 from sqlalchemy.orm import Session
 from typing import List
 
-import crud, schemas, models, config
-from database import SessionLocal
-from auth import verify_token, log_admin_action
-import websocket_manager
-from cache_manager import cache_manager
-from queue_manager import queue_manager
+from app import crud, schemas, models, config
+from app.database import SessionLocal
+from app.auth import verify_token, log_admin_action
+from app.services import websocket_manager
+from app.utils.cache_manager import cache_manager
+from app.services.queue_manager import queue_manager
 
 router = APIRouter()
 
@@ -68,7 +68,7 @@ async def anadir_cancion(
         raise HTTPException(status_code=403, detail="No tienes permiso para añadir más canciones.")
 
     # Cargar configuraciones de la cola lazy
-    from settings_storage import load_settings
+    from app.services.settings_storage import load_settings
     settings = load_settings()
     allow_unrestricted = settings.get("lazy_queue_allow_unrestricted", False)
     max_concurrent_songs = settings.get("lazy_queue_max_concurrent_songs", 10)
@@ -96,7 +96,7 @@ async def anadir_cancion(
     hora_cierre_str = config.settings.KARAOKE_CIERRE
     try:
         h, m = map(int, hora_cierre_str.split(':'))
-        from timezone_utils import now_bogota
+        from app.timezone_utils import now_bogota
         ahora = now_bogota()
         hora_cierre = ahora.replace(hour=h, minute=m, second=0, microsecond=0)
         if hora_cierre < ahora:
@@ -263,7 +263,7 @@ async def play_song_now(cancion_id: int, db: Session = Depends(get_db), admin: d
     if not db_cancion:
         raise HTTPException(status_code=404, detail="Canción no encontrada.")
 
-    from timezone_utils import now_bogota
+    from app.timezone_utils import now_bogota
 
     canciones_reproduciendo = cache_manager.get_songs_by_estado('reproduciendo')
     if canciones_reproduciendo:

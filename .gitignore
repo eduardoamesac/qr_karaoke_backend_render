@@ -39,3 +39,9 @@ qrcodes_mesas/
 # VSCode
 .vscode/
 settings.json
+
+# OpenAPI spec (generado dinámicamente)
+openapi.json
+
+# Archivos generados
+admin_qr.png

@@ -10,7 +10,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional, Any
 import threading
-from timezone_utils import now_bogota
+from app.timezone_utils import now_bogota
 
 class CacheManager: # Define la clase central encargada de gestionar los datos en memoria y archivos JSON
     """Gestor centralizado de caché para canciones, mesas, cuentas, consumos y song_credits""" # Docstring descriptivo de la clase
