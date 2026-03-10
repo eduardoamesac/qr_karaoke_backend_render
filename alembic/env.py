@@ -29,13 +29,14 @@ except Exception:
     pass
 
 # Import your model's MetaData object here
-from app.database import SQLALCHEMY_DATABASE_URL, Base
-from app import models
+from app.db.database import SQLALCHEMY_DATABASE_URL
+from app.db.models import Base
+from app.db import models as _models  # ensure all model tables are registered
 
 # Prefer explicit environment variable DATABASE_URL or SQLALCHEMY_DATABASE_URL
 env_db_url = os.getenv('DATABASE_URL') or os.getenv('SQLALCHEMY_DATABASE_URL')
 
-target_metadata = models.Base.metadata
+target_metadata = Base.metadata
 
 
 def run_migrations_offline():
