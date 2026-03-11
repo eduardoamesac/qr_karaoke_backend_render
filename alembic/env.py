@@ -21,29 +21,45 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 
 # Load environment variables from .env so Alembic honors the project's config
 try:
-    # python-dotenv is already a dependency in requirements.txt
     from dotenv import load_dotenv
     load_dotenv()
 except Exception:
-    # If python-dotenv isn't available, rely on actual environment variables
     pass
 
 # Import your model's MetaData object here
-from app.db.database import SQLALCHEMY_DATABASE_URL
-from app.db.models import Base
+from app.db.models.base import Base
 from app.db import models as _models  # ensure all model tables are registered
-
-# Prefer explicit environment variable DATABASE_URL or SQLALCHEMY_DATABASE_URL
-env_db_url = os.getenv('DATABASE_URL') or os.getenv('SQLALCHEMY_DATABASE_URL')
 
 target_metadata = Base.metadata
 
+# Build the MySQL connection URL from individual env vars.
+# Falls back to DATABASE_URL / SQLALCHEMY_DATABASE_URL if set, which is
+# convenient on platforms like Render that export a single DATABASE_URL.
+_DB_HOST = os.getenv("DB_HOST", "localhost")
+_DB_PORT = os.getenv("DB_PORT", "3306")
+_DB_USER = os.getenv("DB_USER", "root")
+_DB_PASSWORD = os.getenv("DB_PASSWORD", "")
+_DB_NAME = os.getenv("DB_NAME", "karaoke_db")
+
+_built_url = (
+    f"mysql+mysqlconnector://{_DB_USER}:{_DB_PASSWORD}"
+    f"@{_DB_HOST}:{_DB_PORT}/{_DB_NAME}"
+)
+
+# Prefer an explicit DATABASE_URL env var (common on cloud platforms),
+# then the URL we built from individual vars.
+SQLALCHEMY_DATABASE_URL = (
+    os.getenv("DATABASE_URL")
+    or os.getenv("SQLALCHEMY_DATABASE_URL")
+    or _built_url
+)
+
 
 def run_migrations_offline():
-    # Prefer env var if present, otherwise fall back to alembic.ini or database.py
-    url = env_db_url or config.get_main_option("sqlalchemy.url") or SQLALCHEMY_DATABASE_URL
     context.configure(
-        url=url, target_metadata=target_metadata, literal_binds=True
+        url=SQLALCHEMY_DATABASE_URL,
+        target_metadata=target_metadata,
+        literal_binds=True,
     )
 
     with context.begin_transaction():
@@ -52,18 +68,18 @@ def run_migrations_offline():
 
 def run_migrations_online():
     configuration = config.get_section(config.config_ini_section)
-    # Allow environment variables (.env) to override the ini file
-    configuration['sqlalchemy.url'] = env_db_url or configuration.get('sqlalchemy.url', SQLALCHEMY_DATABASE_URL)
+    configuration["sqlalchemy.url"] = SQLALCHEMY_DATABASE_URL
 
     connectable = engine_from_config(
         configuration,
-        prefix='sqlalchemy.',
+        prefix="sqlalchemy.",
         poolclass=pool.NullPool,
     )
 
     with connectable.connect() as connection:
         context.configure(
-            connection=connection, target_metadata=target_metadata
+            connection=connection,
+            target_metadata=target_metadata,
         )
 
         with context.begin_transaction():
