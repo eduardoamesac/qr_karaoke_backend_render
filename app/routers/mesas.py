@@ -1,12 +1,16 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+from sqlalchemy import text
 from typing import List
 from app import crud, schemas, models
 import re # Importar para el filtro de groserías
 import datetime
+import logging
 from app.database import SessionLocal
 from app.auth import verify_token, log_admin_action
 from app.utils.cache_manager import cache_manager as cache
+
+logger = logging.getLogger(__name__)
 router = APIRouter()
 
 # Lista de palabras inapropiadas (puedes expandirla según sea necesario)
@@ -30,6 +34,38 @@ def get_db():
         yield db
     finally:
         db.close()
+
+
+def ensure_mesa_in_mysql(db: Session, mesa_id: int, mesa_nombre: str, qr_code: str):
+    """
+    Asegura que la mesa exista en la tabla MySQL `mesas` para satisfacer
+    la FK constraint de `usuarios.mesa_id`.
+    Las mesas viven en el cache JSON, pero MySQL necesita el registro
+    para que el INSERT de usuarios no falle por FK.
+    """
+    result = db.execute(
+        text("SELECT id FROM mesas WHERE id = :id"), {"id": mesa_id}
+    )
+    if not result.fetchone():
+        try:
+            db.execute(
+                text(
+                    "INSERT INTO mesas (id, nombre, qr_code, is_active) "
+                    "VALUES (:id, :nombre, :qr_code, :is_active)"
+                ),
+                {
+                    "id": mesa_id,
+                    "nombre": mesa_nombre,
+                    "qr_code": qr_code,
+                    "is_active": True,
+                },
+            )
+            db.commit()
+            logger.info(f"Mesa {mesa_id} ('{mesa_nombre}') sincronizada a MySQL para FK.")
+        except Exception as e:
+            db.rollback()
+            logger.warning(f"No se pudo sincronizar mesa {mesa_id} a MySQL: {e}")
+
 
 @router.get("/", response_model=List[schemas.Mesa], summary="Listar todas las mesas", dependencies=[Depends(verify_token)])
 def get_mesas(db: Session = Depends(get_db)):
@@ -187,11 +223,18 @@ def conectar_usuario_a_mesa(
     # Generar automáticamente el nick basado en la mesa y el número de usuario
     nick_automatico = f"{mesa_nombre}-Usuario{usuario_numero}"
     
+    # Asegurar que la mesa exista en MySQL para la FK constraint
+    ensure_mesa_in_mysql(db, mesa_id, mesa_nombre, qr_code_mesa_base)
+    
     # Verificar si ya existe un usuario con este número en esta mesa
-    db_usuario_existente = db.query(models.Usuario).filter(
-        models.Usuario.mesa_id == mesa_id,
-        models.Usuario.nick == nick_automatico
-    ).first()
+    try:
+        db_usuario_existente = db.query(models.Usuario).filter(
+            models.Usuario.mesa_id == mesa_id,
+            models.Usuario.nick == nick_automatico
+        ).first()
+    except Exception as e:
+        logger.error(f"Error al buscar usuario '{nick_automatico}' en mesa {mesa_id}: {e}")
+        raise HTTPException(status_code=500, detail=f"Error de base de datos al buscar usuario: {e}")
     
     if db_usuario_existente:
         # Si el usuario ya existe y está activo, retornarlo
@@ -206,8 +249,12 @@ def conectar_usuario_a_mesa(
             return db_usuario_existente
     
     # Crear el nuevo usuario con el nick automático
-    usuario_data = schemas.UsuarioCreate(nick=nick_automatico)
-    return crud.create_usuario_en_mesa(db=db, usuario=usuario_data, mesa_id=mesa_id)
+    try:
+        usuario_data = schemas.UsuarioCreate(nick=nick_automatico)
+        return crud.create_usuario_en_mesa(db=db, usuario=usuario_data, mesa_id=mesa_id)
+    except Exception as e:
+        logger.error(f"Error al crear usuario '{nick_automatico}' en mesa {mesa_id}: {e}")
+        raise HTTPException(status_code=500, detail=f"Error al crear usuario: {e}")
 
 @router.get("/{mesa_id}/usuarios-conectados", response_model=List[schemas.UsuarioConectado], summary="Ver usuarios conectados a una mesa")
 def get_usuarios_conectados(mesa_id: int, db: Session = Depends(get_db)):
