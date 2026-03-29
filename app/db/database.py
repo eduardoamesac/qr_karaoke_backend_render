@@ -40,31 +40,44 @@ else:
     POOL_PRE_PING = True
 
 # ============================================================
-# CONNECTION URL
+# CONNECTION URL & ENGINE
 # ============================================================
 
-SQLALCHEMY_DATABASE_URL = (
-    f"mysql+mysqlconnector://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
-)
+# Allow DATABASE_URL override (used by Alembic on Render and by the test suite).
+# When set to a sqlite:// URL the engine is configured for SQLite instead of MySQL.
+DATABASE_URL_OVERRIDE = os.getenv("DATABASE_URL")
 
-# ============================================================
-# ENGINE
-# ============================================================
-
-engine = create_engine(
-    SQLALCHEMY_DATABASE_URL,
-    poolclass=QueuePool,
-    pool_size=POOL_SIZE,
-    max_overflow=MAX_OVERFLOW,
-    pool_recycle=POOL_RECYCLE,
-    pool_pre_ping=POOL_PRE_PING,
-    echo=False,
-    connect_args={
-        "use_unicode": True,
-        "charset": "utf8mb4",
-        "collation": "utf8mb4_unicode_ci",
-    }
-)
+if DATABASE_URL_OVERRIDE:
+    SQLALCHEMY_DATABASE_URL = DATABASE_URL_OVERRIDE
+    if DATABASE_URL_OVERRIDE.startswith("sqlite"):
+        from sqlalchemy.pool import StaticPool
+        engine = create_engine(
+            SQLALCHEMY_DATABASE_URL,
+            connect_args={"check_same_thread": False},
+            poolclass=StaticPool,
+            echo=False,
+        )
+    else:
+        # Generic URL override (e.g. postgres or mysql with full URL)
+        engine = create_engine(SQLALCHEMY_DATABASE_URL, echo=False)
+else:
+    SQLALCHEMY_DATABASE_URL = (
+        f"mysql+mysqlconnector://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+    )
+    engine = create_engine(
+        SQLALCHEMY_DATABASE_URL,
+        poolclass=QueuePool,
+        pool_size=POOL_SIZE,
+        max_overflow=MAX_OVERFLOW,
+        pool_recycle=POOL_RECYCLE,
+        pool_pre_ping=POOL_PRE_PING,
+        echo=False,
+        connect_args={
+            "use_unicode": True,
+            "charset": "utf8mb4",
+            "collation": "utf8mb4_unicode_ci",
+        }
+    )
 
 # ============================================================
 # SESSION FACTORY

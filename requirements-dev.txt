@@ -1,5 +1,6 @@
 # Dependencias de desarrollo
 pytest
+httpx
 playwright
 pytest-playwright
 selenium
