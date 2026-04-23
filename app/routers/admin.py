@@ -421,13 +421,16 @@ def delete_table(mesa_id: int, db: Session = Depends(get_db)):
     if not db_mesa:
         raise HTTPException(status_code=404, detail="Mesa no encontrada.")
 
-    if db_mesa.usuarios:
+    # Check users from cache
+    from app.utils.cache_manager import cache_manager as _cache
+    usuarios_activos = [u for u in _cache.get_usuarios_by_mesa_from_cache(mesa_id) if u.get("is_active")]
+    if usuarios_activos:
         raise HTTPException(
             status_code=400,
             detail="No se puede eliminar la mesa porque tiene usuarios conectados."
         )
 
-    crud.delete_mesa(db, mesa_id=mesa_id)
+    crud.delete_mesa(db, mesa_id=mesa_id)  # already clears users via cache_manager
     return Response(status_code=204)
 
 @router.post("/tables/{mesa_id}/activate", response_model=schemas.Mesa, summary="Activar una mesa")
@@ -1315,6 +1318,7 @@ def get_single_table_payment_status(mesa_id: int, db: Session = Depends(get_db))
 async def create_pago_endpoint(pago: schemas.PagoCreate, db: Session = Depends(get_db)):
     """
     **[Admin]** Registra un nuevo pago para una mesa específica.
+    Cuando el saldo queda en cero, limpia automáticamente los usuarios de sesión de la mesa.
     """
 
     # 1️⃣ Guardar en BD (FUENTE OFICIAL)
@@ -1323,13 +1327,16 @@ async def create_pago_endpoint(pago: schemas.PagoCreate, db: Session = Depends(g
     # 2️⃣ Recalcular estado dinámicamente
     estado = crud.get_table_payment_status(db, pago.mesa_id)
 
-    # 3️⃣ Si ya pagó todo → cerrar mesa en cache
-    if estado and estado.get("saldo_pendiente", 0) <= 0:
+    # 3️⃣ Si ya pagó todo → cerrar mesa y limpiar usuarios de sesión
+    if estado and float(estado.get("saldo_pendiente", 1)) <= 0:
         mesa = cache.get_mesa_by_id(pago.mesa_id)
         if mesa:
             mesa["is_active"] = False
             mesa["closed_at"] = datetime.now().isoformat()
             cache.update_mesa(pago.mesa_id, mesa)
+        # Limpiar usuarios de sesión — la mesa se libera para la próxima noche
+        cache.clear_usuarios_de_mesa(pago.mesa_id)
+        logger.info(f"Mesa {pago.mesa_id} pagada completamente. Usuarios de sesión limpiados.")
 
     return db_pago
 

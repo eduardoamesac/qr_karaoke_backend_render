@@ -17,6 +17,15 @@ from app.db.crud.crud_usuarios import (
     delete_usuario,
     get_or_create_dj_user,
     get_ranking_usuarios,
+    ban_usuario,
+    unban_nick,
+    get_banned_nicks,
+    set_usuario_silenciado,
+    get_usuarios_por_nivel,
+    get_usuarios_sin_canciones_cantadas,
+    get_ranking_puntos_usuarios,
+    get_consumo_por_mesa,
+    get_consumos_por_usuario,
 )
 
 from app.db.crud.crud_productos import (
@@ -116,6 +125,13 @@ from app.db.crud.crud_admin import (
     get_productos_no_consumidos,
     get_usuarios_inactivos_consumo,
     get_usuarios_consumen_pero_no_cantan,
+    get_resumen_mesa,
+    close_table_session,
+    create_new_active_cuenta,
+    get_previous_cuentas,
+    get_cuenta_payment_status,
+    start_next_song_if_autoplay_and_idle,
+    get_estado_mesas,
 )
 
 __all__ = [
@@ -124,6 +140,9 @@ __all__ = [
     "create_usuario_en_mesa", "get_o_crear_usuario_admin_para_mesa",
     "get_all_usuarios", "update_usuario", "delete_usuario",
     "get_or_create_dj_user", "get_ranking_usuarios",
+    "ban_usuario", "unban_nick", "get_banned_nicks", "set_usuario_silenciado",
+    "get_usuarios_por_nivel", "get_usuarios_sin_canciones_cantadas",
+    "get_ranking_puntos_usuarios", "get_consumo_por_mesa", "get_consumos_por_usuario",
     # Productos
     "get_producto_by_id", "get_producto_by_nombre", "get_all_productos",
     "get_productos", "create_producto", "update_producto", "delete_producto",
@@ -163,4 +182,7 @@ __all__ = [
     "get_categorias_mas_consumidas_por_mesa", "get_canciones_mas_pedidas_por_mesa",
     "get_productos_mas_consumidos_por_mesa", "get_productos_no_consumidos",
     "get_usuarios_inactivos_consumo", "get_usuarios_consumen_pero_no_cantan",
+    "get_resumen_mesa", "close_table_session", "create_new_active_cuenta",
+    "get_previous_cuentas", "get_cuenta_payment_status",
+    "start_next_song_if_autoplay_and_idle", "get_estado_mesas",
 ]

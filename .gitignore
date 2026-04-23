@@ -12,6 +12,8 @@ logs/
 karaoke_debug.log
 uvicorn_run.log
 product_errors.log
+server_output.txt
+*_output.txt
 
 # Backups
 *.backup
@@ -31,6 +33,7 @@ __pycache__/
 *.pyo
 *.pyd
 .Python
+.pytest_cache/
 
 # Archivos de base de datos SQLite
 *.db
@@ -61,3 +64,6 @@ admin_qr.png
 # OS
 .DS_Store
 Thumbs.db
+
+# Git
+.gitattributes

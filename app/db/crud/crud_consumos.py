@@ -5,7 +5,7 @@ from decimal import Decimal
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 
-from app.db.models import Pago
+from app.db.models import Pago as PagoModel
 from app.schemas import ConsumoCreate, CarritoCreate
 from app.utils.cache_manager import cache_manager as cache
 
@@ -66,14 +66,14 @@ def create_consumo_para_usuario(db: Session, consumo: ConsumoCreate, usuario_id:
 
     creditos_ganados = int(valor_total * credit_multiplier)
     if creditos_ganados > 0:
-        usuario.song_credits = (usuario.song_credits or 0) + creditos_ganados
-        db.add(usuario)
+        new_credits = (usuario.song_credits or 0) + creditos_ganados
+        cache.update_usuario_en_cache(usuario.id, {"song_credits": new_credits})
+        usuario.song_credits = new_credits
 
     db_producto.stock -= consumo.cantidad
     db.add(db_producto)
-
     db.commit()
-    db.refresh(usuario)
+    db.refresh(db_producto)
 
     from types import SimpleNamespace
     db_consumo = SimpleNamespace(**consumo_obj)
@@ -115,21 +115,24 @@ def get_table_payment_status(db: Session, mesa_id: int):
     consumos_raw = cache.get_consumos_by_mesa(mesa_id)
     total_consumido = sum(Decimal(str(c.get("valor_total", 0))) for c in consumos_raw)
 
-    from app.db.models import Pago as PagoModel
     total_pagado = db.query(func.sum(PagoModel.monto)).filter(
         PagoModel.mesa_id == mesa_id
     ).scalar() or Decimal('0.00')
 
-    saldo_pendiente = total_consumido - total_pagado
+    saldo_pendiente = total_consumido - Decimal(str(total_pagado))
 
     consumos_items = []
     for c in consumos_raw:
         producto = get_producto_by_id(db, c.get("producto_id"))
+        try:
+            created_at = datetime.datetime.fromisoformat(c.get("created_at", ""))
+        except Exception:
+            created_at = datetime.datetime.now()
         consumos_items.append({
             "producto_nombre": producto.nombre if producto else "Producto Eliminado",
-            "cantidad": c.get("cantidad"),
-            "valor_total": Decimal(str(c.get("valor_total"))),
-            "created_at": datetime.datetime.fromisoformat(c.get("created_at"))
+            "cantidad": c.get("cantidad", 1),
+            "valor_total": Decimal(str(c.get("valor_total", 0))),
+            "created_at": created_at,
         })
 
     pagos_detalle = db.query(PagoModel).filter(
@@ -138,13 +141,14 @@ def get_table_payment_status(db: Session, mesa_id: int):
 
     return {
         "mesa_id": mesa_id,
-        "mesa_nombre": mesa.get("nombre"),
+        "mesa_nombre": mesa.get("nombre", f"Mesa {mesa_id}"),
+        "qr_code": mesa.get("qr_code"),
         "is_active": mesa.get("is_active", True),
         "total_consumido": total_consumido,
-        "total_pagado": total_pagado,
+        "total_pagado": Decimal(str(total_pagado)),
         "saldo_pendiente": saldo_pendiente,
         "consumos": consumos_items,
-        "pagos": pagos_detalle
+        "pagos": pagos_detalle,
     }
 
 
@@ -166,7 +170,6 @@ def get_all_tables_payment_status(db: Session):
 
 def get_recent_consumos(db: Session, limit: int = 10):
     """Obtiene los consumos más recientes desde el cache e hidrata con nombres de BD."""
-    from app.db.models import Usuario, Producto
     consumos = cache.get_all_consumos()
     if not consumos:
         return []
@@ -182,20 +185,24 @@ def get_recent_consumos(db: Session, limit: int = 10):
     if not recent:
         return []
 
-    user_ids = {c.get("usuario_id") for c in recent if c.get("usuario_id")}
     prod_ids = {c.get("producto_id") for c in recent if c.get("producto_id")}
 
-    usuarios = db.query(Usuario).filter(Usuario.id.in_(user_ids)).all() if user_ids else []
+    from app.db.models import Producto
     productos = db.query(Producto).filter(Producto.id.in_(prod_ids)).all() if prod_ids else []
 
-    user_map = {u.id: u.nick for u in usuarios}
     prod_map = {p.id: p.nombre for p in productos}
     mesa_map = {m.get("id"): m.get("nombre") for m in cache.get_all_mesas()}
 
     enriched = []
     for c in recent:
         c_copy = dict(c)
-        c_copy["usuario_nick"] = user_map.get(c.get("usuario_id"), "Desconocido")
+        # Look up user from cache instead of DB
+        usuario_id = c.get("usuario_id")
+        if usuario_id:
+            u = cache.get_usuario_by_id_from_cache(usuario_id)
+            c_copy["usuario_nick"] = u.get("nick", "Desconocido") if u else "Desconocido"
+        else:
+            c_copy["usuario_nick"] = "Desconocido"
         c_copy["producto_nombre"] = prod_map.get(c.get("producto_id"), "Desconocido")
         if c.get("mesa_id"):
             c_copy["mesa_nombre"] = mesa_map.get(c.get("mesa_id"))
@@ -225,8 +232,8 @@ def delete_consumo(db: Session, consumo_id: int):
         credit_multiplier = settings.get("lazy_queue_credit_multiplier", 1.0)
         creditos_a_restar = int(consumo["valor_total"] * credit_multiplier)
         if creditos_a_restar > 0:
-            usuario.song_credits = max(0, (usuario.song_credits or 0) - creditos_a_restar)
-            db.add(usuario)
+            new_credits = max(0, (usuario.song_credits or 0) - creditos_a_restar)
+            cache.update_usuario_en_cache(usuario.id, {"song_credits": new_credits})
 
     db.commit()
     return cache.delete_consumo_from_cache(consumo_id)
@@ -266,8 +273,8 @@ def update_consumo_cantidad(db: Session, consumo_id: int, delta: int):
         credit_multiplier = settings.get("lazy_queue_credit_multiplier", 1.0)
         creditos_delta = int(valor_delta * credit_multiplier)
         if creditos_delta != 0:
-            usuario.song_credits = max(0, (usuario.song_credits or 0) + creditos_delta)
-            db.add(usuario)
+            new_credits = max(0, (usuario.song_credits or 0) + creditos_delta)
+            cache.update_usuario_en_cache(usuario.id, {"song_credits": new_credits})
 
     db.commit()
 

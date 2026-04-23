@@ -10,8 +10,6 @@ from dotenv import load_dotenv
 # ===============================
 load_dotenv()
 
-print("YOUTUBE_API_KEY cargada:", os.getenv("YOUTUBE_API_KEY"))
-
 # ===============================
 # LOGGING
 # ===============================

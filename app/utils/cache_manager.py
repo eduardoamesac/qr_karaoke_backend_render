@@ -40,6 +40,10 @@ class CacheManager: # Define la clase central encargada de gestionar los datos e
         # Caché en memoria de song_credits
         self.song_credits_data: Dict[int, List[Dict[str, Any]]] = {}  # Créditos disponibles para pedir canciones {usuario_id: [creditos]}
         
+        # Caché en memoria de usuarios (sesión por mesa)
+        self.usuarios_data: Dict[int, Dict[str, Any]] = {}  # {usuario_id: datos_usuario}
+        self.next_usuario_id = 1  # Contador de IDs para usuarios de sesión
+        
         # Lock para evitar race conditions
         self.lock = threading.RLock() # Cerrojo para que múltiples hilos no corrompan los datos al escribir (conecta con threading)
         
@@ -410,7 +414,10 @@ class CacheManager: # Define la clase central encargada de gestionar los datos e
         
         # Cargar caché de song_credits
         self._load_song_credits_data() # Carga créditos de canciones por usuario (conecta con _load_song_credits_data)
-    
+        
+        # Cargar caché de usuarios (sesión)
+        self._load_usuarios_data()  # Carga usuarios de sesión por mesa
+
     # ========================================================================
     # FUNCIONES DE CACHÉ DE MESAS (Lista General)
     # ========================================================================
@@ -526,6 +533,7 @@ class CacheManager: # Define la clase central encargada de gestionar los datos e
                 del self.mesas_data[mesa_id] # Borra del diccionario maestro de mesas
                 self._save_mesas_data() # Actualiza el archivo JSON (conecta con _save_mesas_data)
                 self.clear_mesa_cache(mesa_id) # Borra su cuenta financiera asociada (conecta con clear_mesa_cache)
+                self.clear_usuarios_de_mesa(mesa_id)  # Borra los usuarios de sesión de esta mesa
                 return True # Eliminado
             return False # No existía
     
@@ -722,6 +730,112 @@ class CacheManager: # Define la clase central encargada de gestionar los datos e
                 cache_file.unlink() # Borra el archivo físico (conecta con pathlib)
     
     # ========================================================================
+    # FUNCIONES DE CACHÉ DE USUARIOS DE SESIÓN (Por mesa, efímeros)
+    # ========================================================================
+
+    def _get_usuarios_file(self) -> Path:
+        """Obtiene la ruta del archivo de usuarios de sesión."""
+        return self.cache_dir / "usuarios.json"
+
+    def _load_usuarios_data(self) -> None:
+        """Carga el índice de usuarios desde JSON."""
+        cache_file = self._get_usuarios_file()
+        if cache_file.exists():
+            try:
+                with open(cache_file, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+                    self.usuarios_data = data.get("usuarios", {})
+                    self.usuarios_data = {int(k): v for k, v in self.usuarios_data.items()}
+                    self.next_usuario_id = data.get("next_id", max(self.usuarios_data.keys()) + 1 if self.usuarios_data else 1)
+            except Exception as e:
+                print(f"Error cargando caché de usuarios: {e}")
+                self.usuarios_data = {}
+                self.next_usuario_id = 1
+        else:
+            self.usuarios_data = {}
+            self.next_usuario_id = 1
+
+    def _save_usuarios_data(self) -> None:
+        """Guarda el índice de usuarios a JSON."""
+        cache_file = self._get_usuarios_file()
+        try:
+            data = {
+                "usuarios": {str(k): v for k, v in self.usuarios_data.items()},
+                "next_id": self.next_usuario_id
+            }
+            with open(cache_file, 'w', encoding='utf-8') as f:
+                json.dump(data, f, indent=2, ensure_ascii=False, default=str)
+        except Exception as e:
+            print(f"Error guardando caché de usuarios: {e}")
+
+    def create_usuario_en_cache(self, usuario_data: dict) -> int:
+        """Crea un usuario de sesión en caché y retorna su usuario_id."""
+        with self.lock:
+            usuario_id = self.next_usuario_id
+            self.next_usuario_id += 1
+            usuario_data["id"] = usuario_id
+            if "created_at" not in usuario_data:
+                usuario_data["created_at"] = now_bogota().isoformat()
+            if "last_active" not in usuario_data:
+                usuario_data["last_active"] = now_bogota().isoformat()
+            self.usuarios_data[usuario_id] = usuario_data
+            self._save_usuarios_data()
+            return usuario_id
+
+    def get_usuario_by_id_from_cache(self, usuario_id: int) -> Optional[Dict[str, Any]]:
+        """Obtiene un usuario por ID desde caché."""
+        with self.lock:
+            return self.usuarios_data.get(int(usuario_id))
+
+    def get_usuario_by_nick_from_cache(self, nick: str) -> Optional[Dict[str, Any]]:
+        """Obtiene un usuario por su nick (case-insensitive) desde caché."""
+        with self.lock:
+            nick_lower = nick.lower()
+            for u in self.usuarios_data.values():
+                if u.get("nick", "").lower() == nick_lower:
+                    return u
+            return None
+
+    def get_usuarios_by_mesa_from_cache(self, mesa_id: int) -> List[Dict[str, Any]]:
+        """Obtiene todos los usuarios activos de una mesa desde caché."""
+        with self.lock:
+            return [u for u in self.usuarios_data.values() if u.get("mesa_id") == mesa_id]
+
+    def update_usuario_en_cache(self, usuario_id: int, updates: dict) -> bool:
+        """Actualiza datos de un usuario en caché."""
+        with self.lock:
+            uid = int(usuario_id)
+            if uid in self.usuarios_data:
+                self.usuarios_data[uid].update(updates)
+                self._save_usuarios_data()
+                return True
+            return False
+
+    def delete_usuario_from_cache(self, usuario_id: int) -> Optional[Dict[str, Any]]:
+        """Elimina un usuario del caché y retorna sus datos."""
+        with self.lock:
+            uid = int(usuario_id)
+            if uid in self.usuarios_data:
+                u = self.usuarios_data.pop(uid)
+                self._save_usuarios_data()
+                return u
+            return None
+
+    def clear_usuarios_de_mesa(self, mesa_id: int) -> None:
+        """Elimina todos los usuarios de sesión de una mesa."""
+        with self.lock:
+            ids_to_remove = [uid for uid, u in self.usuarios_data.items() if u.get("mesa_id") == mesa_id]
+            for uid in ids_to_remove:
+                del self.usuarios_data[uid]
+            if ids_to_remove:
+                self._save_usuarios_data()
+
+    def get_all_usuarios_from_cache(self) -> List[Dict[str, Any]]:
+        """Obtiene todos los usuarios de sesión activos."""
+        with self.lock:
+            return list(self.usuarios_data.values())
+
+    # ========================================================================
     # ALIAS PARA COMPATIBILIDAD (Garantizan que el código viejo siga funcionando)
     # ========================================================================
     
@@ -763,7 +877,6 @@ class CacheManager: # Define la clase central encargada de gestionar los datos e
             self.clear_all_songs()
             
             # 2. Limpiar mesas
-            # Borrar archivos mesa_cuenta_*.json
             for mesa_file in self.cache_dir.glob("mesa_cuenta_*.json"):
                 try:
                     mesa_file.unlink()
@@ -787,8 +900,13 @@ class CacheManager: # Define la clase central encargada de gestionar los datos e
                     credits_file.unlink()
                 except:
                     pass
+
+            # 5. Limpiar usuarios de sesión
+            self.usuarios_data = {}
+            self.next_usuario_id = 1
+            self._save_usuarios_data()
             
-            # 5. Sincronización
+            # 6. Sincronización
             self.set_queue_revision(1)
             print("CACHE REINICIADO COMPLETAMENTE.")
 

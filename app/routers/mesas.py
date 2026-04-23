@@ -2,8 +2,8 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy import text
 from typing import List
-from app import crud, schemas, models
-import re # Importar para el filtro de groserías
+from app import crud, schemas
+import re
 import datetime
 import logging
 from app.database import SessionLocal
@@ -180,13 +180,9 @@ def conectar_usuario_a_mesa(
         usuario_numero = None
         for num in range(1, 11):
             nick_test = f"{mesa_nombre}-Usuario{num}"
-            usuario_existente = db.query(models.Usuario).filter(
-                models.Usuario.mesa_id == mesa_id,
-                models.Usuario.nick == nick_test,
-                models.Usuario.is_active == True
-            ).first()
-            
-            if not usuario_existente:
+            # Look up from cache instead of DB
+            usuario_existente = cache.get_usuario_by_nick_from_cache(nick_test)
+            if not usuario_existente or not usuario_existente.get("is_active"):
                 usuario_numero = str(num)
                 break
         
@@ -223,32 +219,27 @@ def conectar_usuario_a_mesa(
     # Generar automáticamente el nick basado en la mesa y el número de usuario
     nick_automatico = f"{mesa_nombre}-Usuario{usuario_numero}"
     
-    # Asegurar que la mesa exista en MySQL para la FK constraint
+    # Asegurar que la mesa exista en MySQL para la FK constraint (cuentas → mesas)
     ensure_mesa_in_mysql(db, mesa_id, mesa_nombre, qr_code_mesa_base)
     
-    # Verificar si ya existe un usuario con este número en esta mesa
-    try:
-        db_usuario_existente = db.query(models.Usuario).filter(
-            models.Usuario.mesa_id == mesa_id,
-            models.Usuario.nick == nick_automatico
-        ).first()
-    except Exception as e:
-        logger.error(f"Error al buscar usuario '{nick_automatico}' en mesa {mesa_id}: {e}")
-        raise HTTPException(status_code=500, detail=f"Error de base de datos al buscar usuario: {e}")
+    # Verificar si ya existe un usuario con este nick en el caché (no en DB)
+    db_usuario_existente = cache.get_usuario_by_nick_from_cache(nick_automatico)
     
     if db_usuario_existente:
-        # Si el usuario ya existe y está activo, retornarlo
-        if db_usuario_existente.is_active:
-            return db_usuario_existente
+        if db_usuario_existente.get("is_active"):
+            # Return the existing cache user as object
+            from app.db.crud.crud_usuarios import _to_obj
+            return _to_obj(db_usuario_existente)
         else:
-            # Si existe pero está inactivo, reactivarlo
-            db_usuario_existente.is_active = True
-            db_usuario_existente.last_active = datetime.datetime.utcnow()
-            db.commit()
-            db.refresh(db_usuario_existente)
-            return db_usuario_existente
+            # Reactivate in cache
+            cache.update_usuario_en_cache(
+                db_usuario_existente["id"],
+                {"is_active": True, "last_active": datetime.datetime.utcnow().isoformat()}
+            )
+            from app.db.crud.crud_usuarios import _to_obj
+            return _to_obj(cache.get_usuario_by_id_from_cache(db_usuario_existente["id"]))
     
-    # Crear el nuevo usuario con el nick automático
+    # Crear el nuevo usuario en caché
     try:
         usuario_data = schemas.UsuarioCreate(nick=nick_automatico)
         return crud.create_usuario_en_mesa(db=db, usuario=usuario_data, mesa_id=mesa_id)
@@ -266,11 +257,11 @@ def get_usuarios_conectados(mesa_id: int, db: Session = Depends(get_db)):
     if not mesa:
         raise HTTPException(status_code=404, detail="Mesa no encontrada.")
     
-    usuarios_activos = db.query(models.Usuario).filter(
-        models.Usuario.mesa_id == mesa_id,
-        models.Usuario.is_active == True
-    ).all()
-    
+    from app.db.crud.crud_usuarios import _to_obj
+    usuarios_activos = [
+        _to_obj(u) for u in cache.get_usuarios_by_mesa_from_cache(mesa_id)
+        if u.get("is_active")
+    ]
     return usuarios_activos
 
 @router.get("/{mesa_id}/payment-status", response_model=schemas.MesaEstadoPago, summary="Obtener estado de cuenta de una mesa")

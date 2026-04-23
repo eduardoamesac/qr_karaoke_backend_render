@@ -101,14 +101,14 @@ def create_cancion_para_usuario(db: Session, cancion: CancionCreate, usuario_id:
 
 
 def consume_song_credit(db: Session, usuario_id: int, cancion_id: int) -> bool:
-    """Consume un crédito de canción del usuario."""
+    """Consume un crédito de canción del usuario (actualiza en CACHE)."""
     from app.db.crud.crud_usuarios import get_usuario_by_id
     usuario = get_usuario_by_id(db, usuario_id)
     if not usuario or (usuario.song_credits or 0) <= 0:
         return False
 
-    usuario.song_credits = (usuario.song_credits or 1) - 1
-    db.commit()
+    new_credits = max(0, (usuario.song_credits or 1) - 1)
+    cache.update_usuario_en_cache(usuario_id, {"song_credits": new_credits})
     return True
 
 
