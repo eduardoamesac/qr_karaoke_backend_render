@@ -43,11 +43,12 @@ def ensure_mesa_in_mysql(db: Session, mesa_id: int, mesa_nombre: str, qr_code: s
     Las mesas viven en el cache JSON, pero MySQL necesita el registro
     para que el INSERT de usuarios no falle por FK.
     """
-    result = db.execute(
-        text("SELECT id FROM mesas WHERE id = :id"), {"id": mesa_id}
-    )
-    if not result.fetchone():
-        try:
+    try:
+        # Realizamos la consulta y la inserción dentro de un bloque try-except global
+        result = db.execute(
+            text("SELECT id FROM mesas WHERE id = :id"), {"id": mesa_id}
+        )
+        if not result.fetchone():
             db.execute(
                 text(
                     "INSERT INTO mesas (id, nombre, qr_code, is_active) "
@@ -62,9 +63,9 @@ def ensure_mesa_in_mysql(db: Session, mesa_id: int, mesa_nombre: str, qr_code: s
             )
             db.commit()
             logger.info(f"Mesa {mesa_id} ('{mesa_nombre}') sincronizada a MySQL para FK.")
-        except Exception as e:
-            db.rollback()
-            logger.warning(f"No se pudo sincronizar mesa {mesa_id} a MySQL: {e}")
+    except Exception as e:
+        db.rollback()
+        logger.warning(f"No se pudo sincronizar mesa {mesa_id} a MySQL (posible tabla inexistente): {e}")
 
 
 @router.get("/", response_model=List[schemas.Mesa], summary="Listar todas las mesas", dependencies=[Depends(verify_token)])
@@ -159,28 +160,41 @@ def conectar_usuario_a_mesa(
         
         mesa_numero = match_antiguo.group(1)
         
-        # Buscar la mesa para asignar el siguiente usuario disponible
-        qr_code_mesa_base = f"karaoke-mesa-{mesa_numero}"
-        db_mesa_temp = crud.get_mesa_by_qr(db, qr_code=qr_code_mesa_base)
+    # --- Búsqueda unificada de la mesa con fallbacks (mesa-2 vs mesa-02) ---
+    qr_code_mesa_base = f"karaoke-mesa-{mesa_numero}"
+    db_mesa = crud.get_mesa_by_qr(db, qr_code=qr_code_mesa_base)
+    
+    if not db_mesa:
+        # Intentar formato sin ceros (ej: mesa-2)
+        qr_code_mesa_base_int = f"karaoke-mesa-{int(mesa_numero)}"
+        db_mesa = crud.get_mesa_by_qr(db, qr_code=qr_code_mesa_base_int)
+
+    if not db_mesa:
+        # Intentar formato con ceros (ej: mesa-02)
+        qr_code_mesa_base_pad = f"karaoke-mesa-{int(mesa_numero):02d}"
+        db_mesa = crud.get_mesa_by_qr(db, qr_code=qr_code_mesa_base_pad)
         
-        if not db_mesa_temp:
-            qr_code_mesa_base_int = f"karaoke-mesa-{int(mesa_numero)}"
-            db_mesa_temp = crud.get_mesa_by_qr(db, qr_code=qr_code_mesa_base_int)
-            
-        if not db_mesa_temp:
-            raise HTTPException(
-                status_code=404, 
-                detail=f"La mesa '{qr_code_mesa_base}' no existe. Por favor, contacta al personal."
-            )
-        
-        mesa_id = db_mesa_temp.get('id')
-        mesa_nombre = db_mesa_temp.get('nombre')
-        
-        # Encontrar el siguiente número de usuario disponible (1-10)
+    if not db_mesa:
+        raise HTTPException(
+            status_code=404, 
+            detail=f"La mesa '{qr_code_mesa_base}' no existe. Por favor, contacta al personal."
+        )
+
+    mesa_id = db_mesa.get('id')
+    mesa_nombre = db_mesa.get('nombre')
+    is_active = db_mesa.get('is_active', True)
+
+    if not is_active:
+        raise HTTPException(
+            status_code=403, 
+            detail="Esta mesa se encuentra desactivada temporalmente. Por favor, contacta al personal."
+        )
+
+    # Si es formato antiguo o no tenemos usuario_numero, buscar el siguiente disponible
+    if not match_nuevo:
         usuario_numero = None
         for num in range(1, 11):
             nick_test = f"{mesa_nombre}-Usuario{num}"
-            # Look up from cache instead of DB
             usuario_existente = cache.get_usuario_by_nick_from_cache(nick_test)
             if not usuario_existente or not usuario_existente.get("is_active"):
                 usuario_numero = str(num)
@@ -189,38 +203,14 @@ def conectar_usuario_a_mesa(
         if not usuario_numero:
             raise HTTPException(
                 status_code=429,
-                detail="La mesa ha alcanzado el máximo de 10 usuarios activos. Por favor, usa un QR específico de usuario o intenta más tarde."
+                detail="La mesa ha alcanzado el máximo de 10 usuarios activos. Por favor, intenta más tarde."
             )
-    
-    # Buscar la mesa base (sin el sufijo de usuario)
-    qr_code_mesa_base = f"karaoke-mesa-{mesa_numero}"
-    db_mesa = crud.get_mesa_by_qr(db, qr_code=qr_code_mesa_base)
-    
-    if not db_mesa:
-        qr_code_mesa_base_int = f"karaoke-mesa-{int(mesa_numero)}"
-        db_mesa = crud.get_mesa_by_qr(db, qr_code=qr_code_mesa_base_int)
-        
-    if not db_mesa:
-        raise HTTPException(
-            status_code=404, 
-            detail=f"La mesa '{qr_code_mesa_base}' no existe. Por favor, contacta al personal."
-        )
-
-    is_active = db_mesa.get('is_active', True)
-    mesa_id = db_mesa.get('id')
-    mesa_nombre = db_mesa.get('nombre')
-
-    if not is_active:
-        raise HTTPException(
-            status_code=403, 
-            detail="Esta mesa se encuentra desactivada temporalmente. Por favor, contacta al personal."
-        )
     
     # Generar automáticamente el nick basado en la mesa y el número de usuario
     nick_automatico = f"{mesa_nombre}-Usuario{usuario_numero}"
-    
-    # Asegurar que la mesa exista en MySQL para la FK constraint (cuentas → mesas)
-    ensure_mesa_in_mysql(db, mesa_id, mesa_nombre, qr_code_mesa_base)
+
+    # Asegurar sincronización con MySQL (ahora robusta a errores de tabla inexistente)
+    ensure_mesa_in_mysql(db, mesa_id, mesa_nombre, db_mesa.get('qr_code'))
     
     # Verificar si ya existe un usuario con este nick en el caché (no en DB)
     db_usuario_existente = cache.get_usuario_by_nick_from_cache(nick_automatico)
@@ -300,8 +290,14 @@ def get_mesa_info(qr_code: str, db: Session = Depends(get_db)):
     db_mesa = crud.get_mesa_by_qr(db, qr_code=qr_code_mesa_base)
     
     if not db_mesa and (match_nuevo or match_antiguo):
+        # Probar formato sin ceros
         qr_code_mesa_base_int = f"karaoke-mesa-{int(mesa_numero)}"
         db_mesa = crud.get_mesa_by_qr(db, qr_code=qr_code_mesa_base_int)
+        
+        # Probar formato con ceros (02) si aún no se encuentra
+        if not db_mesa:
+            qr_code_mesa_base_pad = f"karaoke-mesa-{int(mesa_numero):02d}"
+            db_mesa = crud.get_mesa_by_qr(db, qr_code=qr_code_mesa_base_pad)
         
     if not db_mesa:
         raise HTTPException(
