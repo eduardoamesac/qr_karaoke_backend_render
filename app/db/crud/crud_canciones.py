@@ -359,10 +359,13 @@ async def avanzar_cola_automaticamente(db: Session):
             })
 
         siguiente = queue_manager.pop_next_song(db)
-        queue_manager.refresh_all(db)
+        queue_manager.refresh_all(db) # Sincronizar el singleton
 
+        # --- MEJORA: Broadcast con el estado real del CACHE JSON ---
         try:
-            await websocket_manager.manager.broadcast_queue_update()
+            # Obtenemos la cola completa agrupada por estados para el admin
+            new_queue_state = get_cola_completa_con_lazy(db)
+            await websocket_manager.manager.broadcast_queue_update(new_queue_state)
         except Exception:
             logger.exception('❌ Error broadcasting queue_update after advancing cola')
 

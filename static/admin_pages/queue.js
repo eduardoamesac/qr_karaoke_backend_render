@@ -283,33 +283,28 @@ function renderApprovedSongs(songs, listElement) {
     // si existe, o en su defecto la primera canción aprobada (siguiente en sonar).
     let item = null;
     let isPlaying = false;
-    let isFirstQueueRender = true;
-    console.log("upcoming logic", songs);
+    
     if (Array.isArray(songs)) {
         if (songs.length > 0) {
             item = songs[0];
             songs.now_playing = item;
             isPlaying = !!(item.estado && item.estado === 'reproduciendo');
         }
-    } else if (songs && typeof songs === 'object') {
+    } else if (songs && typeof songs === 'object' && songs.now_playing !== undefined) {
         if (songs.now_playing) {
-            console.log("now playing", songs);
             item = songs.now_playing;
             isPlaying = true;
-            if (songs.upcoming && Array.isArray(songs.upcoming) && songs.upcoming.length > 0) {
-                songs.lazy_queue.unshift(songs.upcoming[0]);
-                console.log("songs object ", songs);
-            }
         } else if (songs.upcoming && Array.isArray(songs.upcoming) && songs.upcoming.length > 0) {
-            console.log("else if upcoming", songs);
             item = songs.upcoming[0];
             isPlaying = false;
+        }
+    }
 
-            // 🚨 Solo en el primer render evitamos que aparezca en lazy
-            if (isFirstQueueRender) {
-                songs.upcoming = songs.upcoming.slice(1);
-                isFirstQueueRender = false;
-            }
+    // Garantizar que la canción "Siguiente" aparezca en la lista de abajo si hay alguien cantando
+    if (songs && songs.now_playing && songs.upcoming && songs.upcoming.length > 0) {
+        const nextSong = songs.upcoming[0];
+        if (songs.lazy_queue && !songs.lazy_queue.find(s => s.id === nextSong.id)) {
+            songs.lazy_queue.unshift(nextSong);
         }
     }
 

@@ -44,22 +44,30 @@ class ConnectionManager:
                 # La conexión ya fue eliminada, lo ignoramos.
                 pass
 
-    async def broadcast_queue_update(self):
+    async def broadcast_queue_update(self, queue_state: dict = None):
         """
         Obtiene el ESTADO DEFINITIVO de la cola (con integridad validada)
         y lo envía a todos los clientes.
         
         IMPORTANTE:
-        - Usa QueueSynchronizer para garantizar estado consistente
+        - Si se pasa queue_state, lo usa directamente.
+        - Si no, usa el CRUD basado en cache (más seguro sin SQL).
         - Incluye revisión (revision number) para invalidar cache frontend
         - Valida que now_playing no esté duplicado en upcoming
         """
+        if queue_state:
+            payload = {
+                "type": "queue_update",
+                "payload": queue_state
+            }
+            await self._broadcast(json.dumps(payload, default=str))
+            return
+
         db = SessionLocal()
         try:
-            from queue_synchronizer import QueueSynchronizer
-            
-            # Obtener estado DEFINITIVO (con validaciones)
-            queue_state = QueueSynchronizer.get_definitive_state(db)
+            from app.db import crud
+            # Usar el CRUD basado en cache que es más seguro dado que no hay tablas SQL
+            queue_state = crud.get_cola_completa_con_lazy(db)
             
             payload = {
                 "type": "queue_update",

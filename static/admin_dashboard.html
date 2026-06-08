@@ -397,6 +397,13 @@
                                         <p style="font-size: 1.5em; color: var(--secondary-color);">Puntaje: <strong>${songInfo.puntuacion_ia}</strong></p>
                                     `;
                                 }
+                                    
+                                    // --- REACTIVIDAD: Refrescar listas al terminar canción ---
+                                    if (document.getElementById('queue').classList.contains('active')) {
+                                        if (typeof loadQueueData === 'function') loadQueueData();
+                                    } else if (document.getElementById('dashboard').classList.contains('active')) {
+                                        if (typeof loadDashboardPage === 'function') loadDashboardPage();
+                                    }
                                 break;
                             case 'notification':
                                 showNotification(data.payload?.mensaje || 'Notificación', 'info');
@@ -409,20 +416,34 @@
                                 }
                                 break;
                             case 'queue_update':
-                                // Almacenar el estado de la cola en la variable global
-                                // Esto permite actualizar la vista aunque no esté activa
-                                currentQueueData = data.payload || { now_playing: null, upcoming: [] };
-                                // Actualizar la lista si la pestaña de cola está visible
-                                if (document.getElementById('queue').classList.contains('active')) {
-                                    const approvedListEl = document.getElementById('approved-songs-list');
-                                    const pendingListEl = document.getElementById('pending-songs-list');
-                                    if (approvedListEl && typeof renderApprovedSongs === 'function') {
-                                        renderApprovedSongs(currentQueueData, approvedListEl);
-                                    }
-                                    if (pendingListEl && typeof renderPendingSongs === 'function') {
-                                        renderPendingSongs(currentQueueData.pending || [], pendingListEl);
-                                    }
+                                    // Sincronizar variable global
+                                    currentQueueData = data.payload || {};
+                                    
+                                    // --- RENDERIZADO DIRECTO: Evita race conditions y lag de red ---
+                                    const queueTab = document.getElementById('queue');
+                                    const dashboardTab = document.getElementById('dashboard');
+                                    
+                                    if (queueTab && queueTab.classList.contains('active')) {
+                                        const approvedListEl = document.getElementById('approved-songs-list');
+                                        const lazySongsListEl = document.getElementById('lazy-songs-list');
+                                        
+                                        if (data.payload && typeof renderApprovedSongs === 'function' && approvedListEl) {
+                                            renderApprovedSongs(currentQueueData, approvedListEl);
+                                            if (typeof renderLazySongs === 'function' && lazySongsListEl) {
+                                                renderLazySongs(currentQueueData.lazy_queue || [], lazySongsListEl);
+                                            }
+                                        } else if (typeof loadQueueData === 'function') {
+                                            loadQueueData();
+                                        }
+                                    } else if (dashboardTab && dashboardTab.classList.contains('active')) {
+                                        if (typeof loadDashboardPage === 'function') loadDashboardPage();
                                 }
+                                break;
+                            case 'play_song':
+                                // Forzar actualización cuando el player inicia una canción
+                                console.log('🎵 Nueva canción detectada, actualizando UI...');
+                                if (typeof loadQueueData === 'function' && document.getElementById('queue').classList.contains('active')) loadQueueData();
+                                if (typeof loadDashboardPage === 'function' && document.getElementById('dashboard').classList.contains('active')) loadDashboardPage();
                                 break;
                             case 'pause_playback':
                                 // Sincronizar el estado de pausa en el frontend

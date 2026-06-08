@@ -174,8 +174,11 @@ async def aprobar_cancion(cancion_id: int, db: Session = Depends(get_db), admin:
     if not db_cancion:
         raise HTTPException(status_code=404, detail="Canción no encontrada")
     await crud.start_next_song_if_autoplay_and_idle(db)
-    queue_manager.refresh_queue(db)
-    await websocket_manager.manager.broadcast_queue_update()
+    
+    # Refrescar y enviar estado completo para actualización instantánea en el admin
+    queue_manager.refresh_all(db)
+    new_state = crud.get_cola_completa_con_lazy(db)
+    await websocket_manager.manager.broadcast_queue_update(new_state)
     return db_cancion
 
 @router.post("/{cancion_id}/rechazar", response_model=schemas.Cancion, summary="Rechazar una canción")
@@ -197,11 +200,13 @@ async def rechazar_cancion(cancion_id: int, db: Session = Depends(get_db), admin
     
     db_cancion = crud.update_cancion_estado(db, cancion_id=cancion_id, nuevo_estado="rechazada")
     
-    # NUEVO: Refrescar la cola ANTES de chequear la siguiente lazy para que el cache esté al día
-    queue_manager.refresh_queue(db)
+    # Refrescar y chequear la siguiente canción en espera
+    queue_manager.refresh_all(db)
     crud.check_and_approve_next_lazy_song(db)
     
-    await websocket_manager.manager.broadcast_queue_update()
+    # Notificar a los clientes con el nuevo estado
+    new_state = crud.get_cola_completa_con_lazy(db)
+    await websocket_manager.manager.broadcast_queue_update(new_state)
     return db_cancion
 
 @router.post("/admin/add", response_model=schemas.Cancion, summary="[Admin] Añadir una canción como DJ")
