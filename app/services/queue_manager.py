@@ -45,14 +45,23 @@ class QueueManager:
     def refresh_all(self, db: Session):
         """Sincroniza desde el CACHE JSON."""
         # Obtener canciones por estado del cache
+        def get_sort_key(s):
+            try:
+                val = s.get("orden_manual")
+                # None o corruptos van al final (999999)
+                order = int(val) if val is not None else 999999
+            except (ValueError, TypeError):
+                order = 999999
+            return (order, str(s.get("created_at", "")))
+
         self._now_playing_list = cache.get_songs_by_estado("reproduciendo")
         self._now_playing = self._now_playing_list[0] if self._now_playing_list else None
         
         self._approved_queue = cache.get_songs_by_estado("aprobado") or []
-        self._approved_queue.sort(key=lambda s: (s.get("orden_manual", 0) or 0, s.get("created_at", "")))
+        self._approved_queue.sort(key=get_sort_key)
 
         self._lazy_queue = cache.get_songs_by_estado("pendiente_lazy") or []
-        self._lazy_queue.sort(key=lambda s: (s.get("orden_manual", 0) or 0, s.get("created_at", "")))
+        self._lazy_queue.sort(key=get_sort_key)
 
         self._pending_queue = cache.get_songs_by_estado("pendiente") or []
         self._pending_queue.sort(key=lambda s: s.get("created_at", ""))

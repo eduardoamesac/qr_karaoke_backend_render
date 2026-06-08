@@ -934,7 +934,14 @@
                 const nowPlayingInfo = document.getElementById('now-playing-info');
                 const upcomingInfo = document.getElementById('upcoming-info');
 
-                // Actualizar "Ahora Cantando"
+                // Obtener la siguiente canción real (priorizando aprobadas, luego lazy)
+                let nextSong = null;
+                if (queueData && queueData.upcoming && queueData.upcoming.length > 0) {
+                    nextSong = queueData.upcoming[0];
+                } else if (queueData && queueData.lazy_queue && queueData.lazy_queue.length > 0) {
+                    nextSong = queueData.lazy_queue[0];
+                }
+
                 if (queueData && queueData.now_playing) {
                     const song = queueData.now_playing;
                     // Protegemos contra estructura inesperada
@@ -948,8 +955,7 @@
                 }
 
                 // Actualizar "Siguiente" y guardar información para la transición
-                if (queueData && queueData.upcoming && queueData.upcoming.length > 0) {
-                    const nextSong = queueData.upcoming[0];
+                if (nextSong) {
                     const addedBy = (nextSong && nextSong.usuario) ? (nextSong.usuario.mesa ? nextSong.usuario.mesa.nombre : nextSong.usuario.nick) : 'Desconocido';
 
                     // Guardar información de la siguiente canción para mostrar en la transición
