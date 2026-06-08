@@ -49,13 +49,11 @@ async def _perform_youtube_search(q: str, karaoke_mode: bool = False) -> List[Di
     # Aumentamos el timeout a 30 segundos para evitar errores en redes lentas
     async with httpx.AsyncClient(timeout=30.0) as client:
         try:
-            # --- INICIO DE LA CORRECCIÓN ---
-            # Importamos 'isodate' aquí para que esté disponible en todo el bloque try...except
             try:
                 import isodate
             except ImportError:
-                raise ImportError("La librería 'isodate' no está instalada. Por favor, ejecuta: pip install isodate")
-            # --- FIN DE LA CORRECCIÓN ---
+                logger.error("La librería 'isodate' no está instalada.")
+                raise HTTPException(status_code=500, detail="Error interno: isodate no instalado.")
 
             video_id_from_url = extract_video_id_from_url(q)
             logger.info(f"¿Es una URL? ID extraído: {video_id_from_url}")
@@ -73,34 +71,32 @@ async def _perform_youtube_search(q: str, karaoke_mode: bool = False) -> List[Di
                     "q": q,
                     "key": YOUTUBE_API_KEY,
                     "type": "video",
-                    "videoCategoryId": "10",  # Categoría de Música
-                    "maxResults": 10
+                    "maxResults": 25
                 }
                 logger.info("Realizando primera llamada a la API de YouTube (search)...")
                 search_response = await client.get(YOUTUBE_SEARCH_URL, params=search_params)
                 search_response.raise_for_status()
                 search_results = search_response.json()
                 logger.info("Respuesta de la API (search) recibida con éxito.")
+                
                 # Extraer IDs de forma robusta: algunos items pueden no contener 'videoId'
                 from typing import Iterable
 
                 def extract_video_ids_from_search_items(items: Iterable[dict]) -> List[str]:
-                    ids: List[str] = []
+                    unique_ids: List[str] = []
+                    seen = set()  # Para evitar duplicados en la lista de IDs
                     for item in items:
                         id_obj = item.get("id")
+                        vid = None
                         if isinstance(id_obj, dict):
                             vid = id_obj.get("videoId")
-                            if vid:
-                                ids.append(vid)
-                            else:
-                                # Puede ser un canal/playlist u otro tipo inesperado; lo omitimos
-                                logger.debug(f"Se encontró un item con 'id' dict sin 'videoId': {id_obj}. Omitiendo.")
                         elif isinstance(id_obj, str):
-                            # A veces el id puede venir como string
-                            ids.append(id_obj)
-                        else:
-                            logger.debug(f"Item de búsqueda con formato inesperado: {item}. Omitiendo.")
-                    return ids
+                            vid = id_obj
+                        
+                        if vid and vid not in seen:
+                            unique_ids.append(vid)
+                            seen.add(vid)
+                    return unique_ids
 
                 video_ids = extract_video_ids_from_search_items(search_results.get("items", []))
                 logger.info(f"IDs de video encontrados: {video_ids}")
@@ -134,14 +130,6 @@ async def _perform_youtube_search(q: str, karaoke_mode: bool = False) -> List[Di
                 
                 content_details = item.get("contentDetails", {})
                 try:
-                    # --- INICIO DE LA CORRECCIÓN ---
-                    # Importamos 'isodate' aquí para asegurar que esté disponible.
-                    # Si no está instalado, lanzará un error claro.
-                    try:
-                        import isodate
-                    except ImportError:
-                        raise ImportError("La librería 'isodate' no está instalada. Por favor, ejecuta: pip install isodate")
-                    # --- FIN DE LA CORRECCIÓN ---
                     duration_iso = content_details.get("duration", "PT0S") # "PT0S" es duración cero
                     duration_seconds = int(isodate.parse_duration(duration_iso).total_seconds())
                 except (isodate.ISO8601Error, KeyError):
@@ -166,8 +154,8 @@ async def _perform_youtube_search(q: str, karaoke_mode: bool = False) -> List[Di
                 else:
                     video_id_val = vid_field or ""
 
-                # Filtrar por duración strict (120s - 600s)
-                if not (120 <= duration_seconds <= 600):
+                # Filtrar por duración (45s - 900s) para ser menos restrictivos
+                if not (45 <= duration_seconds <= 900):
                     continue
 
                 formatted_results.append({
