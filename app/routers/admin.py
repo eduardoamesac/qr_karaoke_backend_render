@@ -779,22 +779,39 @@ async def move_pending_song_up(cancion_id: int, db: Session = Depends(get_db), a
     """
     **[Admin]** Mueve una canción pendiente una posición hacia arriba en la cola.
     """
+    from datetime import datetime, timedelta
     from app.utils.cache_manager import cache_manager as cm
     all_songs = cm.get_all_songs()
     pending = sorted(
         [s for s in all_songs if s.get('estado') == 'pendiente'],
-        key=lambda s: s.get('created_at', '')
+        key=lambda s: str(s.get('created_at', ''))
     )
-    idx = next((i for i, s in enumerate(pending) if s.get('id') == cancion_id), None)
+    
+    # Comparación robusta de IDs (soporta int y str)
+    idx = next((i for i, s in enumerate(pending) if int(s.get('id', 0)) == int(cancion_id)), None)
+    
     if idx is None:
         raise HTTPException(status_code=404, detail="Canción pendiente no encontrada.")
+        
     if idx > 0:
-        # Intercambiar created_at con la anterior
-        prev = pending[idx - 1]
-        curr = pending[idx]
-        temp = curr.get('created_at')
-        cm.update_song_in_cache(curr['id'], {'created_at': prev.get('created_at')})
-        cm.update_song_in_cache(prev['id'], {'created_at': temp})
+        try:
+            prev = pending[idx - 1]
+            curr = pending[idx]
+
+            # INTERCAMBIO (SWAP) de timestamps para mover exactamente 1 posición
+            cm.update_song_in_cache(curr['id'], {'created_at': prev.get('created_at')})
+            cm.update_song_in_cache(prev['id'], {'created_at': curr.get('created_at')})
+            
+            logger.info(f"Canción {cancion_id} intercambiada con {prev['id']} (Subir)")
+        except Exception as e:
+            logger.error(f"Error al intercambiar canción arriba: {e}")
+
+    try:
+        from app.services.queue_manager import queue_manager
+        queue_manager.refresh_queue(db)
+    except Exception as e:
+        logger.warning(f"Omitiendo refresh de DB (MySQL no disponible): {e}")
+
     await websocket_manager.manager.broadcast_queue_update()
     return {"mensaje": "Canción movida hacia arriba."}
 
@@ -805,24 +822,122 @@ async def move_pending_song_down(cancion_id: int, db: Session = Depends(get_db),
     """
     **[Admin]** Mueve una canción pendiente una posición hacia abajo en la cola.
     """
+    from datetime import datetime, timedelta
     from app.utils.cache_manager import cache_manager as cm
     all_songs = cm.get_all_songs()
     pending = sorted(
         [s for s in all_songs if s.get('estado') == 'pendiente'],
-        key=lambda s: s.get('created_at', '')
+        key=lambda s: str(s.get('created_at', ''))
     )
-    idx = next((i for i, s in enumerate(pending) if s.get('id') == cancion_id), None)
+    
+    idx = next((i for i, s in enumerate(pending) if int(s.get('id', 0)) == int(cancion_id)), None)
+    
     if idx is None:
         raise HTTPException(status_code=404, detail="Canción pendiente no encontrada.")
+        
     if idx < len(pending) - 1:
-        # Intercambiar created_at con la siguiente
-        nxt = pending[idx + 1]
-        curr = pending[idx]
-        temp = curr.get('created_at')
-        cm.update_song_in_cache(curr['id'], {'created_at': nxt.get('created_at')})
-        cm.update_song_in_cache(nxt['id'], {'created_at': temp})
+        try:
+            nxt = pending[idx + 1]
+            curr = pending[idx]
+
+            # INTERCAMBIO (SWAP) de timestamps para mover exactamente 1 posición
+            cm.update_song_in_cache(curr['id'], {'created_at': nxt.get('created_at')})
+            cm.update_song_in_cache(nxt['id'], {'created_at': curr.get('created_at')})
+            
+            logger.info(f"Canción {cancion_id} intercambiada con {nxt['id']} (Bajar)")
+        except Exception as e:
+            logger.error(f"Error al intercambiar canción abajo: {e}")
+
+    try:
+        from app.services.queue_manager import queue_manager
+        queue_manager.refresh_queue(db)
+    except Exception as e:
+        logger.warning(f"Omitiendo refresh de DB (MySQL no disponible): {e}")
+
     await websocket_manager.manager.broadcast_queue_update()
     return {"mensaje": "Canción movida hacia abajo."}
+
+# ===================== UPCOMING QUEUE MOVEMENT (APPROVED) =====================
+
+@router.post("/canciones/approved/{cancion_id}/move-up", status_code=200, summary="Subir canción en próximas")
+async def move_approved_song_up(cancion_id: int, db: Session = Depends(get_db)):
+    """Mueve una canción aprobada hacia arriba usando prioridad manual."""
+    from app.utils.cache_manager import cache_manager as cm
+    all_songs = cm.get_all_songs()
+
+    def get_sort_key(s):
+        try:
+            val = s.get('prioridad_manual', 0)
+            return int(val) if val is not None else 0
+        except (ValueError, TypeError):
+            return 0
+
+    upcoming = sorted(
+        [s for s in all_songs if s.get('estado') == 'aprobado'],
+        key=lambda s: (get_sort_key(s), str(s.get('created_at', ''))),
+        reverse=True # Mayor prioridad va primero
+    )
+    
+    idx = next((i for i, s in enumerate(upcoming) if int(s.get('id', 0)) == int(cancion_id)), None)
+    
+    if idx is not None and idx > 0:
+        prev = upcoming[idx - 1]
+        curr = upcoming[idx]
+
+        # SWAP de prioridad y tiempo para asegurar movimiento de 1 solo paso
+        curr_updates = {'prioridad_manual': prev.get('prioridad_manual'), 'created_at': prev.get('created_at')}
+        prev_updates = {'prioridad_manual': curr.get('prioridad_manual'), 'created_at': curr.get('created_at')}
+        
+        cm.update_song_in_cache(curr['id'], curr_updates)
+        cm.update_song_in_cache(prev['id'], prev_updates)
+        
+        try:
+            from app.services.queue_manager import queue_manager
+            queue_manager.refresh_queue(db)
+        except:
+            pass
+    await websocket_manager.manager.broadcast_queue_update()
+    return {"mensaje": "Orden actualizado"}
+
+@router.post("/canciones/approved/{cancion_id}/move-down", status_code=200, summary="Bajar canción en próximas")
+async def move_approved_song_down(cancion_id: int, db: Session = Depends(get_db)):
+    """Mueve una canción aprobada hacia abajo usando prioridad manual."""
+    from app.utils.cache_manager import cache_manager as cm
+    all_songs = cm.get_all_songs()
+
+    def get_sort_key(s):
+        try:
+            val = s.get('prioridad_manual', 0)
+            return int(val) if val is not None else 0
+        except (ValueError, TypeError):
+            return 0
+
+    upcoming = sorted(
+        [s for s in all_songs if s.get('estado') == 'aprobado'],
+        key=lambda s: (get_sort_key(s), str(s.get('created_at', ''))),
+        reverse=True
+    )
+    
+    idx = next((i for i, s in enumerate(upcoming) if int(s.get('id', 0)) == int(cancion_id)), None)
+    
+    if idx is not None and idx < len(upcoming) - 1:
+        nxt = upcoming[idx + 1]
+        curr = upcoming[idx]
+
+        # SWAP de prioridad y tiempo
+        curr_updates = {'prioridad_manual': nxt.get('prioridad_manual'), 'created_at': nxt.get('created_at')}
+        prev_updates = {'prioridad_manual': curr.get('prioridad_manual'), 'created_at': curr.get('created_at')}
+        
+        cm.update_song_in_cache(curr['id'], curr_updates)
+        cm.update_song_in_cache(nxt['id'], prev_updates)
+        
+        try:
+            from app.services.queue_manager import queue_manager
+            queue_manager.refresh_queue(db)
+        except:
+            pass
+    await websocket_manager.manager.broadcast_queue_update()
+    return {"mensaje": "Orden actualizado"}
 
 # ===================== LAZY QUEUE MOVEMENT ENDPOINTS =====================
 
@@ -831,32 +946,59 @@ async def move_lazy_song_up(cancion_id: int, db: Session = Depends(get_db), admi
     log_admin_action(admin.get("sub"), "move_lazy_song_up", f"ID: {cancion_id}")
     """
     **[Admin]** Mueve una canción en la cola lazy una posición hacia arriba.
-    
-    CAMBIO: Ahora usa QueueSynchronizer para GARANTIZAR que:
-    1. La canción no está siendo reproducida
-    2. El reorden es ATÓMICO
-    3. El estado retornado es DEFINITIVO
-    4. Se incrementa la revisión para invalidar cache frontend
     """
-    from queue_synchronizer import QueueSynchronizer
+    from datetime import datetime, timedelta
+    from app.utils.cache_manager import cache_manager as cm
     
-    # Usar mecanismo determinístico y seguro
-    result = QueueSynchronizer.reorder_lazy_queue_safely(
-        db,
-        cancion_id=cancion_id,
-        direction="up",
-        audit_user=f"admin_{admin.get('sub')}"
+    all_songs = cm.get_all_songs()
+
+    def get_sort_key(s):
+        try:
+            val = s.get('orden_manual')
+            return int(val) if val is not None else 999999
+        except (ValueError, TypeError):
+            return 999999
+
+    # Filtrar y ordenar igual que como se muestra en la UI
+    lazy = sorted(
+        [s for s in all_songs if s.get('estado') == 'pendiente_lazy'],
+        key=lambda s: (get_sort_key(s), str(s.get('created_at', '')))
     )
     
-    if not result["success"]:
-        raise HTTPException(status_code=400, detail=result["error"])
+    # Comparación robusta de IDs (soporta int y str)
+    idx = next((i for i, s in enumerate(lazy) if int(s.get('id', 0)) == int(cancion_id)), None)
+    
+    if idx is None:
+        raise HTTPException(status_code=404, detail="Canción lazy no encontrada.")
+        
+    if idx > 0:
+        try:
+            prev = lazy[idx - 1]
+            curr = lazy[idx]
+
+            # SWAP total de criterios de ordenamiento (orden_manual y created_at)
+            curr_updates = {'created_at': prev.get('created_at'), 'orden_manual': prev.get('orden_manual')}
+            prev_updates = {'created_at': curr.get('created_at'), 'orden_manual': curr.get('orden_manual')}
+
+            cm.update_song_in_cache(curr['id'], curr_updates)
+            cm.update_song_in_cache(prev['id'], prev_updates)
+            
+            logger.info(f"Canción lazy {cancion_id} intercambiada con {prev['id']}")
+        except Exception as e:
+            logger.error(f"Error al intercambiar canción lazy: {e}")
+
+    try:
+        from app.db import crud
+        queue_state = crud.get_cola_completa_con_lazy(db)
+    except:
+        queue_state = {}
     
     # Broadcast DEFINITIVO
     await websocket_manager.manager.broadcast_queue_update()
     
     return {
         "mensaje": "Canción movida hacia arriba.",
-        "queue_state": result["queue_state"]
+        "queue_state": queue_state
     }
 
 @router.post("/canciones/lazy/{cancion_id}/move-down", status_code=200, summary="Mover canción lazy hacia abajo")
@@ -864,32 +1006,56 @@ async def move_lazy_song_down(cancion_id: int, db: Session = Depends(get_db), ad
     log_admin_action(admin.get("sub"), "move_lazy_song_down", f"ID: {cancion_id}")
     """
     **[Admin]** Mueve una canción en la cola lazy una posición hacia abajo.
-    
-    CAMBIO: Ahora usa QueueSynchronizer para GARANTIZAR que:
-    1. La canción no está siendo reproducida
-    2. El reorden es ATÓMICO
-    3. El estado retornado es DEFINITIVO
-    4. Se incrementa la revisión para invalidar cache frontend
     """
-    from queue_synchronizer import QueueSynchronizer
+    from datetime import datetime, timedelta
+    from app.utils.cache_manager import cache_manager as cm
     
-    # Usar mecanismo determinístico y seguro
-    result = QueueSynchronizer.reorder_lazy_queue_safely(
-        db,
-        cancion_id=cancion_id,
-        direction="down",
-        audit_user=f"admin_{admin.get('sub')}"
+    all_songs = cm.get_all_songs()
+
+    def get_sort_key(s):
+        try:
+            val = s.get('orden_manual')
+            return int(val) if val is not None else 999999
+        except (ValueError, TypeError):
+            return 999999
+
+    lazy = sorted(
+        [s for s in all_songs if s.get('estado') == 'pendiente_lazy'],
+        key=lambda s: (get_sort_key(s), str(s.get('created_at', '')))
     )
     
-    if not result["success"]:
-        raise HTTPException(status_code=400, detail=result["error"])
+    idx = next((i for i, s in enumerate(lazy) if int(s.get('id', 0)) == int(cancion_id)), None)
+    
+    if idx is None:
+        raise HTTPException(status_code=404, detail="Canción lazy no encontrada.")
+        
+    if idx < len(lazy) - 1:
+        try:
+            nxt = lazy[idx + 1]
+            curr = lazy[idx]
+
+            # SWAP total de criterios de ordenamiento
+            curr_updates = {'created_at': nxt.get('created_at'), 'orden_manual': nxt.get('orden_manual')}
+            nxt_updates = {'created_at': curr.get('created_at'), 'orden_manual': curr.get('orden_manual')}
+
+            cm.update_song_in_cache(curr['id'], curr_updates)
+            cm.update_song_in_cache(nxt['id'], nxt_updates)
+            
+        except Exception as e:
+            logger.error(f"Error al intercambiar canción lazy abajo: {e}")
+
+    try:
+        from app.db import crud
+        queue_state = crud.get_cola_completa_con_lazy(db)
+    except:
+        queue_state = {}
     
     # Broadcast DEFINITIVO
     await websocket_manager.manager.broadcast_queue_update()
     
     return {
         "mensaje": "Canción movida hacia abajo.",
-        "queue_state": result["queue_state"]
+        "queue_state": queue_state
     }
 
 

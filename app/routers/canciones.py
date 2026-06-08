@@ -1,6 +1,7 @@
 ﻿import os
 import datetime
 import asyncio
+import logging
 from fastapi import APIRouter, Depends, HTTPException, Response, status
 from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
@@ -14,15 +15,21 @@ from app.services import websocket_manager
 from app.utils.cache_manager import cache_manager
 from app.services.queue_manager import queue_manager
 
+logger = logging.getLogger(__name__)
 router = APIRouter()
 
 # Dependencia para obtener la sesión de la base de datos
 def get_db():
-    db = SessionLocal()
+    db = None
     try:
+        db = SessionLocal()
         yield db
+    except Exception as e:
+        logger.warning(f"⚠️ No se pudo establecer conexión con la base de datos: {e}")
+        yield None
     finally:
-        db.close()
+        if db:
+            db.close()
 
 # --- ENDPOINT: Avanzar la cola manualmente ---
 @router.post(
@@ -200,26 +207,39 @@ async def rechazar_cancion(cancion_id: int, db: Session = Depends(get_db), admin
 @router.post("/admin/add", response_model=schemas.Cancion, summary="[Admin] Añadir una canción como DJ")
 @router.post("/admin-anadir", response_model=schemas.Cancion, summary="Añadir una canción como admin")
 async def admin_anadir_cancion(cancion: schemas.CancionCreate, db: Session = Depends(get_db), admin: dict = Depends(verify_token)):
-    log_admin_action(admin.get("sub"), "admin_anadir_cancion", f"Titulo: {cancion.titulo}")
-    dj_user = crud.get_or_create_dj_user(db)
-    db_cancion = crud.create_cancion_para_usuario(db=db, cancion=cancion, usuario_id=dj_user.id)
-    
-    # db_cancion es un dict (viene del cache JSON)
-    cancion_id = db_cancion['id']
-    
-    # LAZY APPROVAL: Solo aprobar si no hay nada en la cola
-    canciones_activas = (cache_manager.get_songs_by_estado("reproduciendo") or []) + (cache_manager.get_songs_by_estado("aprobado") or [])
-    hay_cancion_activa = len(canciones_activas) > 0
-    
-    if hay_cancion_activa:
-        cancion_final = crud.update_cancion_estado(db, cancion_id=cancion_id, nuevo_estado="pendiente_lazy")
-    else:
-        cancion_final = crud.update_cancion_estado(db, cancion_id=cancion_id, nuevo_estado="aprobado")
-        await crud.start_next_song_if_autoplay_and_idle(db)
-    
-    queue_manager.refresh_queue(db)
-    await websocket_manager.manager.broadcast_queue_update()
-    return cancion_final
+    try:
+        # Log de acción (protegido contra fallos de DB)
+        try:
+            log_admin_action(admin.get("sub"), "admin_anadir_cancion", f"Titulo: {cancion.titulo}")
+        except: pass
+
+        dj_user = crud.get_or_create_dj_user(db)
+        db_cancion = crud.create_cancion_para_usuario(db=db, cancion=cancion, usuario_id=dj_user.id)
+        
+        # db_cancion es un dict (viene del cache JSON)
+        cancion_id = db_cancion['id']
+        
+        # LAZY APPROVAL: Solo aprobar si no hay nada en la cola
+        canciones_activas = (cache_manager.get_songs_by_estado("reproduciendo") or []) + (cache_manager.get_songs_by_estado("aprobado") or [])
+        nuevo_estado = "aprobado" if not canciones_activas else "pendiente_lazy"
+        
+        cancion_final_dict = crud.update_cancion_estado(db, cancion_id=cancion_id, nuevo_estado=nuevo_estado)
+        
+        if nuevo_estado == "aprobado":
+            try:
+                await crud.start_next_song_if_autoplay_and_idle(db)
+            except: pass
+        
+        # Refrescar cola (protegido)
+        try:
+            queue_manager.refresh_queue(db)
+        except: pass
+        
+        await websocket_manager.manager.broadcast_queue_update()
+        return crud.enriquecer_cancion(db, cancion_final_dict)
+    except Exception as e:
+        logger.exception("❌ Error fatal en admin_anadir_cancion")
+        raise HTTPException(status_code=500, detail=f"Error al procesar la solicitud: {str(e)}")
 
 
 @router.get("/cola", response_model=schemas.ColaView, summary="Ver la cola de canciones")
@@ -236,13 +256,18 @@ def ver_cola_extendida(db: Session = Depends(get_db)):
     - lazy_queue: Canciones en espera de aprobación lazy
     - pending: Canciones pendientes de aprobación manual
     """
-    cola_data = crud.get_cola_completa_con_lazy(db)
-    return schemas.ColaViewExtended(
-        now_playing=cola_data["now_playing"],
-        upcoming=cola_data["upcoming"],
-        lazy_queue=cola_data["lazy_queue"],
-        pending=cola_data["pending"]
-    )
+    try:
+        cola_data = crud.get_cola_completa_con_lazy(db)
+        return schemas.ColaViewExtended(
+            now_playing=cola_data.get("now_playing"),
+            upcoming=cola_data.get("upcoming", []),
+            lazy_queue=cola_data.get("lazy_queue", []),
+            pending=cola_data.get("pending", [])
+        )
+    except Exception as e:
+        logger.exception("❌ Error fatal al procesar la cola extendida")
+        # Devolvemos un estado vacío válido para evitar el error 500 y que el frontend no rompa
+        return schemas.ColaViewExtended(now_playing=None, upcoming=[], lazy_queue=[], pending=[])
 
 
 @router.get("/{cancion_id}/tiempo-espera", response_model=dict, summary="Calcular tiempo de espera")

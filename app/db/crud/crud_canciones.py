@@ -42,7 +42,15 @@ def get_cola_lazy(db: Session):
     """Obtiene la cola de canciones pendiente_lazy (CACHE) ordenada."""
     all_songs = cache.get_all_songs()
     lazy = [s for s in all_songs if s.get("estado") == "pendiente_lazy"]
-    lazy.sort(key=lambda s: (s.get("orden_manual", 999999) or 999999, s.get("created_at", "")))
+    
+    def get_sort_key(s):
+        try:
+            val = s.get('orden_manual')
+            return int(val) if val is not None else 999999
+        except (ValueError, TypeError):
+            return 999999
+
+    lazy.sort(key=lambda s: (get_sort_key(s), str(s.get("created_at", ""))))
     return lazy
 
 
@@ -206,11 +214,32 @@ def enriquecer_cancion(db: Session, song: dict):
     Si no se puede obtener el usuario, usa un dict de fallback.
     """
     from app.db.crud.crud_usuarios import get_usuario_by_id
-    cancion_enriquecida = dict(song)
+    from app.utils.timezone_utils import now_bogota
+    
+    # --- Asegurar campos obligatorios para el schema schemas.Cancion ---
+    cancion_enriquecida = {
+        "id": int(song.get("id") or 0),
+        "titulo": song.get("titulo") or "Título desconocido",
+        "youtube_id": song.get("youtube_id") or "",
+        "duracion_seconds": int(song.get("duracion_seconds") or 0),
+        "estado": song.get("estado", "pendiente"),
+        "created_at": song.get("created_at") or now_bogota().isoformat(),
+        "started_at": song.get("started_at") if song.get("started_at") else None,
+        "finished_at": song.get("finished_at") if song.get("finished_at") else None,
+        "puntuacion_ia": song.get("puntuacion_ia"),
+        "is_karaoke": bool(song.get("is_karaoke", True)),
+        "orden_manual": song.get("orden_manual")
+    }
+
     usuario_id = song.get("usuario_id")
-
-    usuario = get_usuario_by_id(db, usuario_id) if usuario_id else None
-
+    usuario = None
+    if usuario_id:
+        try:
+            usuario = get_usuario_by_id(db, usuario_id)
+        except Exception:
+            # Si falla la búsqueda del usuario (ej. por DB), procedemos con fallback
+            usuario = None
+            
     if usuario:
         cancion_enriquecida["usuario"] = {
             "id": usuario.id,
@@ -243,13 +272,17 @@ def get_cola_completa(db: Session):
     upcoming = []
 
     for song in all_songs:
-        estado = song.get("estado")
-        song_enriched = enriquecer_cancion(db, song)
+        try:
+            if not song or not isinstance(song, dict): continue
+            estado = song.get("estado")
+            song_enriched = enriquecer_cancion(db, song)
 
-        if estado == "reproduciendo":
-            now_playing = song_enriched
-        elif estado == "aprobado":
-            upcoming.append(song_enriched)
+            if estado == "reproduciendo":
+                now_playing = song_enriched
+            elif estado == "aprobado":
+                upcoming.append(song_enriched)
+        except Exception:
+            continue
 
     return {
         "now_playing": now_playing,
@@ -267,21 +300,35 @@ def get_cola_completa_con_lazy(db: Session):
     pending = []
 
     for song in all_songs:
-        estado = song.get("estado", "pendiente")
-        cancion_enriquecida = enriquecer_cancion(db, song)
+        try:
+            if not song or not isinstance(song, dict): continue
+            estado = song.get("estado", "pendiente")
+            cancion_enriquecida = enriquecer_cancion(db, song)
 
-        if estado == "reproduciendo":
-            now_playing = cancion_enriquecida
-        elif estado == "aprobado":
-            upcoming.append(cancion_enriquecida)
-        elif estado == "pendiente_lazy":
-            lazy_queue.append(cancion_enriquecida)
-        elif estado == "pendiente":
-            pending.append(cancion_enriquecida)
+            if estado == "reproduciendo":
+                now_playing = cancion_enriquecida
+            elif estado == "aprobado":
+                upcoming.append(cancion_enriquecida)
+            elif estado == "pendiente_lazy":
+                lazy_queue.append(cancion_enriquecida)
+            elif estado == "pendiente":
+                pending.append(cancion_enriquecida)
+        except Exception:
+            continue
 
-    upcoming.sort(key=lambda s: (s.get("orden_manual", 999999) or 999999, s.get("created_at", "")))
-    lazy_queue.sort(key=lambda s: (s.get("orden_manual", 999999) or 999999, s.get("created_at", "")))
-    pending.sort(key=lambda s: s.get("created_at", ""))
+    # --- Ordenamiento robusto para la respuesta de la cola ---
+    def get_sort_key(s):
+        try:
+            val = s.get("orden_manual")
+            # Intentamos convertir a int, si falla (por ser una fecha corrupta), usamos el valor por defecto
+            order = int(val) if val is not None else 999999
+        except (ValueError, TypeError):
+            order = 999999
+        return (order, str(s.get("created_at", "")))
+
+    upcoming.sort(key=get_sort_key)
+    lazy_queue.sort(key=get_sort_key)
+    pending.sort(key=lambda s: str(s.get("created_at", "")))
 
     return {
         "now_playing": now_playing,

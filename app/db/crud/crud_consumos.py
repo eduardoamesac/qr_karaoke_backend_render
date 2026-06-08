@@ -204,8 +204,8 @@ def get_recent_consumos(db: Session, limit: int = 10):
         else:
             c_copy["usuario_nick"] = "Desconocido"
         c_copy["producto_nombre"] = prod_map.get(c.get("producto_id"), "Desconocido")
-        if c.get("mesa_id"):
-            c_copy["mesa_nombre"] = mesa_map.get(c.get("mesa_id"))
+        if c.get("mesa_id") is not None:
+            c_copy["mesa_nombre"] = mesa_map.get(int(c.get("mesa_id")))
         enriched.append(c_copy)
 
     return enriched

@@ -29,7 +29,7 @@ def _to_obj(u: dict) -> SimpleNamespace:
         return val
 
     return SimpleNamespace(
-        id=u.get("id"),
+        id=int(u.get("id") or 0),
         nick=u.get("nick", ""),
         mesa_id=u.get("mesa_id"),
         puntos=u.get("puntos", 0),
@@ -294,5 +294,3 @@ def _remove_from_ban_list(nick: str):
 def _is_banned(nick: str) -> bool:
     ban_list = _load_ban_list()
     return any(b.get("nick", "").lower() == nick.lower() for b in ban_list)
-
-

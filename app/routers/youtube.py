@@ -113,7 +113,7 @@ async def _perform_youtube_search(q: str, karaoke_mode: bool = False) -> List[Di
 
             # Ahora, obtenemos los detalles (como la duración) de esos videos
             video_params = {
-                "part": "contentDetails,snippet",
+                "part": "contentDetails,snippet,status",
                 "id": ",".join(video_ids),
                 "key": YOUTUBE_API_KEY,
             }
@@ -126,6 +126,12 @@ async def _perform_youtube_search(q: str, karaoke_mode: bool = False) -> List[Di
             # Mapeamos los resultados a un formato simple
             formatted_results = []
             for item in videos_results.get("items", []):
+                # --- FILTRAR VIDEOS CON RESTRICCIÓN DE REPRODUCCIÓN (ERROR 150) ---
+                status = item.get("status", {})
+                if not status.get("embeddable", True):
+                    logger.info(f"Omitiendo video {item.get('id')} por restricción de reproducción externa (Error 150).")
+                    continue
+                
                 content_details = item.get("contentDetails", {})
                 try:
                     # --- INICIO DE LA CORRECCIÓN ---
@@ -185,7 +191,7 @@ async def _perform_youtube_search(q: str, karaoke_mode: bool = False) -> List[Di
             if exc.response.status_code == 403:
                 raise HTTPException(
                     status_code=403,
-                    detail="Acceso denegado por YouTube. Verifica que la API Key sea correcta, no haya expirado y no tenga restricciones de IP."
+                    detail=f"Acceso denegado por YouTube: {error_details}. Verifica cuotas, restricciones de IP y validez de la clave."
                 )
             
             raise HTTPException(status_code=502, detail=f"Error al comunicarse con YouTube: {error_details}")

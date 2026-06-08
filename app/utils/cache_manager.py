@@ -603,12 +603,14 @@ class CacheManager: # Define la clase central encargada de gestionar los datos e
     def get_consumos_by_mesa(self, mesa_id: int) -> List[Dict[str, Any]]: # Filtra historial por mesa
         """Obtiene todos los consumos de una mesa""" # Docstring descriptivo
         with self.lock: # Bloqueo
-            return [c for c in self.consumos_data.values() if c.get("mesa_id") == mesa_id] # Filtra en memoria
+            target_id = int(mesa_id)
+            return [c for c in self.consumos_data.values() if int(c.get("mesa_id", 0)) == target_id] # Filtra en memoria
     
     def get_consumos_by_usuario(self, usuario_id: int) -> List[Dict[str, Any]]: # Filtra historial por cliente
         """Obtiene todos los consumos de un usuario""" # Docstring descriptivo
         with self.lock: # Bloqueo
-            return [c for c in self.consumos_data.values() if c.get("usuario_id") == usuario_id] # Filtra en memoria
+            target_id = int(usuario_id)
+            return [c for c in self.consumos_data.values() if int(c.get("usuario_id", 0)) == target_id] # Filtra en memoria
     
     def get_all_consumos(self) -> List[Dict[str, Any]]: # Obtiene TODOS los pedidos para reportes
         """Obtiene todos los consumos""" # Docstring descriptivo

@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="referrer" content="origin">
     <meta http-equiv="Content-Security-Policy"
-        content="default-src 'self' https:; script-src 'self' 'unsafe-inline' https://www.youtube.com https://s.ytimg.com; frame-src 'self' https://www.youtube.com; style-src 'self' 'unsafe-inline';">
+        content="default-src 'self' https: data:; script-src 'self' 'unsafe-inline' https://www.youtube.com https://s.ytimg.com; frame-src 'self' https://www.youtube.com; style-src 'self' 'unsafe-inline'; img-src 'self' https: data:;">
     <title>LA CANTA QUE RANA - Reproductor</title>
     <style>
         :root {
@@ -260,10 +260,12 @@
 
         // Variable global para el reproductor de YouTube
         var ytPlayer = null;
+        var isYouTubeApiReady = false;
 
         // Callback cuando la API está lista
         function onYouTubeIframeAPIReady() {
             console.log("✅ YouTube IFrame API lista y cargada");
+            isYouTubeApiReady = true;
         }
     </script>
     <script>
@@ -416,6 +418,13 @@
                 return;
             }
 
+            // Verificar si la API de YouTube ya cargó para evitar ReferenceError
+            if (!isYouTubeApiReady || typeof YT === 'undefined' || typeof YT.Player === 'undefined') {
+                console.warn('⏳ YouTube API no lista, reintentando en 500ms...');
+                setTimeout(() => createYouTubePlayer(videoId, startSeconds), 500);
+                return;
+            }
+
             // Limpiar contenedor y crear div para el reproductor
             container.innerHTML = '<div id="youtube-iframe"></div>';
 
@@ -435,7 +444,8 @@
                 },
                 events: {
                     'onReady': onPlayerReady,
-                    'onStateChange': onPlayerStateChange
+                    'onStateChange': onPlayerStateChange,
+                    'onError': onPlayerError
                 }
             });
 
@@ -445,22 +455,28 @@
         // Evento cuando el reproductor está listo
         function onPlayerReady(event) {
             console.log('✅ Reproductor listo, iniciando reproducción');
-            // Iniciamos por defecto
-            event.target.playVideo();
+            
+            try {
+                event.target.playVideo();
+            } catch (e) {
+                console.warn("⚠️ Falló el playVideo inicial:", e);
+            }
+
+            applyPendingActions();
+        }
+
+        function applyPendingActions() {
+            if (!ytPlayer || typeof ytPlayer.playVideo !== 'function') return;
 
             // Aplicar acciones encoladas por admin si las hubiera
             try {
                 if (pendingPause) {
-                    if (typeof event.target.pauseVideo === 'function') {
-                        event.target.pauseVideo();
-                        console.log('⏸️ Aplicando pausa encolada por admin');
-                    }
+                    ytPlayer.pauseVideo();
+                    console.log('⏸️ Aplicando pausa encolada por admin');
                     pendingPause = false;
                 } else if (pendingResume) {
-                    if (typeof event.target.playVideo === 'function') {
-                        event.target.playVideo();
-                        console.log('▶️ Aplicando reanudar encolado por admin');
-                    }
+                    ytPlayer.playVideo();
+                    console.log('▶️ Aplicando reanudar encolado por admin');
                     pendingResume = false;
                 }
             } catch (e) {
@@ -468,6 +484,14 @@
                 pendingPause = false;
                 pendingResume = false;
             }
+        }
+
+        function onPlayerError(event) {
+            console.error('❌ Error en el reproductor de YouTube:', event.data);
+            // Avanzar automáticamente a la siguiente canción si el video no se puede reproducir
+            setTimeout(() => {
+                if (!transitionInProgress) advanceToNextSong();
+            }, 2000);
         }
 
         // Evento cuando cambia el estado del reproductor
