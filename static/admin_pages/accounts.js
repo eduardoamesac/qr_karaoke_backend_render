@@ -729,26 +729,70 @@ function renderDetailsModal(details) {
 
     const consumos = details.consumos || [];
     const pagos = details.pagos || [];
+    // Parsear los valores numéricos correctamente (pueden venir como Decimal serializado, número o string)
+    const totalConsumido = Number(details.total_consumido ?? 0).toLocaleString('es-CO', { minimumFractionDigits: 2 });
+    const totalPagado = Number(details.total_pagado ?? 0).toLocaleString('es-CO', { minimumFractionDigits: 2 });
+    const saldoRaw = details.saldo_pendiente !== undefined ? details.saldo_pendiente : (details.saldo ?? 0);
+    const saldoPendiente = Number(saldoRaw ?? 0).toLocaleString('es-CO', { minimumFractionDigits: 2 });
 
     content.innerHTML = `
-        <div class="account-summary account-summary-box">
-            <p><strong>Mesa:</strong> ${details.mesa_nombre}</p>
-            <p><strong>Total Consumido:</strong> $${details.total_consumido || '0.00'}</p>
-            <p><strong>Total Pagado:</strong> $${details.total_pagado || '0.00'}</p>
-            <p><strong>Saldo Pendiente:</strong> $${details.saldo_pendiente || '0.00'}</p>
-            <div style="margin-top: 15px;">
-                <button id="btn-details-create-order" class="form-btn" style="width: 100%; background-color: var(--bees-green, #28a745); color: white;">🛒 Crear Pedido</button>
-                <div id="details-order-panel" style="display: none; margin-top: 15px; background: var(--page-input-bg, #2a2a2a); padding: 15px; border-radius: 8px; border: 1px solid var(--border-color, #444);"></div>
+        <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+            <!-- Resumen Section -->
+            <div style="flex: 1; min-width: 250px; background: rgba(0,0,0,0.2); padding: 20px; border-radius: 12px; border: 1px solid var(--border-color, #444);">
+                <h4 style="margin-top: 0; color: var(--bees-yellow, #fdb913); border-bottom: 1px solid #444; padding-bottom: 10px;">Resumen</h4>
+                <p style="margin: 10px 0; display: flex; justify-content: space-between;"><strong>Mesa:</strong> <span>${details.mesa_nombre || `Mesa ${details.mesa_id}`}</span></p>
+                <p style="margin: 10px 0; display: flex; justify-content: space-between;"><strong>Total Consumido:</strong> <span style="color: #ff9800;">$${totalConsumido}</span></p>
+                <p style="margin: 10px 0; display: flex; justify-content: space-between;"><strong>Total Pagado:</strong> <span style="color: #4caf50;">$${totalPagado}</span></p>
+                <p style="margin: 10px 0; display: flex; justify-content: space-between; font-size: 1.1em; font-weight: bold; border-top: 1px solid #444; padding-top: 10px;">
+                    <strong>Saldo Pendiente:</strong> 
+                    <span style="color: ${Number(saldoRaw) > 0 ? '#dc3545' : '#28a745'}">$${saldoPendiente}</span>
+                </p>
+                
+                <div style="margin-top: 25px;">
+                    <button id="btn-details-create-order" class="form-btn" style="width: 100%; background-color: var(--bees-green, #28a745); color: white; padding: 12px; font-weight: bold; font-size: 1.05em; border-radius: 8px;">🛒 Crear Pedido</button>
+                    <div id="details-order-panel" style="display: none; margin-top: 15px; background: var(--page-input-bg, #2a2a2a); padding: 15px; border-radius: 8px; border: 1px solid var(--border-color, #444);"></div>
+                </div>
+            </div>
+
+            <!-- Detalles Section -->
+            <div style="flex: 1.5; min-width: 300px; display: flex; flex-direction: column; gap: 20px;">
+                <!-- Consumos -->
+                <div style="background: rgba(0,0,0,0.2); padding: 20px; border-radius: 12px; border: 1px solid var(--border-color, #444);">
+                    <h4 style="margin-top: 0; color: var(--bees-yellow, #fdb913); border-bottom: 1px solid #444; padding-bottom: 10px; display: flex; justify-content: space-between;">
+                        <span>🛒 Consumos</span>
+                        <span style="font-size: 0.8em; background: rgba(255,255,255,0.1); padding: 2px 8px; border-radius: 10px; color: white;">${consumos.length}</span>
+                    </h4>
+                    <ul class="details-consumos-list" style="list-style: none; padding: 0; margin: 0; max-height: 250px; overflow-y: auto;">
+                        ${consumos.length ? consumos.map(c => `
+                            <li style="padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; align-items: center;">
+                                <div>
+                                    <span style="font-weight: bold; color: #eee;">${c.cantidad}x</span> 
+                                    <span>${c.producto_nombre || `Producto #${c.producto_id}`}</span>
+                                    <div style="font-size: 0.8em; color: #888; margin-top: 3px;">${new Date(c.created_at).toLocaleString()}</div>
+                                </div>
+                                <span style="font-weight: bold; color: #ff9800;">$${c.valor_total}</span>
+                            </li>
+                        `).join('') : '<li style="text-align: center; color: #888; padding: 20px;">Sin consumos registrados</li>'}
+                    </ul>
+                </div>
+
+                <!-- Pagos -->
+                <div style="background: rgba(0,0,0,0.2); padding: 20px; border-radius: 12px; border: 1px solid var(--border-color, #444);">
+                    <h4 style="margin-top: 0; color: var(--bees-yellow, #fdb913); border-bottom: 1px solid #444; padding-bottom: 10px; display: flex; justify-content: space-between;">
+                        <span>💳 Pagos</span>
+                        <span style="font-size: 0.8em; background: rgba(255,255,255,0.1); padding: 2px 8px; border-radius: 10px; color: white;">${pagos.length}</span>
+                    </h4>
+                    <ul style="list-style: none; padding: 0; margin: 0; max-height: 200px; overflow-y: auto;">
+                        ${pagos.length ? pagos.map(p => `
+                            <li style="padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; align-items: center;">
+                                <div style="font-size: 0.85em; color: #888;">${new Date(p.created_at).toLocaleString()}</div>
+                                <span style="font-weight: bold; color: #4caf50;">$${p.monto}</span>
+                            </li>
+                        `).join('') : '<li style="text-align: center; color: #888; padding: 20px;">Sin pagos registrados</li>'}
+                    </ul>
+                </div>
             </div>
         </div>
-        <h4>Consumos</h4>
-        <ul class="details-consumos-list">
-            ${consumos.length ? consumos.map(c => `<li>${c.cantidad}x ${c.producto_nombre} — $${c.valor_total} <small>(${new Date(c.created_at).toLocaleString()})</small></li>`).join('') : '<li>Sin consumos</li>'}
-        </ul>
-            <h4>Pagos</h4>
-        <ul>
-            ${pagos.length ? pagos.map(p => `<li>$${p.monto} — <small>${new Date(p.created_at).toLocaleString()}</small></li>`).join('') : '<li>Sin pagos</li>'}
-        </ul>
     `;
 
     // Add listener for the toggle button
@@ -1507,31 +1551,34 @@ function setupMesaCardListeners() {
         // View Details Button
         if (target.matches('.btn-view-details') || target.closest('.btn-view-details')) {
             const btn = target.matches('.btn-view-details') ? target : target.closest('.btn-view-details');
-            const mesaId = btn.dataset.mesaId;
+            const mesaId = parseInt(btn.dataset.mesaId, 10);
 
             console.log(`[DEBUG] View Details clicked for Mesa ${mesaId}`);
 
             const account = currentAccounts.find(a => a.mesa_id == mesaId);
 
-            if (account && account.cuenta_id) {
+            if (account) {
+                // Usar directamente los datos que ya tenemos en memoria para evitar
+                // una segunda llamada API que puede fallar o devolver datos incorrectos.
+                // Construir el objeto de detalles a partir de currentAccounts.
+                const details = {
+                    mesa_id: account.mesa_id,
+                    mesa_nombre: account.mesa_nombre || `Mesa ${account.mesa_id}`,
+                    total_consumido: account.total_consumido,
+                    total_pagado: account.total_pagado,
+                    saldo_pendiente: account.saldo_pendiente,
+                    consumos: account.consumos || [],
+                    pagos: account.pagos || []
+                };
+                renderDetailsModal(details);
+            } else {
+                // Si por alguna razón no está en currentAccounts, intentar por API
                 try {
-                    await showAccountDetails(account.cuenta_id);
+                    await showAccountDetails(mesaId);
                 } catch (err) {
                     console.error("Error showing details:", err);
                     showNotification("Error al mostrar detalles: " + err.message, "error");
                 }
-            } else {
-                // Show empty details if no account or no cuenta_id
-                const emptyDetails = {
-                    mesa_id: mesaId,
-                    mesa_nombre: account ? (account.mesa_nombre || `Mesa ${mesaId}`) : `Mesa ${mesaId}`,
-                    total_consumido: "0.00",
-                    total_pagado: "0.00",
-                    saldo_pendiente: "0.00",
-                    consumos: [],
-                    pagos: []
-                };
-                renderDetailsModal(emptyDetails);
             }
         }
     });

@@ -41,7 +41,8 @@
 }
 
 .modal-card-xlarge {
-    width: 600px;
+    width: 900px;
+    max-width: 95%;
 }
 
 .modal-card-scrollable {
