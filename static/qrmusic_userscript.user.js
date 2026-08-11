@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         QrMusic TV Player 2
 // @namespace    http://tampermonkey.net/
-// @version      6.4
+// @version      6.5
 // @description  Integración de QrMusic con YouTube. Aumenta la cortina a 5 segundos y previene parpadeos de carga entre canciones manteniendo la cortina hasta que la nueva canción inicie reproducción.
 // @author       Antigravity
 // @match        https://www.youtube.com/*
@@ -40,11 +40,33 @@
     }
 
     try {
-        console.log("%c[QrMusic] !!! SCRIPT INICIALIZADO Y ACTIVO (v6.4) !!!", "color: #9d4edd; font-size: 16px; font-weight: bold;");
+        console.log("%c[QrMusic] !!! SCRIPT INICIALIZADO Y ACTIVO (v6.5) !!!", "color: #9d4edd; font-size: 16px; font-weight: bold;");
 
         // 1. Configuración de IP/Host de QrMusic
         let qrmusicHost = localStorage.getItem("qrmusic_host") || "localhost:8000";
-        let ownerLogoUrl = `http://${qrmusicHost}/static/images/watermark.jpg`; // Fallback inicial
+
+        // Determinar dinámicamente si usar HTTPS/WSS (para producción) o HTTP/WS (para desarrollo local)
+        const getHttpProto = () => {
+            const hostLower = qrmusicHost.toLowerCase();
+            const isLocal = hostLower.startsWith("localhost") || 
+                            hostLower.startsWith("127.0.0.1") || 
+                            hostLower.startsWith("192.168.") ||
+                            hostLower.startsWith("172.") ||
+                            hostLower.startsWith("10.");
+            return isLocal ? "http" : "https";
+        };
+
+        const getWsProto = () => {
+            const hostLower = qrmusicHost.toLowerCase();
+            const isLocal = hostLower.startsWith("localhost") || 
+                            hostLower.startsWith("127.0.0.1") || 
+                            hostLower.startsWith("192.168.") ||
+                            hostLower.startsWith("172.") ||
+                            hostLower.startsWith("10.");
+            return isLocal ? "ws" : "wss";
+        };
+
+        let ownerLogoUrl = `${getHttpProto()}://${qrmusicHost}/static/images/watermark.jpg`; // Fallback inicial
 
         // Si estamos en la página de setup local, marcamos como instalado
         const isPlayer2Page = window.location.pathname.includes('/player2') || window.location.pathname.includes('player2.html');
@@ -59,11 +81,12 @@
 
         // Cargar configuraciones públicas (Logo del Dueño / Nombre de la App)
         const fetchOwnerSettings = () => {
-            fetch(`http://${qrmusicHost}/api/v1/player2/settings`)
+            const proto = getHttpProto();
+            fetch(`${proto}://${qrmusicHost}/api/v1/player2/settings`)
                 .then(res => res.json())
                 .then(data => {
                     if (data.owner_logo) {
-                        ownerLogoUrl = `http://${qrmusicHost}${data.owner_logo}`;
+                        ownerLogoUrl = `${proto}://${qrmusicHost}${data.owner_logo}`;
                         console.log("[QrMusic] Logo corporativo del dueño cargado:", ownerLogoUrl);
                         
                         // Actualizar logo en la pantalla de bienvenida
@@ -237,7 +260,7 @@
                 indicator.innerHTML = policy.createHTML(`
                     <img class="status-indicator-img" src="${ownerLogoUrl}" />
                     <div class="status-indicator-badge"></div>
-                    <div class="status-indicator-version">v6.4</div>
+                    <div class="status-indicator-version">v6.5</div>
                 `);
                 document.body.appendChild(indicator);
             }
@@ -723,7 +746,7 @@
                 if (!document.getElementById('qrmusic-watermark')) {
                     const img = document.createElement('img');
                     img.id = 'qrmusic-watermark';
-                    img.src = `http://${qrmusicHost}/static/images/watermark.jpg`;
+                    img.src = `${getHttpProto()}://${qrmusicHost}/static/images/watermark.jpg`;
                     document.body.appendChild(img);
                 }
 
@@ -778,7 +801,7 @@
             triggeringNext = true;
             console.log("[QrMusic] Canciones detectadas en cola. Avanzando de manera automática...");
             try {
-                const response = await fetch(`http://${qrmusicHost}/api/v1/canciones/siguiente`, { method: 'POST' });
+                const response = await fetch(`${getHttpProto()}://${qrmusicHost}/api/v1/canciones/siguiente`, { method: 'POST' });
                 console.log("[QrMusic] Respuesta avanzar automática:", response.status);
             } catch (err) {
                 console.error("[QrMusic] Error al iniciar canción automática:", err);
@@ -810,7 +833,7 @@
         // 5. Conexión WebSocket para controlar la navegación y procesar comunicados/emojis
         let socket = null;
         const connectWebSocket = () => {
-            const wsUrl = `ws://${qrmusicHost}/ws/cola`;
+            const wsUrl = `${getWsProto()}://${qrmusicHost}/ws/cola`;
             console.log(`[QrMusic] Conectando a WebSocket: ${wsUrl}`);
             
             socket = new WebSocket(wsUrl);
@@ -1009,7 +1032,7 @@
             setInterval(async () => {
                 const isHome = isHomePath();
                 try {
-                    const fetchUrl = `http://${qrmusicHost}/api/v1/canciones/cola/extended`;
+                    const fetchUrl = `${getHttpProto()}://${qrmusicHost}/api/v1/canciones/cola/extended`;
                     const res = await fetch(fetchUrl);
                     if (res.ok) {
                         const data = await res.json();
@@ -1125,7 +1148,7 @@
                     console.log(`[QrMusic] 🏁 Canción finalizada detectada (${currentVideoId}). Solicitando siguiente canción...`);
 
                     try {
-                        const response = await fetch(`http://${qrmusicHost}/api/v1/canciones/siguiente`, { method: 'POST' });
+                        const response = await fetch(`${getHttpProto()}://${qrmusicHost}/api/v1/canciones/siguiente`, { method: 'POST' });
                         if (response.status === 204) {
                             console.log("[QrMusic] 📭 Cola vacía (204). Regresando al Home virtualmente para no perder pantalla completa...");
                             const v = document.querySelector('video');

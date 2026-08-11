@@ -11,7 +11,7 @@ USE `eventoQrDb`;
 SET FOREIGN_KEY_CHECKS = 1;
 
 -- =====================================================================
--- 1. TABLAS PRINCIPALES (CREACIÓN DESDE CERO)
+-- 1. TABLAS CORE (ORDENADAS DE FORMA SEGURA POR LLAVES FORÁNEAS)
 -- =====================================================================
 
 -- Tabla: mesas
@@ -22,6 +22,19 @@ CREATE TABLE IF NOT EXISTS `mesas` (
     `is_active`   BOOLEAN       NOT NULL DEFAULT TRUE,
     PRIMARY KEY (`id`),
     UNIQUE KEY `uq_mesas_qr_code` (`qr_code`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Tabla: locales (SaaS / Multi-Local)
+CREATE TABLE IF NOT EXISTS `locales` (
+    `id`          INT           NOT NULL AUTO_INCREMENT,
+    `slug`        VARCHAR(100)  NOT NULL,
+    `nombre`      VARCHAR(200)  NOT NULL,
+    `direccion`   VARCHAR(200)  NULL,
+    `logo_url`    VARCHAR(500)  NULL,
+    `is_active`   BOOLEAN       NOT NULL DEFAULT TRUE,
+    `created_at`  DATETIME      NULL,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uq_locales_slug` (`slug`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Tabla: usuarios
@@ -63,15 +76,19 @@ CREATE TABLE IF NOT EXISTS `canciones` (
 
 -- Tabla: productos
 CREATE TABLE IF NOT EXISTS `productos` (
-    `id`          INT            NOT NULL AUTO_INCREMENT,
-    `nombre`      VARCHAR(100)   NOT NULL,
-    `descripcion` VARCHAR(500)   NULL,
-    `valor`       NUMERIC(10, 2) NOT NULL,
-    `costo`       NUMERIC(10, 2) NOT NULL DEFAULT 0.00,
-    `stock`       INT            NOT NULL DEFAULT 0,
-    `imagen_url`  VARCHAR(500)   NULL,
-    `is_active`   BOOLEAN        NOT NULL DEFAULT TRUE,
-    PRIMARY KEY (`id`)
+    `id`              INT            NOT NULL AUTO_INCREMENT,
+    `nombre`          VARCHAR(100)   NOT NULL,
+    `descripcion`     VARCHAR(500)   NULL,
+    `categoria`       VARCHAR(100)   NOT NULL DEFAULT 'General',
+    `valor`           NUMERIC(10, 2) NOT NULL,
+    `costo`           NUMERIC(10, 2) NOT NULL DEFAULT 0.00,
+    `stock`           INT            NOT NULL DEFAULT 0,
+    `stock_seguridad` INT            NOT NULL DEFAULT 0,
+    `local_id`        INT            NULL,
+    `imagen_url`      VARCHAR(500)   NULL,
+    `is_active`       BOOLEAN        NOT NULL DEFAULT TRUE,
+    PRIMARY KEY (`id`),
+    CONSTRAINT `fk_productos_local_id` FOREIGN KEY (`local_id`) REFERENCES `locales` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Tabla: cuentas
@@ -114,7 +131,7 @@ CREATE TABLE IF NOT EXISTS `pagos` (
     CONSTRAINT `fk_pagos_mesa_id` FOREIGN KEY (`mesa_id`) REFERENCES `mesas` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Tabla: banned_nicks (Nombres prohibidos en la plataforma)
+-- Tabla: banned_nicks
 CREATE TABLE IF NOT EXISTS `banned_nicks` (
     `id`          INT           NOT NULL AUTO_INCREMENT,
     `nick`        VARCHAR(100)  NOT NULL,
@@ -155,21 +172,8 @@ CREATE TABLE IF NOT EXISTS `configuracion_global` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- =====================================================================
--- 2. TABLAS DE SAAS / MULTI-LOCAL
+-- 2. TABLAS DE ADMINISTRACIÓN (SaaS / MULTI-LOCAL)
 -- =====================================================================
-
--- Tabla: locales
-CREATE TABLE IF NOT EXISTS `locales` (
-    `id`          INT           NOT NULL AUTO_INCREMENT,
-    `slug`        VARCHAR(100)  NOT NULL,
-    `nombre`      VARCHAR(200)  NOT NULL,
-    `direccion`   VARCHAR(200)  NULL,
-    `logo_url`    VARCHAR(500)  NULL,
-    `is_active`   BOOLEAN       NOT NULL DEFAULT TRUE,
-    `created_at`  DATETIME      NULL,
-    PRIMARY KEY (`id`),
-    UNIQUE KEY `uq_locales_slug` (`slug`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Tabla: usuarios_locales (Dueños/Administradores globales de locales)
 CREATE TABLE IF NOT EXISTS `usuarios_locales` (
@@ -235,4 +239,10 @@ ALTER TABLE `usuarios` ADD COLUMN `is_silenced` BOOLEAN NOT NULL DEFAULT FALSE;
 ALTER TABLE `usuarios` ADD COLUMN `is_banned` BOOLEAN NOT NULL DEFAULT FALSE;
 ALTER TABLE `usuarios` ADD COLUMN `credits_added_at` DATETIME NULL;
 ALTER TABLE `usuarios` ADD COLUMN `last_song_added_at` DATETIME NULL;
+
+-- PARCHE C: Nuevas columnas añadidas a la tabla productos para soporte multi-local y categorías
+ALTER TABLE `productos` ADD COLUMN `categoria` VARCHAR(100) NOT NULL DEFAULT 'General';
+ALTER TABLE `productos` ADD COLUMN `stock_seguridad` INT NOT NULL DEFAULT 0;
+ALTER TABLE `productos` ADD COLUMN `local_id` INT NULL;
+ALTER TABLE `productos` ADD CONSTRAINT `fk_productos_local_id` FOREIGN KEY (`local_id`) REFERENCES `locales` (`id`) ON DELETE CASCADE;
 */
