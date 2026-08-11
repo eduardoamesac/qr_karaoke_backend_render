@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         QrMusic TV Player 2
 // @namespace    http://tampermonkey.net/
-// @version      6.6
+// @version      6.7
 // @description  Integración de QrMusic con YouTube. Aumenta la cortina a 5 segundos y previene parpadeos de carga entre canciones manteniendo la cortina hasta que la nueva canción inicie reproducción.
 // @author       Antigravity
 // @match        https://www.youtube.com/*
@@ -40,7 +40,7 @@
     }
 
     try {
-        console.log("%c[QrMusic] !!! SCRIPT INICIALIZADO Y ACTIVO (v6.6) !!!", "color: #9d4edd; font-size: 16px; font-weight: bold;");
+        console.log("%c[QrMusic] !!! SCRIPT INICIALIZADO Y ACTIVO (v6.7) !!!", "color: #9d4edd; font-size: 16px; font-weight: bold;");
 
         // 1. Configuración de IP/Host de QrMusic
         let qrmusicHost = localStorage.getItem("qrmusic_host") || "localhost:8000";
@@ -275,7 +275,7 @@
                 indicator.innerHTML = policy.createHTML(`
                     <img class="status-indicator-img" src="${ownerLogoUrl}" />
                     <div class="status-indicator-badge"></div>
-                    <div class="status-indicator-version">v6.6</div>
+                    <div class="status-indicator-version">v6.7</div>
                 `);
                 document.body.appendChild(indicator);
             }
@@ -761,10 +761,41 @@
                             </p>
                             <div class="welcome-footer">
                                 📡 Esperando canción en cola...
+                                <br><br>
+                                <span id="qrmusic-btn-config" style="font-size: 16px; cursor: pointer; color: #a29bfe; text-decoration: underline; pointer-events: auto !important; z-index: 999999999 !important; display: inline-block;">⚙️ Configurar Servidor</span>
                             </div>
                         </div>
                     `);
                     document.body.appendChild(welcomeScreen);
+
+                    // Vincular manejador al botón de configuración de la pantalla de bienvenida
+                    const configBtn = document.getElementById('qrmusic-btn-config');
+                    if (configBtn) {
+                        configBtn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            const newHost = prompt("Introduce el host/IP del servidor QrMusic (ej: qr-karaoke-backend-render-pb3m.onrender.com):", qrmusicHost);
+                            if (newHost !== null) {
+                                const cleanHost = newHost.trim().replace(/^https?:\/\//i, '').replace(/\/+$/, '');
+                                if (cleanHost) {
+                                    localStorage.setItem("qrmusic_host", cleanHost);
+                                    alert("Servidor actualizado a: " + cleanHost + ". Recargando...");
+                                    window.location.reload();
+                                }
+                            }
+                        });
+                    }
+
+                    // Doble click en el fondo para atajo de emergencia
+                    welcomeScreen.addEventListener('dblclick', () => {
+                        const newHost = prompt("Configure la dirección del servidor QrMusic:", qrmusicHost);
+                        if (newHost !== null) {
+                            const cleanHost = newHost.trim().replace(/^https?:\/\//i, '').replace(/\/+$/, '');
+                            if (cleanHost) {
+                                localStorage.setItem("qrmusic_host", cleanHost);
+                                window.location.reload();
+                            }
+                        }
+                    });
                 }
                 const watermark = document.getElementById('qrmusic-watermark');
                 if (watermark) watermark.remove();
