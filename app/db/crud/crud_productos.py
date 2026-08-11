@@ -2,8 +2,9 @@
 
 from sqlalchemy.orm import Session
 from decimal import Decimal
+from typing import Optional
 
-from app.db.models import Producto
+from app.db.models import Producto, Compra
 from app.schemas import ProductoCreate
 from app.utils.cache_manager import cache_manager as cache
 
@@ -13,24 +14,41 @@ def get_producto_by_id(db: Session, producto_id: int):
     return db.query(Producto).filter(Producto.id == producto_id).first()
 
 
-def get_producto_by_nombre(db: Session, nombre: str):
-    """Obtiene un producto por nombre."""
-    return db.query(Producto).filter(Producto.nombre == nombre).first()
+def get_producto_by_nombre_and_local(db: Session, nombre: str, local_id: Optional[int] = None):
+    """Obtiene un producto por nombre y local."""
+    query = db.query(Producto).filter(Producto.nombre == nombre)
+    if local_id is not None:
+        query = query.filter(Producto.local_id == local_id)
+    else:
+        query = query.filter(Producto.local_id.is_(None))
+    return query.first()
 
 
-def get_all_productos(db: Session):
+def get_all_productos(db: Session, local_id: Optional[int] = None):
     """Obtiene todos los productos activos."""
-    return db.query(Producto).filter(Producto.is_active == True).all()
+    query = db.query(Producto).filter(Producto.is_active == True)
+    if local_id is not None:
+        query = query.filter(Producto.local_id == local_id)
+    else:
+        query = query.filter(Producto.local_id.is_(None))
+    return query.all()
 
 
-def get_productos(db: Session, skip: int = 0, limit: int = 100):
+def get_productos(db: Session, skip: int = 0, limit: int = 100, local_id: Optional[int] = None):
     """Obtiene productos con paginación (sin filtrar por is_active)."""
-    return db.query(Producto).offset(skip).limit(limit).all()
+    query = db.query(Producto)
+    if local_id is not None:
+        query = query.filter(Producto.local_id == local_id)
+    else:
+        query = query.filter(Producto.local_id.is_(None))
+    return query.offset(skip).limit(limit).all()
 
 
-def create_producto(db: Session, producto: ProductoCreate):
+def create_producto(db: Session, producto: ProductoCreate, local_id: Optional[int] = None):
     """Crea un nuevo producto."""
     db_producto = Producto(**producto.dict())
+    if local_id is not None:
+        db_producto.local_id = local_id
     db.add(db_producto)
     db.commit()
     db.refresh(db_producto)
@@ -51,6 +69,37 @@ def update_producto(db: Session, producto_id: int, producto_update: ProductoCrea
     db.commit()
     db.refresh(db_producto)
     return db_producto
+
+
+def registrar_compra(db: Session, compra_data, local_id: int):
+    """
+    Registra una nueva compra, incrementa el stock y actualiza el costo del producto.
+    """
+    total_costo = Decimal(compra_data.cantidad) * Decimal(compra_data.precio_compra)
+    db_compra = Compra(
+        local_id=local_id,
+        producto_id=compra_data.producto_id,
+        cantidad=compra_data.cantidad,
+        precio_compra=compra_data.precio_compra,
+        total_costo=total_costo,
+        proveedor=compra_data.proveedor
+    )
+    db.add(db_compra)
+    
+    # Aumentar stock y actualizar costo del producto
+    db_producto = db.query(Producto).filter(Producto.id == compra_data.producto_id).first()
+    if db_producto:
+        db_producto.stock += compra_data.cantidad
+        db_producto.costo = compra_data.precio_compra
+
+    db.commit()
+    db.refresh(db_compra)
+    return db_compra
+
+
+def get_compras_by_local(db: Session, local_id: int):
+    """Obtiene el historial de compras para un local."""
+    return db.query(Compra).filter(Compra.local_id == local_id).order_by(Compra.fecha.desc()).all()
 
 
 def delete_producto(db: Session, producto_id: int):

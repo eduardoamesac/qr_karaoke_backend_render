@@ -94,6 +94,8 @@ class ProductoBase(BaseModel):
     valor: Decimal
     costo: Decimal = Decimal("0")
     stock: int
+    stock_seguridad: int = 0
+    local_id: Optional[int] = None
     imagen_url: Optional[str] = None
     is_active: bool = True
 
@@ -103,6 +105,24 @@ class ProductoCreate(ProductoBase):
 class Producto(ProductoBase):
     id: int
     is_active: bool
+    model_config = ConfigDict(from_attributes=True)
+
+class CompraCreate(BaseModel):
+    producto_id: int
+    cantidad: int
+    precio_compra: Decimal
+    proveedor: Optional[str] = None
+
+class Compra(BaseModel):
+    id: int
+    local_id: int
+    producto_id: int
+    cantidad: int
+    precio_compra: Decimal
+    total_costo: Decimal
+    fecha: datetime
+    proveedor: Optional[str] = None
+    producto: Optional[Producto] = None
     model_config = ConfigDict(from_attributes=True)
 
 # --- Schemas para Consumo ---
@@ -449,3 +469,61 @@ class CuentaInfo(BaseModel):
     created_at: datetime
     closed_at: Optional[datetime] = None
     model_config = ConfigDict(from_attributes=True)
+
+# --- Schemas para SaaS QrMusic ---
+
+class LocalBase(BaseModel):
+    nombre: str
+    slug: str
+    direccion: Optional[str] = None
+    logo_url: Optional[str] = None
+
+class LocalCreate(LocalBase):
+    pass
+
+class LocalOut(LocalBase):
+    id: int
+    is_active: bool
+    created_at: datetime
+    model_config = ConfigDict(from_attributes=True)
+
+class UsuarioLocalBase(BaseModel):
+    email: str
+    nombre: str
+    telefono: Optional[str] = None
+
+class UsuarioLocalCreate(UsuarioLocalBase):
+    password: str
+
+class UsuarioLocalOut(UsuarioLocalBase):
+    id: int
+    is_active: bool
+    created_at: datetime
+    model_config = ConfigDict(from_attributes=True)
+
+class UsuarioLocalLogin(BaseModel):
+    email: str
+    password: str
+
+class UsuarioEmpleadoLocalBase(BaseModel):
+    email: str
+    nombre: str
+    rol: str  # 'dj', 'mesero', 'cajero', 'admin'
+    local_id: int
+
+class UsuarioEmpleadoLocalCreate(UsuarioEmpleadoLocalBase):
+    password: str
+
+class UsuarioEmpleadoLocalOut(UsuarioEmpleadoLocalBase):
+    id: int
+    is_active: bool
+    created_at: datetime
+    model_config = ConfigDict(from_attributes=True)
+
+class TokenOut(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+    role: str  # 'owner', 'dj', 'mesero', etc.
+    email: str
+    name: str
+    local_slugs: Optional[List[str]] = None

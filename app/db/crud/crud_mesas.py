@@ -23,6 +23,7 @@ def create_mesa(db: Session, mesa: MesaCreate):
     mesa_data = {
         "nombre": mesa.nombre,
         "qr_code": mesa.qr_code,
+        "local_id": mesa.local_id,
         "is_active": True,
         "created_at": datetime.datetime.now().isoformat(),
         "usuarios": []

@@ -16,6 +16,8 @@ from app.core.security import (  # noqa: F401
     verify_token_optional,
     verify_refresh_token,
     log_admin_action,
+    hash_password,
+    verify_password,
 )
 
 # Keep MASTER_API_KEY for backward compat (some routers import it from here)
@@ -27,5 +29,5 @@ __all__ = [
     "security", "security_optional", "MASTER_API_KEY",
     "create_access_token", "create_refresh_token",
     "verify_token", "verify_token_optional", "verify_refresh_token",
-    "log_admin_action",
+    "log_admin_action", "hash_password", "verify_password",
 ]

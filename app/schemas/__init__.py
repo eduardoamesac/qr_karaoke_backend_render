@@ -76,6 +76,8 @@ from app.schemas.producto import (
     CompraProducto,
     ReporteCategoriaMasVendida,
     ReporteIngresosPorCategoria,
+    Compra,
+    CompraCreate,
 )
 
 from app.schemas.pago import (
@@ -102,6 +104,20 @@ from app.schemas.token import (
     Notificacion,
 )
 
+from app.schemas.saas import (
+    LocalBase,
+    LocalCreate,
+    LocalOut,
+    UsuarioLocalBase,
+    UsuarioLocalCreate,
+    UsuarioLocalOut,
+    UsuarioLocalLogin,
+    UsuarioEmpleadoLocalBase,
+    UsuarioEmpleadoLocalCreate,
+    UsuarioEmpleadoLocalOut,
+    TokenOut,
+)
+
 __all__ = [
     # Cancion
     "CancionBase", "CancionCreate", "Cancion", "CancionAdminView",
@@ -123,7 +139,7 @@ __all__ = [
     # Producto
     "ProductoBase", "ProductoCreate", "Producto", "ProductoValorUpdate",
     "ProductoMasConsumido", "CompraProducto", "ReporteCategoriaMasVendida",
-    "ReporteIngresosPorCategoria",
+    "ReporteIngresosPorCategoria", "Compra", "CompraCreate",
     # Pago
     "PagoBase", "PagoCreate", "PagoView", "ReporteIngresos",
     "ReporteIngresosPorMesa", "ReporteIngresosPromedio",
@@ -133,4 +149,9 @@ __all__ = [
     "AdminLoginRequest", "AdminLoginResponse",
     "ConfiguracionGlobalBase", "ConfiguracionGlobal", "ClosingTimeUpdate",
     "Notificacion",
+    # SaaS
+    "LocalBase", "LocalCreate", "LocalOut",
+    "UsuarioLocalBase", "UsuarioLocalCreate", "UsuarioLocalOut", "UsuarioLocalLogin",
+    "UsuarioEmpleadoLocalBase", "UsuarioEmpleadoLocalCreate", "UsuarioEmpleadoLocalOut",
+    "TokenOut",
 ]

@@ -88,7 +88,7 @@ function handleGenerateQR(event) {
 
     // Generate URL
     const appBaseUrl = window.location.origin;
-    const appUrl = `${appBaseUrl}/?table=${encodeURIComponent(qrCode)}`;
+    const appUrl = `${appBaseUrl}/user?table=${encodeURIComponent(qrCode)}`;
     const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(appUrl)}`;
 
     resultArea.innerHTML = `
@@ -198,9 +198,11 @@ async function handleCreateTableDirect() {
             return;
         }
 
+        const activeLocalId = sessionStorage.getItem('active_local_id');
         const payload = {
             nombre: nombre,
-            qr_code: qrCode
+            qr_code: qrCode,
+            local_id: activeLocalId ? parseInt(activeLocalId, 10) : null
         };
 
         await apiFetch('/mesas/', { method: 'POST', body: JSON.stringify(payload) });

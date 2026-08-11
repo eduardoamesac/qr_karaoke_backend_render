@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QrMusic TV Player 2 - Setup</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0b0813;
+            --card-bg: rgba(18, 14, 34, 0.65);
+            --primary: #9d4edd;
+            --primary-glow: rgba(157, 78, 221, 0.4);
+            --secondary: #3f37c9;
+            --accent: #4cc9f0;
+            --success: #2ecc71;
+            --text-color: #ffffff;
+            --text-secondary: #a0a0b0;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        /* Animated Mesh Background */
+        .background-glow {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1;
+            background: 
+                radial-gradient(circle at 10% 20%, rgba(63, 55, 201, 0.25) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(157, 78, 221, 0.25) 0%, transparent 40%);
+            filter: blur(80px);
+            animation: pulse-bg 15s infinite alternate;
+        }
+
+        @keyframes pulse-bg {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.1); }
+        }
+
+        /* Container & Cards */
+        .container {
+            position: relative;
+            z-index: 10;
+            width: 90%;
+            max-width: 800px;
+            text-align: center;
+        }
+
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(157, 78, 221, 0.2);
+            border-radius: 24px;
+            padding: 45px 40px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 30px rgba(157, 78, 221, 0.1);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Logo Header */
+        .logo-area {
+            margin-bottom: 30px;
+        }
+
+        .logo-icon {
+            font-size: 48px;
+            display: inline-block;
+            animation: float 4s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(5deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
+
+        h1 {
+            font-size: 36px;
+            font-weight: 800;
+            margin: 10px 0 5px 0;
+            letter-spacing: -1px;
+            background: linear-gradient(135deg, #ffffff 30%, #c77dff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        p.subtitle {
+            font-size: 16px;
+            color: var(--text-secondary);
+            margin-bottom: 35px;
+            font-weight: 300;
+        }
+
+        /* Setup Flow View */
+        .setup-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            text-align: left;
+            margin-bottom: 35px;
+        }
+
+        .step-item {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 16px 20px;
+            transition: all 0.3s ease;
+        }
+
+        .step-item:hover {
+            background: rgba(157, 78, 221, 0.08);
+            border-color: rgba(157, 78, 221, 0.3);
+            transform: translateX(5px);
+        }
+
+        .step-number {
+            width: 36px;
+            height: 36px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: 800;
+            font-size: 16px;
+            box-shadow: 0 0 10px var(--primary-glow);
+        }
+
+        .step-content {
+            flex: 1;
+        }
+
+        .step-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 2px;
+        }
+
+        .step-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .step-action-btn {
+            background: rgba(255, 255, 255, 0.08);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 8px 16px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .step-action-btn:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+            box-shadow: 0 0 15px var(--primary-glow);
+        }
+
+        .step-action-btn.install-btn {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            border: none;
+        }
+
+        .step-action-btn.install-btn:hover {
+            box-shadow: 0 0 20px var(--primary-glow);
+            transform: scale(1.03);
+        }
+
+        /* Success Active View */
+        .ready-view {
+            display: none;
+            animation: scaleIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        @keyframes scaleIn {
+            0% { transform: scale(0.9); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .success-circle {
+            width: 100px;
+            height: 100px;
+            background: rgba(46, 204, 113, 0.1);
+            border: 2px solid var(--success);
+            border-radius: 50%;
+            margin: 0 auto 25px auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 0 30px rgba(46, 204, 113, 0.2);
+            animation: pulse-success 2s infinite alternate;
+        }
+
+        @keyframes pulse-success {
+            0% { box-shadow: 0 0 20px rgba(46, 204, 113, 0.2); }
+            100% { box-shadow: 0 0 40px rgba(46, 204, 113, 0.4); }
+        }
+
+        .success-icon {
+            font-size: 48px;
+            color: var(--success);
+        }
+
+        .ready-title {
+            font-size: 32px;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 15px;
+        }
+
+        .ready-desc {
+            font-size: 16px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            max-width: 500px;
+            margin: 0 auto 30px auto;
+        }
+
+        .ready-footer {
+            font-size: 13px;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 800;
+            animation: blink 2.5s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="background-glow"></div>
+
+    <div class="container">
+        <!-- VISTA 1: CONFIGURACIÓN / PASOS -->
+        <div id="setup-view" class="card">
+            <div class="logo-area">
+                <span class="logo-icon">📺</span>
+                <h1>Vinculación del TV Player 2</h1>
+                <p class="subtitle">Sigue estos pasos desasistidos en tu televisor para iniciar la reproducción sin publicidad</p>
+            </div>
+
+            <div class="setup-steps">
+                <div class="step-item">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <div class="step-title">Bloqueador de Publicidad</div>
+                        <div class="step-desc">Instala AdBlock para anular anuncios de YouTube (Versión clásica compatible con Chrome V3).</div>
+                    </div>
+                    <a href="https://chromewebstore.google.com/detail/gighmmpiobklfepjocnamgkkbiglidom" target="_blank" class="step-action-btn">🔗 Abrir Tienda</a>
+                </div>
+
+                <div class="step-item">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <div class="step-title">Gestor de Scripts</div>
+                        <div class="step-desc">Instala Violentmonkey para habilitar scripts de enlace.</div>
+                    </div>
+                    <a href="https://chromewebstore.google.com/detail/jinjaccalgkegednnccohejagnlnfdag" target="_blank" class="step-action-btn">🔗 Abrir Tienda</a>
+                </div>
+
+                <div class="step-item">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <div class="step-title">Enlace de QrMusic</div>
+                        <div class="step-desc">Haz clic para instalar el Userscript conector de sincronización.</div>
+                    </div>
+                    <a href="/static/qrmusic_userscript.user.js" target="_blank" class="step-action-btn install-btn">⚡ Instalar Script</a>
+                </div>
+
+                <div class="step-item">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <div class="step-title">Pantalla Completa</div>
+                        <div class="step-desc">Presiona <strong>F11</strong> en el teclado para ocultar los marcos de la TV.</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="margin-top: 35px; text-align: center; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 25px;">
+                <a href="https://www.youtube.com" class="step-action-btn install-btn" style="padding: 14px 35px; font-size: 16px; display: inline-block;">📺 Abrir el Reproductor (TV Mode)</a>
+                <p style="font-size: 12px; color: var(--text-secondary); margin-top: 12px;">
+                    <em>Al hacer clic, se abrirá YouTube y el Userscript tomará el control total, ocultando YouTube y mostrando nuestra pantalla de espera exclusiva de QrMusic.</em>
+                </p>
+            </div>
+        </div>
+
+        <!-- VISTA 2: LISTO / VINCULADO -->
+        <div id="ready-view" class="card ready-view">
+            <div class="logo-badge-container" style="position: relative; display: inline-block; margin: 0 auto 25px auto; width: 20vh; height: 20vh;">
+                <img id="owner-logo-display" src="/static/images/watermark.jpg" style="width: 20vh; height: 20vh; border-radius: 50%; border: 0.4vh solid var(--primary); object-fit: cover; box-shadow: 0 0 2.5vh var(--primary-glow);" />
+                <div class="success-badge" style="width: 5vh; height: 5vh; background: var(--success); border-radius: 50%; display: flex; justify-content: center; align-items: center; color: #fff; position: absolute; bottom: 0; right: 0; font-size: 2.4vh; border: 0.4vh solid #120e22; box-shadow: 0 0.5vh 1.5vh rgba(0,0,0,0.3);">✔</div>
+            </div>
+            <h2 class="ready-title">¡Listo para Empezar!</h2>
+            <p class="ready-desc">
+                El reproductor de TV se encuentra **vinculado y sincronizado** en segundo plano. Puedes ocultar el cursor.
+            </p>
+            <div class="ready-footer">
+                📡 Esperando canción desde el administrador o mesa...
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 1. Cargar configuraciones públicas (Logo del Dueño / Nombre de la App)
+        let qrmusicHost = window.location.host;
+        let ownerLogoUrl = '/static/images/watermark.jpg';
+
+        fetch('/api/v1/player2/settings')
+            .then(res => res.json())
+            .then(data => {
+                if (data.owner_logo) {
+                    ownerLogoUrl = data.owner_logo;
+                    const logoImg = document.getElementById('owner-logo-display');
+                    if (logoImg) logoImg.src = ownerLogoUrl;
+                }
+            })
+            .catch(err => console.warn("No se pudieron cargar los ajustes públicos del player2:", err));
+
+        // 2. Conexión nativa de WebSocket para el Setup/Waiting Screen
+        let socket = null;
+        const connectWebSocket = () => {
+            const wsUrl = `ws://${qrmusicHost}/ws/cola`;
+            console.log(`[QrMusic Setup] Conectando a WebSocket: ${wsUrl}`);
+            
+            socket = new WebSocket(wsUrl);
+            
+            socket.onopen = () => {
+                console.log("[QrMusic Setup] WebSocket conectado.");
+                // Mostrar vista de LISTO/VINCULADO
+                document.getElementById('setup-view').style.display = 'none';
+                document.getElementById('ready-view').style.display = 'block';
+            };
+
+            socket.onmessage = (event) => {
+                try {
+                    const data = JSON.parse(event.data);
+                    console.log("[QrMusic Setup] Mensaje recibido:", data);
+                    
+                    // A. Redirección nativa a YouTube al recibir primera canción
+                    if (data.type === 'play_song') {
+                        const payload = data.payload || {};
+                        const youtube_id = payload.youtube_id;
+                        if (youtube_id) {
+                            console.log(`[QrMusic Setup] Redirigiendo a YouTube para reproducir: ${youtube_id}`);
+                            window.location.href = `https://www.youtube.com/watch?v=${youtube_id}`;
+                        }
+                    } 
+                    // B. Procesamiento de Emojis/Reacciones
+                    else if (data.type === 'reaction' && data.payload && data.payload.reaction) {
+                        const reactionVal = data.payload.reaction;
+                        
+                        const el = document.createElement('div');
+                        el.className = 'reaction-emoji';
+                        el.style.left = `${Math.random() * 85 + 7}%`;
+                        el.style.setProperty('--tx', `${(Math.random() - 0.5) * 220}px`);
+                        el.textContent = reactionVal;
+                        
+                        const container = document.getElementById('qrmusic-reaction-container');
+                        if (container) {
+                            container.appendChild(el);
+                            setTimeout(() => el.remove(), 5500);
+                        }
+                    }
+                } catch (err) {
+                    console.error("[QrMusic Setup] Error procesando mensaje:", err);
+                }
+            };
+
+            socket.onclose = () => {
+                console.log("[QrMusic Setup] WebSocket cerrado. Reconectando en 3 segundos...");
+                setTimeout(connectWebSocket, 3000);
+            };
+
+            socket.onerror = (err) => {
+                console.error("[QrMusic Setup] Error en WebSocket:", err);
+            };
+        };
+
+        // Iniciar WebSocket
+        connectWebSocket();
+    </script>
+</body>
+</html>

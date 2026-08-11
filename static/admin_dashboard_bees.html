@@ -29,7 +29,14 @@
                     <h3>Últimos Pedidos</h3>
                     <p>Pedidos pendientes por despachar</p>
                 </div>
-                <button class="admin-orders-toggle" id="orders-toggle-btn" title="Expandir/Colapsar pedidos">
+                <!-- Selector de Local Global (Solo visible para Owners) -->
+                <div id="global-local-selector-container" style="display: none; margin-left: auto; margin-right: 15px; align-items: center; gap: 8px;">
+                    <label for="global-local-select" style="color: rgba(255,255,255,0.7); font-size: 0.85em; font-weight: 500;">Local:</label>
+                    <select id="global-local-select" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 4px 10px; border-radius: 6px; font-size: 0.85em; font-weight: 600; outline: none; cursor: pointer; transition: all 0.2s;">
+                        <!-- Dinámico -->
+                    </select>
+                </div>
+                <button class="admin-orders-toggle" id="orders-toggle-btn" title="Expandir/Colapsar pedidos" style="margin-left: 0;">
                     <span class="toggle-icon">▼</span>
                 </button>
             </div>
@@ -196,6 +203,10 @@
 
             async function apiFetch(endpoint, options = {}) {
                 const headers = { ...options.headers, 'Authorization': `Bearer ${apiKey}` };
+                const activeLocalId = sessionStorage.getItem('active_local_id');
+                if (activeLocalId) {
+                    headers['X-Local-ID'] = activeLocalId;
+                }
                 // Solo añadir Content-Type si hay un body. Evita errores 422 en POSTs vacíos.
                 // FIX: El content-type se debe añadir si el body no es FormData
                 if (options.body && !(options.body instanceof FormData)) {
@@ -496,7 +507,7 @@
                     url = `${window.location.origin}${tableQrCode}`;
                 } else {
                     // URL para las mesas
-                    url = `${window.location.origin}/?table=${tableQrCode}`;
+                    url = `${window.location.origin}/user?table=${tableQrCode}`;
                 }
 
                 QRCode.toCanvas(canvas, url, { width: 256, errorCorrectionLevel: 'H' }, function (error) {
@@ -530,7 +541,7 @@
                     if (tableQrCode && tableQrCode.startsWith('/')) {
                         url = `${window.location.origin}${tableQrCode}`;
                     } else if (tableQrCode) {
-                        url = `${window.location.origin}/?table=${tableQrCode}`;
+                        url = `${window.location.origin}/user?table=${tableQrCode}`;
                     }
 
                     if (url) {
@@ -959,6 +970,72 @@
                     .catch(err => { console.warn('Failed to load fragment', pageId, err); });
             }
 
+            function parseJwt(token) {
+                try {
+                    return JSON.parse(atob(token.split('.')[1]));
+                } catch (e) {
+                    return null;
+                }
+            }
+
+            async function setupOwnerLocalSelector() {
+                try {
+                    const response = await fetch('/api/v1/saas/locales', {
+                        headers: { 'Authorization': `Bearer ${apiKey}` }
+                    });
+                    if (!response.ok) throw new Error('Error al cargar locales');
+                    const locales = await response.json();
+                    
+                    const container = document.getElementById('global-local-selector-container');
+                    const select = document.getElementById('global-local-select');
+                    
+                    if (locales.length > 0 && container && select) {
+                        select.innerHTML = '';
+                        locales.forEach(local => {
+                            const opt = document.createElement('option');
+                            opt.value = local.id;
+                            opt.textContent = local.nombre;
+                            select.appendChild(opt);
+                        });
+                        
+                        let savedLocalId = sessionStorage.getItem('active_local_id');
+                        if (!savedLocalId || !locales.some(l => l.id == savedLocalId)) {
+                            savedLocalId = locales[0].id;
+                        }
+                        sessionStorage.setItem('active_local_id', savedLocalId);
+                        select.value = savedLocalId;
+                        
+                        container.style.display = 'flex';
+                        
+                        select.addEventListener('change', () => {
+                            sessionStorage.setItem('active_local_id', select.value);
+                            showNotification(`Establecimiento cambiado a: ${select.options[select.selectedIndex].text}`, 'info');
+                            
+                            const activePage = document.querySelector('.page.active');
+                            if (activePage) {
+                                const pageId = activePage.id;
+                                if (pageId === 'inventory') {
+                                    loadInventoryPage();
+                                } else if (pageId === 'dashboard') {
+                                    loadDashboardPage();
+                                } else if (pageId === 'queue') {
+                                    loadQueuePage();
+                                } else if (pageId === 'accounts') {
+                                    loadAccountsPage();
+                                } else if (pageId === 'reports') {
+                                    loadReportsPage();
+                                } else if (pageId === 'settings') {
+                                    loadSettingsPage();
+                                }
+                            }
+                            loadTopOrdersBar();
+                        });
+                    }
+                } catch (error) {
+                    console.error('Error configurando selector de local:', error);
+                }
+            }
+
             function loadAllFragments() {
                 return Promise.all(['dashboard', 'queue', 'inventory', 'accounts', 'reports', 'settings'].map(loadFragment));
             }
@@ -968,6 +1045,14 @@
                     if (!apiKey) {
                         window.location.href = '/admin';
                         return;
+                    }
+
+                    // Inicializar local_id según rol
+                    const payload = parseJwt(apiKey);
+                    if (payload && payload.role === 'owner') {
+                        setupOwnerLocalSelector();
+                    } else if (payload && payload.local_id) {
+                        sessionStorage.setItem('active_local_id', payload.local_id);
                     }
 
                     // Cargar datos de la página inicial

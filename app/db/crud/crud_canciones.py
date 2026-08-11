@@ -60,7 +60,7 @@ def get_available_song_credits(db: Session, usuario_id: int) -> int:
     usuario = get_usuario_by_id(db, usuario_id)
     if not usuario:
         return 0
-    return usuario.song_credits or 1
+    return usuario.song_credits if usuario.song_credits is not None else 0
 
 
 def get_user_credits_detail(db: Session, usuario_id: int):
@@ -70,17 +70,39 @@ def get_user_credits_detail(db: Session, usuario_id: int):
     if not usuario:
         return {"creditos": 0, "proxima_renovacion": None}
     return {
-        "creditos": usuario.song_credits or 1,
+        "creditos": usuario.song_credits if usuario.song_credits is not None else 0,
         "proxima_renovacion": usuario.credits_added_at
     }
 
 
 def check_if_song_in_user_list(db: Session, usuario_id: int, youtube_id: str) -> bool:
-    """Verifica si una canción ya fue añadida por este usuario."""
+    """Verifica si una canción ya está en la cola para el usuario o su mesa."""
+    from app.db.crud.crud_usuarios import get_usuario_by_id
+    usuario = get_usuario_by_id(db, usuario_id)
+    if not usuario:
+        return False
+
+    mesa_id = getattr(usuario, "mesa_id", None)
+    usuario_ids_mesa = {usuario_id}
+
+    if mesa_id:
+        try:
+            usuarios_mesa = cache.get_usuarios_by_mesa_from_cache(mesa_id)
+            if usuarios_mesa:
+                for u in usuarios_mesa:
+                    uid = u.get("id")
+                    if uid:
+                        usuario_ids_mesa.add(int(uid))
+        except Exception:
+            pass
+
     all_songs = cache.get_all_songs()
     for song in all_songs:
-        if song.get("youtube_id") == youtube_id and song.get("usuario_id") == usuario_id:
-            return True
+        # Solo considerar como duplicado si está en la cola activa (reproduciendo, aprobado, pendiente)
+        if song.get("estado") in ["pendiente", "pendiente_lazy", "aprobado", "reproduciendo"]:
+            if song.get("youtube_id") == youtube_id:
+                if song.get("usuario_id") in usuario_ids_mesa:
+                    return True
     return False
 
 
@@ -115,8 +137,9 @@ def consume_song_credit(db: Session, usuario_id: int, cancion_id: int) -> bool:
     if not usuario or (usuario.song_credits or 0) <= 0:
         return False
 
-    new_credits = max(0, (usuario.song_credits or 1) - 1)
-    cache.update_usuario_en_cache(usuario_id, {"song_credits": new_credits})
+    new_credits = max(0, (usuario.song_credits or 0) - 1)
+    new_puntos = max(0, (usuario.puntos or 0) - 1)
+    cache.update_usuario_en_cache(usuario_id, {"song_credits": new_credits, "puntos": new_puntos})
     return True
 
 
@@ -241,6 +264,19 @@ def enriquecer_cancion(db: Session, song: dict):
             usuario = None
             
     if usuario:
+        mesa_info = None
+        if getattr(usuario, "mesa_id", None):
+            try:
+                from app.db.crud.crud_mesas import get_mesa_by_id
+                mesa_obj = get_mesa_by_id(db, usuario.mesa_id)
+                if mesa_obj:
+                    mesa_info = {
+                        "id": int(mesa_obj.get("id") or usuario.mesa_id),
+                        "nombre": str(mesa_obj.get("nombre") or f"Mesa {usuario.mesa_id}")
+                    }
+            except Exception:
+                pass
+
         cancion_enriquecida["usuario"] = {
             "id": usuario.id,
             "nick": usuario.nick,
@@ -248,7 +284,7 @@ def enriquecer_cancion(db: Session, song: dict):
             "nivel": usuario.nivel,
             "song_credits": usuario.song_credits or 1,
             "is_silenced": usuario.is_silenced,
-            "mesa": None
+            "mesa": mesa_info
         }
     else:
         cancion_enriquecida["usuario"] = {

@@ -85,3 +85,21 @@ def log_admin_action(admin_id: str, action: str, details: str = ""):
     log_msg = f"[{timestamp}] ADMIN:{admin_id} | ACTION:{action} | DETAILS:{details}"
     logger.info(log_msg)
     print(log_msg)
+
+
+import hashlib
+
+def hash_password(password: str) -> str:
+    salt = os.urandom(16)
+    pw_hash = hashlib.pbkdf2_hmac('sha256', password.encode(), salt, 100000)
+    return salt.hex() + ":" + pw_hash.hex()
+
+def verify_password(password: str, hashed_password: str) -> bool:
+    try:
+        salt_hex, hash_hex = hashed_password.split(":")
+        salt = bytes.fromhex(salt_hex)
+        pw_hash = hashlib.pbkdf2_hmac('sha256', password.encode(), salt, 100000)
+        return pw_hash.hex() == hash_hex
+    except Exception:
+        return False
+

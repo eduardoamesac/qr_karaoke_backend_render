@@ -1,4 +1,4 @@
-﻿import os
+import os
 import datetime
 import asyncio
 import logging
@@ -20,16 +20,15 @@ router = APIRouter()
 
 # Dependencia para obtener la sesión de la base de datos
 def get_db():
-    db = None
     try:
         db = SessionLocal()
-        yield db
     except Exception as e:
         logger.warning(f"⚠️ No se pudo establecer conexión con la base de datos: {e}")
-        yield None
+        raise e
+    try:
+        yield db
     finally:
-        if db:
-            db.close()
+        db.close()
 
 # --- ENDPOINT: Avanzar la cola manualmente ---
 @router.post(

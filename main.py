@@ -1,5 +1,5 @@
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Request
-from fastapi.responses import Response, FileResponse
+from fastapi.responses import Response, FileResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 import os
 import logging
@@ -29,6 +29,7 @@ from app.services import broadcast, thumbnails, websocket_manager
 from app.routers import mesas, canciones, youtube, consumos, usuarios, admin, productos
 from app.routers.admin_settings import router as settings_router
 from app.routers.admin_extra import router as admin_extra_router
+from app.routers import auth_saas, locales, player2
 from app.services.song_credits_background import start_credits_background_task
 
 logger = logging.getLogger(__name__)
@@ -43,6 +44,20 @@ async def lifespan(app: FastAPI):
     # Setup inicial en lifespan (reemplaza @app.on_event startup)
     db = SessionLocal()
     try:
+        # Ejecutar alteraciones de base de datos seguras para stock_seguridad y local_id
+        from sqlalchemy import text
+        try:
+            db.execute(text("ALTER TABLE productos ADD COLUMN stock_seguridad INTEGER DEFAULT 0"))
+            db.commit()
+        except Exception:
+            db.rollback()
+            
+        try:
+            db.execute(text("ALTER TABLE productos ADD COLUMN local_id INTEGER REFERENCES locales(id)"))
+            db.commit()
+        except Exception:
+            db.rollback()
+
         crud.get_or_create_dj_user(db)
         # Iniciar tarea de background para decrementar créditos
         start_credits_background_task()
@@ -53,6 +68,17 @@ async def lifespan(app: FastAPI):
 app = FastAPI(title="Karaoke 'LA CANTA QUE RANA'", lifespan=lifespan)
 
 # ===============================
+# CORS MIDDLEWARE
+# ===============================
+from fastapi.middleware.cors import CORSMiddleware
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 # ✅ HEALTH CHECK PARA RENDER
 # ===============================
 @app.get("/salud", include_in_schema=False)
@@ -71,13 +97,13 @@ async def add_referrer_policy_header(request: Request, call_next):
 # ===============================
 # FRONTEND
 # ===============================
-@app.get("/", response_class=FileResponse, include_in_schema=False)
-async def read_index():
-    return FileResponse(os.path.join("static", "index.html"))
+@app.get("/", include_in_schema=False)
+async def root_redirect():
+    return RedirectResponse(url="/admin")
 
-@app.get("/bees", response_class=FileResponse, include_in_schema=False)
-async def read_bees_index():
-    return FileResponse(os.path.join("static", "index_bees.html"))
+@app.get("/user", response_class=FileResponse, include_in_schema=False)
+async def read_user_app():
+    return FileResponse(os.path.join("static", "user.html"))
 
 @app.get("/admin", response_class=FileResponse, include_in_schema=False)
 async def read_admin_index():
@@ -119,11 +145,19 @@ app.include_router(broadcast.router, prefix="/api/v1/broadcast", tags=["Broadcas
 app.include_router(thumbnails.router)
 app.include_router(settings_router)
 app.include_router(admin_extra_router)
+app.include_router(auth_saas.router, prefix="/api/v1/saas/auth", tags=["SaaS Auth"])
+app.include_router(locales.router, prefix="/api/v1/saas/locales", tags=["SaaS Locales"])
+app.include_router(player2.router, prefix="/api/v1/player2", tags=["Player2"])
 
 # ===============================
 # STATIC FILES
 # ===============================
 app.mount("/static", StaticFiles(directory="static"), name="static")
+
+@app.get("/player2", include_in_schema=False)
+@app.get("/player2/", include_in_schema=False)
+async def redirect_player2():
+    return RedirectResponse(url="/api/v1/player2/")
 
 @app.get("/favicon.ico", include_in_schema=False)
 async def favicon():

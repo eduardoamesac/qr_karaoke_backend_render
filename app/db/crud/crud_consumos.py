@@ -67,8 +67,23 @@ def create_consumo_para_usuario(db: Session, consumo: ConsumoCreate, usuario_id:
     creditos_ganados = int(valor_total * credit_multiplier)
     if creditos_ganados > 0:
         new_credits = (usuario.song_credits or 0) + creditos_ganados
-        cache.update_usuario_en_cache(usuario.id, {"song_credits": new_credits})
+        new_puntos = (usuario.puntos or 0) + creditos_ganados
+        
+        # Recalcular nivel del usuario por puntos
+        nivel = "bronce"
+        if new_puntos >= 5000:
+            nivel = "oro"
+        elif new_puntos >= 1000:
+            nivel = "plata"
+            
+        cache.update_usuario_en_cache(usuario.id, {
+            "song_credits": new_credits,
+            "puntos": new_puntos,
+            "nivel": nivel
+        })
         usuario.song_credits = new_credits
+        usuario.puntos = new_puntos
+        usuario.nivel = nivel
 
     db_producto.stock -= consumo.cantidad
     db.add(db_producto)

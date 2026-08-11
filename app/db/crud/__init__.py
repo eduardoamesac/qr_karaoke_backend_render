@@ -14,6 +14,7 @@ from app.db.crud.crud_usuarios import (
     get_o_crear_usuario_admin_para_mesa,
     get_all_usuarios,
     update_usuario,
+    add_puntos_a_usuario,
     delete_usuario,
     get_or_create_dj_user,
     get_ranking_usuarios,
@@ -30,7 +31,7 @@ from app.db.crud.crud_usuarios import (
 
 from app.db.crud.crud_productos import (
     get_producto_by_id,
-    get_producto_by_nombre,
+    get_producto_by_nombre_and_local,
     get_all_productos,
     get_productos,
     create_producto,
@@ -38,6 +39,8 @@ from app.db.crud.crud_productos import (
     delete_producto,
     update_producto_valor,
     update_producto_active_status,
+    registrar_compra,
+    get_compras_by_local,
 )
 
 from app.db.crud.crud_pagos import (
@@ -138,15 +141,16 @@ __all__ = [
     # Usuarios
     "get_usuario_by_id", "get_usuario_by_nick", "create_usuario",
     "create_usuario_en_mesa", "get_o_crear_usuario_admin_para_mesa",
-    "get_all_usuarios", "update_usuario", "delete_usuario",
+    "get_all_usuarios", "update_usuario", "add_puntos_a_usuario", "delete_usuario",
     "get_or_create_dj_user", "get_ranking_usuarios",
     "ban_usuario", "unban_nick", "get_banned_nicks", "set_usuario_silenciado",
     "get_usuarios_por_nivel", "get_usuarios_sin_canciones_cantadas",
     "get_ranking_puntos_usuarios", "get_consumo_por_mesa", "get_consumos_por_usuario",
     # Productos
-    "get_producto_by_id", "get_producto_by_nombre", "get_all_productos",
+    "get_producto_by_id", "get_producto_by_nombre_and_local", "get_all_productos",
     "get_productos", "create_producto", "update_producto", "delete_producto",
-    "update_producto_valor", "update_producto_active_status",
+    "update_producto_valor", "update_producto_active_status", "registrar_compra",
+    "get_compras_by_local",
     # Pagos y API Keys
     "create_pago", "get_pagos", "get_pagos_mesa",
     "create_admin_api_key", "get_admin_api_key", "get_all_admin_api_keys",

@@ -206,14 +206,24 @@ def conectar_usuario_a_mesa(
                 detail="La mesa ha alcanzado el máximo de 10 usuarios activos. Por favor, intenta más tarde."
             )
     
-    # Generar automáticamente el nick basado en la mesa y el número de usuario
-    nick_automatico = f"{mesa_nombre}-Usuario{usuario_numero}"
+    # Determinar el nick final: si el usuario ingresó un apodo personalizado, lo usamos.
+    # Si no, usamos el formato automático de UsuarioX.
+    # Para evitar colisiones en el caché global, el nick se almacena como "NombreMesa-Apodo".
+    custom_nick = usuario.nick.strip() if usuario.nick else ""
+    
+    if not custom_nick or custom_nick.lower() == "usuario" or custom_nick.startswith(f"{mesa_nombre}-Usuario"):
+        nick_final = f"{mesa_nombre}-Usuario{usuario_numero}"
+    else:
+        if custom_nick.startswith(f"{mesa_nombre}-"):
+            nick_final = custom_nick
+        else:
+            nick_final = f"{mesa_nombre}-{custom_nick}"
 
     # Asegurar sincronización con MySQL (ahora robusta a errores de tabla inexistente)
     ensure_mesa_in_mysql(db, mesa_id, mesa_nombre, db_mesa.get('qr_code'))
     
     # Verificar si ya existe un usuario con este nick en el caché (no en DB)
-    db_usuario_existente = cache.get_usuario_by_nick_from_cache(nick_automatico)
+    db_usuario_existente = cache.get_usuario_by_nick_from_cache(nick_final)
     
     if db_usuario_existente:
         if db_usuario_existente.get("is_active"):
@@ -231,10 +241,10 @@ def conectar_usuario_a_mesa(
     
     # Crear el nuevo usuario en caché
     try:
-        usuario_data = schemas.UsuarioCreate(nick=nick_automatico)
+        usuario_data = schemas.UsuarioCreate(nick=nick_final)
         return crud.create_usuario_en_mesa(db=db, usuario=usuario_data, mesa_id=mesa_id)
     except Exception as e:
-        logger.error(f"Error al crear usuario '{nick_automatico}' en mesa {mesa_id}: {e}")
+        logger.error(f"Error al crear usuario '{nick_final}' en mesa {mesa_id}: {e}")
         raise HTTPException(status_code=500, detail=f"Error al crear usuario: {e}")
 
 @router.get("/{mesa_id}/usuarios-conectados", response_model=List[schemas.UsuarioConectado], summary="Ver usuarios conectados a una mesa")

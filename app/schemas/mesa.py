@@ -8,6 +8,7 @@ from decimal import Decimal
 class MesaBase(BaseModel):
     nombre: str
     qr_code: str
+    local_id: Optional[int] = None
 
 
 class MesaCreate(MesaBase):

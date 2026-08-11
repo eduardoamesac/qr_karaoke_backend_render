@@ -29,6 +29,7 @@
             justify-content: center;
             align-items: center;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            cursor: none; /* Oculta el cursor del mouse para pantallas de TV/reproducción */
         }
 
         #background-carousel {
@@ -282,6 +283,7 @@
         let autoplayTimer = null;
         let transitionInProgress = false;
         let currentSongEnded = false;
+        let currentSongTitle = "";
 
         // Flags para acciones enviadas por admin antes de que el reproductor exista
         let pendingPause = false;
@@ -440,7 +442,8 @@
                     'rel': 0,
                     'iv_load_policy': 3,
                     'playsinline': 1,
-                    'start': startSeconds
+                    'start': startSeconds,
+                    'origin': window.location.origin
                 },
                 events: {
                     'onReady': onPlayerReady,
@@ -486,12 +489,43 @@
             }
         }
 
+        function showBannerNotification(message, duration = 5000) {
+            if (!notificationBanner) return;
+            notificationBanner.textContent = message;
+            notificationBanner.classList.add('show');
+            setTimeout(() => {
+                notificationBanner.classList.remove('show');
+            }, duration);
+        }
+
         function onPlayerError(event) {
             console.error('❌ Error en el reproductor de YouTube:', event.data);
+            
+            let artist = "El artista";
+            if (currentSongTitle) {
+                const parts = currentSongTitle.split('-');
+                if (parts.length > 1) {
+                    artist = parts[0].trim();
+                } else {
+                    artist = `"${currentSongTitle}"`;
+                }
+            }
+
+            let errorText = "Ocurrió un error con el video de YouTube. Saltando...";
+            if (event.data === 150 || event.data === 101) {
+                errorText = `El artista ${artist} sólo permite que esta canción se reproduzca directamente en YouTube, solicítala directamente al administrador. Saltando...`;
+            } else if (event.data === 100) {
+                errorText = "El video no existe o es privado. Saltando...";
+            } else if (event.data === 2) {
+                errorText = "ID de video inválido o malformado. Saltando...";
+            }
+            
+            showBannerNotification(errorText, 3000);
+
             // Avanzar automáticamente a la siguiente canción si el video no se puede reproducir
             setTimeout(() => {
                 if (!transitionInProgress) advanceToNextSong();
-            }, 2000);
+            }, 3000);
         }
 
         // Evento cuando cambia el estado del reproductor
@@ -944,6 +978,7 @@
 
                 if (queueData && queueData.now_playing) {
                     const song = queueData.now_playing;
+                    currentSongTitle = song.titulo || '';
                     // Protegemos contra estructura inesperada
                     const addedBy = (song && song.usuario) ? (song.usuario.mesa ? song.usuario.mesa.nombre : song.usuario.nick) : 'Desconocido';
                     const title = (song && song.titulo) ? song.titulo : 'Título desconocido';

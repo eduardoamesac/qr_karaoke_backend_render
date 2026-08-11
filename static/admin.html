@@ -1,148 +1,695 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - LA CANTA QUE RANA</title>
+    <title>QrMusic SaaS - Controla la Música y Pedidos de tu Local</title>
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
+        :root {
+            --bg-base: #0b0f19;
+            --bg-card: rgba(17, 24, 39, 0.7);
+            --primary: #8b5cf6;
+            --primary-glow: rgba(139, 92, 246, 0.4);
+            --secondary: #06b6d4;
+            --secondary-glow: rgba(6, 182, 212, 0.4);
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --accent: #d946ef;
+        }
+
+        * {
             margin: 0;
-            background-color: #121212;
-            color: #e0e0e0;
-            text-align: center;
-            padding: 20px;
+            padding: 0;
             box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
         }
 
-        .container {
-            background-color: #1e1e1e;
-            padding: 2em;
-            border-radius: 10px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-            max-width: 400px;
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(139, 92, 246, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(6, 182, 212, 0.15) 0%, transparent 40%);
+            background-attachment: fixed;
+        }
+
+        /* Navbar */
+        header {
             width: 100%;
+            padding: 1.5rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            background-color: rgba(11, 15, 25, 0.8);
         }
 
-        h1 {
-            color: #f44336;
-            /* Color rojo para admin */
-            margin-bottom: 0.5em;
+        .logo {
+            font-size: 1.6rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
         }
 
-        p {
-            color: #b0b0b0;
-            margin-bottom: 1.5em;
+        .logo span {
+            color: var(--accent);
+            -webkit-text-fill-color: var(--accent);
         }
 
-        input[type="password"] {
-            width: calc(100% - 22px);
-            padding: 10px;
-            margin-bottom: 1em;
-            border-radius: 5px;
-            border: 1px solid #555;
-            background-color: #333;
+        nav {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        nav a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s, transform 0.3s;
+        }
+
+        nav a:hover {
+            color: var(--text-main);
+            transform: translateY(-1px);
+        }
+
+        .btn-nav-login {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: #fff;
-            font-size: 1em;
+            padding: 0.6rem 1.4rem;
+            border-radius: 30px;
+            font-weight: 600;
+            box-shadow: 0 4px 15px var(--primary-glow);
+            transition: transform 0.3s, box-shadow 0.3s;
         }
 
-        button {
+        .btn-nav-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(139, 92, 246, 0.6);
+        }
+
+        /* Main Container */
+        main {
+            padding: 8rem 5% 4rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            margin-bottom: 6rem;
+            animation: fadeIn 1s ease-out;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(to right, #fff, #a78bfa, #22d3ee);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        @media(min-width: 768px) {
+            .hero h1 {
+                font-size: 4rem;
+            }
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            max-width: 700px;
+            margin: 0 auto 2.5rem;
+            line-height: 1.6;
+        }
+
+        .hero-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1.2rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: #fff;
+            padding: 0.9rem 2rem;
+            border-radius: 30px;
+            font-weight: 700;
+            text-decoration: none;
+            box-shadow: 0 4px 20px var(--primary-glow);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.7);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-main);
+            padding: 0.9rem 2rem;
+            border-radius: 30px;
+            font-weight: 700;
+            text-decoration: none;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: background 0.3s, transform 0.3s;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-3px);
+        }
+
+        /* Features Section */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-bottom: 8rem;
+        }
+
+        .feature-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 2.5rem 2rem;
+            border-radius: 20px;
+            backdrop-filter: blur(16px);
+            transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
-            padding: 12px;
-            background-color: #f44336;
-            color: #ffffff;
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary-glow), transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(139, 92, 246, 0.3);
+            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.1);
+        }
+
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            display: inline-block;
+        }
+
+        .feature-card h3 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 0.8rem;
+            color: #fff;
+        }
+
+        .feature-card p {
+            color: var(--text-muted);
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        /* Portal Acceso */
+        .portal-section {
+            background: var(--bg-card);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 30px;
+            max-width: 600px;
+            margin: 0 auto;
+            overflow: hidden;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.4);
+            backdrop-filter: blur(20px);
+        }
+
+        .tabs-header {
+            display: flex;
+            background: rgba(255,255,255,0.02);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 1.5rem;
+            text-align: center;
+            background: transparent;
             border: none;
-            border-radius: 5px;
+            color: var(--text-muted);
+            font-weight: 700;
+            font-size: 1rem;
             cursor: pointer;
-            font-size: 1.1em;
-            font-weight: bold;
-            transition: background-color 0.3s;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
         }
 
-        button:hover {
-            background-color: #d32f2f;
+        .tab-btn.active {
+            color: var(--text-main);
+            border-bottom-color: var(--primary);
+            background: rgba(139, 92, 246, 0.05);
         }
 
-        button:disabled {
-            background-color: #555;
-            cursor: not-allowed;
+        .tabs-content {
+            padding: 2.5rem;
         }
 
-        #error-message {
-            color: #ffcdd2;
-            margin-top: 1em;
-            min-height: 1.2em;
+        .form-container {
+            display: none;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .form-container.active {
+            display: block;
+        }
+
+        .form-container h2 {
+            margin-bottom: 0.5rem;
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: #fff;
+        }
+
+        .form-container p.subtitle {
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+            font-size: 0.9rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.85rem 1.2rem;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            color: #fff;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus {
+            border-color: var(--primary);
+            background: rgba(255,255,255,0.05);
+            box-shadow: 0 0 10px rgba(139, 92, 246, 0.25);
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            box-shadow: 0 4px 15px var(--primary-glow);
+            transition: all 0.3s;
+            margin-top: 1rem;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(139, 92, 246, 0.6);
+        }
+
+        .toggle-auth {
+            margin-top: 1.5rem;
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .toggle-auth a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .toggle-auth a:hover {
+            text-decoration: underline;
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        .alert-error {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            color: #fca5a5;
+        }
+
+        .alert-success {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            color: #6ee7b7;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 6rem;
+            padding: 3rem 5% 1.5rem;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.9rem;
         }
     </style>
 </head>
-
 <body>
-    <div class="container" id="admin-login-container">
-        <h1>Acceso de Administrador</h1>
-        <p>Introduce tu clave de API para continuar.</p>
-        <form id="admin-login-form">
-            <input type="password" id="api-key-input" placeholder="Tu clave de API" required autocomplete="off">
-            <button type="submit" id="admin-login-button">Ingresar</button>
-        </form>
-        <div id="error-message"></div>
-    </div>
+
+    <!-- Header / Navbar -->
+    <header>
+        <a href="#" class="logo">Qr<span>Music</span></a>
+        <nav>
+            <a href="#features">Características</a>
+            <a href="#portal">Acceder</a>
+            <a href="#portal" class="btn-nav-login">Registrar Local</a>
+        </nav>
+    </header>
+
+    <!-- Main -->
+    <main>
+
+        <!-- Hero Section -->
+        <section class="hero">
+            <h1>Tu Local. Tu Música.<br>Tus Pedidos.</h1>
+            <p>La plataforma SaaS definitiva para bares, cafeterías y restaurantes. Permite que tus clientes soliciten canciones y realicen pedidos directamente desde sus celulares escaneando un código QR.</p>
+            <div class="hero-buttons">
+                <a href="#portal" class="btn-primary" onclick="switchForm('owner-register')">Prueba Gratis de 14 días</a>
+                <a href="#features" class="btn-secondary">Conoce las Ventajas</a>
+            </div>
+        </section>
+
+        <!-- Features Grid -->
+        <section id="features" class="features-grid">
+            <div class="feature-card">
+                <span class="feature-icon">🎵</span>
+                <h3>Música Colaborativa</h3>
+                <p>Tus clientes escanean el código QR en su mesa, exploran o buscan canciones del catálogo de YouTube y solicitan agregarlas a la cola del local con total autonomía.</p>
+            </div>
+            <div class="feature-card">
+                <span class="feature-icon">🛍️</span>
+                <h3>Pedidos y Consumos</h3>
+                <p>Digitaliza tu carta y recibe las órdenes de cada mesa al instante en la cocina o barra. Sin esperas, sin demoras y optimizando la rotación de mesas.</p>
+            </div>
+            <div class="feature-card">
+                <span class="feature-icon">👥</span>
+                <h3>Gestión de Empleados</h3>
+                <p>Crea cuentas dedicadas para tu personal de servicio. Los DJs administran la cola musical y los meseros coordinan la entrega y cobros de pedidos.</p>
+            </div>
+            <div class="feature-card">
+                <span class="feature-icon">🏬</span>
+                <h3>Plataforma Multi-local</h3>
+                <p>Si eres dueño de una cadena de locales o múltiples franquicias, puedes gestionarlos todos desde un mismo panel de control de forma centralizada.</p>
+            </div>
+        </section>
+
+        <!-- Portal Acceso (SaaS Tabs) -->
+        <section id="portal" class="portal-section">
+            <div class="tabs-header">
+                <button class="tab-btn active" id="tab-owner" onclick="switchTab('owner')">Socios (Dueños)</button>
+                <button class="tab-btn" id="tab-employee" onclick="switchTab('employee')">Colaboradores (DJs/Staff)</button>
+            </div>
+
+            <div class="tabs-content">
+                <div id="alert-box" class="alert"></div>
+
+                <!-- Form 1: Owner Login -->
+                <div id="owner-login-container" class="form-container active">
+                    <h2>Bienvenido, Socio</h2>
+                    <p class="subtitle">Inicia sesión para administrar tus locales, menú y música.</p>
+                    <form id="owner-login-form" onsubmit="handleOwnerLogin(event)">
+                        <div class="form-group">
+                            <label for="owner-email">Correo Electrónico</label>
+                            <input type="email" id="owner-email" required placeholder="socio@tuempresa.com">
+                        </div>
+                        <div class="form-group">
+                            <label for="owner-password">Contraseña</label>
+                            <input type="password" id="owner-password" required placeholder="••••••••">
+                        </div>
+                        <button type="submit" class="btn-submit">Ingresar al Panel</button>
+                        <div class="toggle-auth">
+                            ¿Aún no tienes cuenta? <a href="#" onclick="switchForm('owner-register')">Regístrate gratis</a>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Form 2: Owner Register -->
+                <div id="owner-register-container" class="form-container">
+                    <h2>Registra tu Local en QrMusic</h2>
+                    <p class="subtitle">Comienza gratis por 14 días. No requiere tarjeta de crédito.</p>
+                    <form id="owner-register-form" onsubmit="handleOwnerRegister(event)">
+                        <div class="form-group">
+                            <label for="reg-name">Nombre Completo</label>
+                            <input type="text" id="reg-name" required placeholder="Tu Nombre">
+                        </div>
+                        <div class="form-group">
+                            <label for="reg-email">Correo Electrónico</label>
+                            <input type="email" id="reg-email" required placeholder="socio@tuempresa.com">
+                        </div>
+                        <div class="form-group">
+                            <label for="reg-phone">Celular / Teléfono</label>
+                            <input type="text" id="reg-phone" placeholder="+57 300 123 4567">
+                        </div>
+                        <div class="form-group">
+                            <label for="reg-password">Contraseña</label>
+                            <input type="password" id="reg-password" required placeholder="Mínimo 6 caracteres">
+                        </div>
+                        <button type="submit" class="btn-submit">Crear Mi Cuenta</button>
+                        <div class="toggle-auth">
+                            ¿Ya tienes una cuenta registrada? <a href="#" onclick="switchForm('owner-login')">Inicia sesión</a>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Form 3: Employee Login -->
+                <div id="employee-login-container" class="form-container">
+                    <h2>Ingreso de Colaboradores</h2>
+                    <p class="subtitle">Acceso para meseros, DJs y administradores de local.</p>
+                    <form id="employee-login-form" onsubmit="handleEmployeeLogin(event)">
+                        <div class="form-group">
+                            <label for="emp-email">Correo de Colaborador</label>
+                            <input type="email" id="emp-email" required placeholder="colaborador@local.com">
+                        </div>
+                        <div class="form-group">
+                            <label for="emp-password">Contraseña</label>
+                            <input type="password" id="emp-password" required placeholder="••••••••">
+                        </div>
+                        <button type="submit" class="btn-submit">Ingresar a Trabajar</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 QrMusic. Todos los derechos reservados. El ritmo y sabor del local en manos de tus clientes.</p>
+    </footer>
 
     <script>
-        const loginForm = document.getElementById('admin-login-form');
-        const apiKeyInput = document.getElementById('api-key-input');
-        const loginButton = document.getElementById('admin-login-button');
-        const errorMessage = document.getElementById('error-message');
+        const alertBox = document.getElementById('alert-box');
 
-        async function handleAdminLogin(event) {
-            event.preventDefault();
-            const apiKey = apiKeyInput.value.trim();
+        function showAlert(message, type = 'error') {
+            alertBox.style.display = 'block';
+            alertBox.className = `alert alert-${type}`;
+            alertBox.textContent = message;
+        }
 
-            if (!apiKey) {
-                errorMessage.textContent = 'Por favor, introduce la clave de API.';
-                return;
-            }
+        function clearAlert() {
+            alertBox.style.display = 'none';
+        }
 
-            loginButton.disabled = true;
-            loginButton.textContent = 'Verificando...';
-            errorMessage.textContent = '';
+        function switchTab(role) {
+            clearAlert();
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.form-container').forEach(c => c.classList.remove('active'));
 
-            try {
-                // Usamos el nuevo endpoint de autenticación que registra auditoría
-                const response = await fetch('/api/v1/auth/login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ api_key: apiKey })
-                });
-
-                const data = await response.json();
-
-                if (response.status === 403 || !data.success) {
-                    throw new Error(data.detail || 'Clave de API incorrecta o inválida.');
-                }
-
-                if (!response.ok) throw new Error('Error de autenticación en el servidor.');
-
-                // Si la clave es correcta, la guardamos
-                sessionStorage.setItem('adminApiKey', data.access_token);
-                // Opcional: guardar descripción para mostrar "Bienvenido, DJ"
-                sessionStorage.setItem('adminDesc', data.description);
-
-                window.location.href = '/admin/dashboard';
-            } catch (error) {
-                errorMessage.textContent = error.message;
-                loginButton.disabled = false;
-                loginButton.textContent = 'Ingresar';
+            if (role === 'owner') {
+                document.getElementById('tab-owner').classList.add('active');
+                document.getElementById('owner-login-container').classList.add('active');
+            } else if (role === 'employee') {
+                document.getElementById('tab-employee').classList.add('active');
+                document.getElementById('employee-login-container').classList.add('active');
             }
         }
 
-        loginForm.addEventListener('submit', handleAdminLogin);
+        function switchForm(formId) {
+            clearAlert();
+            document.querySelectorAll('.form-container').forEach(c => c.classList.remove('active'));
+            if (formId === 'owner-register') {
+                document.getElementById('owner-register-container').classList.add('active');
+            } else if (formId === 'owner-login') {
+                document.getElementById('owner-login-container').classList.add('active');
+            }
+        }
+
+        async function handleOwnerRegister(event) {
+            event.preventDefault();
+            clearAlert();
+
+            const nombre = document.getElementById('reg-name').value.trim();
+            const email = document.getElementById('reg-email').value.trim();
+            const telefono = document.getElementById('reg-phone').value.trim();
+            const password = document.getElementById('reg-password').value;
+
+            try {
+                const response = await fetch('/api/v1/saas/auth/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ nombre, email, telefono, password })
+                });
+
+                const data = await response.json();
+                if (!response.ok) {
+                    throw new Error(data.detail || 'Error al crear la cuenta. Intente nuevamente.');
+                }
+
+                showAlert('¡Registro exitoso! Iniciando sesión...', 'success');
+                
+                // Automáticamente iniciar sesión después de registrarse
+                setTimeout(() => {
+                    document.getElementById('owner-email').value = email;
+                    document.getElementById('owner-password').value = password;
+                    switchForm('owner-login');
+                }, 1500);
+
+            } catch (error) {
+                showAlert(error.message, 'error');
+            }
+        }
+
+        async function handleOwnerLogin(event) {
+            event.preventDefault();
+            clearAlert();
+
+            const email = document.getElementById('owner-email').value.trim();
+            const password = document.getElementById('owner-password').value;
+
+            try {
+                const response = await fetch('/api/v1/saas/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+                if (!response.ok) {
+                    throw new Error(data.detail || 'Error de inicio de sesión.');
+                }
+
+                // Guardar token e info en sessionStorage
+                sessionStorage.setItem('token', data.access_token);
+                sessionStorage.setItem('adminApiKey', data.access_token); // Retrocompatibilidad para el panel original
+                sessionStorage.setItem('role', data.role);
+                sessionStorage.setItem('email', data.email);
+                sessionStorage.setItem('name', data.name);
+                sessionStorage.setItem('localSlugs', JSON.stringify(data.local_slugs || []));
+
+                showAlert('Acceso concedido. Redirigiendo...', 'success');
+
+                setTimeout(() => {
+                    window.location.href = '/admin/dashboard';
+                }, 1000);
+
+            } catch (error) {
+                showAlert(error.message, 'error');
+            }
+        }
+
+        async function handleEmployeeLogin(event) {
+            event.preventDefault();
+            clearAlert();
+
+            const email = document.getElementById('emp-email').value.trim();
+            const password = document.getElementById('emp-password').value;
+
+            try {
+                const response = await fetch('/api/v1/saas/auth/employee/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+                if (!response.ok) {
+                    throw new Error(data.detail || 'Error de inicio de sesión.');
+                }
+
+                // Guardar token e info en sessionStorage
+                sessionStorage.setItem('token', data.access_token);
+                sessionStorage.setItem('adminApiKey', data.access_token); // Retrocompatibilidad para el panel original
+                sessionStorage.setItem('role', data.role);
+                sessionStorage.setItem('email', data.email);
+                sessionStorage.setItem('name', data.name);
+                sessionStorage.setItem('localSlugs', JSON.stringify(data.local_slugs || []));
+
+                showAlert('Acceso concedido. Iniciando turno...', 'success');
+
+                setTimeout(() => {
+                    window.location.href = '/admin/dashboard';
+                }, 1000);
+
+            } catch (error) {
+                showAlert(error.message, 'error');
+            }
+        }
     </script>
 </body>
-
 </html>

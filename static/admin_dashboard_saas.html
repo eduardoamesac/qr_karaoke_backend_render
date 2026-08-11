@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SaaS Dashboard - QrMusic</title>
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-base: #070a13;
+            --bg-card: rgba(17, 24, 39, 0.65);
+            --primary: #8b5cf6;
+            --primary-glow: rgba(139, 92, 246, 0.3);
+            --secondary: #06b6d4;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --accent: #d946ef;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-image: 
+                radial-gradient(circle at 0% 0%, rgba(139, 92, 246, 0.1) 0%, transparent 35%),
+                radial-gradient(circle at 100% 100%, rgba(6, 182, 212, 0.1) 0%, transparent 35%);
+            background-attachment: fixed;
+        }
+
+        /* Top Header */
+        header {
+            width: 100%;
+            padding: 1rem 5%;
+            background: rgba(11, 15, 25, 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 90;
+        }
+
+        .logo {
+            font-size: 1.4rem;
+            font-weight: 800;
+            text-decoration: none;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-info {
+            text-align: right;
+        }
+
+        .user-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: #fff;
+        }
+
+        .user-role {
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            display: inline-block;
+            margin-top: 2px;
+        }
+
+        .role-owner { background: rgba(139, 92, 246, 0.2); color: #c084fc; border: 1px solid rgba(139, 92, 246, 0.3); }
+        .role-dj { background: rgba(217, 70, 239, 0.2); color: #f472b6; border: 1px solid rgba(217, 70, 239, 0.3); }
+        .role-mesero { background: rgba(6, 182, 212, 0.2); color: #22d3ee; border: 1px solid rgba(6, 182, 212, 0.3); }
+
+        .btn-logout {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-muted);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-logout:hover {
+            background: var(--danger);
+            color: #fff;
+            border-color: var(--danger);
+        }
+
+        /* Main Workspace */
+        .workspace {
+            flex: 1;
+            padding: 2rem 5%;
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .welcome-hero {
+            margin-bottom: 2rem;
+        }
+
+        .welcome-hero h1 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #fff;
+        }
+
+        .welcome-hero p {
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* Dashboard Views */
+        .dashboard-view {
+            display: none;
+        }
+
+        .dashboard-view.active {
+            display: block;
+        }
+
+        /* Glassmorphism Cards */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 2rem;
+            backdrop-filter: blur(16px);
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Grid layouts */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+        }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 16px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #fff;
+            margin-top: 4px;
+            background: linear-gradient(135deg, #fff, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            font-weight: 600;
+            color: var(--text-muted);
+            letter-spacing: 0.05em;
+        }
+
+        /* Forms in Dashboard */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.2rem;
+        }
+
+        @media(max-width: 600px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            color: #fff;
+            font-size: 0.95rem;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 8px rgba(139, 92, 246, 0.2);
+            background: rgba(255,255,255,0.05);
+        }
+
+        .btn-action {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            padding: 0.8rem 1.5rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 12px var(--primary-glow);
+            transition: all 0.3s;
+        }
+
+        .btn-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(139, 92, 246, 0.5);
+        }
+
+        /* Table design */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        th {
+            font-weight: 600;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        td {
+            color: var(--text-main);
+            font-size: 0.95rem;
+        }
+
+        /* Alerts and helper boxes */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1.5rem;
+            color: var(--text-muted);
+        }
+
+        .empty-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Order queue styles for Mesero view */
+        .order-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+        }
+
+        .order-card:hover {
+            border-color: rgba(6, 182, 212, 0.2);
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .order-details h4 {
+            color: #fff;
+            font-size: 1.1rem;
+            margin-bottom: 4px;
+        }
+
+        .order-details p {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .order-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-status {
+            padding: 6px 12px;
+            font-size: 0.8rem;
+            border-radius: 6px;
+            font-weight: 700;
+            cursor: pointer;
+            border: none;
+            color: #fff;
+        }
+
+        .btn-success { background: var(--success); }
+        .btn-warning { background: var(--warning); }
+        .btn-danger { background: var(--danger); }
+
+        /* Local Select Dropdown in Dashboard header */
+        .local-selector-container {
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .local-selector-container label {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .local-select {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #fff;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            outline: none;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <a href="#" class="logo">QrMusic <span>SaaS</span></a>
+        <div class="user-profile">
+            <div class="user-info">
+                <div class="user-name" id="profile-name">Cargando...</div>
+                <div class="user-role" id="profile-role">...</div>
+            </div>
+            <button class="btn-logout" onclick="handleLogout()">Salir</button>
+        </div>
+    </header>
+
+    <!-- Main Workspace -->
+    <main class="workspace">
+        <div class="welcome-hero">
+            <h1 id="welcome-title">Bienvenido a QrMusic</h1>
+            <p id="welcome-subtitle">Accediendo a tu panel administrativo corporativo...</p>
+        </div>
+
+        <div id="alert-box" style="display: none; padding: 1rem; border-radius: 12px; margin-bottom: 1.5rem; font-weight: 600;"></div>
+
+        <!-- 🏢 OWNER VIEW -->
+        <div id="view-owner" class="dashboard-view">
+            <!-- Selector de Local o Creación del primero -->
+            <div class="card">
+                <div class="card-title">Establecimientos Activos</div>
+                
+                <div class="local-selector-container" id="local-selector-block" style="display: none;">
+                    <label for="owner-local-select">Selecciona Local:</label>
+                    <select id="owner-local-select" class="local-select" onchange="onLocalSelected()">
+                        <!-- Dinámico -->
+                    </select>
+                </div>
+
+                <div id="empty-locales-state" class="empty-state" style="display: none;">
+                    <div class="empty-icon">🏬</div>
+                    <h3>No tienes locales registrados</h3>
+                    <p>Para comenzar a usar QrMusic, registra tu primer local de inmediato.</p>
+                </div>
+
+                <!-- Formulario Registro Local -->
+                <div id="register-local-form-block" style="margin-top: 1.5rem;">
+                    <h3 style="margin-bottom: 1rem; color: #fff;">Registrar Nuevo Establecimiento</h3>
+                    <form id="create-local-form" onsubmit="handleCreateLocal(event)">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="local-name">Nombre Comercial</label>
+                                <input type="text" id="local-name" required placeholder="Restaurante La Canta que Rana">
+                            </div>
+                            <div class="form-group">
+                                <label for="local-slug">Slug Personalizado para URL</label>
+                                <input type="text" id="local-slug" required placeholder="la-canta-que-rana">
+                            </div>
+                        </div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="local-address">Dirección Física</label>
+                                <input type="text" id="local-address" placeholder="Calle 45 # 12-34, Bogotá">
+                            </div>
+                            <div class="form-group">
+                                <label for="local-logo">Enlace al Logotipo (URL)</label>
+                                <input type="url" id="local-logo" placeholder="https://miweb.com/logo.png">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn-action">Registrar Local</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Panel de Estadísticas y Personal del Local Seleccionado -->
+            <div id="local-management-dashboard" style="display: none;">
+                <!-- Stats Row -->
+                <div class="stats-row">
+                    <div class="stat-card">
+                        <div class="stat-label">Ventas Totales</div>
+                        <div class="stat-value" id="stat-sales">$0.00</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Mesas Activas</div>
+                        <div class="stat-value" id="stat-tables">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Clientes en Local</div>
+                        <div class="stat-value" id="stat-customers">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Catálogo Menú</div>
+                        <div class="stat-value" id="stat-products">0</div>
+                    </div>
+                </div>
+
+                <div class="grid-2">
+                    <!-- Crear Empleado -->
+                    <div class="card">
+                        <div class="card-title">Registrar Personal (DJs / Meseros)</div>
+                        <form id="create-employee-form" onsubmit="handleCreateEmployee(event)">
+                            <div class="form-group">
+                                <label for="emp-name">Nombre Completo</label>
+                                <input type="text" id="emp-name" required placeholder="Carlos DJ">
+                            </div>
+                            <div class="form-group">
+                                <label for="emp-email">Correo de Acceso</label>
+                                <input type="email" id="emp-email" required placeholder="carlos@local.com">
+                            </div>
+                            <div class="form-group">
+                                <label for="emp-password">Contraseña Provisional</label>
+                                <input type="password" id="emp-password" required placeholder="••••••••">
+                            </div>
+                            <div class="form-group">
+                                <label for="emp-role">Rol asignado</label>
+                                <select id="emp-role" required>
+                                    <option value="dj">DJ (Control de Música)</option>
+                                    <option value="mesero">Mesero (Gestión de Pedidos)</option>
+                                    <option value="admin">Administrador Secundario</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn-action">Contratar / Agregar</button>
+                        </form>
+                    </div>
+
+                    <!-- Lista Empleados -->
+                    <div class="card">
+                        <div class="card-title">Equipo de Trabajo</div>
+                        <div id="employees-table-container">
+                            <table id="employees-table">
+                                <thead>
+                                    <tr>
+                                        <th>Nombre</th>
+                                        <th>Rol</th>
+                                        <th>Correo</th>
+                                        <th>Estado</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="employees-list-body">
+                                    <!-- Dinámico -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 🎧 DJ VIEW -->
+        <div id="view-dj" class="dashboard-view">
+            <div class="card">
+                <div class="card-title">Panel del DJ - Cola de Reproducción</div>
+                <div class="stats-row">
+                    <div class="stat-card">
+                        <div class="stat-label">En Cola</div>
+                        <div class="stat-value">12</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Sonando Ahora</div>
+                        <div class="stat-value">Activa</div>
+                    </div>
+                </div>
+                <div class="empty-state">
+                    <div class="empty-icon">🎵</div>
+                    <h3>Integración con la Cola de Canciones</h3>
+                    <p>Puedes pausar, saltar y banear canciones. Usa la barra del reproductor del local.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 🛍️ WAITER VIEW (MESERO) -->
+        <div id="view-mesero" class="dashboard-view">
+            <div class="card">
+                <div class="card-title">Gestión de Órdenes y Pedidos</div>
+                <div class="stats-row">
+                    <div class="stat-card">
+                        <div class="stat-label">Pendientes</div>
+                        <div class="stat-value" style="color: var(--warning); -webkit-text-fill-color: var(--warning);">4</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Entregadas</div>
+                        <div class="stat-value" style="color: var(--success); -webkit-text-fill-color: var(--success);">18</div>
+                    </div>
+                </div>
+
+                <h3 style="margin-bottom: 1rem; color: #fff;">Cola de Pedidos en Tiempo Real</h3>
+                
+                <div id="orders-list-container">
+                    <!-- Pedido 1 -->
+                    <div class="order-card">
+                        <div class="order-details">
+                            <h4>Mesa 4 — Cerveza Club Colombia x2</h4>
+                            <p>Solicitado hace 4 min | Total: $16,000</p>
+                        </div>
+                        <div class="order-actions">
+                            <button class="btn-status btn-warning">Preparando</button>
+                            <button class="btn-status btn-success" onclick="this.parentElement.parentElement.remove()">Completar</button>
+                        </div>
+                    </div>
+
+                    <!-- Pedido 2 -->
+                    <div class="order-card">
+                        <div class="order-details">
+                            <h4>Mesa 2 — Hamburguesa Especial con Papas</h4>
+                            <p>Solicitado hace 8 min | Total: $28,000</p>
+                        </div>
+                        <div class="order-actions">
+                            <button class="btn-status btn-success" onclick="this.parentElement.parentElement.remove()">Entregar</button>
+                        </div>
+                    </div>
+
+                    <!-- Pedido 3 -->
+                    <div class="order-card">
+                        <div class="order-details">
+                            <h4>Mesa 7 — Margaritas Coctel x3</h4>
+                            <p>Solicitado hace 12 min | Total: $75,000</p>
+                        </div>
+                        <div class="order-actions">
+                            <button class="btn-status btn-danger" onclick="this.parentElement.parentElement.remove()">Cancelar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        const token = sessionStorage.getItem('token');
+        const role = sessionStorage.getItem('role');
+        const email = sessionStorage.getItem('email');
+        const name = sessionStorage.getItem('name');
+
+        if (!token) {
+            window.location.href = '/admin';
+        }
+
+        // Set User Profile headers
+        document.getElementById('profile-name').textContent = name || 'Usuario';
+        const roleLabel = document.getElementById('profile-role');
+        roleLabel.textContent = role || 'Socio';
+        if (role === 'owner') {
+            roleLabel.className = 'user-role role-owner';
+            document.getElementById('profile-role').textContent = 'Dueño / Socio';
+        } else if (role === 'dj') {
+            roleLabel.className = 'user-role role-dj';
+            document.getElementById('profile-role').textContent = 'DJ';
+        } else if (role === 'mesero') {
+            roleLabel.className = 'user-role role-mesero';
+            document.getElementById('profile-role').textContent = 'Mesero';
+        } else {
+            roleLabel.className = 'user-role role-owner';
+        }
+
+        // Activate matching view
+        function activateView() {
+            document.querySelectorAll('.dashboard-view').forEach(view => view.classList.remove('active'));
+            if (role === 'owner') {
+                document.getElementById('view-owner').classList.add('active');
+                document.getElementById('welcome-title').textContent = 'Panel de Socio QrMusic';
+                document.getElementById('welcome-subtitle').textContent = 'Administra tus establecimientos comerciales y equipos.';
+                loadLocales();
+            } else if (role === 'dj') {
+                document.getElementById('view-dj').classList.add('active');
+                document.getElementById('welcome-title').textContent = 'Consola del DJ';
+                document.getElementById('welcome-subtitle').textContent = 'Monitorea y modera las solicitudes de canciones de tu local.';
+            } else if (role === 'mesero') {
+                document.getElementById('view-mesero').classList.add('active');
+                document.getElementById('welcome-title').textContent = 'Pedidos de Servicio';
+                document.getElementById('welcome-subtitle').textContent = 'Gestión ágil de consumos en mesa.';
+            }
+        }
+
+        function showMessage(message, type = 'error') {
+            const box = document.getElementById('alert-box');
+            box.style.display = 'block';
+            box.textContent = message;
+            if (type === 'success') {
+                box.style.background = 'rgba(16, 185, 129, 0.1)';
+                box.style.border = '1px solid rgba(16, 185, 129, 0.2)';
+                box.style.color = '#6ee7b7';
+            } else {
+                box.style.background = 'rgba(239, 68, 68, 0.1)';
+                box.style.border = '1px solid rgba(239, 68, 68, 0.2)';
+                box.style.color = '#fca5a5';
+            }
+        }
+
+        function handleLogout() {
+            sessionStorage.clear();
+            window.location.href = '/admin';
+        }
+
+        // Locales SaaS API management
+        async function loadLocales() {
+            try {
+                const response = await fetch('/api/v1/saas/locales', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                if (!response.ok) throw new Error('Error al cargar locales.');
+
+                const locales = await response.json();
+                const selector = document.getElementById('owner-local-select');
+                const selectorBlock = document.getElementById('local-selector-block');
+                const emptyState = document.getElementById('empty-locales-state');
+
+                selector.innerHTML = '';
+
+                if (locales.length === 0) {
+                    emptyState.style.display = 'block';
+                    selectorBlock.style.display = 'none';
+                    document.getElementById('local-management-dashboard').style.display = 'none';
+                } else {
+                    emptyState.style.display = 'none';
+                    selectorBlock.style.display = 'flex';
+                    
+                    locales.forEach(loc => {
+                        const opt = document.createElement('option');
+                        opt.value = loc.id;
+                        opt.textContent = loc.nombre;
+                        selector.appendChild(opt);
+                    });
+
+                    onLocalSelected();
+                }
+            } catch (error) {
+                showMessage(error.message);
+            }
+        }
+
+        async function handleCreateLocal(event) {
+            event.preventDefault();
+            const nombre = document.getElementById('local-name').value.trim();
+            const slug = document.getElementById('local-slug').value.trim();
+            const direccion = document.getElementById('local-address').value.trim();
+            const logo_url = document.getElementById('local-logo').value.trim();
+
+            try {
+                const response = await fetch('/api/v1/saas/locales', {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ nombre, slug, direccion, logo_url })
+                });
+
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.detail || 'Error al crear local.');
+
+                showMessage('¡Local registrado con éxito!', 'success');
+                document.getElementById('create-local-form').reset();
+                loadLocales();
+            } catch (error) {
+                showMessage(error.message);
+            }
+        }
+
+        async function onLocalSelected() {
+            const localId = document.getElementById('owner-local-select').value;
+            if (!localId) return;
+
+            document.getElementById('local-management-dashboard').style.display = 'block';
+
+            // Load dashboard summary
+            try {
+                const response = await fetch(`/api/v1/saas/locales/${localId}/dashboard-summary`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const summary = await response.json();
+                
+                document.getElementById('stat-sales').textContent = `$${summary.total_sales.toLocaleString('es-CO')}`;
+                document.getElementById('stat-tables').textContent = summary.active_tables;
+                document.getElementById('stat-customers').textContent = summary.active_customers;
+                document.getElementById('stat-products').textContent = summary.total_products;
+
+                // Load employees list
+                loadEmployees(localId);
+
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        async function loadEmployees(localId) {
+            try {
+                const response = await fetch(`/api/v1/saas/locales/${localId}/employees`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const employees = await response.json();
+                const tbody = document.getElementById('employees-list-body');
+                tbody.innerHTML = '';
+
+                if (employees.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: var(--text-muted);">Sin personal contratado aún.</td></tr>';
+                    return;
+                }
+
+                employees.forEach(emp => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td style="font-weight: 600; color: #fff;">${emp.nombre}</td>
+                        <td><span class="user-role ${emp.rol === 'dj' ? 'role-dj' : 'role-mesero'}">${emp.rol}</span></td>
+                        <td>${emp.email}</td>
+                        <td style="color: var(--success);">● Activo</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        async function handleCreateEmployee(event) {
+            event.preventDefault();
+            const localId = document.getElementById('owner-local-select').value;
+            if (!localId) return;
+
+            const nombre = document.getElementById('emp-name').value.trim();
+            const email = document.getElementById('emp-email').value.trim();
+            const password = document.getElementById('emp-password').value;
+            const rol = document.getElementById('emp-role').value;
+
+            try {
+                const response = await fetch(`/api/v1/saas/locales/${localId}/employees`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ nombre, email, password, rol, local_id: parseInt(localId) })
+                });
+
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.detail || 'Error al agregar empleado.');
+
+                showMessage('¡Colaborador agregado al equipo!', 'success');
+                document.getElementById('create-employee-form').reset();
+                loadEmployees(localId);
+            } catch (error) {
+                showMessage(error.message);
+            }
+        }
+
+        // Init
+        activateView();
+    </script>
+</body>
+</html>

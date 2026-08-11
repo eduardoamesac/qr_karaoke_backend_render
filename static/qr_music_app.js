@@ -37,17 +37,53 @@ function renderQueue(queueData) {
     nowPlayingContainer.innerHTML = '';
     upcomingList.innerHTML = '';
 
-    if (queueData.now_playing) {
-        nowPlayingContainer.innerHTML = createSongItemHTML(queueData.now_playing, false);
+    if (!queueData) return;
+
+    let nowPlaying = null;
+    let allUpcoming = [];
+    
+
+    if (Array.isArray(queueData)) {
+        allUpcoming = queueData;
+    } else {
+        nowPlaying = queueData.now_playing;
+        if (queueData.upcoming) {
+            allUpcoming.push(...queueData.upcoming);
+        }
+        if (queueData.lazy_queue) {
+            allUpcoming.push(...queueData.lazy_queue);
+        }
+        if (queueData.pending) {
+            allUpcoming.push(...queueData.pending);
+        }
+    }
+
+    if (nowPlaying) {
+        nowPlayingContainer.innerHTML = createSongItemHTML(nowPlaying, false);
     } else {
         nowPlayingContainer.innerHTML = '<p>La cola está vacía. ¡Añade una canción!</p>';
     }
 
-    if (queueData.upcoming && queueData.upcoming.length > 0) {
-        queueData.upcoming.forEach(song => {
+    // Filtrar duplicados por ID y excluir la que ya se está reproduciendo
+    const uniqueUpcoming = [];
+    const seenIds = new Set();
+    
+    if (nowPlaying && nowPlaying.id) {
+        seenIds.add(nowPlaying.id);
+    }
+
+    allUpcoming.forEach(song => {
+        if (song && song.id && !seenIds.has(song.id)) {
+            seenIds.add(song.id);
+            uniqueUpcoming.push(song);
+        }
+    });
+
+    if (uniqueUpcoming.length > 0) {
+        uniqueUpcoming.forEach(song => {
             upcomingList.innerHTML += createSongItemHTML(song, false);
         });
-    } else if (!queueData.now_playing) {
+    } else if (!nowPlaying) {
         upcomingList.innerHTML = '';
     } else {
         upcomingList.innerHTML = '<li><p>No hay más canciones en la cola.</p></li>';
@@ -186,50 +222,63 @@ function showNotification(message, type = 'success', duration = 3000) {
 // ============================================
 
 function connectWebSocket() {
+    console.log(`🔌 [WS Auditoría] Intentando establecer conexión a: ${WEBSOCKET_URL}`);
     state.websocket = new WebSocket(WEBSOCKET_URL);
 
-    state.websocket.onmessage = (event) => {
-        const data = JSON.parse(event.data);
+    state.websocket.onopen = () => {
+        console.log("🟢 [WS Auditoría] Conexión WebSocket establecida con éxito.");
+    };
 
-        if (data.type) {
-            if (data.type === 'notification' || data.type === 'admin_notification') {
-                showNotification(data.payload.mensaje);
-            } else if (data.type === 'product_update') {
-                fetchProducts();
-            } else if (data.type === 'queue_update') {
-                renderQueue(data.payload);
-            } else if (data.type === 'song_finished') {
-                fetchMyList();
-            } else if (data.type === 'consumo_deleted' || data.type === 'consumo_created') {
-                fetchTableAccountStatus();
-            } else if (data.type === 'reaction') {
-                const reactionPayload = data.payload;
-                if (reactionPayload && reactionPayload.reaction) {
-                    const emoji = document.createElement('div');
-                    emoji.className = 'reaction-emoji';
-                    emoji.textContent = reactionPayload.reaction;
-                    emoji.style.left = `${Math.random() * 90 + 5}%`;
-                    emoji.style.setProperty('--tx', `${(Math.random() - 0.5) * 100}px`);
-                    document.getElementById('reaction-container').appendChild(emoji);
-                    setTimeout(() => emoji.remove(), 5000);
-                }
-            } else if (data.type === 'update_account') {
-                if (state.user && state.user.mesa && data.mesa_id === state.user.mesa.id) {
+    state.websocket.onmessage = (event) => {
+        try {
+            const data = JSON.parse(event.data);
+            console.log("📥 [WS Auditoría] Respuesta/Mensaje recibido del servidor:", data);
+
+            if (data.type) {
+                if (data.type === 'notification' || data.type === 'admin_notification') {
+                    showNotification(data.payload.mensaje);
+                } else if (data.type === 'product_update') {
+                    fetchProducts();
+                } else if (data.type === 'queue_update') {
+                    renderQueue(data.payload);
+                } else if (data.type === 'song_finished') {
+                    fetchMyList();
+                    fetchUserProfile();
+                } else if (data.type === 'consumo_deleted' || data.type === 'consumo_created') {
                     fetchTableAccountStatus();
+                } else if (data.type === 'reaction') {
+                    const reactionPayload = data.payload;
+                    if (reactionPayload && reactionPayload.reaction) {
+                        const emoji = document.createElement('div');
+                        emoji.className = 'reaction-emoji';
+                        emoji.textContent = reactionPayload.reaction;
+                        emoji.style.left = `${Math.random() * 90 + 5}%`;
+                        emoji.style.setProperty('--tx', `${(Math.random() - 0.5) * 100}px`);
+                        document.getElementById('reaction-container').appendChild(emoji);
+                        setTimeout(() => emoji.remove(), 5000);
+                    }
+                } else if (data.type === 'update_account') {
+                    if (state.user && state.user.mesa && data.mesa_id === state.user.mesa.id) {
+                        fetchTableAccountStatus();
+                    }
+                } else if (data.type === 'points_decayed') {
+                    fetchUserProfile();
                 }
+            } else {
+                renderQueue(data);
             }
-        } else {
-            renderQueue(data);
+        } catch (err) {
+            console.warn("⚠️ [WS Auditoría] Error al procesar mensaje JSON entrante:", err, "Contenido:", event.data);
         }
     };
 
-    state.websocket.onclose = () => {
-        console.log('WebSocket desconectado. Intentando reconectar en 5 segundos...');
+    state.websocket.onclose = (event) => {
+        console.log(`🔴 [WS Auditoría] Conexión WebSocket cerrada. Código: ${event.code}, Razón: ${event.reason || 'Ninguna'}. Intentando reconectar en 5 segundos...`);
         setTimeout(connectWebSocket, 5000);
     };
 
     state.websocket.onerror = (error) => {
-        console.error('Error de WebSocket:', error);
+        console.error('❌ [WS Auditoría] Error detectado en la conexión:', error);
         state.websocket.close();
     };
 }
@@ -616,7 +665,8 @@ async function handleMoveSongDown(event) {
 
 async function fetchProducts() {
     catalogList.innerHTML = '<p>Cargando catálogo...</p>';
-    const response = await fetch(`${API_BASE_URL}/productos/`);
+    const localId = (state.user && state.user.mesa && state.user.mesa.local_id) || '';
+    const response = await fetch(`${API_BASE_URL}/productos/?local_id=${localId}`);
     const products = await response.json();
     renderCatalog(products);
 }
@@ -680,6 +730,21 @@ async function fetchTableAccountStatus() {
         `;
     } catch (error) {
         container.innerHTML = `<p class="error-msg">${error.message}</p>`;
+    }
+}
+
+async function fetchQueue() {
+    try {
+        console.log("📡 [WS Auditoría] Cargando cola de canciones vía HTTP...");
+        const response = await fetch(`${API_BASE_URL}/canciones/cola/extended`);
+        if (!response.ok) {
+            throw new Error(`Error ${response.status} al obtener la cola.`);
+        }
+        const queueData = await response.json();
+        console.log("📥 [WS Auditoría] Cola de canciones recibida vía HTTP:", queueData);
+        renderQueue(queueData);
+    } catch (error) {
+        console.error("❌ [WS Auditoría] Error al obtener la cola:", error);
     }
 }
 
@@ -751,6 +816,7 @@ function showDashboard() {
     connectWebSocket();
     renderCart();
     fetchMyList();
+    fetchQueue();
 }
 
 function handleTabClick(event) {
@@ -775,6 +841,9 @@ function handleTabClick(event) {
 
     // Cargar contenido según la pestaña
     switch (activeTabId) {
+        case 'tab-queue':
+            fetchQueue();
+            break;
         case 'tab-my-list':
             fetchMyList();
             break;
@@ -827,9 +896,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
     if (storedUser && storedTable === state.tableQrCode) {
         state.user = JSON.parse(storedUser);
-        if (!state.user.mesa || !state.user.mesa.id) {
-            fetchUserProfile();
-        }
+        fetchUserProfile(); // Sincronizar el perfil con el servidor para obtener los puntos actualizados
         showDashboard();
     } else {
         // Si no hay sesión almacenada para esta mesa, intentar auto-conexión si el QR incluye '-usuarioN'

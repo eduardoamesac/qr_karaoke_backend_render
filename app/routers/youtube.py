@@ -1,7 +1,7 @@
 import httpx
 import os
 from fastapi import APIRouter, HTTPException
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 from fastapi import Depends # Importar Depends
 import re
 from urllib.parse import urlparse, parse_qs
@@ -16,7 +16,7 @@ router = APIRouter()
 YOUTUBE_SEARCH_URL = "https://www.googleapis.com/youtube/v3/search"
 YOUTUBE_VIDEOS_URL = "https://www.googleapis.com/youtube/v3/videos"
 
-def extract_video_id_from_url(url: str) -> str | None:
+def extract_video_id_from_url(url: str) -> Optional[str]:
     """
     Extrae el ID de un video de YouTube desde varios formatos de URL.
     """
@@ -122,11 +122,7 @@ async def _perform_youtube_search(q: str, karaoke_mode: bool = False) -> List[Di
             # Mapeamos los resultados a un formato simple
             formatted_results = []
             for item in videos_results.get("items", []):
-                # --- FILTRAR VIDEOS CON RESTRICCIÓN DE REPRODUCCIÓN (ERROR 150) ---
-                status = item.get("status", {})
-                if not status.get("embeddable", True):
-                    logger.info(f"Omitiendo video {item.get('id')} por restricción de reproducción externa (Error 150).")
-                    continue
+                snippet = item.get("snippet", {})
                 
                 content_details = item.get("contentDetails", {})
                 try:
@@ -135,7 +131,6 @@ async def _perform_youtube_search(q: str, karaoke_mode: bool = False) -> List[Di
                 except (isodate.ISO8601Error, KeyError):
                     duration_seconds = 0
 
-                snippet = item.get("snippet", {})
                 title = snippet.get("title", "Título no disponible")
 
                 # Hacemos la obtención de la miniatura más robusta

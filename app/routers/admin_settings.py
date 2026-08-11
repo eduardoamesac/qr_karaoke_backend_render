@@ -1,4 +1,5 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, UploadFile, File
+import os
 from pydantic import BaseModel
 from app.services.settings_storage import load_settings, save_settings
 from app.auth import verify_token
@@ -156,3 +157,36 @@ def update_lazy_queue_config(data: LazyQueueConfig):
             "max_concurrent_songs": data.max_concurrent_songs
         }
     }
+
+
+@router.post("/logo", summary="Subir logo corporativo para la pantalla de espera")
+async def upload_owner_logo(file: UploadFile = File(...)):
+    """
+    Subir logo corporativo para la pantalla de espera del Player 2.
+    """
+    extension = os.path.splitext(file.filename)[1].lower()
+    if extension not in [".jpg", ".jpeg", ".png", ".gif", ".webp"]:
+        return {"status": "error", "message": "Formato de imagen no permitido"}
+    
+    # Directorio de subida
+    UPLOAD_DIR = "static/images"
+    os.makedirs(UPLOAD_DIR, exist_ok=True)
+    
+    # Guardar con un nombre representativo
+    filename = f"owner_logo{extension}"
+    file_path = os.path.join(UPLOAD_DIR, filename)
+    
+    with open(file_path, "wb") as buffer:
+        buffer.write(await file.read())
+        
+    # Guardar en la configuración de settings
+    settings = load_settings()
+    settings["owner_logo"] = f"/static/images/{filename}"
+    save_settings(settings)
+    
+    return {
+        "status": "success",
+        "message": "Logo corporativo actualizado con éxito",
+        "owner_logo": settings["owner_logo"]
+    }
+

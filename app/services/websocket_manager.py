@@ -85,6 +85,11 @@ class ConnectionManager:
         payload = {"type": "product_update"}
         await self._broadcast(json.dumps(payload))
 
+    async def broadcast_points_decay(self):
+        """Notifica a todos los clientes que los puntos/créditos decayeron para que refresquen su perfil."""
+        payload = {"type": "points_decayed"}
+        await self._broadcast(json.dumps(payload))
+
     async def broadcast_consumo_created(self, consumo_payload: dict):
         """
         Envía un evento indicando que se creó un nuevo consumo.

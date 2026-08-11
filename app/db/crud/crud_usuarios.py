@@ -125,6 +125,35 @@ def update_usuario(db: Session, usuario_id: int, usuario_data: dict):
     return _to_obj(u)
 
 
+def add_puntos_a_usuario(db: Session, usuario_id: int, puntos_a_anadir: int):
+    """Añade puntos y créditos a un usuario en CACHE (y actualiza el nivel)."""
+    u = cache.get_usuario_by_id_from_cache(usuario_id)
+    if not u:
+        return None
+    
+    puntos_actuales = u.get("puntos", 0)
+    creditos_actuales = u.get("song_credits", 0)
+    
+    nuevos_puntos = puntos_actuales + puntos_a_anadir
+    nuevos_creditos = creditos_actuales + puntos_a_anadir
+    
+    # Recalcular nivel
+    nivel = "bronce"
+    if nuevos_puntos >= 5000:
+        nivel = "oro"
+    elif nuevos_puntos >= 1000:
+        nivel = "plata"
+        
+    cache.update_usuario_en_cache(usuario_id, {
+        "puntos": nuevos_puntos,
+        "song_credits": nuevos_creditos,
+        "nivel": nivel
+    })
+    
+    u_updated = cache.get_usuario_by_id_from_cache(usuario_id)
+    return _to_obj(u_updated)
+
+
 def delete_usuario(db: Session, usuario_id: int):
     """Elimina un usuario del CACHE."""
     u = cache.delete_usuario_from_cache(usuario_id)

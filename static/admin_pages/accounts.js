@@ -1137,9 +1137,11 @@ async function handleCreateMesaSubmit(event) {
             qrCode = `karaoke-mesa-${safeName}`;
         }
 
+        const activeLocalId = sessionStorage.getItem('active_local_id');
         const payload = {
             nombre: nombreMesa,
-            qr_code: qrCode
+            qr_code: qrCode,
+            local_id: activeLocalId ? parseInt(activeLocalId, 10) : null
         };
         const result = await apiFetch('/mesas/', {
             method: 'POST',
@@ -1406,7 +1408,7 @@ function updateQRForTable(mesaId, userNum) {
 
     // Generate URL
     const appBaseUrl = window.location.origin;
-    const appUrl = `${appBaseUrl}/?table=${encodeURIComponent(qrCode)}`;
+    const appUrl = `${appBaseUrl}/user?table=${encodeURIComponent(qrCode)}`;
     const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(appUrl)}`;
 
     if (img) img.src = qrImageUrl;

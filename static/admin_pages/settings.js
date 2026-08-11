@@ -79,6 +79,32 @@ function renderSettings(settings, container) {
     `;
     cardsContainer.appendChild(generalCard);
 
+    // ============= TARJETA: LOGO CORPORATIVO =============
+    const logoCard = document.createElement('div');
+    logoCard.className = 'settings-card';
+    logoCard.innerHTML = `
+        <div class="settings-card-header">
+            <div class="settings-card-icon">🏢</div>
+            <div class="settings-card-header-content">
+                <h3>Imagen Corporativa (Logo)</h3>
+                <p>Personaliza la pantalla de espera de tu TV</p>
+            </div>
+        </div>
+        <form id="logo-settings-form" enctype="multipart/form-data">
+            <div class="logo-preview-container" style="margin-bottom: 20px; text-align: center;">
+                <img id="logo-preview-img" src="${settings.owner_logo || '/static/images/watermark.jpg'}" style="width: 120px !important; height: 120px !important; border-radius: 50% !important; border: 2.5px solid var(--primary, #9d4edd) !important; object-fit: cover !important; box-shadow: 0 0 15px rgba(157,78,221,0.3) !important;" />
+            </div>
+            <div class="bees-form-group">
+                <label for="owner-logo-file" class="bees-label">Subir nueva imagen (PNG, JPG, WEBP)</label>
+                <input type="file" id="owner-logo-file" name="file" accept="image/*" class="bees-input" style="padding: 8px !important;">
+            </div>
+            <button type="submit" class="bees-btn bees-btn-primary" style="margin-top: 15px !important;">
+                📤 Subir Logo
+            </button>
+        </form>
+    `;
+    cardsContainer.appendChild(logoCard);
+
     // ============= TARJETA 2: TEMA =============
     const themeCard = document.createElement('div');
     themeCard.className = 'settings-card';
@@ -300,6 +326,36 @@ function renderSettings(settings, container) {
         </div>
     `;
     cardsContainer.appendChild(apiKeysCard);
+
+    // ============= TARJETA: REPRODUCTOR NATIVO (PLAYER 2) =============
+    const player2Card = document.createElement('div');
+    player2Card.className = 'settings-card';
+    player2Card.innerHTML = `
+        <div class="settings-card-header">
+            <div class="settings-card-icon">📺</div>
+            <div class="settings-card-header-content">
+                <h3>Reproductor Nativo (Player 2)</h3>
+                <p>Control del reproductor Chromium local con bloqueador de publicidad</p>
+            </div>
+        </div>
+        <div style="margin-top: 15px; display: flex; flex-direction: column; gap: 12px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.05); padding: 10px 15px; border-radius: 8px;">
+                <span style="font-size: 14px; color: var(--page-text-secondary);">Estado del reproductor local:</span>
+                <strong id="player2-status-text" style="color: var(--bees-red);">🔴 Inactivo</strong>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <button type="button" id="btn-launch-player2" class="bees-btn bees-btn-success" style="flex: 1; padding: 12px;">🟢 Iniciar</button>
+                <button type="button" id="btn-kill-player2" class="bees-btn bees-btn-danger" style="flex: 1; padding: 12px;">🔴 Detener</button>
+            </div>
+            <div style="font-size: 12px; color: var(--page-text-secondary); line-height: 1.4;">
+                💡 <em>Nota: Esta acción ejecuta Chromium de forma local en la máquina que aloja el servidor. Si estás en la nube, ejecuta <strong>python launch_player2.py --server TU_URL_SERVER --ws TU_URL_WS</strong> localmente en el PC del bar.</em>
+            </div>
+        </div>
+    `;
+    cardsContainer.appendChild(player2Card);
+    
+    // Check status immediately
+    setTimeout(checkPlayer2Status, 100);
 
     // ============= TARJETA 7: HERRAMIENTAS DE DIAGNÓSTICO =============
     const debugCard = document.createElement('div');
@@ -570,6 +626,43 @@ async function handleGeneralSettingsUpdate(event, form) {
     }
 }
 
+async function handleLogoUpload(event, form) {
+    event.preventDefault();
+    const fileInput = document.getElementById('owner-logo-file');
+    if (!fileInput || fileInput.files.length === 0) {
+        showNotification('❌ Por favor, selecciona un archivo.', 'error');
+        return;
+    }
+    
+    const formData = new FormData();
+    formData.append('file', fileInput.files[0]);
+    
+    try {
+        const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+        const headers = {};
+        if (token) headers['Authorization'] = `Bearer ${token}`;
+        
+        const response = await fetch('/api/v1/admin/settings/logo', {
+            method: 'POST',
+            headers: headers,
+            body: formData
+        });
+        
+        const result = await response.json();
+        if (response.ok && result.status === 'success') {
+            showNotification('✅ Logo corporativo subido exitosamente.', 'success');
+            const preview = document.getElementById('logo-preview-img');
+            if (preview) {
+                preview.src = result.owner_logo + '?t=' + Date.now();
+            }
+        } else {
+            showNotification(`❌ ${result.message || 'Error al subir el logo'}`, 'error');
+        }
+    } catch (error) {
+        showNotification(`❌ Error: ${error.message}`, 'error');
+    }
+}
+
 
 
 async function loadLazyQueueConfig() {
@@ -654,6 +747,13 @@ function setupSettingsListeners() {
         generalSettingsForm.dataset.listenerAttached = '1';
     }
 
+    // Logo settings form
+    const logoSettingsForm = document.getElementById('logo-settings-form');
+    if (logoSettingsForm && !logoSettingsForm.dataset.listenerAttached) {
+        logoSettingsForm.addEventListener('submit', (e) => handleLogoUpload(e, e.target));
+        logoSettingsForm.dataset.listenerAttached = '1';
+    }
+
     // Theme form
     if (themeSettingsForm && !themeSettingsForm.dataset.listenerAttached) {
         themeSettingsForm.addEventListener('submit', (e) => handleThemeChange(e, e.target));
@@ -727,6 +827,20 @@ function setupSettingsListeners() {
 
     // Load API keys
     loadApiKeys();
+
+    // Player 2 controls listeners
+    const btnLaunch = document.getElementById('btn-launch-player2');
+    const btnKill = document.getElementById('btn-kill-player2');
+    
+    if (btnLaunch && !btnLaunch.dataset.listenerAttached) {
+        btnLaunch.addEventListener('click', handleLaunchPlayer2);
+        btnLaunch.dataset.listenerAttached = '1';
+    }
+    
+    if (btnKill && !btnKill.dataset.listenerAttached) {
+        btnKill.addEventListener('click', handleKillPlayer2);
+        btnKill.dataset.listenerAttached = '1';
+    }
 }
 
 async function handleResetNight() {
@@ -738,6 +852,43 @@ async function handleResetNight() {
         await apiFetch('/admin/reset-night', { method: 'POST' });
         showNotification('✅ Sistema reiniciado correctamente.', 'success');
         setTimeout(() => loadSettingsPage(), 300);
+    } catch (error) {
+        showNotification(`❌ ${error.message}`, 'error');
+    }
+}
+
+async function checkPlayer2Status() {
+    const statusText = document.getElementById('player2-status-text');
+    if (!statusText) return;
+    try {
+        const response = await apiFetch('/player2/status');
+        if (response && response.running) {
+            statusText.textContent = '🟢 Activo (Kiosko)';
+            statusText.style.color = 'var(--bees-green, #2ecc71)';
+        } else {
+            statusText.textContent = '🔴 Inactivo';
+            statusText.style.color = 'var(--bees-red, #e74c3c)';
+        }
+    } catch (e) {
+        console.warn('Player2 status endpoint error:', e);
+    }
+}
+
+async function handleLaunchPlayer2() {
+    try {
+        const response = await apiFetch('/player2/launch', { method: 'POST' });
+        showNotification(response.message || '🟢 Reproductor nativo iniciado.', 'success');
+        setTimeout(checkPlayer2Status, 1000);
+    } catch (error) {
+        showNotification(`❌ ${error.message}`, 'error');
+    }
+}
+
+async function handleKillPlayer2() {
+    try {
+        const response = await apiFetch('/player2/kill', { method: 'POST' });
+        showNotification(response.message || '🔴 Reproductor nativo detenido.', 'info');
+        setTimeout(checkPlayer2Status, 500);
     } catch (error) {
         showNotification(`❌ ${error.message}`, 'error');
     }
