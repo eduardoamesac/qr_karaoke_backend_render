@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         QrMusic TV Player 2
 // @namespace    http://tampermonkey.net/
-// @version      6.5
+// @version      6.6
 // @description  Integración de QrMusic con YouTube. Aumenta la cortina a 5 segundos y previene parpadeos de carga entre canciones manteniendo la cortina hasta que la nueva canción inicie reproducción.
 // @author       Antigravity
 // @match        https://www.youtube.com/*
@@ -40,7 +40,7 @@
     }
 
     try {
-        console.log("%c[QrMusic] !!! SCRIPT INICIALIZADO Y ACTIVO (v6.5) !!!", "color: #9d4edd; font-size: 16px; font-weight: bold;");
+        console.log("%c[QrMusic] !!! SCRIPT INICIALIZADO Y ACTIVO (v6.6) !!!", "color: #9d4edd; font-size: 16px; font-weight: bold;");
 
         // 1. Configuración de IP/Host de QrMusic
         let qrmusicHost = localStorage.getItem("qrmusic_host") || "localhost:8000";
@@ -78,6 +78,21 @@
             }
             document.body.dataset.qrmusicInstalled = "true";
         }
+
+        // Listener global de teclado (CTRL+SHIFT+H) para configurar el servidor de QrMusic directamente en YouTube
+        window.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'h') {
+                const newHost = prompt("Configure la dirección (host/IP) del servidor QrMusic:", qrmusicHost);
+                if (newHost !== null) {
+                    const cleanHost = newHost.trim().replace(/^https?:\/\//i, '').replace(/\/+$/, '');
+                    if (cleanHost) {
+                        localStorage.setItem("qrmusic_host", cleanHost);
+                        alert("Servidor configurado a: " + cleanHost + ". Recargando...");
+                        window.location.reload();
+                    }
+                }
+            }
+        });
 
         // Cargar configuraciones públicas (Logo del Dueño / Nombre de la App)
         const fetchOwnerSettings = () => {
@@ -260,9 +275,27 @@
                 indicator.innerHTML = policy.createHTML(`
                     <img class="status-indicator-img" src="${ownerLogoUrl}" />
                     <div class="status-indicator-badge"></div>
-                    <div class="status-indicator-version">v6.5</div>
+                    <div class="status-indicator-version">v6.6</div>
                 `);
                 document.body.appendChild(indicator);
+            }
+
+            // Manejador de click en el indicador para re-configurar el host en caliente en la Smart TV
+            if (!indicator.dataset.hasClickListener) {
+                indicator.dataset.hasClickListener = "true";
+                indicator.style.cursor = "pointer";
+                indicator.title = "Haz click aquí para configurar el servidor QrMusic";
+                indicator.addEventListener('click', () => {
+                    const newHost = prompt("Introduce la dirección (host/IP) del servidor QrMusic (ej: qr-karaoke-backend-render-pb3m.onrender.com):", qrmusicHost);
+                    if (newHost !== null) {
+                        const cleanHost = newHost.trim().replace(/^https?:\/\//i, '').replace(/\/+$/, '');
+                        if (cleanHost) {
+                            localStorage.setItem("qrmusic_host", cleanHost);
+                            alert("Servidor actualizado a: " + cleanHost + ". Recargando página...");
+                            window.location.reload();
+                        }
+                    }
+                });
             }
 
             // Forzar actualización de la imagen si cambia
