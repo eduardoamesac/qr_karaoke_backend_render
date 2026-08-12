@@ -2,7 +2,8 @@
 // CONFIGURACIÓN
 // ============================================
 const API_BASE_URL = '/api/v1';
-const WEBSOCKET_URL = `ws://${window.location.host}/ws/cola`;
+const wsProtocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
+const WEBSOCKET_URL = `${wsProtocol}://${window.location.host}/ws/cola`;
 
 // ============================================
 // ESTADO DE LA APLICACIÓN

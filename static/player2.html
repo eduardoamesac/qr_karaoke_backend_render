@@ -346,7 +346,8 @@
         // 2. Conexión nativa de WebSocket para el Setup/Waiting Screen
         let socket = null;
         const connectWebSocket = () => {
-            const wsUrl = `ws://${qrmusicHost}/ws/cola`;
+            const wsProto = window.location.protocol === 'https:' ? 'wss' : 'ws';
+            const wsUrl = `${wsProto}://${qrmusicHost}/ws/cola`;
             console.log(`[QrMusic Setup] Conectando a WebSocket: ${wsUrl}`);
             
             socket = new WebSocket(wsUrl);
