@@ -91,17 +91,52 @@
         // Listener global de teclado (CTRL+SHIFT+H) para configurar servidor y sede directamente en YouTube
         window.addEventListener('keydown', (e) => {
             if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'h') {
-                const newHost = prompt("Configure la dirección (host/IP) del servidor QrMusic:", qrmusicHost);
-                if (newHost !== null) {
-                    const cleanHost = newHost.trim().replace(/^https?:\/\//i, '').replace(/\/+$/, '');
-                    if (cleanHost) {
-                        localStorage.setItem("qrmusic_host", cleanHost);
+                const input = prompt(
+                    "Configure la URL o Host del servidor QrMusic:\n" +
+                    "(Ejemplos: 'localhost:8000?local=1', '192.168.1.50:8000', o 'http://miservidor.com?local=sede-norte')",
+                    qrmusicLocalId ? `${qrmusicHost}?local=${qrmusicLocalId}` : qrmusicHost
+                );
+                if (input !== null && input.trim()) {
+                    let cleanInput = input.trim();
+                    let parsedHost = cleanInput;
+                    let parsedLocal = null;
+
+                    // Si es una URL completa con protocolo o query string
+                    try {
+                        let urlToParse = cleanInput;
+                        if (!urlToParse.startsWith('http://') && !urlToParse.startsWith('https://')) {
+                            urlToParse = 'http://' + urlToParse;
+                        }
+                        const parsed = new URL(urlToParse);
+                        parsedHost = parsed.host;
+                        parsedLocal = parsed.searchParams.get('local') || parsed.searchParams.get('slug') || parsed.searchParams.get('local_id');
+                    } catch (e) {
+                        // Fallback manual si no parsea como URL estricta
+                        if (cleanInput.includes('?')) {
+                            const parts = cleanInput.split('?');
+                            parsedHost = parts[0].replace(/^https?:\/\//i, '').replace(/\/+$/, '');
+                            const qParams = new URLSearchParams(parts[1]);
+                            parsedLocal = qParams.get('local') || qParams.get('slug') || qParams.get('local_id');
+                        } else {
+                            parsedHost = cleanInput.replace(/^https?:\/\//i, '').replace(/\/+$/, '');
+                        }
                     }
-                    const newLocal = prompt("Configure la Sede (ID o Slug del local):", qrmusicLocalId || "");
-                    if (newLocal !== null) {
-                        localStorage.setItem("qrmusic_local_id", newLocal.trim());
+
+                    if (parsedHost) {
+                        localStorage.setItem("qrmusic_host", parsedHost);
                     }
-                    alert("Ajustes guardados. Recargando...");
+
+                    // Si no venía parámetro en la URL, preguntarlo específicamente
+                    if (parsedLocal !== null) {
+                        localStorage.setItem("qrmusic_local_id", parsedLocal);
+                    } else {
+                        const newLocal = prompt("Configure la Sede (ID o Slug del local) para este TV:", qrmusicLocalId || "");
+                        if (newLocal !== null) {
+                            localStorage.setItem("qrmusic_local_id", newLocal.trim());
+                        }
+                    }
+
+                    alert(`Ajustes guardados:\n• Servidor: ${localStorage.getItem("qrmusic_host")}\n• Sede: ${localStorage.getItem("qrmusic_local_id") || "General"}\nRecargando pantalla...`);
                     window.location.reload();
                 }
             }
@@ -522,72 +557,100 @@
                     100% { transform: translate(-50%, -5px); }
                 }
                 
-                /* Marca de agua */
+                /* Marca de agua / QR (Tamaño 2x para TV de 100": 220px) */
                 #qrmusic-watermark {
                     position: fixed !important;
-                    top: 25px !important;
-                    right: 25px !important;
-                    width: 110px !important;
-                    height: 110px !important;
+                    top: 35px !important;
+                    right: 35px !important;
+                    width: 220px !important;
+                    height: 220px !important;
                     z-index: 2000000000 !important;
                     opacity: 1 !important;
                     pointer-events: none !important;
                     border-radius: 50% !important;
-                    box-shadow: 0 0 15px rgba(128, 0, 128, 0.4) !important;
+                    border: 4px solid rgba(157, 78, 221, 0.5) !important;
+                    box-shadow: 0 0 35px rgba(128, 0, 128, 0.5) !important;
                 }
                 
-                /* Barra de estado inferior */
-                #qrmusic-bottom-bar {
+                /* BLOQUE IZQUIERDO: SONANDO AHORA (Alineado a la izquierda) */
+                #qrmusic-now-playing-box {
                     position: fixed !important;
-                    bottom: 25px !important;
-                    left: 50% !important;
-                    transform: translateX(-50%) !important;
-                    width: 90% !important;
-                    max-width: 1200px !important;
-                    height: 75px !important;
+                    bottom: 35px !important;
+                    left: 40px !important;
+                    max-width: 46vw !important;
+                    min-width: 380px !important;
                     z-index: 2000000000 !important;
-                    background: rgba(10, 8, 20, 0.75) !important;
-                    backdrop-filter: blur(12px) !important;
-                    border: 1.5px solid rgba(157, 78, 221, 0.3) !important;
-                    border-radius: 18px !important;
-                    display: flex !important;
-                    justify-content: space-between !important;
-                    align-items: center !important;
-                    padding: 0 35px !important;
-                    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6), 0 0 25px rgba(157, 78, 221, 0.15) !important;
+                    background: rgba(10, 8, 24, 0.88) !important;
+                    backdrop-filter: blur(16px) !important;
+                    border: 2.5px solid rgba(157, 78, 221, 0.5) !important;
+                    border-radius: 22px !important;
+                    padding: 18px 28px !important;
+                    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.75), 0 0 30px rgba(157, 78, 221, 0.25) !important;
                     color: #ffffff !important;
                     font-family: 'Outfit', sans-serif !important;
                     pointer-events: none !important;
                     box-sizing: border-box !important;
-                }
-                .qrmusic-bar-section {
                     display: flex !important;
                     flex-direction: column !important;
-                    justify-content: center !important;
-                    max-width: 46% !important;
-                    overflow: hidden !important;
-                    white-space: nowrap !important;
-                }
-                .qrmusic-bar-label {
-                    font-size: 11px !important;
-                    text-transform: uppercase !important;
-                    letter-spacing: 2px !important;
-                    color: #c77dff !important;
-                    font-weight: 800 !important;
-                    margin-bottom: 2px !important;
                     text-align: left !important;
                 }
-                .qrmusic-bar-value {
-                    font-size: 16px !important;
-                    font-weight: 600 !important;
+
+                /* BLOQUE DERECHO: SIGUIENTE EN COLA (Alineado a la derecha) */
+                #qrmusic-next-song-box {
+                    position: fixed !important;
+                    bottom: 35px !important;
+                    right: 40px !important;
+                    max-width: 46vw !important;
+                    min-width: 380px !important;
+                    z-index: 2000000000 !important;
+                    background: rgba(10, 8, 24, 0.88) !important;
+                    backdrop-filter: blur(16px) !important;
+                    border: 2.5px solid rgba(76, 201, 240, 0.5) !important;
+                    border-radius: 22px !important;
+                    padding: 18px 28px !important;
+                    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.75), 0 0 30px rgba(76, 201, 240, 0.25) !important;
+                    color: #ffffff !important;
+                    font-family: 'Outfit', sans-serif !important;
+                    pointer-events: none !important;
+                    box-sizing: border-box !important;
+                    display: flex !important;
+                    flex-direction: column !important;
+                    text-align: right !important;
+                }
+
+                /* Tipografía Duplicada (2x) para Pantalla Gigante (100") */
+                .qrmusic-box-label {
+                    font-size: 20px !important;
+                    text-transform: uppercase !important;
+                    letter-spacing: 3px !important;
+                    font-weight: 800 !important;
+                    margin-bottom: 4px !important;
+                }
+                .qrmusic-box-label-now {
+                    color: #c77dff !important;
+                    text-align: left !important;
+                }
+                .qrmusic-box-label-next {
+                    color: #4cc9f0 !important;
+                    text-align: right !important;
+                }
+                .qrmusic-box-title {
+                    font-size: 32px !important;
+                    font-weight: 800 !important;
                     color: #ffffff !important;
                     text-overflow: ellipsis !important;
                     overflow: hidden !important;
+                    white-space: nowrap !important;
+                    line-height: 1.25 !important;
                 }
-                .qrmusic-bar-divider {
-                    width: 1px !important;
-                    height: 45px !important;
-                    background: rgba(157, 78, 221, 0.2) !important;
+                .qrmusic-box-user {
+                    font-size: 22px !important;
+                    font-weight: 600 !important;
+                    color: #a29bfe !important;
+                    margin-top: 4px !important;
+                    text-overflow: ellipsis !important;
+                    overflow: hidden !important;
+                    white-space: nowrap !important;
                 }
 
                 /* --- BANNER DE COMUNICADOS DE LA ADMINISTRACIÓN NEÓN --- */
@@ -619,8 +682,8 @@
                     transform: translate(-50%, 0) scale(1) !important;
                 }
                 .admin-banner-logo-img {
-                    width: 75px !important;
-                    height: 75px !important;
+                    width: 100px !important;
+                    height: 100px !important;
                     border-radius: 50% !important;
                     object-fit: cover !important;
                     filter: drop-shadow(0 0 8px #ff007f) !important;
@@ -632,7 +695,7 @@
                     text-align: left !important;
                 }
                 .admin-banner-label {
-                    font-size: 11px !important;
+                    font-size: 16px !important;
                     text-transform: uppercase !important;
                     letter-spacing: 3px !important;
                     color: #ff007f !important;
@@ -641,34 +704,34 @@
                     text-shadow: 0 0 10px rgba(255, 0, 127, 0.6) !important;
                 }
                 .admin-banner-message {
-                    font-size: 26px !important;
+                    font-size: 32px !important;
                     font-weight: 800 !important;
                     text-shadow: 0 0 15px rgba(255, 255, 255, 0.5) !important;
                     line-height: 1.3 !important;
                     color: #ffffff !important;
                 }
 
-                /* --- ESTILOS DE INDICADOR DE ESTADO GRÁFICO --- */
+                /* --- ESTILOS DE INDICADOR DE ESTADO GRÁFICO (2x: 220px) --- */
                 #qrmusic-status-indicator {
                     position: fixed !important;
-                    top: 25px !important;
-                    left: 25px !important;
-                    width: 110px !important;
-                    height: 110px !important;
+                    top: 35px !important;
+                    left: 35px !important;
+                    width: 220px !important;
+                    height: 220px !important;
                     z-index: 2000000000 !important;
                     pointer-events: none !important;
                 }
                 .status-indicator-img {
-                    width: 110px !important;
-                    height: 110px !important;
+                    width: 220px !important;
+                    height: 220px !important;
                     border-radius: 50% !important;
-                    border: 3px solid rgba(157, 78, 221, 0.4) !important;
+                    border: 4px solid rgba(157, 78, 221, 0.5) !important;
                     object-fit: cover !important;
-                    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5) !important;
+                    box-shadow: 0 0 25px rgba(0, 0, 0, 0.6) !important;
                 }
                 .status-indicator-badge {
-                    width: 30px !important;
-                    height: 30px !important;
+                    width: 50px !important;
+                    height: 50px !important;
                     border-radius: 50% !important;
                     display: flex !important;
                     justify-content: center !important;
@@ -677,10 +740,10 @@
                     position: absolute !important;
                     bottom: 0 !important;
                     right: 0 !important;
-                    font-size: 15px !important;
+                    font-size: 24px !important;
                     font-weight: bold !important;
-                    border: 2.5px solid #000000 !important;
-                    box-shadow: 0 3px 8px rgba(0,0,0,0.4) !important;
+                    border: 3.5px solid #000000 !important;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.5) !important;
                 }
                 .status-indicator-badge.connected {
                     background: #2ecc71 !important;
@@ -694,16 +757,16 @@
                     position: absolute !important;
                     top: 0 !important;
                     right: 0 !important;
-                    background: rgba(12, 6, 24, 0.95) !important;
-                    border: 2px solid rgba(157, 78, 221, 0.7) !important;
-                    color: #c77dff !important;
-                    padding: 1px 5px !important;
-                    font-size: 9px !important;
+                    background: rgba(157, 78, 221, 0.95) !important;
+                    color: #ffffff !important;
+                    font-size: 13px !important;
                     font-weight: 800 !important;
-                    border-radius: 8px !important;
-                    box-shadow: 0 2px 5px rgba(0,0,0,0.5) !important;
-                    font-family: monospace !important;
-                    line-height: 1 !important;
+                    padding: 4px 10px !important;
+                    border-radius: 12px !important;
+                    border: 2px solid #000000 !important;
+                    box-shadow: 0 3px 10px rgba(0,0,0,0.5) !important;
+                    letter-spacing: 1px !important;
+                    font-family: 'Outfit', sans-serif !important;
                 }
 
                 /* --- ESTILOS DE PANTALLA TIPO CORTINA DE TRANSICIÓN --- */
@@ -828,14 +891,17 @@
                 }
                 const watermark = document.getElementById('qrmusic-watermark');
                 if (watermark) watermark.remove();
-                const bottomBar = document.getElementById('qrmusic-bottom-bar');
-                if (bottomBar) bottomBar.remove();
+                const nowPlayingBox = document.getElementById('qrmusic-now-playing-box');
+                if (nowPlayingBox) nowPlayingBox.remove();
+                const nextSongBox = document.getElementById('qrmusic-next-song-box');
+                if (nextSongBox) nextSongBox.remove();
                 const statusIndicator = document.getElementById('qrmusic-status-indicator');
                 if (statusIndicator) statusIndicator.remove();
             } else {
                 const welcomeScreen = document.getElementById('qrmusic-welcome-screen');
                 if (welcomeScreen) welcomeScreen.remove();
 
+                // Marca de agua QR de QrMusic (Esquina superior derecha)
                 if (!document.getElementById('qrmusic-watermark')) {
                     const img = document.createElement('img');
                     img.id = 'qrmusic-watermark';
@@ -843,21 +909,28 @@
                     document.body.appendChild(img);
                 }
 
-                if (!document.getElementById('qrmusic-bottom-bar')) {
-                    const bar = document.createElement('div');
-                    bar.id = 'qrmusic-bottom-bar';
-                    bar.innerHTML = policy.createHTML(`
-                        <div class="qrmusic-bar-section">
-                            <div class="qrmusic-bar-label">🎵 Sonando Ahora</div>
-                            <div id="qrmusic-current-song" class="qrmusic-bar-value">Cargando catálogo...</div>
-                        </div>
-                        <div class="qrmusic-bar-divider"></div>
-                        <div class="qrmusic-bar-section">
-                            <div class="qrmusic-bar-label">⏭️ Siguiente en Cola</div>
-                            <div id="qrmusic-next-song" class="qrmusic-bar-value">Esperando pedidos...</div>
-                        </div>
+                // Bloque 1: Sonando Ahora (Inferior Izquierda)
+                if (!document.getElementById('qrmusic-now-playing-box')) {
+                    const nowBox = document.createElement('div');
+                    nowBox.id = 'qrmusic-now-playing-box';
+                    nowBox.innerHTML = policy.createHTML(`
+                        <div class="qrmusic-box-label qrmusic-box-label-now">🎵 Sonando Ahora</div>
+                        <div id="qrmusic-current-song" class="qrmusic-box-title">Cargando catálogo...</div>
+                        <div id="qrmusic-current-user" class="qrmusic-box-user"></div>
                     `);
-                    document.body.appendChild(bar);
+                    document.body.appendChild(nowBox);
+                }
+
+                // Bloque 2: Siguiente en Cola (Inferior Derecha)
+                if (!document.getElementById('qrmusic-next-song-box')) {
+                    const nextBox = document.createElement('div');
+                    nextBox.id = 'qrmusic-next-song-box';
+                    nextBox.innerHTML = policy.createHTML(`
+                        <div class="qrmusic-box-label qrmusic-box-label-next">⏭️ Siguiente en Cola</div>
+                        <div id="qrmusic-next-song" class="qrmusic-box-title">Esperando pedidos...</div>
+                        <div id="qrmusic-next-user" class="qrmusic-box-user"></div>
+                    `);
+                    document.body.appendChild(nextBox);
                 }
 
                 // Asegurar el indicador gráfico en modo de reproducción
@@ -878,13 +951,18 @@
             }
         };
 
-        // Actualizar textos en la barra inferior
-        const updateOverlay = (current, next) => {
+        // Actualizar textos en los 2 bloques inferiores
+        const updateOverlay = (current, next, currentUser = '', nextUser = '') => {
             if (isPlayer2Page) return;
             const currentEl = document.getElementById('qrmusic-current-song');
             const nextEl = document.getElementById('qrmusic-next-song');
+            const currentUserEl = document.getElementById('qrmusic-current-user');
+            const nextUserEl = document.getElementById('qrmusic-next-user');
+
             if (currentEl) currentEl.textContent = current;
             if (nextEl) nextEl.textContent = next;
+            if (currentUserEl) currentUserEl.textContent = currentUser;
+            if (nextUserEl) nextUserEl.textContent = nextUser;
         };
 
         // Helper para llamar al endpoint /siguiente y forzar el inicio de reproducción
@@ -892,9 +970,13 @@
         const triggerNextSong = async () => {
             if (triggeringNext) return;
             triggeringNext = true;
-            console.log("[QrMusic] Canciones detectadas en cola. Avanzando de manera automática...");
+            console.log(`[QrMusic] Canciones detectadas en cola (local: ${qrmusicLocalId || 'General'}). Avanzando de manera automática...`);
             try {
-                const response = await fetch(`${getHttpProto()}://${qrmusicHost}/api/v1/canciones/siguiente`, { method: 'POST' });
+                let nextUrl = `${getHttpProto()}://${qrmusicHost}/api/v1/canciones/siguiente`;
+                if (qrmusicLocalId) {
+                    nextUrl += `?local_id=${encodeURIComponent(qrmusicLocalId)}`;
+                }
+                const response = await fetch(nextUrl, { method: 'POST' });
                 console.log("[QrMusic] Respuesta avanzar automática:", response.status);
             } catch (err) {
                 console.error("[QrMusic] Error al iniciar canción automática:", err);
@@ -926,13 +1008,16 @@
         // 5. Conexión WebSocket para controlar la navegación y procesar comunicados/emojis
         let socket = null;
         const connectWebSocket = () => {
-            const wsUrl = `${getWsProto()}://${qrmusicHost}/ws/cola`;
+            let wsUrl = `${getWsProto()}://${qrmusicHost}/ws/cola`;
+            if (qrmusicLocalId) {
+                wsUrl += `?local=${encodeURIComponent(qrmusicLocalId)}`;
+            }
             console.log(`[QrMusic] Conectando a WebSocket: ${wsUrl}`);
             
             socket = new WebSocket(wsUrl);
             
             socket.onopen = () => {
-                console.log("[QrMusic] WebSocket conectado correctamente.");
+                console.log(`[QrMusic] WebSocket conectado correctamente (Sede: ${qrmusicLocalId || 'General'}).`);
                 updateStatusIndicator(true);
             };
 
@@ -1125,7 +1210,10 @@
             setInterval(async () => {
                 const isHome = isHomePath();
                 try {
-                    const fetchUrl = `${getHttpProto()}://${qrmusicHost}/api/v1/canciones/cola/extended`;
+                    let fetchUrl = `${getHttpProto()}://${qrmusicHost}/api/v1/canciones/cola/extended`;
+                    if (qrmusicLocalId) {
+                        fetchUrl += `?local_id=${encodeURIComponent(qrmusicLocalId)}`;
+                    }
                     const res = await fetch(fetchUrl);
                     if (res.ok) {
                         const data = await res.json();
@@ -1187,20 +1275,30 @@
                             return;
                         }
 
-                        // Obtener únicamente el título
+                        // Obtener títulos y datos de usuarios
                         let currentText = "Ninguna canción en reproducción";
+                        let currentUserText = "";
                         if (data.now_playing) {
                             currentText = data.now_playing.titulo || "Desconocida";
+                            if (data.now_playing.usuario && data.now_playing.usuario.nick) {
+                                const mObj = data.now_playing.usuario.mesa;
+                                const mesaStr = mObj ? ` (${typeof mObj === 'object' ? mObj.nombre : mObj})` : "";
+                                currentUserText = `🎤 ${data.now_playing.usuario.nick}${mesaStr}`;
+                            }
                         }
 
                         let nextText = "No hay más canciones en cola";
-                        if (upcoming.length > 0) {
-                            nextText = upcoming[0].titulo || "Desconocida";
-                        } else if (lazy.length > 0) {
-                            nextText = lazy[0].titulo || "Desconocida";
+                        let nextUserText = "";
+                        if (nextSongObj) {
+                            nextText = nextSongObj.titulo || "Desconocida";
+                            if (nextSongObj.usuario && nextSongObj.usuario.nick) {
+                                const mObj = nextSongObj.usuario.mesa;
+                                const mesaStr = mObj ? ` (${typeof mObj === 'object' ? mObj.nombre : mObj})` : "";
+                                nextUserText = `👤 ${nextSongObj.usuario.nick}${mesaStr}`;
+                            }
                         }
 
-                        updateOverlay(currentText, nextText);
+                        updateOverlay(currentText, nextText, currentUserText, nextUserText);
                     }
                 } catch (err) {
                     // Fails silently
@@ -1238,10 +1336,14 @@
                 if (isFinished && !video._qrmusicReported) {
                     video._qrmusicReported = true;
                     lastReportedVideoId = currentVideoId;
-                    console.log(`[QrMusic] 🏁 Canción finalizada detectada (${currentVideoId}). Solicitando siguiente canción...`);
+                    console.log(`[QrMusic] 🏁 Canción finalizada detectada (${currentVideoId}) en sede (${qrmusicLocalId || 'General'}). Solicitando siguiente...`);
 
                     try {
-                        const response = await fetch(`${getHttpProto()}://${qrmusicHost}/api/v1/canciones/siguiente`, { method: 'POST' });
+                        let nextUrl = `${getHttpProto()}://${qrmusicHost}/api/v1/canciones/siguiente`;
+                        if (qrmusicLocalId) {
+                            nextUrl += `?local_id=${encodeURIComponent(qrmusicLocalId)}`;
+                        }
+                        const response = await fetch(nextUrl, { method: 'POST' });
                         if (response.status === 204) {
                             console.log("[QrMusic] 📭 Cola vacía (204). Regresando al Home virtualmente para no perder pantalla completa...");
                             const v = document.querySelector('video');
