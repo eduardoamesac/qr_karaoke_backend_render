@@ -7,15 +7,21 @@ from app.schemas import MesaCreate
 from app.utils.cache_manager import cache_manager as cache
 
 
+from typing import Optional
+
 def get_mesa_by_qr(db: Session, qr_code: str):
     """Busca una mesa por su código QR (desde CACHE)."""
     return cache.get_mesa_by_qr(qr_code)
 
 
-def get_mesas(db: Session):
-    """Devuelve todas las mesas (desde CACHE)."""
+def get_mesas(db: Session, local_id: Optional[int] = None):
+    """Devuelve todas las mesas (desde CACHE), opcionalmente filtradas por local_id."""
     mesas = cache.get_all_mesas()
-    return mesas if mesas else []
+    if not mesas:
+        return []
+    if local_id is not None:
+        return [m for m in mesas if m.get("local_id") == local_id or m.get("local_id") is None]
+    return mesas
 
 
 def create_mesa(db: Session, mesa: MesaCreate):

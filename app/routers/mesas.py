@@ -68,16 +68,32 @@ def ensure_mesa_in_mysql(db: Session, mesa_id: int, mesa_nombre: str, qr_code: s
         logger.warning(f"No se pudo sincronizar mesa {mesa_id} a MySQL (posible tabla inexistente): {e}")
 
 
-@router.get("/", response_model=List[schemas.Mesa], summary="Listar todas las mesas", dependencies=[Depends(verify_token)])
-def get_mesas(db: Session = Depends(get_db)):
+from fastapi import Request
+from typing import Optional
+
+def get_mesa_local_id(request: Request, admin: Optional[dict] = None) -> Optional[int]:
+    local_id_str = request.query_params.get("local_id") or request.headers.get("X-Local-ID")
+    if local_id_str:
+        try:
+            return int(local_id_str)
+        except Exception:
+            pass
+    if admin and admin.get("role") != "owner":
+        return admin.get("local_id")
+    return None
+
+@router.get("/", response_model=List[schemas.Mesa], summary="Listar todas las mesas")
+def get_mesas(request: Request, db: Session = Depends(get_db), admin: dict = Depends(verify_token)):
     """
-    **[Admin]** Devuelve una lista de todas las mesas creadas en el sistema.
+    **[Admin]** Devuelve una lista de todas las mesas creadas en el sistema para el local activo.
     """
-    mesas = crud.get_mesas(db)
+    active_local_id = get_mesa_local_id(request, admin)
+    mesas = crud.get_mesas(db, local_id=active_local_id)
     return mesas
 
 @router.post("/", response_model=schemas.Mesa, status_code=201, summary="Crear una nueva mesa")
 def create_mesa_endpoint(
+    request: Request,
     mesa: schemas.MesaCreate, 
     db: Session = Depends(get_db),
     admin: dict = Depends(verify_token)
@@ -86,7 +102,10 @@ def create_mesa_endpoint(
     Crea una nueva mesa en el sistema con un nombre y un código QR único.
     El código QR debe ser único en todo el sistema.
     """
-    log_admin_action(admin.get("sub"), "create_mesa", f"Mesa: {mesa.nombre}, QR: {mesa.qr_code}")
+    active_local_id = get_mesa_local_id(request, admin)
+    if not mesa.local_id and active_local_id:
+        mesa.local_id = active_local_id
+    log_admin_action(admin.get("sub"), "create_mesa", f"Mesa: {mesa.nombre}, QR: {mesa.qr_code}, Local: {mesa.local_id}")
     db_mesa = crud.get_mesa_by_qr(db, qr_code=mesa.qr_code)
     if db_mesa:
         # db_mesa es un dict si viene del cache

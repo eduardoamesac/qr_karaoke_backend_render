@@ -313,3 +313,179 @@ async def list_purchases(request: Request, db: Session = Depends(get_db), api_ke
         
     compras = crud.get_compras_by_local(db, local_id)
     return JSONResponse(content=jsonable_encoder(compras, custom_encoder={Decimal: lambda v: float(v)}))
+
+
+@router.post("/traslado", response_model=schemas.saas.TrasladoInventarioOut, summary="Trasladar stock de un producto entre sedes")
+async def transfer_product_stock(
+    request: Request,
+    traslado_in: schemas.saas.TrasladoInventarioCreate,
+    db: Session = Depends(get_db),
+    api_key: dict = Depends(verify_token)
+):
+    """
+    Traslada stock de un producto desde un local de origen hacia un local de destino del mismo dueño.
+    """
+    if traslado_in.local_origen_id == traslado_in.local_destino_id:
+        raise HTTPException(status_code=400, detail="El local de origen y destino no pueden ser el mismo.")
+
+    if traslado_in.cantidad <= 0:
+        raise HTTPException(status_code=400, detail="La cantidad a trasladar debe ser mayor a cero.")
+
+    from app.db.models.local import Local
+    from app.db.models.usuario_local import UsuarioLocal
+    from app.db.models.producto import Producto
+    from app.db.models.traslado_inventario import TrasladoInventario
+
+    # Validar permisos sobre las sedes
+    role = api_key.get("role")
+    if role == "owner":
+        owner = db.query(UsuarioLocal).filter(UsuarioLocal.email == api_key.get("sub")).first()
+        if not owner:
+            raise HTTPException(status_code=404, detail="Propietario no encontrado.")
+        owner_local_ids = [l.id for l in owner.locales]
+        if traslado_in.local_origen_id not in owner_local_ids or traslado_in.local_destino_id not in owner_local_ids:
+            raise HTTPException(status_code=403, detail="Ambos locales deben pertenecer a tu cuenta.")
+    else:
+        # Empleado
+        emp_local_id = api_key.get("local_id")
+        if emp_local_id != traslado_in.local_origen_id:
+            raise HTTPException(status_code=403, detail="Solo puedes emitir traslados desde tu local asignado.")
+
+    # Buscar locales
+    local_origen = db.query(Local).filter(Local.id == traslado_in.local_origen_id).first()
+    local_destino = db.query(Local).filter(Local.id == traslado_in.local_destino_id).first()
+    if not local_origen or not local_destino:
+        raise HTTPException(status_code=404, detail="Uno de los locales no fue encontrado.")
+
+    # Buscar producto en origen
+    producto_origen = db.query(Producto).filter(
+        Producto.id == traslado_in.producto_id,
+        Producto.local_id == traslado_in.local_origen_id
+    ).first()
+
+    if not producto_origen:
+        raise HTTPException(status_code=404, detail="El producto no existe en el local de origen.")
+
+    if producto_origen.stock < traslado_in.cantidad:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Stock insuficiente en {local_origen.nombre}. Stock actual: {producto_origen.stock}, Solicitado: {traslado_in.cantidad}"
+        )
+
+    # Descontar stock en origen
+    producto_origen.stock -= traslado_in.cantidad
+
+    # Buscar o crear producto en destino (por nombre)
+    producto_destino = db.query(Producto).filter(
+        Producto.local_id == traslado_in.local_destino_id,
+        Producto.nombre.ilike(producto_origen.nombre)
+    ).first()
+
+    if producto_destino:
+        producto_destino.stock += traslado_in.cantidad
+        if producto_origen.precio_costo and not producto_destino.precio_costo:
+            producto_destino.precio_costo = producto_origen.precio_costo
+    else:
+        # Crear copia del producto en el local destino con el stock transferido
+        producto_destino = Producto(
+            nombre=producto_origen.nombre,
+            precio=producto_origen.precio,
+            precio_costo=producto_origen.precio_costo or 0,
+            categoria=producto_origen.categoria or "General",
+            stock=traslado_in.cantidad,
+            stock_seguridad=producto_origen.stock_seguridad or 0,
+            local_id=traslado_in.local_destino_id,
+            image_url=producto_origen.image_url,
+            is_active=True
+        )
+        db.add(producto_destino)
+
+    # Crear registro de auditoría de traslado
+    user_name = api_key.get("name") or api_key.get("sub") or "Administrador"
+    user_id = api_key.get("id")
+    traslado = TrasladoInventario(
+        local_origen_id=traslado_in.local_origen_id,
+        local_destino_id=traslado_in.local_destino_id,
+        producto_origen_id=producto_origen.id,
+        producto_nombre=producto_origen.nombre,
+        cantidad=traslado_in.cantidad,
+        costo_unitario=producto_origen.precio_costo or 0,
+        usuario_id=user_id,
+        usuario_nombre=user_name,
+        notas=traslado_in.notas
+    )
+    db.add(traslado)
+    db.commit()
+    db.refresh(traslado)
+
+    log_admin_action(
+        api_key.get("sub"),
+        "transfer_stock",
+        f"{traslado_in.cantidad}x {producto_origen.nombre} desde {local_origen.nombre} hacia {local_destino.nombre}"
+    )
+
+    try:
+        import asyncio
+        asyncio.create_task(websocket_manager.manager.broadcast_product_update())
+    except Exception:
+        pass
+
+    out_data = {
+        "id": traslado.id,
+        "local_origen_id": traslado.local_origen_id,
+        "local_destino_id": traslado.local_destino_id,
+        "producto_origen_id": traslado.producto_origen_id,
+        "producto_nombre": traslado.producto_nombre,
+        "cantidad": traslado.cantidad,
+        "costo_unitario": float(traslado.costo_unitario) if traslado.costo_unitario else 0.0,
+        "usuario_id": traslado.usuario_id,
+        "usuario_nombre": traslado.usuario_nombre,
+        "notas": traslado.notas,
+        "fecha": traslado.fecha,
+        "local_origen_nombre": local_origen.nombre,
+        "local_destino_nombre": local_destino.nombre
+    }
+    return JSONResponse(content=jsonable_encoder(out_data))
+
+
+@router.get("/traslados", response_model=List[schemas.saas.TrasladoInventarioOut], summary="Historial de traslados de un local")
+async def list_transfers(
+    request: Request,
+    db: Session = Depends(get_db),
+    api_key: dict = Depends(verify_token)
+):
+    """
+    Obtiene el historial de traslados (entrantes y salientes) del local activo.
+    """
+    local_id = get_active_local_id(request, api_key)
+    if not local_id:
+        raise HTTPException(status_code=400, detail="Debe especificar o tener un local activo para listar traslados.")
+
+    from app.db.models.traslado_inventario import TrasladoInventario
+    from app.db.models.local import Local
+
+    traslados = db.query(TrasladoInventario).filter(
+        (TrasladoInventario.local_origen_id == local_id) | (TrasladoInventario.local_destino_id == local_id)
+    ).order_by(TrasladoInventario.fecha.desc()).limit(100).all()
+
+    locales_map = {l.id: l.nombre for l in db.query(Local).all()}
+
+    results = []
+    for t in traslados:
+        results.append({
+            "id": t.id,
+            "local_origen_id": t.local_origen_id,
+            "local_destino_id": t.local_destino_id,
+            "producto_origen_id": t.producto_origen_id,
+            "producto_nombre": t.producto_nombre,
+            "cantidad": t.cantidad,
+            "costo_unitario": float(t.costo_unitario) if t.costo_unitario else 0.0,
+            "usuario_id": t.usuario_id,
+            "usuario_nombre": t.usuario_nombre,
+            "notas": t.notas,
+            "fecha": t.fecha,
+            "local_origen_nombre": locales_map.get(t.local_origen_id, f"Local #{t.local_origen_id}"),
+            "local_destino_nombre": locales_map.get(t.local_destino_id, f"Local #{t.local_destino_id}")
+        })
+
+    return JSONResponse(content=jsonable_encoder(results))

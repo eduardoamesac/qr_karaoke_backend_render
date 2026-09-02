@@ -30,6 +30,8 @@ CREATE TABLE IF NOT EXISTS `locales` (
     `slug`        VARCHAR(100)  NOT NULL,
     `nombre`      VARCHAR(200)  NOT NULL,
     `direccion`   VARCHAR(200)  NULL,
+    `telefono`    VARCHAR(50)   NULL,
+    `hora_cierre` VARCHAR(10)   NULL DEFAULT '03:00',
     `logo_url`    VARCHAR(500)  NULL,
     `is_active`   BOOLEAN       NOT NULL DEFAULT TRUE,
     `created_at`  DATETIME      NULL,
@@ -199,17 +201,37 @@ CREATE TABLE IF NOT EXISTS `usuarios_locales_rel` (
 
 -- Tabla: usuarios_empleado_locales (DJ, Meseros, Cajeros por cada Local)
 CREATE TABLE IF NOT EXISTS `usuarios_empleado_locales` (
-    `id`            INT           NOT NULL AUTO_INCREMENT,
-    `local_id`      INT           NOT NULL,
-    `email`         VARCHAR(100)  NOT NULL,
-    `password_hash` VARCHAR(200)  NOT NULL,
-    `nombre`        VARCHAR(200)  NOT NULL,
-    `rol`           VARCHAR(50)   NOT NULL, -- 'dj', 'mesero', 'cajero', 'admin'
-    `is_active`     BOOLEAN       NOT NULL DEFAULT TRUE,
-    `created_at`    DATETIME      NULL,
+    `id`                 INT           NOT NULL AUTO_INCREMENT,
+    `local_id`           INT           NOT NULL,
+    `email`              VARCHAR(100)  NOT NULL,
+    `password_hash`      VARCHAR(200)  NOT NULL,
+    `nombre`             VARCHAR(200)  NOT NULL,
+    `rol`                VARCHAR(50)   NOT NULL, -- 'dj', 'mesero', 'cajero', 'admin'
+    `modulos_permitidos` TEXT          NULL,     -- JSON array de módulos autorizados ej: ["dashboard","accounts","inventory"]
+    `is_active`          BOOLEAN       NOT NULL DEFAULT TRUE,
+    `created_at`         DATETIME      NULL,
     PRIMARY KEY (`id`),
     UNIQUE KEY `uq_empleados_email` (`email`),
     CONSTRAINT `fk_empleados_local_id` FOREIGN KEY (`local_id`) REFERENCES `locales` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Tabla: traslados_inventario (Auditoría y control de transferencias de stock entre sedes)
+CREATE TABLE IF NOT EXISTS `traslados_inventario` (
+    `id`                 INT            NOT NULL AUTO_INCREMENT,
+    `local_origen_id`    INT            NOT NULL,
+    `local_destino_id`   INT            NOT NULL,
+    `producto_origen_id` INT            NULL,
+    `producto_nombre`    VARCHAR(200)   NOT NULL,
+    `cantidad`           INT            NOT NULL,
+    `costo_unitario`     NUMERIC(10, 2) NOT NULL DEFAULT 0.00,
+    `usuario_id`         INT            NULL,
+    `usuario_nombre`     VARCHAR(200)   NULL,
+    `notas`              VARCHAR(500)   NULL,
+    `fecha`              DATETIME       NULL,
+    PRIMARY KEY (`id`),
+    CONSTRAINT `fk_traslados_local_origen` FOREIGN KEY (`local_origen_id`) REFERENCES `locales` (`id`) ON DELETE CASCADE,
+    CONSTRAINT `fk_traslados_local_destino` FOREIGN KEY (`local_destino_id`) REFERENCES `locales` (`id`) ON DELETE CASCADE,
+    CONSTRAINT `fk_traslados_producto_origen` FOREIGN KEY (`producto_origen_id`) REFERENCES `productos` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 
@@ -245,4 +267,29 @@ ALTER TABLE `productos` ADD COLUMN `categoria` VARCHAR(100) NOT NULL DEFAULT 'Ge
 ALTER TABLE `productos` ADD COLUMN `stock_seguridad` INT NOT NULL DEFAULT 0;
 ALTER TABLE `productos` ADD COLUMN `local_id` INT NULL;
 ALTER TABLE `productos` ADD CONSTRAINT `fk_productos_local_id` FOREIGN KEY (`local_id`) REFERENCES `locales` (`id`) ON DELETE CASCADE;
+
+-- PARCHE D: Soporte para permisos granulares de empleados y traslados de inventario entre sedes
+ALTER TABLE `usuarios_empleado_locales` ADD COLUMN `modulos_permitidos` TEXT NULL;
+
+CREATE TABLE IF NOT EXISTS `traslados_inventario` (
+    `id`                 INT            NOT NULL AUTO_INCREMENT,
+    `local_origen_id`    INT            NOT NULL,
+    `local_destino_id`   INT            NOT NULL,
+    `producto_origen_id` INT            NULL,
+    `producto_nombre`    VARCHAR(200)   NOT NULL,
+    `cantidad`           INT            NOT NULL,
+    `costo_unitario`     NUMERIC(10, 2) NOT NULL DEFAULT 0.00,
+    `usuario_id`         INT            NULL,
+    `usuario_nombre`     VARCHAR(200)   NULL,
+    `notas`              VARCHAR(500)   NULL,
+    `fecha`              DATETIME       NULL,
+    PRIMARY KEY (`id`),
+    CONSTRAINT `fk_traslados_local_origen` FOREIGN KEY (`local_origen_id`) REFERENCES `locales` (`id`) ON DELETE CASCADE,
+    CONSTRAINT `fk_traslados_local_destino` FOREIGN KEY (`local_destino_id`) REFERENCES `locales` (`id`) ON DELETE CASCADE,
+    CONSTRAINT `fk_traslados_producto_origen` FOREIGN KEY (`producto_origen_id`) REFERENCES `productos` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- PARCHE E: Soporte para hora de cierre independiente y teléfono de contacto por sede
+ALTER TABLE `locales` ADD COLUMN `telefono` VARCHAR(50) NULL;
+ALTER TABLE `locales` ADD COLUMN `hora_cierre` VARCHAR(10) NULL DEFAULT '03:00';
 */

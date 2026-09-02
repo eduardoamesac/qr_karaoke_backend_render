@@ -177,40 +177,91 @@ function renderSettings(settings, container) {
     `;
     cardsContainer.appendChild(notificationsCard);
 
-    // ============= TARJETA 4: HORA DE CIERRE =============
-    const closingTimeCard = document.createElement('div');
-    closingTimeCard.className = 'settings-card';
-    const closingHour = String(settings.closing_hour || 3).padStart(2, '0');
-    const closingMinute = String(settings.closing_minute || 0).padStart(2, '0');
-    closingTimeCard.innerHTML = `
-        <div class="settings-card-header">
-            <div class="settings-card-icon">🌙</div>
-            <div class="settings-card-header-content">
-                <h3>Hora de Cierre</h3>
-                <p>Configurar cierre nocturno</p>
-            </div>
-        </div>
-        <div class="closing-time-display">
-            <div class="closing-time-display-label">Hora Actual</div>
-            <div class="closing-time-display-value" id="closing-time-display">${closingHour}:${closingMinute}</div>
-        </div>
-        <form id="closing-time-form">
-            <div class="closing-time-inputs">
-                <div class="bees-form-group">
-                    <label for="closing-hour">Hora (0-23)</label>
-                    <input type="number" id="closing-hour" name="closing_hour" min="0" max="23" value="${settings.closing_hour || 3}">
-                </div>
-                <div class="bees-form-group">
-                    <label for="closing-minute">Minuto (0-59)</label>
-                    <input type="number" id="closing-minute" name="closing_minute" min="0" max="59" value="${settings.closing_minute || 0}">
+    // ============= TARJETA: SEDES Y HORAS DE CIERRE (MULTI-LOCAL CRUD) =============
+    const localesCard = document.createElement('div');
+    localesCard.className = 'settings-card';
+    localesCard.style.gridColumn = '1 / -1';
+    localesCard.innerHTML = `
+        <div class="settings-card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <div class="settings-card-icon">🏢</div>
+                <div class="settings-card-header-content">
+                    <h3>Sedes y Horarios de Cierre</h3>
+                    <p>Administra las sucursales del negocio y la hora de cierre independiente de cada local</p>
                 </div>
             </div>
-            <button type="submit" class="bees-btn bees-btn-primary">
-                💾 Guardar Hora
+            <button type="button" class="bees-btn bees-btn-primary" onclick="openCreateLocalModal()" style="font-size: 13px; font-weight: 600; padding: 8px 16px;">
+                ➕ Nueva Sede
             </button>
-        </form>
+        </div>
+        <div style="overflow-x: auto; margin-top: 15px;">
+            <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 13px;">
+                <thead>
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.1); color: var(--page-text-secondary);">
+                        <th style="padding: 10px 6px;">Nombre de Sede</th>
+                        <th style="padding: 10px 6px;">URL (Slug)</th>
+                        <th style="padding: 10px 6px;">Dirección / Contacto</th>
+                        <th style="padding: 10px 6px; text-align: center;">🌙 Hora Cierre</th>
+                        <th style="padding: 10px 6px; text-align: center;">Estado</th>
+                        <th style="padding: 10px 6px; text-align: right;">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="locales-table-tbody">
+                    <tr><td colspan="6" style="text-align: center; color: var(--page-text-secondary); padding: 25px;">Cargando sedes...</td></tr>
+                </tbody>
+            </table>
+        </div>
     `;
-    cardsContainer.appendChild(closingTimeCard);
+    cardsContainer.appendChild(localesCard);
+
+    // Inyectar modal de locales si no existe
+    if (!document.getElementById('local-crud-modal')) {
+        const localModal = document.createElement('div');
+        localModal.id = 'local-crud-modal';
+        localModal.className = 'modal-overlay';
+        localModal.innerHTML = `
+            <div class="card modal-card-medium" style="background: #18142a; border: 1px solid #6c5ce7; border-radius: 12px; padding: 24px; max-width: 500px; width: 90%;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                    <h3 id="local-modal-title" style="color: #fff; margin: 0; font-size: 1.2em;">🏢 Nueva Sede</h3>
+                    <button type="button" onclick="closeLocalModal()" style="background: none; border: none; color: #a29bfe; font-size: 24px; cursor: pointer;">&times;</button>
+                </div>
+                <form id="local-crud-form">
+                    <input type="hidden" id="local-id-field" value="">
+                    <div class="bees-form-group" style="margin-bottom: 12px;">
+                        <label style="color: #a29bfe; font-size: 13px; font-weight: 600;">Nombre del Establecimiento</label>
+                        <input type="text" id="local-nombre" required placeholder="Ej: QrMusic Bar - Sede Norte" style="width: 100%; background: #1e1738; color: #fff; border: 1px solid rgba(255,255,255,0.2); padding: 10px; border-radius: 8px;">
+                    </div>
+                    <div class="bees-form-group" style="margin-bottom: 12px;">
+                        <label style="color: #a29bfe; font-size: 13px; font-weight: 600;">Identificador URL (Slug)</label>
+                        <input type="text" id="local-slug" required placeholder="ej: sede-norte" style="width: 100%; background: #1e1738; color: #fff; border: 1px solid rgba(255,255,255,0.2); padding: 10px; border-radius: 8px;">
+                        <small style="color: var(--page-text-secondary); display: block; margin-top: 4px; font-size: 11px;">Solo minúsculas, números y guiones. Se usará para acceder al karaoke.</small>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+                        <div class="bees-form-group">
+                            <label style="color: #a29bfe; font-size: 13px; font-weight: 600;">Dirección</label>
+                            <input type="text" id="local-direccion" placeholder="Ej: Calle 10 # 40-20" style="width: 100%; background: #1e1738; color: #fff; border: 1px solid rgba(255,255,255,0.2); padding: 10px; border-radius: 8px;">
+                        </div>
+                        <div class="bees-form-group">
+                            <label style="color: #a29bfe; font-size: 13px; font-weight: 600;">Teléfono / Contacto</label>
+                            <input type="text" id="local-telefono" placeholder="Ej: 300 123 4567" style="width: 100%; background: #1e1738; color: #fff; border: 1px solid rgba(255,255,255,0.2); padding: 10px; border-radius: 8px;">
+                        </div>
+                    </div>
+                    <div class="bees-form-group" style="margin-bottom: 16px;">
+                        <label style="color: #a29bfe; font-size: 13px; font-weight: 600;">🌙 Hora de Cierre Nocturno</label>
+                        <input type="time" id="local-hora-cierre" value="03:00" required style="width: 100%; background: #1e1738; color: #fff; border: 1px solid rgba(255,255,255,0.2); padding: 10px; border-radius: 8px;">
+                        <small style="color: var(--page-text-secondary); display: block; margin-top: 4px; font-size: 11px;">Hora en que finaliza la atención y se pausa la adición de canciones para esta sede.</small>
+                    </div>
+                    <div style="display: flex; gap: 12px;">
+                        <button type="submit" class="bees-btn bees-btn-primary" style="flex: 1;">💾 Guardar Sede</button>
+                        <button type="button" class="bees-btn bees-btn-secondary" onclick="closeLocalModal()">Cancelar</button>
+                    </div>
+                </form>
+            </div>
+        `;
+        document.body.appendChild(localModal);
+    }
+
+    setTimeout(loadLocalesSettingsList, 100);
 
     // ============= TARJETA 5: CONFIGURACIÓN COLA LAZY =============
     const lazyQueueCard = document.createElement('div');
@@ -356,6 +407,121 @@ function renderSettings(settings, container) {
     
     // Check status immediately
     setTimeout(checkPlayer2Status, 100);
+
+    // ============= TARJETA: EQUIPO Y COLABORADORES (MULTI-SEDE) =============
+    const employeesCard = document.createElement('div');
+    employeesCard.className = 'settings-card';
+    employeesCard.style.gridColumn = '1 / -1';
+    employeesCard.innerHTML = `
+        <div class="settings-card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <div class="settings-card-icon">👥</div>
+                <div class="settings-card-header-content">
+                    <h3>Equipo y Permisos</h3>
+                    <p>Administra colaboradores, roles y módulos permitidos por sede</p>
+                </div>
+            </div>
+            <button type="button" class="bees-btn bees-btn-primary" onclick="openCreateEmployeeModal()" style="font-size: 13px; font-weight: 600; padding: 8px 16px;">
+                ➕ Agregar Empleado
+            </button>
+        </div>
+        <div style="overflow-x: auto; margin-top: 15px;">
+            <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 13px;">
+                <thead>
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.1); color: var(--page-text-secondary);">
+                        <th style="padding: 10px 6px;">Nombre</th>
+                        <th style="padding: 10px 6px;">Correo</th>
+                        <th style="padding: 10px 6px;">Rol</th>
+                        <th style="padding: 10px 6px;">Módulos Autorizados</th>
+                        <th style="padding: 10px 6px; text-align: center;">Estado</th>
+                        <th style="padding: 10px 6px; text-align: right;">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="employees-table-tbody">
+                    <tr><td colspan="6" style="text-align: center; color: var(--page-text-secondary); padding: 25px;">Cargando colaboradores...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    `;
+    cardsContainer.appendChild(employeesCard);
+
+    // Inyectar modal de colaboradores si no existe
+    if (!document.getElementById('employee-crud-modal')) {
+        const empModal = document.createElement('div');
+        empModal.id = 'employee-crud-modal';
+        empModal.className = 'modal-overlay';
+        empModal.innerHTML = `
+            <div class="card modal-card-medium" style="background: #18142a; border: 1px solid #6c5ce7; border-radius: 12px; padding: 24px; max-width: 520px; width: 90%;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                    <h3 id="employee-modal-title" style="color: #fff; margin: 0; font-size: 1.2em;">👤 Agregar Colaborador</h3>
+                    <button type="button" onclick="closeEmployeeModal()" style="background: none; border: none; color: #a29bfe; font-size: 24px; cursor: pointer;">&times;</button>
+                </div>
+                <form id="employee-crud-form">
+                    <input type="hidden" id="employee-id-field" value="">
+                    <div class="bees-form-group" style="margin-bottom: 12px;">
+                        <label style="color: #a29bfe; font-size: 13px; font-weight: 600;">Nombre Completo</label>
+                        <input type="text" id="employee-nombre" required placeholder="Ej: Carlos Gómez" style="width: 100%; background: #1e1738; color: #fff; border: 1px solid rgba(255,255,255,0.2); padding: 10px; border-radius: 8px;">
+                    </div>
+                    <div class="bees-form-group" style="margin-bottom: 12px;">
+                        <label style="color: #a29bfe; font-size: 13px; font-weight: 600;">Correo Electrónico</label>
+                        <input type="email" id="employee-email" required placeholder="carlos@local.com" style="width: 100%; background: #1e1738; color: #fff; border: 1px solid rgba(255,255,255,0.2); padding: 10px; border-radius: 8px;">
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+                        <div class="bees-form-group">
+                            <label style="color: #a29bfe; font-size: 13px; font-weight: 600;">Rol</label>
+                            <select id="employee-rol" required style="width: 100%; background: #1e1738; color: #fff; border: 1px solid rgba(255,255,255,0.2); padding: 10px; border-radius: 8px;">
+                                <option value="admin">Administrador de Sede</option>
+                                <option value="cajero">Cajero / Barra</option>
+                                <option value="mesero">Mesero / Sala</option>
+                                <option value="dj">DJ / Karaoke</option>
+                            </select>
+                        </div>
+                        <div class="bees-form-group">
+                            <label style="color: #a29bfe; font-size: 13px; font-weight: 600;">Sede Asignada</label>
+                            <select id="employee-local-id" required style="width: 100%; background: #1e1738; color: #fff; border: 1px solid rgba(255,255,255,0.2); padding: 10px; border-radius: 8px;">
+                                <option value="">Selecciona sede...</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="bees-form-group" style="margin-bottom: 14px;">
+                        <label style="color: #a29bfe; font-size: 13px; font-weight: 600;" id="employee-password-label">Contraseña</label>
+                        <input type="password" id="employee-password" placeholder="••••••••" style="width: 100%; background: #1e1738; color: #fff; border: 1px solid rgba(255,255,255,0.2); padding: 10px; border-radius: 8px;">
+                        <small id="employee-password-help" style="color: var(--page-text-secondary); display: none; margin-top: 4px;">Deja en blanco si no deseas cambiar la contraseña.</small>
+                    </div>
+                    <div class="bees-form-group" style="margin-bottom: 16px;">
+                        <label style="color: #a29bfe; font-size: 13px; font-weight: 600; display: block; margin-bottom: 8px;">Módulos Autorizados</label>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; background: rgba(0,0,0,0.2); padding: 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.08);">
+                            <label style="display: flex; align-items: center; gap: 8px; font-size: 12px; cursor: pointer; color: #fff;">
+                                <input type="checkbox" name="emp_module" value="dashboard" checked> 📊 Dashboard
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 8px; font-size: 12px; cursor: pointer; color: #fff;">
+                                <input type="checkbox" name="emp_module" value="accounts" checked> 🪑 Mesas y Cuentas
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 8px; font-size: 12px; cursor: pointer; color: #fff;">
+                                <input type="checkbox" name="emp_module" value="inventory" checked> 📦 Inventario
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 8px; font-size: 12px; cursor: pointer; color: #fff;">
+                                <input type="checkbox" name="emp_module" value="queue" checked> 🎵 Cola Karaoke
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 8px; font-size: 12px; cursor: pointer; color: #fff;">
+                                <input type="checkbox" name="emp_module" value="reports"> 📈 Reportes
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 8px; font-size: 12px; cursor: pointer; color: #fff;">
+                                <input type="checkbox" name="emp_module" value="settings"> ⚙️ Configuración
+                            </label>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 12px;">
+                        <button type="submit" class="bees-btn bees-btn-primary" style="flex: 1;">💾 Guardar Colaborador</button>
+                        <button type="button" class="bees-btn bees-btn-secondary" onclick="closeEmployeeModal()">Cancelar</button>
+                    </div>
+                </form>
+            </div>
+        `;
+        document.body.appendChild(empModal);
+    }
+
+    setTimeout(loadEmployeesList, 150);
 
     // ============= TARJETA 7: HERRAMIENTAS DE DIAGNÓSTICO =============
     const debugCard = document.createElement('div');
@@ -841,6 +1007,18 @@ function setupSettingsListeners() {
         btnKill.addEventListener('click', handleKillPlayer2);
         btnKill.dataset.listenerAttached = '1';
     }
+
+    const empForm = document.getElementById('employee-crud-form');
+    if (empForm && !empForm.dataset.listenerAttached) {
+        empForm.addEventListener('submit', handleSaveEmployee);
+        empForm.dataset.listenerAttached = '1';
+    }
+
+    const localForm = document.getElementById('local-crud-form');
+    if (localForm && !localForm.dataset.listenerAttached) {
+        localForm.addEventListener('submit', handleSaveLocal);
+        localForm.dataset.listenerAttached = '1';
+    }
 }
 
 async function handleResetNight() {
@@ -893,3 +1071,486 @@ async function handleKillPlayer2() {
         showNotification(`❌ ${error.message}`, 'error');
     }
 }
+
+// ==========================================
+// GESTIÓN DE COLABORADORES / EMPLEADOS
+// ==========================================
+
+let allEmployees = [];
+
+async function loadEmployeesList() {
+    const tbody = document.getElementById('employees-table-tbody');
+    if (!tbody) return;
+
+    const activeLocalId = parseInt(sessionStorage.getItem('active_local_id'), 10);
+    if (!activeLocalId) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--page-text-secondary); padding: 20px;">Selecciona una sede activa para ver sus colaboradores.</td></tr>';
+        return;
+    }
+
+    try {
+        const employees = await apiFetch(`/saas/locales/${activeLocalId}/employees`);
+        allEmployees = employees || [];
+        renderEmployeesList(allEmployees);
+    } catch (err) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--bees-red); padding: 20px;">Error al cargar colaboradores: ${err.message}</td></tr>`;
+    }
+}
+
+function renderEmployeesList(employees) {
+    const tbody = document.getElementById('employees-table-tbody');
+    if (!tbody) return;
+
+    tbody.innerHTML = '';
+    if (!employees || employees.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--page-text-secondary); padding: 20px;">No hay colaboradores registrados en esta sede.</td></tr>';
+        return;
+    }
+
+    const roleBadges = {
+        'admin': '<span class="bees-badge bees-badge-primary">👑 Admin Sede</span>',
+        'cajero': '<span class="bees-badge bees-badge-success">💵 Cajero</span>',
+        'mesero': '<span class="bees-badge bees-badge-info">🍽️ Mesero</span>',
+        'dj': '<span class="bees-badge bees-badge-warning">🎧 DJ / Karaoke</span>'
+    };
+
+    const moduleIcons = {
+        'dashboard': '📊 Dashboard',
+        'accounts': '🪑 Mesas',
+        'inventory': '📦 Inventario',
+        'queue': '🎵 Cola',
+        'reports': '📈 Reportes',
+        'settings': '⚙️ Ajustes',
+        'tables': '🪑 Mesas'
+    };
+
+    employees.forEach(emp => {
+        const roleHtml = roleBadges[emp.rol] || `<span class="bees-badge bees-badge-secondary">${emp.rol}</span>`;
+        const statusHtml = emp.is_active
+            ? '<span class="bees-badge bees-badge-success">✓ Activo</span>'
+            : '<span class="bees-badge bees-badge-danger">✗ Inactivo</span>';
+
+        const modulesList = emp.modulos_permitidos || [];
+        const modulesHtml = modulesList.length > 0
+            ? modulesList.map(m => `<span style="display: inline-block; background: rgba(108,92,231,0.2); color: #a29bfe; border: 1px solid rgba(108,92,231,0.4); padding: 2px 6px; border-radius: 4px; font-size: 11px; margin: 2px;">${moduleIcons[m] || m}</span>`).join(' ')
+            : '<span style="color: var(--page-text-secondary); font-size: 11px;">Ninguno</span>';
+
+        const row = document.createElement('tr');
+        row.style.borderBottom = '1px solid rgba(255,255,255,0.05)';
+        row.innerHTML = `
+            <td style="padding: 10px 6px; font-weight: 600; color: #fff;">${emp.nombre}</td>
+            <td style="padding: 10px 6px; color: var(--page-text-secondary);">${emp.email}</td>
+            <td style="padding: 10px 6px;">${roleHtml}</td>
+            <td style="padding: 10px 6px; max-width: 250px;">${modulesHtml}</td>
+            <td style="padding: 10px 6px; text-align: center;">${statusHtml}</td>
+            <td style="padding: 10px 6px; text-align: right; white-space: nowrap;">
+                <button type="button" class="bees-btn bees-btn-secondary" style="width: 32px; height: 32px; padding: 0; display: inline-flex; align-items: center; justify-content: center; border-radius: 6px; margin-right: 4px; font-size: 14px;" onclick="openEditEmployeeModal(${emp.id})" title="Editar Colaborador">✏️</button>
+                <button type="button" class="bees-btn bees-btn-danger" style="width: 32px; height: 32px; padding: 0; display: inline-flex; align-items: center; justify-content: center; border-radius: 6px; font-size: 14px;" onclick="handleDeleteEmployee(${emp.id})" title="Eliminar Colaborador">🗑️</button>
+            </td>
+        `;
+        tbody.appendChild(row);
+    });
+}
+
+async function populateLocalDropdownInEmployeeModal(selectedLocalId = null) {
+    const localSelect = document.getElementById('employee-local-id');
+    if (!localSelect) return;
+
+    localSelect.innerHTML = '<option value="">Cargando sedes...</option>';
+    try {
+        const locales = await apiFetch('/saas/locales');
+        localSelect.innerHTML = '<option value="">Selecciona sede...</option>';
+        if (locales) {
+            locales.forEach(loc => {
+                const opt = document.createElement('option');
+                opt.value = loc.id;
+                opt.textContent = loc.nombre;
+                if (selectedLocalId && loc.id == selectedLocalId) opt.selected = true;
+                localSelect.appendChild(opt);
+            });
+        }
+    } catch(e) {
+        localSelect.innerHTML = '<option value="">Error al cargar sedes</option>';
+    }
+}
+
+function openCreateEmployeeModal() {
+    const modal = document.getElementById('employee-crud-modal');
+    if (!modal) return;
+
+    const activeLocalId = parseInt(sessionStorage.getItem('active_local_id'), 10);
+    document.getElementById('employee-modal-title').textContent = '👤 Agregar Colaborador';
+    document.getElementById('employee-id-field').value = '';
+    document.getElementById('employee-nombre').value = '';
+    document.getElementById('employee-email').value = '';
+    document.getElementById('employee-email').disabled = false;
+    document.getElementById('employee-password').value = '';
+    document.getElementById('employee-password').required = true;
+    document.getElementById('employee-password-help').style.display = 'none';
+    document.getElementById('employee-rol').value = 'mesero';
+
+    populateLocalDropdownInEmployeeModal(activeLocalId);
+
+    const defaultModules = ['accounts', 'tables', 'queue'];
+    document.querySelectorAll('input[name="emp_module"]').forEach(cb => {
+        cb.checked = defaultModules.includes(cb.value);
+    });
+
+    modal.classList.add('active');
+    modal.classList.remove('hidden');
+    modal.style.display = 'flex';
+}
+
+function openEditEmployeeModal(employeeId) {
+    const modal = document.getElementById('employee-crud-modal');
+    if (!modal) return;
+
+    const emp = allEmployees.find(e => e.id == employeeId);
+    if (!emp) return;
+
+    document.getElementById('employee-modal-title').textContent = '✏️ Editar Colaborador';
+    document.getElementById('employee-id-field').value = emp.id;
+    document.getElementById('employee-nombre').value = emp.nombre;
+    document.getElementById('employee-email').value = emp.email;
+    document.getElementById('employee-email').disabled = true;
+    document.getElementById('employee-password').value = '';
+    document.getElementById('employee-password').required = false;
+    document.getElementById('employee-password-help').style.display = 'block';
+    document.getElementById('employee-rol').value = emp.rol || 'mesero';
+
+    populateLocalDropdownInEmployeeModal(emp.local_id);
+
+    const allowed = emp.modulos_permitidos || [];
+    document.querySelectorAll('input[name="emp_module"]').forEach(cb => {
+        cb.checked = allowed.includes(cb.value);
+    });
+
+    modal.classList.add('active');
+    modal.classList.remove('hidden');
+    modal.style.display = 'flex';
+}
+
+function closeEmployeeModal() {
+    const modal = document.getElementById('employee-crud-modal');
+    if (modal) {
+        modal.classList.remove('active');
+        modal.classList.add('hidden');
+        modal.style.display = 'none';
+    }
+}
+
+async function handleSaveEmployee(e) {
+    e.preventDefault();
+    const empId = document.getElementById('employee-id-field').value;
+    const nombre = document.getElementById('employee-nombre').value.trim();
+    const email = document.getElementById('employee-email').value.trim();
+    const password = document.getElementById('employee-password').value;
+    const rol = document.getElementById('employee-rol').value;
+    const localId = parseInt(document.getElementById('employee-local-id').value, 10);
+
+    const selectedModules = [];
+    document.querySelectorAll('input[name="emp_module"]:checked').forEach(cb => {
+        selectedModules.push(cb.value);
+    });
+
+    if (!localId) {
+        showNotification('Por favor asigna una sede al empleado.', 'error');
+        return;
+    }
+
+    try {
+        if (!empId) {
+            // Create
+            if (!password) {
+                showNotification('La contraseña es obligatoria.', 'error');
+                return;
+            }
+            const payload = {
+                nombre,
+                email,
+                password,
+                rol,
+                local_id: localId,
+                modulos_permitidos: selectedModules
+            };
+            await apiFetch(`/saas/locales/${localId}/employees`, {
+                method: 'POST',
+                body: JSON.stringify(payload)
+            });
+            showNotification('✅ Colaborador creado exitosamente.', 'success');
+        } else {
+            // Update
+            const payload = {
+                nombre,
+                rol,
+                local_id: localId,
+                modulos_permitidos: selectedModules
+            };
+            if (password) payload.password = password;
+
+            await apiFetch(`/saas/locales/${localId}/employees/${empId}`, {
+                method: 'PUT',
+                body: JSON.stringify(payload)
+            });
+            showNotification('✅ Colaborador actualizado.', 'success');
+        }
+
+        closeEmployeeModal();
+        loadEmployeesList();
+    } catch (err) {
+        showNotification(`Error: ${err.message}`, 'error');
+    }
+}
+
+async function handleDeleteEmployee(employeeId) {
+    const activeLocalId = parseInt(sessionStorage.getItem('active_local_id'), 10);
+    if (!confirm('¿Estás seguro de eliminar a este colaborador? Ya no podrá acceder al panel.')) {
+        return;
+    }
+
+    try {
+        await apiFetch(`/saas/locales/${activeLocalId}/employees/${employeeId}`, {
+            method: 'DELETE'
+        });
+        showNotification('✅ Colaborador eliminado.', 'success');
+        loadEmployeesList();
+    } catch (err) {
+        showNotification(`Error al eliminar: ${err.message}`, 'error');
+    }
+}
+
+// ==========================================
+// GESTIÓN DE SEDES / LOCALES (MULTI-LOCAL CRUD)
+// ==========================================
+
+let allLocalesSettings = [];
+
+async function loadLocalesSettingsList() {
+    const tbody = document.getElementById('locales-table-tbody');
+    if (!tbody) return;
+
+    try {
+        const locales = await apiFetch('/saas/locales');
+        allLocalesSettings = locales || [];
+        renderLocalesSettingsList(allLocalesSettings);
+    } catch (err) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--bees-red); padding: 20px;">Error al cargar sedes: ${err.message}</td></tr>`;
+    }
+}
+
+function renderLocalesSettingsList(locales) {
+    const tbody = document.getElementById('locales-table-tbody');
+    if (!tbody) return;
+
+    tbody.innerHTML = '';
+    if (!locales || locales.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--page-text-secondary); padding: 20px;">No hay sedes registradas.</td></tr>';
+        return;
+    }
+
+    const currentActiveLocalId = sessionStorage.getItem('active_local_id');
+
+    locales.forEach(loc => {
+        const isCurrent = String(loc.id) === String(currentActiveLocalId);
+        const currentBadge = isCurrent
+            ? '<span class="bees-badge bees-badge-primary" style="margin-left: 8px; font-size: 11px;">📍 Sede Activa</span>'
+            : '';
+
+        const statusHtml = loc.is_active
+            ? '<span class="bees-badge bees-badge-success">✓ Activa</span>'
+            : '<span class="bees-badge bees-badge-danger">✗ Inactiva</span>';
+
+        const contactInfo = [loc.direccion, loc.telefono].filter(Boolean).join(' • ') || '<span style="color: var(--page-text-secondary); font-size: 11px;">Sin datos</span>';
+        const horaCierre = loc.hora_cierre || '03:00';
+
+        const switchBtn = !isCurrent
+            ? `<button type="button" class="bees-btn bees-btn-primary" style="width: 32px; height: 32px; padding: 0; display: inline-flex; align-items: center; justify-content: center; border-radius: 6px; margin-right: 4px; font-size: 14px;" onclick="handleSwitchActiveLocal(${loc.id}, '${loc.nombre}')" title="Conmutar a esta sede">🔄</button>`
+            : '';
+
+        const row = document.createElement('tr');
+        row.style.borderBottom = '1px solid rgba(255,255,255,0.05)';
+        row.innerHTML = `
+            <td style="padding: 10px 6px; font-weight: 600; color: #fff;">
+                ${loc.nombre} ${currentBadge}
+            </td>
+            <td style="padding: 10px 6px; font-family: monospace; color: #a29bfe;">${loc.slug}</td>
+            <td style="padding: 10px 6px; color: var(--page-text-secondary); font-size: 12px;">${contactInfo}</td>
+            <td style="padding: 10px 6px; text-align: center; font-weight: 600; color: #ffd32a;">
+                🌙 ${horaCierre}
+            </td>
+            <td style="padding: 10px 6px; text-align: center;">${statusHtml}</td>
+            <td style="padding: 10px 6px; text-align: right; white-space: nowrap;">
+                ${switchBtn}
+                <button type="button" class="bees-btn bees-btn-secondary" style="width: 32px; height: 32px; padding: 0; display: inline-flex; align-items: center; justify-content: center; border-radius: 6px; margin-right: 4px; font-size: 14px;" onclick="openEditLocalModal(${loc.id})" title="Editar Sede">✏️</button>
+                <button type="button" class="bees-btn bees-btn-danger" style="width: 32px; height: 32px; padding: 0; display: inline-flex; align-items: center; justify-content: center; border-radius: 6px; font-size: 14px;" onclick="handleDeleteLocal(${loc.id})" title="Eliminar Sede">🗑️</button>
+            </td>
+        `;
+        tbody.appendChild(row);
+    });
+}
+
+function openCreateLocalModal() {
+    const modal = document.getElementById('local-crud-modal');
+    if (!modal) return;
+
+    document.getElementById('local-modal-title').textContent = '🏢 Nueva Sede';
+    document.getElementById('local-id-field').value = '';
+    document.getElementById('local-nombre').value = '';
+    document.getElementById('local-slug').value = '';
+    document.getElementById('local-slug').disabled = false;
+    document.getElementById('local-direccion').value = '';
+    document.getElementById('local-telefono').value = '';
+    document.getElementById('local-hora-cierre').value = '03:00';
+
+    modal.classList.add('active');
+    modal.classList.remove('hidden');
+    modal.style.display = 'flex';
+}
+
+function openEditLocalModal(localId) {
+    const modal = document.getElementById('local-crud-modal');
+    if (!modal) return;
+
+    const loc = allLocalesSettings.find(l => l.id == localId);
+    if (!loc) return;
+
+    document.getElementById('local-modal-title').textContent = '✏️ Editar Sede';
+    document.getElementById('local-id-field').value = loc.id;
+    document.getElementById('local-nombre').value = loc.nombre;
+    document.getElementById('local-slug').value = loc.slug;
+    document.getElementById('local-slug').disabled = false;
+    document.getElementById('local-direccion').value = loc.direccion || '';
+    document.getElementById('local-telefono').value = loc.telefono || '';
+    document.getElementById('local-hora-cierre').value = loc.hora_cierre || '03:00';
+
+    modal.classList.add('active');
+    modal.classList.remove('hidden');
+    modal.style.display = 'flex';
+}
+
+function closeLocalModal() {
+    const modal = document.getElementById('local-crud-modal');
+    if (modal) {
+        modal.classList.remove('active');
+        modal.classList.add('hidden');
+        modal.style.display = 'none';
+    }
+}
+
+async function handleSaveLocal(e) {
+    e.preventDefault();
+    const localId = document.getElementById('local-id-field').value;
+    const nombre = document.getElementById('local-nombre').value.trim();
+    const slug = document.getElementById('local-slug').value.trim().toLowerCase();
+    const direccion = document.getElementById('local-direccion').value.trim();
+    const telefono = document.getElementById('local-telefono').value.trim();
+    const hora_cierre = document.getElementById('local-hora-cierre').value;
+
+    if (!nombre || !slug) {
+        showNotification('El nombre y el slug son obligatorios.', 'error');
+        return;
+    }
+
+    try {
+        if (!localId) {
+            // Create
+            const payload = {
+                nombre,
+                slug,
+                direccion: direccion || null,
+                telefono: telefono || null,
+                hora_cierre: hora_cierre || "03:00"
+            };
+            await apiFetch('/saas/locales', {
+                method: 'POST',
+                body: JSON.stringify(payload)
+            });
+            showNotification('✅ Sede creada exitosamente.', 'success');
+        } else {
+            // Update
+            const payload = {
+                nombre,
+                slug,
+                direccion: direccion || null,
+                telefono: telefono || null,
+                hora_cierre: hora_cierre || "03:00"
+            };
+            try {
+                await apiFetch(`/saas/locales/${localId}`, {
+                    method: 'PUT',
+                    body: JSON.stringify(payload)
+                });
+            } catch (putErr) {
+                if (putErr.message && (putErr.message.includes('405') || putErr.message.includes('Method Not Allowed'))) {
+                    await apiFetch(`/saas/locales/${localId}/update`, {
+                        method: 'POST',
+                        body: JSON.stringify(payload)
+                    });
+                } else {
+                    throw putErr;
+                }
+            }
+            showNotification('✅ Sede actualizada exitosamente.', 'success');
+        }
+
+        closeLocalModal();
+        loadLocalesSettingsList();
+
+        // Actualizar el selector global de la barra superior si existe
+        if (typeof setupOwnerLocalSelector === 'function') {
+            setupOwnerLocalSelector();
+        }
+    } catch (err) {
+        showNotification(`Error: ${err.message}`, 'error');
+    }
+}
+
+async function handleDeleteLocal(localId) {
+    if (!confirm('⚠️ ¿Estás seguro de eliminar esta sede? Se borrarán sus mesas, productos y accesos asociados.')) {
+        return;
+    }
+
+    try {
+        try {
+            await apiFetch(`/saas/locales/${localId}`, {
+                method: 'DELETE'
+            });
+        } catch (delErr) {
+            if (delErr.message && (delErr.message.includes('405') || delErr.message.includes('Method Not Allowed'))) {
+                await apiFetch(`/saas/locales/${localId}/delete`, {
+                    method: 'POST'
+                });
+            } else {
+                throw delErr;
+            }
+        }
+        showNotification('✅ Sede eliminada correctamente.', 'success');
+        loadLocalesSettingsList();
+
+        // Si se borró la sede activa, refrescar selector
+        if (typeof setupOwnerLocalSelector === 'function') {
+            await setupOwnerLocalSelector();
+            if (typeof reloadCurrentActivePage === 'function') {
+                reloadCurrentActivePage();
+            }
+        }
+    } catch (err) {
+        showNotification(`Error al eliminar: ${err.message}`, 'error');
+    }
+}
+
+function handleSwitchActiveLocal(localId, localNombre) {
+    sessionStorage.setItem('active_local_id', localId);
+    showNotification(`📍 Sede activa cambiada a: ${localNombre}`, 'info');
+
+    // Actualizar selector global en la barra superior
+    const globalSelect = document.getElementById('global-local-select');
+    if (globalSelect) {
+        globalSelect.value = localId;
+    }
+
+    // Recargar tabla de settings para reflejar badge de sede activa
+    renderLocalesSettingsList(allLocalesSettings);
+    loadEmployeesList();
+}
+

@@ -58,6 +58,24 @@ async def lifespan(app: FastAPI):
         except Exception:
             db.rollback()
 
+        try:
+            db.execute(text("ALTER TABLE locales ADD COLUMN telefono VARCHAR(50) NULL"))
+            db.commit()
+        except Exception:
+            db.rollback()
+
+        try:
+            db.execute(text("ALTER TABLE locales ADD COLUMN hora_cierre VARCHAR(10) DEFAULT '03:00'"))
+            db.commit()
+        except Exception:
+            db.rollback()
+
+        try:
+            db.execute(text("ALTER TABLE usuarios_empleado_locales ADD COLUMN modulos_permitidos TEXT NULL"))
+            db.commit()
+        except Exception:
+            db.rollback()
+
         crud.get_or_create_dj_user(db)
         # Iniciar tarea de background para decrementar créditos
         start_credits_background_task()

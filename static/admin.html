@@ -641,6 +641,11 @@
                 sessionStorage.setItem('email', data.email);
                 sessionStorage.setItem('name', data.name);
                 sessionStorage.setItem('localSlugs', JSON.stringify(data.local_slugs || []));
+                sessionStorage.setItem('local_ids', JSON.stringify(data.local_ids || []));
+                sessionStorage.setItem('modulos_permitidos', JSON.stringify(data.modulos_permitidos || []));
+                if (data.local_ids && data.local_ids.length > 0) {
+                    sessionStorage.setItem('active_local_id', data.local_ids[0]);
+                }
 
                 showAlert('Acceso concedido. Redirigiendo...', 'success');
 
@@ -679,6 +684,11 @@
                 sessionStorage.setItem('email', data.email);
                 sessionStorage.setItem('name', data.name);
                 sessionStorage.setItem('localSlugs', JSON.stringify(data.local_slugs || []));
+                sessionStorage.setItem('local_ids', JSON.stringify(data.local_ids || []));
+                sessionStorage.setItem('modulos_permitidos', JSON.stringify(data.modulos_permitidos || []));
+                if (data.local_ids && data.local_ids.length > 0) {
+                    sessionStorage.setItem('active_local_id', data.local_ids[0]);
+                }
 
                 showAlert('Acceso concedido. Iniciando turno...', 'success');
 

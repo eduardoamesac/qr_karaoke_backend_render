@@ -18,12 +18,22 @@ async function loadInventoryPage() {
         // Encabezado
         const header = document.createElement('div');
         header.className = 'bees-header';
+        header.style.display = 'flex';
+        header.style.justifyContent = 'space-between';
+        header.style.alignItems = 'center';
+        header.style.flexWrap = 'wrap';
+        header.style.gap = '15px';
         header.innerHTML = `
-            <div class="bees-header-icon">📦</div>
-            <div class="bees-header-content">
-                <h1>Inventario</h1>
-                <p>Gestión de productos, stock de seguridad e historial de compras por local</p>
+            <div style="display: flex; align-items: center; gap: 16px;">
+                <div class="bees-header-icon">📦</div>
+                <div class="bees-header-content">
+                    <h1>Inventario</h1>
+                    <p>Gestión de productos, stock de seguridad y traslados entre sedes</p>
+                </div>
             </div>
+            <button class="bees-btn bees-btn-primary" id="btn-open-transfer-modal" style="display: flex; align-items: center; gap: 8px; font-weight: 600; padding: 10px 18px; border-radius: 8px; box-shadow: 0 4px 12px rgba(108,92,231,0.35);">
+                🔄 Trasladar Stock
+            </button>
         `;
         inventoryContainer.appendChild(header);
 
@@ -120,18 +130,24 @@ async function loadInventoryPage() {
         `;
         mainContainer.appendChild(purchaseCard);
 
-        // 3. Tarjeta de historial de compras / gastos
+        // 3. Tarjeta de historial de compras y traslados
         const historyCard = document.createElement('div');
         historyCard.className = 'bees-card';
         historyCard.innerHTML = `
-            <div class="bees-card-header">
-                <div class="bees-card-icon">💸</div>
-                <div class="bees-card-header-content">
-                    <h3>Gastos e Insumos</h3>
-                    <p>Historial de compras del local</p>
+            <div class="bees-card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <div class="bees-card-icon">💸</div>
+                    <div class="bees-card-header-content">
+                        <h3 id="history-card-title">Movimientos</h3>
+                        <p id="history-card-subtitle">Compras y traslados</p>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 6px;">
+                    <button type="button" id="tab-btn-purchases" class="bees-btn bees-btn-primary" style="font-size: 11px; padding: 5px 9px;" onclick="switchInventoryHistoryTab('purchases')">🛒 Compras</button>
+                    <button type="button" id="tab-btn-transfers" class="bees-btn bees-btn-secondary" style="font-size: 11px; padding: 5px 9px;" onclick="switchInventoryHistoryTab('transfers')">🔄 Traslados</button>
                 </div>
             </div>
-            <div style="overflow-x: auto; max-height: 285px; margin-top: 10px;">
+            <div id="container-purchases-history" style="overflow-x: auto; max-height: 285px; margin-top: 10px;">
                 <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 13px;">
                     <thead>
                         <tr style="border-bottom: 1px solid rgba(255,255,255,0.1); color: var(--page-text-secondary);">
@@ -144,6 +160,22 @@ async function loadInventoryPage() {
                     </thead>
                     <tbody id="purchase-history-tbody">
                         <tr><td colspan="5" style="text-align: center; color: var(--page-text-secondary); padding: 20px;">Cargando historial...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div id="container-transfers-history" style="overflow-x: auto; max-height: 285px; margin-top: 10px; display: none;">
+                <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 13px;">
+                    <thead>
+                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.1); color: var(--page-text-secondary);">
+                            <th style="padding: 8px 4px;">Tipo</th>
+                            <th style="padding: 8px 4px;">Producto</th>
+                            <th style="padding: 8px 4px; text-align: center;">Cant</th>
+                            <th style="padding: 8px 4px;">Origen/Destino</th>
+                            <th style="padding: 8px 4px; padding-left: 8px;">Fecha</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transfer-history-tbody">
+                        <tr><td colspan="5" style="text-align: center; color: var(--page-text-secondary); padding: 20px;">Cargando traslados...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -168,6 +200,51 @@ async function loadInventoryPage() {
         `;
         mainContainer.appendChild(productsCard);
 
+        // Inyectar Modal de Traslado de Stock si no existe
+        if (!document.getElementById('transfer-stock-modal')) {
+            const transferModal = document.createElement('div');
+            transferModal.id = 'transfer-stock-modal';
+            transferModal.className = 'modal-overlay';
+            transferModal.innerHTML = `
+                <div class="card modal-card-medium" style="background: #18142a; border: 1px solid #6c5ce7; border-radius: 12px; padding: 24px; max-width: 480px; width: 90%;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                        <h3 style="color: #fff; margin: 0; font-size: 1.2em; display: flex; align-items: center; gap: 8px;">
+                            🔄 <span>Trasladar Stock entre Sedes</span>
+                        </h3>
+                        <button type="button" onclick="closeTransferModal()" style="background: none; border: none; color: #a29bfe; font-size: 24px; cursor: pointer;">&times;</button>
+                    </div>
+                    <form id="transfer-stock-form">
+                        <div class="bees-form-group" style="margin-bottom: 14px;">
+                            <label style="color: #a29bfe; font-size: 13px; font-weight: 600;">Sede Destino</label>
+                            <select id="transfer-dest-local" required style="width: 100%; background: #1e1738; color: #fff; border: 1px solid rgba(255,255,255,0.2); padding: 10px; border-radius: 8px; outline: none; cursor: pointer;">
+                                <option value="">Selecciona sede destino...</option>
+                            </select>
+                        </div>
+                        <div class="bees-form-group" style="margin-bottom: 14px;">
+                            <label style="color: #a29bfe; font-size: 13px; font-weight: 600;">Producto a Trasladar</label>
+                            <select id="transfer-product-id" required style="width: 100%; background: #1e1738; color: #fff; border: 1px solid rgba(255,255,255,0.2); padding: 10px; border-radius: 8px; outline: none; cursor: pointer;">
+                                <option value="">Selecciona producto...</option>
+                            </select>
+                        </div>
+                        <div class="bees-form-group" style="margin-bottom: 14px;">
+                            <label style="color: #a29bfe; font-size: 13px; font-weight: 600;">Cantidad a Transferir</label>
+                            <input type="number" id="transfer-quantity" min="1" required style="width: 100%; background: #1e1738; color: #fff; border: 1px solid rgba(255,255,255,0.2); padding: 10px; border-radius: 8px;" placeholder="Cantidad">
+                            <small id="transfer-stock-available" style="color: #81ecec; display: block; margin-top: 4px; font-size: 12px;"></small>
+                        </div>
+                        <div class="bees-form-group" style="margin-bottom: 18px;">
+                            <label style="color: #a29bfe; font-size: 13px; font-weight: 600;">Notas / Motivo (Opcional)</label>
+                            <input type="text" id="transfer-notes" placeholder="Ej: Reabastecimiento de inventario" style="width: 100%; background: #1e1738; color: #fff; border: 1px solid rgba(255,255,255,0.2); padding: 10px; border-radius: 8px;">
+                        </div>
+                        <div style="display: flex; gap: 12px;">
+                            <button type="submit" class="bees-btn bees-btn-primary" style="flex: 1;">✅ Confirmar Traslado</button>
+                            <button type="button" class="bees-btn bees-btn-secondary" onclick="closeTransferModal()">Cancelar</button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.body.appendChild(transferModal);
+        }
+
         inventoryContainer.appendChild(mainContainer);
 
         // Cargar productos y compras en paralelo
@@ -180,12 +257,19 @@ async function loadInventoryPage() {
         // Cargar dropdown
         populatePurchaseDropdown(products);
 
-        // Cargar historial
+        // Cargar historial de compras y traslados
         try {
             const purchases = await apiFetch('/productos/compras');
             renderPurchases(purchases);
         } catch (err) {
             console.error("Error al cargar historial de compras:", err);
+        }
+
+        try {
+            const transfers = await apiFetch('/productos/traslados');
+            renderTransfers(transfers);
+        } catch (err) {
+            console.error("Error al cargar historial de traslados:", err);
         }
 
         // Setup listeners
@@ -583,5 +667,210 @@ function setupInventoryListeners() {
         fileInput.value = '';
     }
 
+    const btnOpenTransfer = document.getElementById('btn-open-transfer-modal');
+    if (btnOpenTransfer) {
+        btnOpenTransfer.addEventListener('click', openTransferModal);
+    }
+
+    const transferForm = document.getElementById('transfer-stock-form');
+    if (transferForm) {
+        transferForm.addEventListener('submit', handleTransferStockSubmit);
+    }
+
+    const transferProductSelect = document.getElementById('transfer-product-id');
+    if (transferProductSelect) {
+        transferProductSelect.addEventListener('change', (e) => {
+            const selectedOpt = e.target.options[e.target.selectedIndex];
+            const stock = selectedOpt ? selectedOpt.dataset.stock : null;
+            const stockHelp = document.getElementById('transfer-stock-available');
+            const qtyInput = document.getElementById('transfer-quantity');
+            if (stockHelp && stock !== null && stock !== undefined) {
+                stockHelp.textContent = `Stock disponible en origen: ${stock} unidades`;
+                if (qtyInput) {
+                    qtyInput.max = stock;
+                    qtyInput.value = Math.min(1, parseInt(stock, 10) || 1);
+                }
+            } else if (stockHelp) {
+                stockHelp.textContent = '';
+            }
+        });
+    }
+
     inventoryListenersAttached = true;
 }
+
+function switchInventoryHistoryTab(tab) {
+    const btnPurchases = document.getElementById('tab-btn-purchases');
+    const btnTransfers = document.getElementById('tab-btn-transfers');
+    const containerPurchases = document.getElementById('container-purchases-history');
+    const containerTransfers = document.getElementById('container-transfers-history');
+    const title = document.getElementById('history-card-title');
+
+    if (tab === 'purchases') {
+        if (btnPurchases) btnPurchases.className = 'bees-btn bees-btn-primary';
+        if (btnTransfers) btnTransfers.className = 'bees-btn bees-btn-secondary';
+        if (containerPurchases) containerPurchases.style.display = 'block';
+        if (containerTransfers) containerTransfers.style.display = 'none';
+        if (title) title.textContent = 'Compras e Insumos';
+    } else {
+        if (btnPurchases) btnPurchases.className = 'bees-btn bees-btn-secondary';
+        if (btnTransfers) btnTransfers.className = 'bees-btn bees-btn-primary';
+        if (containerPurchases) containerPurchases.style.display = 'none';
+        if (containerTransfers) containerTransfers.style.display = 'block';
+        if (title) title.textContent = 'Traslados entre Sedes';
+    }
+}
+
+function renderTransfers(transfers) {
+    const tbody = document.getElementById('transfer-history-tbody');
+    if (!tbody) return;
+
+    tbody.innerHTML = '';
+    if (!transfers || transfers.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--page-text-secondary); padding: 20px;">No hay traslados registrados para esta sede.</td></tr>';
+        return;
+    }
+
+    const currentLocalId = parseInt(sessionStorage.getItem('active_local_id'), 10);
+
+    transfers.forEach(t => {
+        const isOutgoing = t.local_origen_id === currentLocalId;
+        const typeBadge = isOutgoing
+            ? '<span class="bees-badge bees-badge-warning">📤 Salida</span>'
+            : '<span class="bees-badge bees-badge-success">📥 Entrada</span>';
+        
+        const otherLocal = isOutgoing
+            ? `Hacia: <b>${t.local_destino_nombre || ('Sede #' + t.local_destino_id)}</b>`
+            : `Desde: <b>${t.local_origen_nombre || ('Sede #' + t.local_origen_id)}</b>`;
+
+        const dateStr = new Date(t.fecha).toLocaleDateString('es-CO', {
+            day: '2-digit',
+            month: 'short',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+
+        const row = document.createElement('tr');
+        row.style.borderBottom = '1px solid rgba(255,255,255,0.05)';
+        row.innerHTML = `
+            <td style="padding: 8px 4px;">${typeBadge}</td>
+            <td style="padding: 8px 4px; font-weight: 500;">${t.producto_nombre}</td>
+            <td style="padding: 8px 4px; text-align: center; font-weight: 700;">${t.cantidad}</td>
+            <td style="padding: 8px 4px; font-size: 12px; color: var(--page-text-secondary);">${otherLocal}</td>
+            <td style="padding: 8px 4px; padding-left: 8px; font-size: 12px; color: var(--page-text-secondary);">${dateStr}</td>
+        `;
+        tbody.appendChild(row);
+    });
+}
+
+async function openTransferModal() {
+    const modal = document.getElementById('transfer-stock-modal');
+    if (!modal) return;
+
+    const currentLocalId = parseInt(sessionStorage.getItem('active_local_id'), 10);
+    const destSelect = document.getElementById('transfer-dest-local');
+    const prodSelect = document.getElementById('transfer-product-id');
+    const qtyInput = document.getElementById('transfer-quantity');
+    const notesInput = document.getElementById('transfer-notes');
+    const stockHelp = document.getElementById('transfer-stock-available');
+
+    if (qtyInput) qtyInput.value = '';
+    if (notesInput) notesInput.value = '';
+    if (stockHelp) stockHelp.textContent = '';
+
+    // Cargar sedes destino
+    if (destSelect) {
+        destSelect.innerHTML = '<option value="">Cargando sedes destino...</option>';
+        try {
+            const locales = await apiFetch('/saas/locales');
+            destSelect.innerHTML = '<option value="">Selecciona sede destino...</option>';
+            if (locales) {
+                locales.forEach(loc => {
+                    if (loc.id !== currentLocalId) {
+                        const opt = document.createElement('option');
+                        opt.value = loc.id;
+                        opt.textContent = `${loc.nombre}`;
+                        destSelect.appendChild(opt);
+                    }
+                });
+            }
+        } catch (err) {
+            destSelect.innerHTML = '<option value="">Error cargando sedes</option>';
+        }
+    }
+
+    // Cargar productos con stock disponible del local actual
+    if (prodSelect) {
+        prodSelect.innerHTML = '<option value="">Selecciona producto...</option>';
+        if (allProducts) {
+            allProducts.forEach(p => {
+                if (p.is_active && p.stock > 0) {
+                    const opt = document.createElement('option');
+                    opt.value = p.id;
+                    opt.textContent = `${p.nombre} (Stock actual: ${p.stock})`;
+                    opt.dataset.stock = p.stock;
+                    prodSelect.appendChild(opt);
+                }
+            });
+        }
+    }
+
+    modal.classList.add('active');
+    modal.classList.remove('hidden');
+    modal.style.display = 'flex';
+}
+
+function closeTransferModal() {
+    const modal = document.getElementById('transfer-stock-modal');
+    if (modal) {
+        modal.classList.remove('active');
+        modal.classList.add('hidden');
+        modal.style.display = 'none';
+    }
+}
+
+async function handleTransferStockSubmit(e) {
+    e.preventDefault();
+    const currentLocalId = parseInt(sessionStorage.getItem('active_local_id'), 10);
+    const destLocalId = parseInt(document.getElementById('transfer-dest-local').value, 10);
+    const productId = parseInt(document.getElementById('transfer-product-id').value, 10);
+    const quantity = parseInt(document.getElementById('transfer-quantity').value, 10);
+    const notes = document.getElementById('transfer-notes').value.trim();
+
+    if (!destLocalId) {
+        showNotification('Por favor selecciona una sede de destino.', 'error');
+        return;
+    }
+    if (!productId) {
+        showNotification('Por favor selecciona el producto a trasladar.', 'error');
+        return;
+    }
+    if (!quantity || quantity <= 0) {
+        showNotification('La cantidad debe ser mayor a 0.', 'error');
+        return;
+    }
+
+    try {
+        const payload = {
+            local_origen_id: currentLocalId,
+            local_destino_id: destLocalId,
+            producto_id: productId,
+            cantidad: quantity,
+            notas: notes || null
+        };
+
+        const result = await apiFetch('/productos/traslado', {
+            method: 'POST',
+            body: JSON.stringify(payload)
+        });
+
+        showNotification(`✅ Traslado exitoso: ${quantity} unidades transferidas.`, 'success');
+        closeTransferModal();
+
+        // Recargar inventario e historial
+        loadInventoryPage();
+    } catch (err) {
+        showNotification(`Error en traslado: ${err.message}`, 'error');
+    }
+}
+

@@ -107,6 +107,7 @@ from app.schemas.token import (
 from app.schemas.saas import (
     LocalBase,
     LocalCreate,
+    LocalUpdate,
     LocalOut,
     UsuarioLocalBase,
     UsuarioLocalCreate,
@@ -114,8 +115,11 @@ from app.schemas.saas import (
     UsuarioLocalLogin,
     UsuarioEmpleadoLocalBase,
     UsuarioEmpleadoLocalCreate,
+    UsuarioEmpleadoLocalUpdate,
     UsuarioEmpleadoLocalOut,
     TokenOut,
+    TrasladoInventarioCreate,
+    TrasladoInventarioOut,
 )
 
 __all__ = [
@@ -150,8 +154,9 @@ __all__ = [
     "ConfiguracionGlobalBase", "ConfiguracionGlobal", "ClosingTimeUpdate",
     "Notificacion",
     # SaaS
-    "LocalBase", "LocalCreate", "LocalOut",
+    "LocalBase", "LocalCreate", "LocalUpdate", "LocalOut",
     "UsuarioLocalBase", "UsuarioLocalCreate", "UsuarioLocalOut", "UsuarioLocalLogin",
-    "UsuarioEmpleadoLocalBase", "UsuarioEmpleadoLocalCreate", "UsuarioEmpleadoLocalOut",
+    "UsuarioEmpleadoLocalBase", "UsuarioEmpleadoLocalCreate", "UsuarioEmpleadoLocalUpdate", "UsuarioEmpleadoLocalOut",
     "TokenOut",
+    "TrasladoInventarioCreate", "TrasladoInventarioOut",
 ]

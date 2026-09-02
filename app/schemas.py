@@ -510,9 +510,18 @@ class UsuarioEmpleadoLocalBase(BaseModel):
     nombre: str
     rol: str  # 'dj', 'mesero', 'cajero', 'admin'
     local_id: int
+    modulos_permitidos: Optional[List[str]] = None
 
 class UsuarioEmpleadoLocalCreate(UsuarioEmpleadoLocalBase):
     password: str
+
+class UsuarioEmpleadoLocalUpdate(BaseModel):
+    nombre: Optional[str] = None
+    rol: Optional[str] = None
+    local_id: Optional[int] = None
+    modulos_permitidos: Optional[List[str]] = None
+    password: Optional[str] = None
+    is_active: Optional[bool] = None
 
 class UsuarioEmpleadoLocalOut(UsuarioEmpleadoLocalBase):
     id: int
@@ -527,3 +536,28 @@ class TokenOut(BaseModel):
     email: str
     name: str
     local_slugs: Optional[List[str]] = None
+    local_ids: Optional[List[int]] = None
+    modulos_permitidos: Optional[List[str]] = None
+
+class TrasladoInventarioCreate(BaseModel):
+    local_origen_id: int
+    local_destino_id: int
+    producto_id: int
+    cantidad: int
+    notas: Optional[str] = None
+
+class TrasladoInventarioOut(BaseModel):
+    id: int
+    local_origen_id: int
+    local_destino_id: int
+    producto_origen_id: Optional[int] = None
+    producto_nombre: str
+    cantidad: int
+    costo_unitario: Optional[float] = 0
+    usuario_id: Optional[int] = None
+    usuario_nombre: Optional[str] = None
+    notas: Optional[str] = None
+    fecha: datetime
+    local_origen_nombre: Optional[str] = None
+    local_destino_nombre: Optional[str] = None
+    model_config = ConfigDict(from_attributes=True)

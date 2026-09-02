@@ -50,14 +50,19 @@ def login_owner(login_in: UsuarioLocalLogin, db: Session = Depends(get_db)):
             detail="Usuario inactivo."
         )
 
-    # Get their local slugs
+    # Get their local slugs and ids
     slugs = [local.slug for local in owner.locales]
+    local_ids = [local.id for local in owner.locales]
+    all_modules = ['dashboard', 'queue', 'inventory', 'accounts', 'reports', 'settings', 'tables']
 
     token_data = {
         "sub": owner.email,
         "role": "owner",
         "name": owner.nombre,
-        "id": owner.id
+        "id": owner.id,
+        "local_slugs": slugs,
+        "local_ids": local_ids,
+        "modulos_permitidos": all_modules
     }
     token = create_access_token(token_data)
     
@@ -66,7 +71,9 @@ def login_owner(login_in: UsuarioLocalLogin, db: Session = Depends(get_db)):
         role="owner",
         email=owner.email,
         name=owner.nombre,
-        local_slugs=slugs
+        local_slugs=slugs,
+        local_ids=local_ids,
+        modulos_permitidos=all_modules
     )
 
 @router.post("/employee/login", response_model=TokenOut)
@@ -84,13 +91,36 @@ def login_employee(login_in: UsuarioLocalLogin, db: Session = Depends(get_db)):
             detail="Usuario inactivo."
         )
 
+    modulos = []
+    if employee.modulos_permitidos:
+        try:
+            modulos = json.loads(employee.modulos_permitidos)
+        except Exception:
+            modulos = [m.strip() for m in employee.modulos_permitidos.split(",") if m.strip()]
+    if not modulos:
+        if employee.rol == 'admin':
+            modulos = ['dashboard', 'queue', 'inventory', 'accounts', 'reports', 'settings', 'tables']
+        elif employee.rol == 'cajero':
+            modulos = ['dashboard', 'accounts', 'tables', 'reports']
+        elif employee.rol == 'mesero':
+            modulos = ['accounts', 'tables', 'queue']
+        elif employee.rol == 'dj':
+            modulos = ['queue']
+        else:
+            modulos = ['dashboard', 'accounts', 'queue', 'tables']
+
+    local_slugs = [employee.local.slug] if employee.local else []
+    local_ids = [employee.local_id] if employee.local_id else []
+
     token_data = {
         "sub": employee.email,
         "role": employee.rol,
         "name": employee.nombre,
         "id": employee.id,
         "local_id": employee.local_id,
-        "local_slug": employee.local.slug if employee.local else ""
+        "local_ids": local_ids,
+        "local_slug": employee.local.slug if employee.local else "",
+        "modulos_permitidos": modulos
     }
     token = create_access_token(token_data)
     
@@ -99,7 +129,9 @@ def login_employee(login_in: UsuarioLocalLogin, db: Session = Depends(get_db)):
         role=employee.rol,
         email=employee.email,
         name=employee.nombre,
-        local_slugs=[employee.local.slug] if employee.local else []
+        local_slugs=local_slugs,
+        local_ids=local_ids,
+        modulos_permitidos=modulos
     )
 
 # Helper functions for dependency injection

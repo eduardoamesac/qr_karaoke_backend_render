@@ -32,6 +32,22 @@
     </div>
 
     <div class="main-content">
+        <!-- BARRA SUPERIOR CON SELECTOR DE SEDE Y PERFIL -->
+        <div class="top-nav-bar" style="display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; background: rgba(18, 14, 34, 0.95); border: 1px solid rgba(255,255,255,0.08); margin-bottom: 24px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
+            <div id="global-local-selector-container" style="display: flex; align-items: center; gap: 10px;">
+                <label for="global-local-select" style="color: #a29bfe; font-size: 0.9em; font-weight: 600; display: flex; align-items: center; gap: 5px;">
+                    📍 <span>Sede Activa:</span>
+                </label>
+                <select id="global-local-select" style="background: #1e1738; border: 1px solid #6c5ce7; color: #fff; padding: 6px 14px; border-radius: 8px; font-size: 0.9em; font-weight: 600; outline: none; cursor: pointer; min-width: 180px;">
+                    <option value="">Cargando sedes...</option>
+                </select>
+            </div>
+            <div id="user-profile-badge" style="display: flex; align-items: center; gap: 12px;">
+                <span id="user-name-display" style="color: #fff; font-weight: 600; font-size: 0.9em;"></span>
+                <span id="user-role-badge" style="background: rgba(108, 92, 231, 0.25); color: #a29bfe; border: 1px solid #6c5ce7; padding: 3px 10px; border-radius: 12px; font-size: 0.75em; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;"></span>
+            </div>
+        </div>
+
         <!-- PÁGINA: DASHBOARD -->
         <div id="dashboard" class="page active"></div>
 
@@ -131,17 +147,27 @@
 
         async function apiFetch(endpoint, options = {}) {
             const headers = { ...options.headers, 'Authorization': `Bearer ${apiKey}` };
-            // Solo añadir Content-Type si hay un body. Evita errores 422 en POSTs vacíos.
-            // FIX: El content-type se debe añadir si el body no es FormData
+            const activeLocalId = sessionStorage.getItem('active_local_id');
+            if (activeLocalId) {
+                headers['X-Local-ID'] = activeLocalId;
+            }
             if (options.body && !(options.body instanceof FormData)) {
                 headers['Content-Type'] = 'application/json';
             }
             options.headers = headers;
             const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
             if (response.status === 204) return null; // No content
-            const data = await response.json();
+
+            let data;
+            const text = await response.text();
+            try {
+                data = text ? JSON.parse(text) : null;
+            } catch (jsonErr) {
+                data = { detail: text || `Error HTTP ${response.status}` };
+            }
+
             if (!response.ok) {
-                throw new Error(data.detail || `Error ${response.status}`);
+                throw new Error((data && data.detail) || `Error ${response.status}`);
             }
             return data;
         }
@@ -642,13 +668,131 @@
         function loadAllFragments() {
             return Promise.all(['dashboard', 'queue', 'inventory', 'accounts', 'reports', 'settings'].map(loadFragment));
         }
+        async function setupOwnerLocalSelector() {
+            const role = sessionStorage.getItem('role') || 'owner';
+            const name = sessionStorage.getItem('name') || 'Administrador';
+            const userNameEl = document.getElementById('user-name-display');
+            const userRoleEl = document.getElementById('user-role-badge');
+            if (userNameEl) userNameEl.textContent = name;
+            if (userRoleEl) userRoleEl.textContent = role;
+
+            const container = document.getElementById('global-local-selector-container');
+            const select = document.getElementById('global-local-select');
+            if (!container || !select) return;
+
+            if (role === 'owner') {
+                try {
+                    const locales = await apiFetch('/saas/locales');
+                    if (locales && locales.length > 0) {
+                        select.innerHTML = '';
+                        locales.forEach(loc => {
+                            const opt = document.createElement('option');
+                            opt.value = loc.id;
+                            opt.textContent = `${loc.nombre}`;
+                            select.appendChild(opt);
+                        });
+
+                        let activeLocalId = sessionStorage.getItem('active_local_id');
+                        if (!activeLocalId || !locales.some(l => l.id == activeLocalId)) {
+                            activeLocalId = locales[0].id;
+                        }
+                        sessionStorage.setItem('active_local_id', activeLocalId);
+                        select.value = activeLocalId;
+
+                        select.onchange = function() {
+                            sessionStorage.setItem('active_local_id', this.value);
+                            showNotification(`Sede activa cambiada a: ${select.options[select.selectedIndex].text}`, 'info');
+                            reloadCurrentActivePage();
+                        };
+                    }
+                } catch (err) {
+                    console.error("Error al cargar sedes:", err);
+                }
+            } else {
+                // Empleado
+                const localSlugs = sessionStorage.getItem('localSlugs');
+                let localName = 'Sede Asignada';
+                if (localSlugs) {
+                    try {
+                        const parsed = JSON.parse(localSlugs);
+                        if (parsed && parsed.length > 0) localName = parsed[0];
+                    } catch(e) {}
+                }
+                const localIds = sessionStorage.getItem('local_ids');
+                let localId = sessionStorage.getItem('active_local_id');
+                if (localIds) {
+                    try {
+                        const parsedIds = JSON.parse(localIds);
+                        if (parsedIds && parsedIds.length > 0) {
+                            localId = parsedIds[0];
+                            sessionStorage.setItem('active_local_id', localId);
+                        }
+                    } catch(e) {}
+                }
+                select.innerHTML = `<option value="${localId || ''}">${localName}</option>`;
+                select.disabled = true;
+            }
+        }
+
+        function reloadCurrentActivePage() {
+            const activePage = document.querySelector('.main-content .page.active');
+            if (!activePage) return;
+            const pageId = activePage.id;
+            if (pageId === 'dashboard' && typeof loadDashboardPage === 'function') loadDashboardPage();
+            else if (pageId === 'inventory' && typeof loadInventoryPage === 'function') loadInventoryPage();
+            else if (pageId === 'accounts' && typeof loadAccountsPage === 'function') loadAccountsPage();
+            else if (pageId === 'queue' && typeof loadQueuePage === 'function') loadQueuePage();
+            else if (pageId === 'reports' && typeof loadReportsPage === 'function') loadReportsPage();
+            else if (pageId === 'settings' && typeof loadSettingsPage === 'function') loadSettingsPage();
+        }
+
+        function enforceEmployeePermissions() {
+            const role = sessionStorage.getItem('role') || 'owner';
+            if (role === 'owner') return;
+
+            let modulos = [];
+            try {
+                const raw = sessionStorage.getItem('modulos_permitidos');
+                if (raw) modulos = JSON.parse(raw);
+            } catch (e) {}
+
+            if (!modulos || modulos.length === 0) {
+                modulos = ['dashboard', 'accounts', 'queue', 'tables'];
+            }
+
+            const navLinks = document.querySelectorAll('.nav-menu li a');
+            let firstAllowedHref = null;
+
+            navLinks.forEach(link => {
+                const pageTarget = link.getAttribute('href').replace('#', '');
+                if (!modulos.includes(pageTarget)) {
+                    link.parentElement.style.display = 'none';
+                } else {
+                    link.parentElement.style.display = 'block';
+                    if (!firstAllowedHref) firstAllowedHref = link.getAttribute('href');
+                }
+            });
+
+            const currentHash = window.location.hash || '#dashboard';
+            const currentPage = currentHash.replace('#', '');
+            if (!modulos.includes(currentPage) && firstAllowedHref) {
+                window.location.hash = firstAllowedHref;
+                const targetLink = document.querySelector(`.nav-menu a[href="${firstAllowedHref}"]`);
+                if (targetLink) targetLink.click();
+            }
+        }
+
         window.addEventListener('DOMContentLoaded', () => {
-            loadAllFragments().then(() => {
+            loadAllFragments().then(async () => {
                 apiKey = sessionStorage.getItem('adminApiKey');
                 if (!apiKey) {
                     window.location.href = '/admin';
                     return;
                 }
+
+                // Inicializar selector de sedes y permisos
+                await setupOwnerLocalSelector();
+                enforceEmployeePermissions();
 
                 // Cargar datos de la página inicial
                 loadDashboardPage();

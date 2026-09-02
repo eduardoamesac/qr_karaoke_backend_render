@@ -17,6 +17,8 @@ class Local(Base):
     slug = Column(String(100), unique=True, index=True, nullable=False)
     nombre = Column(String(200), index=True, nullable=False)
     direccion = Column(String(200), nullable=True)
+    telefono = Column(String(50), nullable=True)
+    hora_cierre = Column(String(10), default="03:00", nullable=True)
     logo_url = Column(String(500), nullable=True)
     is_active = Column(Boolean, default=True)
     created_at = Column(DateTime, default=now_bogota)

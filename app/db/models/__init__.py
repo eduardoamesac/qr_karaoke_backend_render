@@ -14,6 +14,7 @@ from app.db.models.local import Local
 from app.db.models.usuario_local import UsuarioLocal
 from app.db.models.usuario_empleado import UsuarioEmpleadoLocal
 from app.db.models.compra import Compra
+from app.db.models.traslado_inventario import TrasladoInventario
 
 __all__ = [
     "Base",
@@ -25,4 +26,5 @@ __all__ = [
     "UsuarioLocal",
     "UsuarioEmpleadoLocal",
     "Compra",
+    "TrasladoInventario",
 ]

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime, Boolean, ForeignKey
+from sqlalchemy import Column, Integer, String, DateTime, Boolean, ForeignKey, Text
 from sqlalchemy.orm import relationship
 from app.db.models.base import Base
 from app.utils.timezone_utils import now_bogota
@@ -12,6 +12,7 @@ class UsuarioEmpleadoLocal(Base):
     password_hash = Column(String(200), nullable=False)
     nombre = Column(String(200), nullable=False)
     rol = Column(String(50), nullable=False)  # 'dj', 'mesero', 'cajero', 'admin'
+    modulos_permitidos = Column(Text, nullable=True)  # JSON array string ej: '["dashboard","accounts","inventory"]'
     is_active = Column(Boolean, default=True)
     created_at = Column(DateTime, default=now_bogota)
 
