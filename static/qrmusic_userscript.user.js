@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         QrMusic TV Player 2
 // @namespace    http://tampermonkey.net/
-// @version      6.7
-// @description  Integración de QrMusic con YouTube. Aumenta la cortina a 5 segundos y previene parpadeos de carga entre canciones manteniendo la cortina hasta que la nueva canción inicie reproducción.
+// @version      7.0
+// @description  Integración de QrMusic con YouTube. Soporte Multi-Local, 2 Bloques Inferiores Independientes para 100", Logos 2x y Reacciones.
 // @author       Antigravity
 // @match        https://www.youtube.com/*
 // @match        https://youtube.com/*
@@ -40,7 +40,7 @@
     }
 
     try {
-        console.log("%c[QrMusic] !!! SCRIPT INICIALIZADO Y ACTIVO (v6.7) !!!", "color: #9d4edd; font-size: 16px; font-weight: bold;");
+        console.log("%c[QrMusic] !!! SCRIPT INICIALIZADO Y ACTIVO (v7.0 - Multi-Local & 2 Cajas 100\") !!!", "color: #9d4edd; font-size: 16px; font-weight: bold;");
 
         // 1. Configuración de IP/Host y Sede de QrMusic
         let qrmusicHost = localStorage.getItem("qrmusic_host") || "localhost:8000";

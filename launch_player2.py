@@ -147,62 +147,91 @@ def on_loaded():
                             width: 110px !important;
                             height: 110px !important;
                             z-index: 1000000000 !important;
-                            opacity: 0.35 !important;
-                            pointer-events: none !important; /* Click-through */
+                            opacity: 1 !important;
+                            pointer-events: none !important;
                             border-radius: 50% !important;
-                            box-shadow: 0 0 15px rgba(128, 0, 128, 0.4) !important;
+                            border: 4px solid rgba(157, 78, 221, 0.5) !important;
+                            box-shadow: 0 0 35px rgba(128, 0, 128, 0.5) !important;
                         }
-                        /* Style for the gorgeous floating glassmorphism bottom bar */
-                        #qrmusic-bottom-bar {
+                        /* BLOQUE IZQUIERDO: SONANDO AHORA (Alineado a la izquierda) */
+                        #qrmusic-now-playing-box {
                             position: fixed !important;
-                            bottom: 25px !important;
-                            left: 50% !important;
-                            transform: translateX(-50%) !important;
-                            width: 90% !important;
-                            max-width: 1200px !important;
-                            height: 75px !important;
+                            bottom: 35px !important;
+                            left: 40px !important;
+                            max-width: 46vw !important;
+                            min-width: 380px !important;
                             z-index: 1000000000 !important;
-                            background: rgba(10, 8, 20, 0.75) !important;
-                            backdrop-filter: blur(12px) !important;
-                            border: 1.5px solid rgba(157, 78, 221, 0.3) !important;
-                            border-radius: 18px !important;
-                            display: flex !important;
-                            justify-content: space-between !important;
-                            align-items: center !important;
-                            padding: 0 35px !important;
-                            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6), 0 0 25px rgba(157, 78, 221, 0.15) !important;
+                            background: rgba(10, 8, 24, 0.88) !important;
+                            backdrop-filter: blur(16px) !important;
+                            border: 2.5px solid rgba(157, 78, 221, 0.5) !important;
+                            border-radius: 22px !important;
+                            padding: 18px 28px !important;
+                            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.75), 0 0 30px rgba(157, 78, 221, 0.25) !important;
                             color: #ffffff !important;
                             font-family: 'Outfit', sans-serif !important;
-                            pointer-events: none !important; /* Click-through */
+                            pointer-events: none !important;
                             box-sizing: border-box !important;
-                        }
-                        .qrmusic-bar-section {
                             display: flex !important;
                             flex-direction: column !important;
-                            justify-content: center !important;
-                            max-width: 46% !important;
-                            overflow: hidden !important;
-                            white-space: nowrap !important;
+                            text-align: left !important;
                         }
-                        .qrmusic-bar-label {
-                            font-size: 11px !important;
+
+                        /* BLOQUE DERECHO: SIGUIENTE EN COLA (Alineado a la derecha) */
+                        #qrmusic-next-song-box {
+                            position: fixed !important;
+                            bottom: 35px !important;
+                            right: 40px !important;
+                            max-width: 46vw !important;
+                            min-width: 380px !important;
+                            z-index: 1000000000 !important;
+                            background: rgba(10, 8, 24, 0.88) !important;
+                            backdrop-filter: blur(16px) !important;
+                            border: 2.5px solid rgba(76, 201, 240, 0.5) !important;
+                            border-radius: 22px !important;
+                            padding: 18px 28px !important;
+                            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.75), 0 0 30px rgba(76, 201, 240, 0.25) !important;
+                            color: #ffffff !important;
+                            font-family: 'Outfit', sans-serif !important;
+                            pointer-events: none !important;
+                            box-sizing: border-box !important;
+                            display: flex !important;
+                            flex-direction: column !important;
+                            text-align: right !important;
+                        }
+
+                        /* Tipografía Duplicada (2x) para Pantalla Gigante (100") */
+                        .qrmusic-box-label {
+                            font-size: 20px !important;
                             text-transform: uppercase !important;
-                            letter-spacing: 2px !important;
-                            color: #c77dff !important;
+                            letter-spacing: 3px !important;
                             font-weight: 800 !important;
-                            margin-bottom: 2px !important;
+                            margin-bottom: 4px !important;
                         }
-                        .qrmusic-bar-value {
-                            font-size: 16px !important;
-                            font-weight: 600 !important;
+                        .qrmusic-box-label-now {
+                            color: #c77dff !important;
+                            text-align: left !important;
+                        }
+                        .qrmusic-box-label-next {
+                            color: #4cc9f0 !important;
+                            text-align: right !important;
+                        }
+                        .qrmusic-box-title {
+                            font-size: 32px !important;
+                            font-weight: 800 !important;
                             color: #ffffff !important;
                             text-overflow: ellipsis !important;
                             overflow: hidden !important;
+                            white-space: nowrap !important;
+                            line-height: 1.25 !important;
                         }
-                        .qrmusic-bar-divider {
-                            width: 1px !important;
-                            height: 45px !important;
-                            background: rgba(157, 78, 221, 0.2) !important;
+                        .qrmusic-box-user {
+                            font-size: 22px !important;
+                            font-weight: 600 !important;
+                            color: #a29bfe !important;
+                            margin-top: 4px !important;
+                            text-overflow: ellipsis !important;
+                            overflow: hidden !important;
+                            white-space: nowrap !important;
                         }
                     `;
                     style.appendChild(document.createTextNode(cssText));
@@ -222,25 +251,28 @@ def on_loaded():
                 }
             };
 
-            // Bottom bar element injection
-            const injectBottomBar = () => {
-                const barId = 'qrmusic-bottom-bar';
-                let bar = document.getElementById(barId);
-                if (!bar && document.body) {
-                    bar = document.createElement('div');
-                    bar.id = barId;
-                    bar.innerHTML = `
-                        <div class="qrmusic-bar-section">
-                            <div class="qrmusic-bar-label">🎵 Sonando Ahora</div>
-                            <div id="qrmusic-current-song" class="qrmusic-bar-value">Cargando catálogo...</div>
-                        </div>
-                        <div class="qrmusic-bar-divider"></div>
-                        <div class="qrmusic-bar-section">
-                            <div class="qrmusic-bar-label">⏭️ Siguiente en Cola</div>
-                            <div id="qrmusic-next-song" class="qrmusic-bar-value">Esperando pedidos...</div>
-                        </div>
+            // Bottom 2 boxes element injection
+            const injectBottomBoxes = () => {
+                if (!document.getElementById('qrmusic-now-playing-box') && document.body) {
+                    const nowBox = document.createElement('div');
+                    nowBox.id = 'qrmusic-now-playing-box';
+                    nowBox.innerHTML = `
+                        <div class="qrmusic-box-label qrmusic-box-label-now">🎵 Sonando Ahora</div>
+                        <div id="qrmusic-current-song" class="qrmusic-box-title">Cargando catálogo...</div>
+                        <div id="qrmusic-current-user" class="qrmusic-box-user"></div>
                     `;
-                    document.body.appendChild(bar);
+                    document.body.appendChild(nowBox);
+                }
+
+                if (!document.getElementById('qrmusic-next-song-box') && document.body) {
+                    const nextBox = document.createElement('div');
+                    nextBox.id = 'qrmusic-next-song-box';
+                    nextBox.innerHTML = `
+                        <div class="qrmusic-box-label qrmusic-box-label-next">⏭️ Siguiente en Cola</div>
+                        <div id="qrmusic-next-song" class="qrmusic-box-title">Esperando pedidos...</div>
+                        <div id="qrmusic-next-user" class="qrmusic-box-user"></div>
+                    `;
+                    document.body.appendChild(nextBox);
                 }
             };
 
@@ -248,6 +280,8 @@ def on_loaded():
             window.updateOverlay = (data) => {
                 const currentEl = document.getElementById('qrmusic-current-song');
                 const nextEl = document.getElementById('qrmusic-next-song');
+                const currentUserEl = document.getElementById('qrmusic-current-user');
+                const nextUserEl = document.getElementById('qrmusic-next-user');
                 if (currentEl && data.current) currentEl.textContent = data.current;
                 if (nextEl && data.next) nextEl.textContent = data.next;
             };
@@ -257,7 +291,7 @@ def on_loaded():
                 if (document.head) injectStyles();
                 if (document.body) {
                     injectWatermark();
-                    injectBottomBar();
+                    injectBottomBoxes();
                 }
 
                 const player = document.getElementById('movie_player') || document.querySelector('.html5-video-player');
