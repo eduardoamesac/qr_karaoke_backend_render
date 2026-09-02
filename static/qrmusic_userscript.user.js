@@ -42,8 +42,9 @@
     try {
         console.log("%c[QrMusic] !!! SCRIPT INICIALIZADO Y ACTIVO (v6.7) !!!", "color: #9d4edd; font-size: 16px; font-weight: bold;");
 
-        // 1. Configuración de IP/Host de QrMusic
+        // 1. Configuración de IP/Host y Sede de QrMusic
         let qrmusicHost = localStorage.getItem("qrmusic_host") || "localhost:8000";
+        let qrmusicLocalId = localStorage.getItem("qrmusic_local_id") || "";
 
         // Determinar dinámicamente si usar HTTPS/WSS (para producción) o HTTP/WS (para desarrollo local)
         const getHttpProto = () => {
@@ -67,8 +68,10 @@
         };
 
         let ownerLogoUrl = `${getHttpProto()}://${qrmusicHost}/static/images/watermark.jpg`; // Fallback inicial
+        let localLogoUrl = null;
+        let localNombre = "";
 
-        // Si estamos en la página de setup local, marcamos como instalado
+        // Si estamos en la página de setup local, marcamos como instalado y sincronizamos
         const isPlayer2Page = window.location.pathname.includes('/player2') || window.location.pathname.includes('player2.html');
         if (isPlayer2Page) {
             const currentHost = window.location.host;
@@ -76,10 +79,16 @@
                 qrmusicHost = currentHost;
                 localStorage.setItem("qrmusic_host", currentHost);
             }
+            const urlParams = new URLSearchParams(window.location.search);
+            const paramLocal = urlParams.get('local') || urlParams.get('slug') || urlParams.get('local_id');
+            if (paramLocal) {
+                qrmusicLocalId = paramLocal;
+                localStorage.setItem("qrmusic_local_id", paramLocal);
+            }
             document.body.dataset.qrmusicInstalled = "true";
         }
 
-        // Listener global de teclado (CTRL+SHIFT+H) para configurar el servidor de QrMusic directamente en YouTube
+        // Listener global de teclado (CTRL+SHIFT+H) para configurar servidor y sede directamente en YouTube
         window.addEventListener('keydown', (e) => {
             if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'h') {
                 const newHost = prompt("Configure la dirección (host/IP) del servidor QrMusic:", qrmusicHost);
@@ -87,34 +96,54 @@
                     const cleanHost = newHost.trim().replace(/^https?:\/\//i, '').replace(/\/+$/, '');
                     if (cleanHost) {
                         localStorage.setItem("qrmusic_host", cleanHost);
-                        alert("Servidor configurado a: " + cleanHost + ". Recargando...");
-                        window.location.reload();
                     }
+                    const newLocal = prompt("Configure la Sede (ID o Slug del local):", qrmusicLocalId || "");
+                    if (newLocal !== null) {
+                        localStorage.setItem("qrmusic_local_id", newLocal.trim());
+                    }
+                    alert("Ajustes guardados. Recargando...");
+                    window.location.reload();
                 }
             }
         });
 
-        // Cargar configuraciones públicas (Logo del Dueño / Nombre de la App)
+        // Cargar configuraciones públicas (Logo del Dueño / Sede / Nombre de la App)
         const fetchOwnerSettings = () => {
             const proto = getHttpProto();
-            fetch(`${proto}://${qrmusicHost}/api/v1/player2/settings`)
+            let settingsUrl = `${proto}://${qrmusicHost}/api/v1/player2/settings`;
+            if (qrmusicLocalId) {
+                settingsUrl += `?${isNaN(qrmusicLocalId) ? 'slug=' : 'local_id='}${encodeURIComponent(qrmusicLocalId)}`;
+            }
+            fetch(settingsUrl)
                 .then(res => res.json())
                 .then(data => {
                     if (data.owner_logo) {
-                        ownerLogoUrl = `${proto}://${qrmusicHost}${data.owner_logo}`;
-                        console.log("[QrMusic] Logo corporativo del dueño cargado:", ownerLogoUrl);
-                        
-                        // Actualizar logo en la pantalla de bienvenida
-                        const logoWelcome = document.getElementById('owner-logo-welcome');
-                        if (logoWelcome) logoWelcome.src = ownerLogoUrl;
-                        
-                        // Actualizar logo en el indicador gráfico de estado
-                        const logoIndicator = document.querySelector('#qrmusic-status-indicator .status-indicator-img');
-                        if (logoIndicator) logoIndicator.src = ownerLogoUrl;
+                        ownerLogoUrl = data.owner_logo.startsWith('http') ? data.owner_logo : `${proto}://${qrmusicHost}${data.owner_logo}`;
+                        console.log("[QrMusic] Logo corporativo / sede cargado:", ownerLogoUrl);
+                    }
+                    if (data.local_logo) {
+                        localLogoUrl = data.local_logo.startsWith('http') ? data.local_logo : `${proto}://${qrmusicHost}${data.local_logo}`;
+                    }
+                    if (data.local_nombre) {
+                        localNombre = data.local_nombre;
+                    }
 
-                        // Actualizar logo en la cortina de transición
-                        const logoCurtain = document.querySelector('#qrmusic-curtain-screen .curtain-logo-img');
-                        if (logoCurtain) logoCurtain.src = ownerLogoUrl;
+                    // Actualizar logo en la pantalla de bienvenida
+                    const logoWelcome = document.getElementById('owner-logo-welcome');
+                    if (logoWelcome) logoWelcome.src = localLogoUrl || ownerLogoUrl;
+                    
+                    // Actualizar logo en el indicador gráfico de estado
+                    const logoIndicator = document.querySelector('#qrmusic-status-indicator .status-indicator-img');
+                    if (logoIndicator) logoIndicator.src = localLogoUrl || ownerLogoUrl;
+
+                    // Actualizar logo en la cortina de transición
+                    const logoCurtain = document.querySelector('#qrmusic-curtain-screen .curtain-logo-img');
+                    if (logoCurtain) logoCurtain.src = localLogoUrl || ownerLogoUrl;
+
+                    // Actualizar logo del local si existe elemento
+                    const localLogoEl = document.getElementById('qrmusic-local-logo');
+                    if (localLogoEl && (localLogoUrl || ownerLogoUrl)) {
+                        localLogoEl.src = localLogoUrl || ownerLogoUrl;
                     }
                 })
                 .catch(err => console.warn("[QrMusic] Error cargando logo corporativo del dueño:", err));

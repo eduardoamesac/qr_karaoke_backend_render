@@ -98,28 +98,41 @@ class QueueManager:
             self._user_songs[usuario_id] = songs
         return self._user_songs[usuario_id]
 
-    def pop_next_song(self, db: Session) -> Optional[Dict[str, Any]]:
-        """Transición de estado: Siguiente en Approved -> Reproduciendo.
-        Si no hay aprobadas, intenta promover una de la cola lazy automatically.
+    def pop_next_song(self, db: Session, local_id: Optional[int] = None) -> Optional[Dict[str, Any]]:
+        """Transición de estado: Siguiente en Approved -> Reproduciendo para un local_id específico.
+        Si no hay aprobadas, intenta promover una de la cola lazy de ese local automáticamente.
         """
         self.refresh_all(db)
         
-        # 1. Si no hay aprobadas, intentar promover la primera de la cola lazy
-        if not self._approved_queue and self._lazy_queue:
-            first_lazy = self._lazy_queue[0]
-            logger.info(f"🚀 No hay canciones aprobadas. Promoviendo '{first_lazy.get('titulo')}' desde cola lazy.")
+        approved_for_local = [
+            s for s in self._approved_queue 
+            if local_id is None or s.get("local_id") == local_id or s.get("local_id") is None
+        ]
+        lazy_for_local = [
+            s for s in self._lazy_queue 
+            if local_id is None or s.get("local_id") == local_id or s.get("local_id") is None
+        ]
+
+        # 1. Si no hay aprobadas, intentar promover la primera de la cola lazy del local
+        if not approved_for_local and lazy_for_local:
+            first_lazy = lazy_for_local[0]
+            logger.info(f"🚀 No hay canciones aprobadas para local {local_id}. Promoviendo '{first_lazy.get('titulo')}' desde cola lazy.")
             
             # Promover a aprobado
             cache.update_song(first_lazy["id"], {"estado": "aprobado"})
             
             # Refrescar para que aparezca en _approved_queue
             self.refresh_all(db)
+            approved_for_local = [
+                s for s in self._approved_queue 
+                if local_id is None or s.get("local_id") == local_id or s.get("local_id") is None
+            ]
 
-        # 2. Proceder con el pop normal si hay algo en la cola aprobada
-        if not self._approved_queue:
+        # 2. Proceder con el pop normal si hay algo en la cola aprobada para este local
+        if not approved_for_local:
             return None
         
-        next_song = self._approved_queue[0]
+        next_song = approved_for_local[0]
         
         if next_song:
             # Actualizar estado en cache

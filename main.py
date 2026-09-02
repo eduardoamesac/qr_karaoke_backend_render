@@ -138,10 +138,31 @@ async def read_player():
 # ===============================
 # WEBSOCKET
 # ===============================
+# WEBSOCKET
+# ===============================
 @app.websocket("/ws/cola")
-async def websocket_endpoint(websocket: WebSocket):
-    await websocket_manager.manager.connect(websocket)
-    await websocket_manager.manager.broadcast_queue_update()
+async def websocket_endpoint(
+    websocket: WebSocket,
+    local_id: Optional[int] = None,
+    local: Optional[str] = None
+):
+    resolved_local_id = local_id
+    if resolved_local_id is None and local:
+        try:
+            resolved_local_id = int(local)
+        except ValueError:
+            # Query by slug
+            db = SessionLocal()
+            try:
+                from app.db.models.local import Local
+                loc = db.query(Local).filter(Local.slug == local).first()
+                if loc:
+                    resolved_local_id = loc.id
+            finally:
+                db.close()
+
+    await websocket_manager.manager.connect(websocket, local_id=resolved_local_id)
+    await websocket_manager.manager.broadcast_queue_update(local_id=resolved_local_id)
     try:
         while True:
             await websocket.receive_text()

@@ -1,18 +1,56 @@
 import subprocess
 import sys
-from fastapi import APIRouter, Depends, HTTPException
+from typing import Optional
+from fastapi import APIRouter, Depends, HTTPException, Query
 from fastapi.responses import FileResponse
+from sqlalchemy.orm import Session
 from app.auth import verify_token
 from app.services.settings_storage import load_settings
+from app.database import SessionLocal
 
 router = APIRouter()
 
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
 @router.get("/settings", summary="Obtener configuraciones públicas del player2")
-def get_player2_public_settings():
+def get_player2_public_settings(
+    local_id: Optional[int] = Query(None),
+    slug: Optional[str] = Query(None),
+    db: Session = Depends(get_db)
+):
     settings = load_settings()
+    owner_logo = settings.get("owner_logo", None)
+    app_name = settings.get("app_name", "QR Karaoke")
+    local_nombre = None
+    local_logo = None
+    resolved_local_id = local_id
+
+    if local_id or slug:
+        from app.db.models.local import Local
+        query = db.query(Local)
+        if local_id:
+            loc = query.filter(Local.id == local_id).first()
+        else:
+            loc = query.filter(Local.slug == slug).first()
+
+        if loc:
+            resolved_local_id = loc.id
+            local_nombre = loc.nombre
+            local_logo = loc.logo_url
+            if loc.logo_url:
+                owner_logo = loc.logo_url
+
     return {
-        "owner_logo": settings.get("owner_logo", None),
-        "app_name": settings.get("app_name", "QR Karaoke")
+        "owner_logo": owner_logo,
+        "local_logo": local_logo,
+        "local_nombre": local_nombre,
+        "local_id": resolved_local_id,
+        "app_name": local_nombre or app_name
     }
 
 
@@ -24,13 +62,18 @@ def get_player2_page():
 player_process = None
 
 @router.post("/launch", summary="Lanzar Reproductor Nativo localmente (Admin)")
-def launch_player(api_key: dict = Depends(verify_token)):
+def launch_player(
+    local_id: Optional[int] = Query(None),
+    api_key: dict = Depends(verify_token)
+):
     global player_process
     if player_process and player_process.poll() is None:
         return {"status": "running", "message": "El reproductor nativo ya está en ejecución."}
     
     python_exe = sys.executable
     cmd = [python_exe, "launch_player2.py"]
+    if local_id:
+        cmd.extend(["--local", str(local_id)])
     try:
         # Lanzar en segundo plano sin bloquear el servidor
         player_process = subprocess.Popen(

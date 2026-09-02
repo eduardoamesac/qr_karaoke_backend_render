@@ -1,5 +1,5 @@
 import json
-from typing import List
+from typing import List, Optional, Dict
 from fastapi import WebSocket
 from app import models
 from fastapi.encoders import jsonable_encoder
@@ -12,118 +12,113 @@ from app.database import SessionLocal
 
 class ConnectionManager:
     def __init__(self):
-        self.active_connections: List[WebSocket] = []
+        # Mapeo: WebSocket -> Optional[int] (local_id)
+        self.connection_locals: Dict[WebSocket, Optional[int]] = {}
 
-    async def connect(self, websocket: WebSocket):
+    @property
+    def active_connections(self) -> List[WebSocket]:
+        return list(self.connection_locals.keys())
+
+    async def connect(self, websocket: WebSocket, local_id: Optional[int] = None):
         await websocket.accept()
-        self.active_connections.append(websocket)
+        self.connection_locals[websocket] = local_id
+        logger.info(f"WebSocket conectado (local_id={local_id}). Total conexiones: {len(self.connection_locals)}")
 
     def disconnect(self, websocket: WebSocket):
-        try:
-            self.active_connections.remove(websocket)
-        except ValueError:
-            # already removed
-            pass
+        self.connection_locals.pop(websocket, None)
 
-    async def _broadcast(self, message: str):
-        """Método auxiliar para enviar un mensaje a todas las conexiones activas."""
+    def get_connections_for_local(self, local_id: Optional[int] = None) -> List[WebSocket]:
+        if local_id is None:
+            return list(self.connection_locals.keys())
+        # Si local_id viene definido, enviar a los que coincidan con local_id o a los que no tienen local_id definido (globales)
+        return [ws for ws, lid in self.connection_locals.items() if lid == local_id or lid is None]
+
+    async def _broadcast(self, message: str, local_id: Optional[int] = None):
+        """Método auxiliar para enviar un mensaje a las conexiones correspondientes al local_id."""
         dead_connections = []
-        # Hacemos una copia de la lista para poder modificarla mientras iteramos
-        for connection in self.active_connections[:]:
+        targets = self.get_connections_for_local(local_id)
+        for connection in targets:
             try:
                 await connection.send_text(message)
             except Exception:
-                # Si el envío falla, marcamos la conexión para eliminarla.
                 dead_connections.append(connection)
 
-        # Eliminamos las conexiones muertas de la lista activa.
         for connection in dead_connections:
-            try:
-                self.active_connections.remove(connection)
-            except ValueError:
-                # La conexión ya fue eliminada, lo ignoramos.
-                pass
+            self.disconnect(connection)
 
-    async def broadcast_queue_update(self, queue_state: dict = None):
+    async def broadcast_queue_update(self, queue_state: dict = None, local_id: Optional[int] = None):
         """
-        Obtiene el ESTADO DEFINITIVO de la cola (con integridad validada)
-        y lo envía a todos los clientes.
-        
-        IMPORTANTE:
-        - Si se pasa queue_state, lo usa directamente.
-        - Si no, usa el CRUD basado en cache (más seguro sin SQL).
-        - Incluye revisión (revision number) para invalidar cache frontend
-        - Valida que now_playing no esté duplicado en upcoming
+        Obtiene el ESTADO DEFINITIVO de la cola (filtrado por local_id) y lo envía a los clientes.
         """
         if queue_state:
             payload = {
                 "type": "queue_update",
-                "payload": queue_state
+                "payload": queue_state,
+                "local_id": local_id
             }
-            await self._broadcast(json.dumps(payload, default=str))
+            await self._broadcast(json.dumps(payload, default=str), local_id=local_id)
             return
 
         db = SessionLocal()
         try:
             from app.db import crud
-            # Usar el CRUD basado en cache que es más seguro dado que no hay tablas SQL
-            queue_state = crud.get_cola_completa_con_lazy(db)
+            # Usar el CRUD basado en cache filtrando por local_id
+            queue_state = crud.get_cola_completa_con_lazy(db, local_id=local_id)
             
             payload = {
                 "type": "queue_update",
-                "payload": queue_state
+                "payload": queue_state,
+                "local_id": local_id
             }
-            await self._broadcast(json.dumps(payload, default=str))
+            await self._broadcast(json.dumps(payload, default=str), local_id=local_id)
         except Exception as e:
             logger.error(f"Error broadcasting queue update: {e}", exc_info=True)
             print(f"Error broadcasting queue update: {e}")
         finally:
             db.close()
 
-    async def broadcast_product_update(self):
+    async def broadcast_product_update(self, local_id: Optional[int] = None):
         """Envía una notificación para que los clientes recarguen el catálogo de productos."""
-        payload = {"type": "product_update"}
-        await self._broadcast(json.dumps(payload))
+        payload = {"type": "product_update", "local_id": local_id}
+        await self._broadcast(json.dumps(payload), local_id=local_id)
 
     async def broadcast_points_decay(self):
         """Notifica a todos los clientes que los puntos/créditos decayeron para que refresquen su perfil."""
         payload = {"type": "points_decayed"}
         await self._broadcast(json.dumps(payload))
 
-    async def broadcast_consumo_created(self, consumo_payload: dict):
+    async def broadcast_consumo_created(self, consumo_payload: dict, local_id: Optional[int] = None):
         """
         Envía un evento indicando que se creó un nuevo consumo.
         """
-        payload = {"type": "consumo_created", "payload": consumo_payload}
-        await self._broadcast(json.dumps(payload, default=str))
+        payload = {"type": "consumo_created", "payload": consumo_payload, "local_id": local_id}
+        await self._broadcast(json.dumps(payload, default=str), local_id=local_id)
 
-    async def broadcast_pedido_created(self, pedido_payload: dict):
+    async def broadcast_pedido_created(self, pedido_payload: dict, local_id: Optional[int] = None):
         """
         Envía un evento indicando que se creó un nuevo pedido consolidado.
         """
-        payload = {"type": "pedido_created", "payload": pedido_payload}
-        await self._broadcast(json.dumps(payload, default=str))
+        payload = {"type": "pedido_created", "payload": pedido_payload, "local_id": local_id}
+        await self._broadcast(json.dumps(payload, default=str), local_id=local_id)
 
-    async def broadcast_consumo_deleted(self, consumo_payload: dict):
+    async def broadcast_consumo_deleted(self, consumo_payload: dict, local_id: Optional[int] = None):
         """
         Envía un evento indicando que un consumo fue eliminado.
         """
-        payload = {"type": "consumo_deleted", "payload": consumo_payload}
-        await self._broadcast(json.dumps(payload))
+        payload = {"type": "consumo_deleted", "payload": consumo_payload, "local_id": local_id}
+        await self._broadcast(json.dumps(payload), local_id=local_id)
 
-    async def broadcast_reaction(self, reaction_payload: dict):
+    async def broadcast_reaction(self, reaction_payload: dict, local_id: Optional[int] = None):
         """
-        Envía una reacción (emoticono) a todos los clientes.
+        Envía una reacción (emoticono) a los clientes del local_id.
         """
-        payload = {"type": "reaction", "payload": reaction_payload}
-        await self._broadcast(json.dumps(payload))
+        payload = {"type": "reaction", "payload": reaction_payload, "local_id": local_id}
+        await self._broadcast(json.dumps(payload), local_id=local_id)
 
-    async def broadcast_song_finished(self, cancion: dict):
+    async def broadcast_song_finished(self, cancion: dict, local_id: Optional[int] = None):
         """
         Envía un evento indicando que una canción ha terminado y su puntuación.
-        cancion es ahora un diccionario del cache, no un modelo ORM.
         """
-        # Extraer datos de la canción
         titulo = cancion.get("titulo", "Desconocida")
         usuario_nick = cancion.get("usuario_nick", "N/A")
         puntuacion_ia = cancion.get("puntuacion_ia")
@@ -136,62 +131,62 @@ class ConnectionManager:
                 "usuario_nick": usuario_nick,
                 "puntuacion_ia": puntuacion_ia,
                 "is_karaoke": is_karaoke
-            }
+            },
+            "local_id": local_id
         }
-        await self._broadcast(json.dumps(payload))
+        await self._broadcast(json.dumps(payload), local_id=local_id)
 
-    async def broadcast_play_song(self, youtube_id: str, duration_seconds: int = 0):
+    async def broadcast_play_song(self, youtube_id: str, duration_seconds: int = 0, local_id: Optional[int] = None):
         """
-        Envía un evento para reproducir una canción en el reproductor.
-        Incluye la duración para permitir el autoplay automático.
+        Envía un evento para reproducir una canción en el reproductor de esa sede.
         """
-        # Log para facilitar correlación entre eventos de servidor y updates del cliente
         try:
-            logger.info(f"Emitiendo play_song -> youtube_id={youtube_id}, duration_seconds={duration_seconds}")
+            logger.info(f"Emitiendo play_song (local_id={local_id}) -> youtube_id={youtube_id}, duration_seconds={duration_seconds}")
         except Exception:
-            # Evitar que un error de logging interrumpa el flujo
-            print(f"Emitiendo play_song -> youtube_id={youtube_id}, duration_seconds={duration_seconds}")
+            print(f"Emitiendo play_song (local_id={local_id}) -> youtube_id={youtube_id}, duration_seconds={duration_seconds}")
 
         payload = {
             "type": "play_song", 
             "payload": {
                 "youtube_id": youtube_id,
                 "duracion_seconds": duration_seconds
-            }
+            },
+            "local_id": local_id
         }
-        await self._broadcast(json.dumps(payload))
+        await self._broadcast(json.dumps(payload), local_id=local_id)
 
-    async def broadcast_restart_song(self):
+    async def broadcast_restart_song(self, local_id: Optional[int] = None):
         """
         Envía un evento para reiniciar la canción actual en el reproductor.
         """
-        payload = {"type": "restart_song"}
-        await self._broadcast(json.dumps(payload))
+        payload = {"type": "restart_song", "local_id": local_id}
+        await self._broadcast(json.dumps(payload), local_id=local_id)
 
-    async def broadcast_pause(self):
+    async def broadcast_pause(self, local_id: Optional[int] = None):
         """
         Envía un evento para pausar la reproducción actual.
         """
-        payload = {"type": "pause_playback"}
-        await self._broadcast(json.dumps(payload))
+        payload = {"type": "pause_playback", "local_id": local_id}
+        await self._broadcast(json.dumps(payload), local_id=local_id)
 
-    async def broadcast_resume(self):
+    async def broadcast_resume(self, local_id: Optional[int] = None):
         """
         Envía un evento para reanudar la reproducción.
         """
-        payload = {"type": "resume_playback"}
-        await self._broadcast(json.dumps(payload))
+        payload = {"type": "resume_playback", "local_id": local_id}
+        await self._broadcast(json.dumps(payload), local_id=local_id)
 
-    async def broadcast_notification(self, mensaje: str):
+    async def broadcast_notification(self, mensaje: str, local_id: Optional[int] = None):
         """
-        Envía un mensaje de notificación global a todas las pantallas conectadas.
+        Envía un mensaje de notificación a las pantallas conectadas.
         """
         payload = {
             "type": "notification",
             "payload": {
                 "mensaje": mensaje
-            }
+            },
+            "local_id": local_id
         }
-        await self._broadcast(json.dumps(payload))
+        await self._broadcast(json.dumps(payload), local_id=local_id)
 
 manager = ConnectionManager()

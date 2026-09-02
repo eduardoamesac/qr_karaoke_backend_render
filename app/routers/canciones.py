@@ -2,11 +2,11 @@ import os
 import datetime
 import asyncio
 import logging
-from fastapi import APIRouter, Depends, HTTPException, Response, status
+from fastapi import APIRouter, Depends, HTTPException, Response, status, Header, Query
 from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy.orm import Session
-from typing import List
+from typing import List, Optional
 
 from app import crud, schemas, models, config
 from app.database import SessionLocal
@@ -37,11 +37,22 @@ def get_db():
     responses={204: {"description": "No hay más canciones en la cola."}},
     summary="Avanzar la cola y obtener la siguiente canción para reproducir"
 )
-async def avanzar_cola(db: Session = Depends(get_db)):
+async def avanzar_cola(
+    local_id: Optional[int] = Query(None),
+    x_local_id: Optional[str] = Header(None, alias="X-Local-ID"),
+    db: Session = Depends(get_db)
+):
     """
-    Avanza la cola a la siguiente canción.
+    Avanza la cola a la siguiente canción para el local correspondiente.
     """
-    nueva_cancion = await crud.avanzar_cola_automaticamente(db)
+    target_local_id = local_id
+    if target_local_id is None and x_local_id:
+        try:
+            target_local_id = int(x_local_id)
+        except Exception:
+            pass
+
+    nueva_cancion = await crud.avanzar_cola_automaticamente(db, local_id=target_local_id)
 
     if not nueva_cancion:
         return Response(status_code=204)
@@ -140,8 +151,9 @@ async def anadir_cancion(
         raise HTTPException(status_code=402, detail="Error al consumir crédito. Intenta nuevamente.")
     
     cancion_final = crud.update_cancion_estado(db, cancion_id=db_cancion['id'], nuevo_estado="pendiente_lazy")
+    song_local_id = db_cancion.get("local_id")
     
-    canciones_activas = (cache_manager.get_songs_by_estado("reproduciendo") or []) + (cache_manager.get_songs_by_estado("aprobado") or [])
+    canciones_activas = (cache_manager.get_songs_by_estado("reproduciendo", local_id=song_local_id) or []) + (cache_manager.get_songs_by_estado("aprobado", local_id=song_local_id) or [])
     hay_cancion_activa = len(canciones_activas) > 0
     
     if not hay_cancion_activa:
@@ -149,7 +161,8 @@ async def anadir_cancion(
         await crud.start_next_song_if_autoplay_and_idle(db)
     
     queue_manager.refresh_queue(db)
-    await websocket_manager.manager.broadcast_queue_update()
+    new_state = crud.get_cola_completa_con_lazy(db, local_id=song_local_id)
+    await websocket_manager.manager.broadcast_queue_update(new_state, local_id=song_local_id)
 
     return cancion_final
 
@@ -175,9 +188,10 @@ async def aprobar_cancion(cancion_id: int, db: Session = Depends(get_db), admin:
     await crud.start_next_song_if_autoplay_and_idle(db)
     
     # Refrescar y enviar estado completo para actualización instantánea en el admin
+    song_local_id = db_cancion.get("local_id")
     queue_manager.refresh_all(db)
-    new_state = crud.get_cola_completa_con_lazy(db)
-    await websocket_manager.manager.broadcast_queue_update(new_state)
+    new_state = crud.get_cola_completa_con_lazy(db, local_id=song_local_id)
+    await websocket_manager.manager.broadcast_queue_update(new_state, local_id=song_local_id)
     return db_cancion
 
 @router.post("/{cancion_id}/rechazar", response_model=schemas.Cancion, summary="Rechazar una canción")
@@ -192,6 +206,13 @@ async def rechazar_cancion(cancion_id: int, db: Session = Depends(get_db), admin
     # Validar que la canción no esté ya reproduciéndose o cantada
     if db_cancion.get('estado') in ['reproduciendo', 'cantada']:
         raise HTTPException(status_code=403, detail="No se puede eliminar: la canción ya está en reproducción o fue cantada")
+    
+    song_local_id = db_cancion.get("local_id")
+    cache_manager.delete_song_from_cache(cancion_id, usuario_id=db_cancion.get('usuario_id'))
+    queue_manager.refresh_all(db)
+    new_state = crud.get_cola_completa_con_lazy(db, local_id=song_local_id)
+    await websocket_manager.manager.broadcast_queue_update(new_state, local_id=song_local_id)
+    return db_cancion
     
     # Solo se pueden rechazar canciones en estado 'pendiente', 'pendiente_lazy' o 'aprobado' (si no está sonando)
     if db_cancion.get('estado') not in ['pendiente', 'pendiente_lazy', 'aprobado']:

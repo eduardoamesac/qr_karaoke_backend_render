@@ -32,6 +32,7 @@ except ImportError:
 parser = argparse.ArgumentParser(description="QrMusic Native Player 2")
 parser.add_argument("--server", default="http://localhost:8000", help="HTTP Server URL")
 parser.add_argument("--ws", default="ws://localhost:8000/ws/cola", help="WebSocket Server URL")
+parser.add_argument("--local", default=None, help="Local ID or Slug")
 parser.add_argument("--dry-run", action="store_true", help="Test dependencies and exit")
 args = parser.parse_args()
 
@@ -41,6 +42,11 @@ if args.dry_run:
 
 SERVER_URL = args.server.rstrip("/")
 WS_URL = args.ws
+LOCAL_PARAM = args.local
+
+if LOCAL_PARAM:
+    sep = "&" if "?" in WS_URL else "?"
+    WS_URL += f"{sep}local={LOCAL_PARAM}"
 
 window = None
 
@@ -48,12 +54,15 @@ window = None
 class PlayerAPI:
     """Python API exposed to Javascript context"""
     def on_video_ended(self):
-        print("[INFO] Video ended callback received. Promoting next song...")
+        print(f"[INFO] Video ended callback received (local={LOCAL_PARAM}). Promoting next song...")
         # Trigger next song via FastAPI endpoint
         def trigger():
             try:
+                next_url = f"{SERVER_URL}/api/v1/canciones/siguiente"
+                if LOCAL_PARAM:
+                    next_url += f"?local_id={LOCAL_PARAM}"
                 req = urllib.request.Request(
-                    f"{SERVER_URL}/api/v1/canciones/siguiente",
+                    next_url,
                     method="POST"
                 )
                 with urllib.request.urlopen(req) as response:

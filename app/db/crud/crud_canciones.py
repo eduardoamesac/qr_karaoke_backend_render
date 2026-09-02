@@ -106,9 +106,20 @@ def check_if_song_in_user_list(db: Session, usuario_id: int, youtube_id: str) ->
     return False
 
 
-def create_cancion_para_usuario(db: Session, cancion: CancionCreate, usuario_id: int):
-    """Crea una canción en cache para un usuario."""
+def create_cancion_para_usuario(db: Session, cancion: CancionCreate, usuario_id: int, local_id: int = None):
+    """Crea una canción en cache para un usuario y le asocia el local_id correspondiente."""
     from app.utils.timezone_utils import now_bogota
+    from app.db.crud.crud_usuarios import get_usuario_by_id
+
+    if local_id is None:
+        try:
+            usuario = get_usuario_by_id(db, usuario_id)
+            if usuario and getattr(usuario, "mesa_id", None):
+                mesa = cache.get_mesa_by_id(usuario.mesa_id)
+                if mesa and mesa.get("local_id"):
+                    local_id = mesa.get("local_id")
+        except Exception:
+            pass
 
     song_id = int(time.time() * 1000) + usuario_id
 
@@ -118,6 +129,7 @@ def create_cancion_para_usuario(db: Session, cancion: CancionCreate, usuario_id:
         "titulo": cancion.titulo,
         "duracion_seconds": cancion.duracion_seconds,
         "usuario_id": usuario_id,
+        "local_id": local_id,
         "estado": "pendiente",
         "created_at": now_bogota().isoformat(),
         "approved_at": None,
@@ -154,9 +166,9 @@ def update_cancion_estado(db: Session, cancion_id: int, nuevo_estado: str):
     return None
 
 
-def get_duracion_total_cola_aprobada(db: Session) -> int:
-    """Obtiene la duración total de la cola de canciones aprobadas."""
-    all_songs = cache.get_all_songs()
+def get_duracion_total_cola_aprobada(db: Session, local_id: int = None) -> int:
+    """Obtiene la duración total de la cola de canciones aprobadas para un local_id."""
+    all_songs = cache.get_all_songs(local_id=local_id)
     total = 0
     for song in all_songs:
         if song.get("estado") == "aprobado":
@@ -169,9 +181,9 @@ def check_and_approve_next_lazy_song(db: Session):
     pass
 
 
-def aprobar_siguiente_cancion_lazy(db: Session):
-    """Aprueba la siguiente canción en la cola lazy (pendiente_lazy -> aprobado)."""
-    all_songs = cache.get_all_songs()
+def aprobar_siguiente_cancion_lazy(db: Session, local_id: int = None):
+    """Aprueba la siguiente canción en la cola lazy (pendiente_lazy -> aprobado) para un local."""
+    all_songs = cache.get_all_songs(local_id=local_id)
     lazy_songs = [s for s in all_songs if s.get("estado") == "pendiente_lazy"]
     if not lazy_songs:
         return None
@@ -232,9 +244,6 @@ def move_lazy_song_down(db: Session, cancion_id: int, usuario_id: int):
 def enriquecer_cancion(db: Session, song: dict):
     """
     Enriquece una canción del cache con info del usuario desde BD.
-
-    Siempre incluye el campo 'usuario' para satisfacer el schema CancionAdminView.
-    Si no se puede obtener el usuario, usa un dict de fallback.
     """
     from app.db.crud.crud_usuarios import get_usuario_by_id
     from app.utils.timezone_utils import now_bogota
@@ -251,7 +260,8 @@ def enriquecer_cancion(db: Session, song: dict):
         "finished_at": song.get("finished_at") if song.get("finished_at") else None,
         "puntuacion_ia": song.get("puntuacion_ia"),
         "is_karaoke": bool(song.get("is_karaoke", True)),
-        "orden_manual": song.get("orden_manual")
+        "orden_manual": song.get("orden_manual"),
+        "local_id": song.get("local_id")
     }
 
     usuario_id = song.get("usuario_id")
@@ -260,7 +270,6 @@ def enriquecer_cancion(db: Session, song: dict):
         try:
             usuario = get_usuario_by_id(db, usuario_id)
         except Exception:
-            # Si falla la búsqueda del usuario (ej. por DB), procedemos con fallback
             usuario = None
             
     if usuario:
@@ -300,9 +309,9 @@ def enriquecer_cancion(db: Session, song: dict):
     return cancion_enriquecida
 
 
-def get_cola_completa(db: Session):
-    """Obtiene la cola básica (now_playing y upcoming)."""
-    all_songs = cache.get_all_songs()
+def get_cola_completa(db: Session, local_id: int = None):
+    """Obtiene la cola básica (now_playing y upcoming) para un local."""
+    all_songs = cache.get_all_songs(local_id=local_id)
 
     now_playing = None
     upcoming = []
@@ -326,9 +335,9 @@ def get_cola_completa(db: Session):
     }
 
 
-def get_cola_completa_con_lazy(db: Session):
-    """Obtiene la cola completa con todas las canciones agrupadas por estado."""
-    all_songs = cache.get_all_songs()
+def get_cola_completa_con_lazy(db: Session, local_id: int = None):
+    """Obtiene la cola completa con todas las canciones agrupadas por estado para un local."""
+    all_songs = cache.get_all_songs(local_id=local_id)
 
     now_playing = None
     upcoming = []
@@ -356,7 +365,6 @@ def get_cola_completa_con_lazy(db: Session):
     def get_sort_key(s):
         try:
             val = s.get("orden_manual")
-            # Intentamos convertir a int, si falla (por ser una fecha corrupta), usamos el valor por defecto
             order = int(val) if val is not None else 999999
         except (ValueError, TypeError):
             order = 999999
@@ -374,8 +382,8 @@ def get_cola_completa_con_lazy(db: Session):
     }
 
 
-async def avanzar_cola_automaticamente(db: Session):
-    """Avanza la cola automáticamente (siguiente canción)."""
+async def avanzar_cola_automaticamente(db: Session, local_id: int = None):
+    """Avanza la cola automáticamente (siguiente canción) para un local específico."""
     import traceback
     from fastapi import HTTPException
     from app.services.queue_manager import queue_manager
@@ -384,39 +392,39 @@ async def avanzar_cola_automaticamente(db: Session):
         from app.utils.timezone_utils import now_bogota
         from app.services import websocket_manager
 
-        canciones_reproduciendo = cache.get_songs_by_estado('reproduciendo') or []
+        canciones_reproduciendo = cache.get_songs_by_estado('reproduciendo', local_id=local_id) or []
         cancion_actual = canciones_reproduciendo[0] if canciones_reproduciendo else None
 
         if cancion_actual:
-            logger.info(f"🏁 Finalizando canción actual: {cancion_actual.get('titulo')}")
+            logger.info(f"🏁 Finalizando canción actual ({cancion_actual.get('titulo')}) para local {local_id}")
             cache.update_song(cancion_actual['id'], {
                 'estado': 'cantada',
                 'finished_at': now_bogota().isoformat()
             })
 
-        siguiente = queue_manager.pop_next_song(db)
-        queue_manager.refresh_all(db) # Sincronizar el singleton
+        siguiente = queue_manager.pop_next_song(db, local_id=local_id)
+        queue_manager.refresh_all(db)
 
-        # --- MEJORA: Broadcast con el estado real del CACHE JSON ---
+        # --- Broadcast con el estado real del CACHE JSON para este local ---
         try:
-            # Obtenemos la cola completa agrupada por estados para el admin
-            new_queue_state = get_cola_completa_con_lazy(db)
-            await websocket_manager.manager.broadcast_queue_update(new_queue_state)
+            new_queue_state = get_cola_completa_con_lazy(db, local_id=local_id)
+            await websocket_manager.manager.broadcast_queue_update(new_queue_state, local_id=local_id)
         except Exception:
             logger.exception('❌ Error broadcasting queue_update after advancing cola')
 
         if siguiente:
             siguiente = enriquecer_cancion(db, siguiente)
-            logger.info(f"🎵 Iniciando siguiente canción: {siguiente.get('titulo')}")
+            logger.info(f"🎵 Iniciando siguiente canción: {siguiente.get('titulo')} (local {local_id})")
             try:
                 await websocket_manager.manager.broadcast_play_song(
                     youtube_id=siguiente.get('youtube_id'),
-                    duration_seconds=int(siguiente.get('duracion_seconds', 0) or 0)
+                    duration_seconds=int(siguiente.get('duracion_seconds', 0) or 0),
+                    local_id=local_id
                 )
             except Exception:
                 logger.exception('❌ Error broadcasting play_song after advancing cola')
         else:
-            logger.info("📭 No hay más canciones en cola.")
+            logger.info(f"📭 No hay más canciones en cola para local {local_id}.")
 
         return siguiente
     except Exception as e:

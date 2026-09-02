@@ -317,44 +317,73 @@
                 <img id="owner-logo-display" src="/static/images/watermark.jpg" style="width: 20vh; height: 20vh; border-radius: 50%; border: 0.4vh solid var(--primary); object-fit: cover; box-shadow: 0 0 2.5vh var(--primary-glow);" />
                 <div class="success-badge" style="width: 5vh; height: 5vh; background: var(--success); border-radius: 50%; display: flex; justify-content: center; align-items: center; color: #fff; position: absolute; bottom: 0; right: 0; font-size: 2.4vh; border: 0.4vh solid #120e22; box-shadow: 0 0.5vh 1.5vh rgba(0,0,0,0.3);">✔</div>
             </div>
-            <h2 class="ready-title">¡Listo para Empezar!</h2>
-            <p class="ready-desc">
-                El reproductor de TV se encuentra **vinculado y sincronizado** en segundo plano. Puedes ocultar el cursor.
+            <h2 class="ready-title" id="ready-title-text">¡Listo para Empezar!</h2>
+            <p class="ready-desc" id="ready-local-desc" style="font-size: 18px; color: #4cc9f0; font-weight: 600; margin-bottom: 8px;">
+                📍 Sede: Vinculando...
             </p>
-            <div class="ready-footer">
-                📡 Esperando canción desde el administrador o mesa...
+            <p class="ready-desc" style="font-size: 14px;">
+                El reproductor de TV se encuentra **vinculado y sincronizado** con la cola de esta sede.
+            </p>
+            <div class="ready-footer" style="margin-top: 20px;">
+                <a href="https://www.youtube.com" class="step-action-btn install-btn" style="padding: 12px 28px; font-size: 15px; display: inline-block; margin-bottom: 12px;">📺 Abrir YouTube en Modo TV</a>
+                <br>
+                <span id="change-local-btn" style="font-size: 12px; color: #a29bfe; cursor: pointer; text-decoration: underline;">🔄 Cambiar de Sede</span>
             </div>
         </div>
     </div>
 
     <script>
-        // 1. Cargar configuraciones públicas (Logo del Dueño / Nombre de la App)
+        // 1. Detectar parámetros de local en URL o localStorage
+        const urlParams = new URLSearchParams(window.location.search);
+        let currentLocalParam = urlParams.get('local') || urlParams.get('slug') || urlParams.get('local_id') || localStorage.getItem('qrmusic_local_id') || localStorage.getItem('qrmusic_local_slug');
+
         let qrmusicHost = window.location.host;
         let ownerLogoUrl = '/static/images/watermark.jpg';
+        let activeLocalId = null;
+        let activeLocalNombre = '';
 
-        fetch('/api/v1/player2/settings')
-            .then(res => res.json())
-            .then(data => {
+        // Función para cargar ajustes públicos de la sede
+        async function loadPublicSettings() {
+            try {
+                let settingsUrl = '/api/v1/player2/settings';
+                if (currentLocalParam) {
+                    settingsUrl += `?${isNaN(currentLocalParam) ? 'slug=' : 'local_id='}${encodeURIComponent(currentLocalParam)}`;
+                }
+                const res = await fetch(settingsUrl);
+                const data = await res.json();
                 if (data.owner_logo) {
                     ownerLogoUrl = data.owner_logo;
                     const logoImg = document.getElementById('owner-logo-display');
                     if (logoImg) logoImg.src = ownerLogoUrl;
                 }
-            })
-            .catch(err => console.warn("No se pudieron cargar los ajustes públicos del player2:", err));
+                if (data.local_id) {
+                    activeLocalId = data.local_id;
+                    localStorage.setItem('qrmusic_local_id', data.local_id);
+                }
+                if (data.local_nombre) {
+                    activeLocalNombre = data.local_nombre;
+                    const descEl = document.getElementById('ready-local-desc');
+                    if (descEl) descEl.textContent = `📍 Sede: ${data.local_nombre}`;
+                }
+            } catch (err) {
+                console.warn("No se pudieron cargar los ajustes públicos del player2:", err);
+            }
+        }
 
-        // 2. Conexión nativa de WebSocket para el Setup/Waiting Screen
+        // 2. Conexión nativa de WebSocket segmentada por local
         let socket = null;
         const connectWebSocket = () => {
             const wsProto = window.location.protocol === 'https:' ? 'wss' : 'ws';
-            const wsUrl = `${wsProto}://${qrmusicHost}/ws/cola`;
+            let wsUrl = `${wsProto}://${qrmusicHost}/ws/cola`;
+            if (activeLocalId || currentLocalParam) {
+                wsUrl += `?local=${encodeURIComponent(activeLocalId || currentLocalParam)}`;
+            }
             console.log(`[QrMusic Setup] Conectando a WebSocket: ${wsUrl}`);
             
             socket = new WebSocket(wsUrl);
             
             socket.onopen = () => {
-                console.log("[QrMusic Setup] WebSocket conectado.");
-                // Mostrar vista de LISTO/VINCULADO
+                console.log("[QrMusic Setup] WebSocket conectado a sede:", activeLocalNombre || currentLocalParam || 'General');
                 document.getElementById('setup-view').style.display = 'none';
                 document.getElementById('ready-view').style.display = 'block';
             };
@@ -404,8 +433,26 @@
             };
         };
 
-        // Iniciar WebSocket
-        connectWebSocket();
+        // Botón cambiar sede
+        const changeLocalBtn = document.getElementById('change-local-btn');
+        if (changeLocalBtn) {
+            changeLocalBtn.onclick = () => {
+                const newLocal = prompt("Ingresa el ID o Slug de la Sede para este televisor:", currentLocalParam || "");
+                if (newLocal !== null) {
+                    const clean = newLocal.trim();
+                    if (clean) {
+                        localStorage.setItem('qrmusic_local_id', clean);
+                        localStorage.setItem('qrmusic_local_slug', clean);
+                        window.location.href = `/player2?local=${encodeURIComponent(clean)}`;
+                    }
+                }
+            };
+        }
+
+        // Iniciar
+        loadPublicSettings().then(() => {
+            connectWebSocket();
+        });
     </script>
 </body>
 </html>

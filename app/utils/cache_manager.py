@@ -166,16 +166,21 @@ class CacheManager: # Define la clase central encargada de gestionar los datos e
             song_ids = self.user_songs[usuario_id] # Obtiene la lista de IDs de canciones del usuario (conecta con self.user_songs)
             return [self.songs_index[sid] for sid in song_ids if sid in self.songs_index] # Retorna los datos completos desde el índice global
     
-    def get_songs_by_estado(self, estado: str) -> List[Dict[str, Any]]: # Filtra canciones por su estado (ej: 'pendiente', 'en_reproduccion')
-        """Obtiene todas las canciones con un estado específico""" # Docstring descriptivo
-        with self.lock: # Protección de concurrencia
-            return [s for s in self.songs_index.values() if s.get("estado") == estado] # Recorre todo el índice global y filtra
+    def get_songs_by_estado(self, estado: str, local_id: Optional[int] = None) -> List[Dict[str, Any]]: # Filtra canciones por su estado y local_id opcional
+        """Obtiene todas las canciones con un estado específico, opcionalmente filtradas por local_id"""
+        with self.lock:
+            songs = [s for s in self.songs_index.values() if s.get("estado") == estado]
+            if local_id is not None:
+                return [s for s in songs if s.get("local_id") == local_id or s.get("local_id") is None]
+            return songs
     
-    def get_song_by_youtube_id(self, youtube_id: str, valid_states: List[str] = None) -> Optional[Dict[str, Any]]: # Busca una canción por el ID de YouTube
-        """Obtiene una canción por su youtube_id (puede filtrar por estados)""" # Docstring explicativo
-        with self.lock: # Protección de hilos
+    def get_song_by_youtube_id(self, youtube_id: str, valid_states: List[str] = None, local_id: Optional[int] = None) -> Optional[Dict[str, Any]]: # Busca una canción por el ID de YouTube
+        """Obtiene una canción por su youtube_id (puede filtrar por estados y local_id)""" # Docstring explicativo
+        with self.lock: # Bloqueo de hilos
             for song in self.songs_index.values(): # Itera sobre todas las canciones en memoria
                 if song.get("youtube_id") == youtube_id: # Si el ID de YouTube coincide
+                    if local_id is not None and song.get("local_id") is not None and song.get("local_id") != local_id:
+                        continue
                     if valid_states is None or song.get("estado") in valid_states: # Y el estado es uno de los permitidos
                         return song # Retorna los datos de la canción encontrada
             return None # Retorna nada si no hay coincidencias
@@ -211,10 +216,13 @@ class CacheManager: # Define la clase central encargada de gestionar los datos e
                 return True # Eliminado correctamente
             return False # No existía
     
-    def get_all_songs(self) -> List[Dict[str, Any]]: # Obtiene el catálogo completo cargado en memoria
-        """Obtiene todas las canciones""" # Docstring simple
+    def get_all_songs(self, local_id: Optional[int] = None) -> List[Dict[str, Any]]: # Obtiene el catálogo completo cargado en memoria
+        """Obtiene todas las canciones, opcionalmente filtradas por local_id"""
         with self.lock: # Protección de lectura
-            return list(self.songs_index.values()) # Retorna todas las canciones como una lista plana
+            songs = list(self.songs_index.values())
+            if local_id is not None:
+                return [s for s in songs if s.get("local_id") == local_id or s.get("local_id") is None]
+            return songs
     
     def clear_all_songs(self) -> None: # Borrado total de canciones (limpieza total)
         """Limpia todas las canciones del caché""" # Docstring explicativo
